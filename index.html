@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>¿Quién se aprovecha de ti?</title>
+<style>
+body {
+  background:#0f0f0f;
+  color:#fff;
+  font-family: Arial, sans-serif;
+  text-align:center;
+  padding:20px;
+}
+button {
+  display:block;
+  width:90%;
+  margin:10px auto;
+  padding:15px;
+  background:#1f1f1f;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+button:hover { background:#333; }
+</style>
+</head>
+<body>
+
+<h1 id="question"></h1>
+<div id="answers"></div>
+
+<script>
+const questions = [
+  {
+    q:"Cuando tienes un problema serio, ¿quién aparece?",
+    a:["Casi nadie","Siempre los mismos","Los que luego piden algo","Muchos… pero solo hablan"]
+  },
+  {
+    q:"Cuando mejoras económicamente…",
+    a:["Algunos se alejan","Todo sigue igual","Aparecen nuevas confianzas","Prefiero ocultarlo"]
+  },
+  {
+    q:"Si pones un límite claro, las personas…",
+    a:["Lo respetan","Se molestan","Te hacen sentir culpable","Se victimizan"]
+  }
+];
+
+let index = 0;
+let score = [0,0,0,0];
+
+function loadQuestion() {
+  document.getElementById("question").innerText = questions[index].q;
+  const answersDiv = document.getElementById("answers");
+  answersDiv.innerHTML = "";
+  questions[index].a.forEach((text,i)=>{
+    const btn = document.createElement("button");
+    btn.innerText = text;
+    btn.onclick = ()=> {
+      score[i]++;
+      index++;
+      if(index < questions.length) loadQuestion();
+      else showResult();
+    }
+    answersDiv.appendChild(btn);
+  });
+}
+
+function showResult() {
+  const max = score.indexOf(Math.max(...score));
+  const results = [
+    "🟥 Aprovechado Silencioso",
+    "🟧 Aplaudidor Falso",
+    "🟨 Familiar Condicional",
+    "🟩 Círculo Real"
+  ];
+  document.body.innerHTML = `<h1>${results[max]}</h1>
+  <p>Este resultado no es casualidad.</p>
+  <button onclick="share()">Compartir</button>`;
+}
+
+function share(){
+  alert("Comparte tu resultado en redes");
+}
+
+loadQuestion();
+</script>
+
+<!-- AdSense Banner -->
+<div style="position:fixed;bottom:0;width:100%;background:#0f0f0f;text-align:center;z-index:999;">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-MAXIQUEEN OS"
+     data-ad-slot="MAXIQUEEN OS"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+<p style="font-size:12px;text-align:center;">
+  <a href="privacidad.html" style="color:#888;">Privacidad</a> |
+  <a href="aviso.html" style="color:#888;">Aviso legal</a>
+</p>
+</body>
+</html>
