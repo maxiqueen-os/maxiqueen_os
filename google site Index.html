@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAXIQUEEN STORE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset básico */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+    body { background: #0f0f0f; color: #fff; line-height: 1.6; }
+
+    /* Header */
+    header { background: #000; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
+    header h1 { color: #FFD700; font-size: 2rem; }
+    nav a { color: #fff; text-decoration: none; margin-left: 20px; font-weight: 600; }
+    nav a:hover { color: #FFD700; }
+
+    /* Sección Bienvenida */
+    .welcome { text-align: center; padding: 80px 20px; background: url('https://via.placeholder.com/1200x400') center/cover no-repeat; position: relative; }
+    .welcome h2 { font-size: 3rem; color: #FFD700; margin-bottom: 20px; }
+    .welcome p { font-size: 1.2rem; color: #fff; margin-bottom: 30px; }
+    .welcome a { background: #FFD700; color: #000; padding: 15px 30px; text-decoration: none; font-weight: 700; border-radius: 8px; transition: 0.3s; }
+    .welcome a:hover { background: #ffb700; }
+
+    /* Productos */
+    .products { padding: 60px 20px; max-width: 1200px; margin: auto; }
+    .products h2 { text-align: center; color: #FFD700; margin-bottom: 40px; font-size: 2.5rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+    .card { background: #1a1a1a; padding: 20px; border-radius: 12px; text-align: center; transition: 0.3s; }
+    .card img { max-width: 100%; border-radius: 8px; margin-bottom: 15px; }
+    .card h3 { color: #FFD700; margin-bottom: 10px; }
+    .card p { margin-bottom: 15px; color: #fff; }
+    .card a { display: inline-block; background: #25D366; color: #fff; padding: 10px 20px; border-radius: 8px; font-weight: 700; transition: 0.3s; text-decoration: none; }
+    .card a:hover { background: #128c53; }
+
+    /* Cómo comprar */
+    .how-to { background: #111; padding: 60px 20px; text-align: center; }
+    .how-to h2 { color: #FFD700; font-size: 2.5rem; margin-bottom: 30px; }
+    .how-to ol { list-style: decimal inside; font-size: 1.2rem; color: #fff; }
+
+    /* Contacto */
+    .contact { padding: 60px 20px; text-align: center; background: #1a1a1a; }
+    .contact h2 { color: #FFD700; font-size: 2.5rem; margin-bottom: 20px; }
+    .contact a { display: inline-block; background: #25D366; color: #fff; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: 700; transition: 0.3s; }
+    .contact a:hover { background: #128c53; }
+
+    /* Redes sociales */
+    .social { padding: 40px 20px; text-align: center; }
+    .social a { margin: 0 10px; font-size: 2rem; color: #FFD700; text-decoration: none; transition: 0.3s; }
+    .social a:hover { color: #ffb700; }
+
+    /* Banner de promociones */
+    .banner { background: #FFD700; color: #000; text-align: center; padding: 30px 20px; font-weight: 700; font-size: 1.5rem; }
+
+    /* Testimonios */
+    .testimonials { background: #111; padding: 60px 20px; max-width: 1000px; margin: auto; text-align: center; }
+    .testimonials h2 { color: #FFD700; margin-bottom: 40px; font-size: 2.5rem; }
+    .testimonial { background: #1a1a1a; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+    .testimonial p { color: #fff; font-style: italic; }
+
+    /* Footer */
+    footer { background: #000; color: #fff; text-align: center; padding: 30px 20px; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>MAXIQUEEN STORE</h1>
+    <nav>
+      <a href="#welcome">Inicio</a>
+      <a href="#products">Productos</a>
+      <a href="#how-to">Cómo Comprar</a>
+      <a href="#contact">Contacto</a>
+      <a href="#social">Redes</a>
+    </nav>
+  </header>
+
+  <!-- Bienvenida -->
+  <section class="welcome" id="welcome">
+    <h2>Bienvenido a MAXIQUEEN STORE</h2>
+    <p>La tienda oficial de ropa, accesorios y gadgets. Compra fácil por WhatsApp y recibe en la comodidad de tu casa.</p>
+    <a href="https://api.whatsapp.com/send/?phone=573016625921&text=Hola+MAXIQUEEN.+Quiero+comprar" target="_blank">Compra ahora por WhatsApp</a>
+  </section>
+
+  <!-- Productos -->
+  <section class="products" id="products">
+    <h2>Productos Destacados</h2>
+    <div class="grid">
+      <!-- Producto 1 -->
+      <div class="card">
+        <img src="https://via.placeholder.com/250x250" alt="Auriculares inalámbricos">
+        <h3>Auriculares inalámbricos</h3>
+        <p>$35.000 COP</p>
+        <a href="https://api.whatsapp.com/send/?phone=573016625921&text=Hola+MAXIQUEEN.+Quiero+comprar+los+auriculares" target="_blank">Comprar por WhatsApp</a>
+      </div>
+      <!-- Producto 2 -->
+      <div class="card">
+        <img src="https://via.placeholder.com/250x250" alt="Conjunto deportivo mujer">
+        <h3>Conjunto deportivo mujer</h3>
+        <p>$55.000 COP</p>
+        <a href="https://api.whatsapp.com/send/?phone=573016625921&text=Hola+MAXIQUEEN.+Quiero+comprar+el+conjunto+deportivo" target="_blank">Comprar por WhatsApp</a>
+      </div>
+      <!-- Producto 3 -->
+      <div class="card">
+        <img src="https://via.placeholder.com/250x250" alt="Ventilador USB portátil">
+        <h3>Ventilador USB portátil</h3>
+        <p>$25.000 COP</p>
+        <a href="https://api.whatsapp.com/send/?phone=573016625921&text=Hola+MAXIQUEEN.+Quiero+comprar+el+ventilador+USB" target="_blank">Comprar por WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cómo Comprar -->
+  <section class="how-to" id="how-to">
+    <h2>Cómo Comprar</h2>
+    <ol>
+      <li>Selecciona el producto que te gusta.</li>
+      <li>Haz clic en el botón “Comprar por WhatsApp”.</li>
+      <li>Envía tu mensaje y confirma tu pedido.</li>
+      <li>Recibe tu compra en la dirección que elijas.</li>
+    </ol>
+  </section>
+
+  <!-- Contacto -->
+  <section class="contact" id="contact">
+    <h2>Contacto / WhatsApp</h2>
+    <a href="https://api.whatsapp.com/send/?phone=573016625921&text=Hola,+quiero+m%C3%A1s+informaci%C3%B3n+sobre+MAXIQUEEN+STORE" target="_blank">¡Chatea con nosotros ahora!</a>
+  </section>
+
+  <!-- Banner promociones -->
+  <section class="banner">
+    🔥 Oferta del mes: Conjuntos deportivos al 20% 🔥
+  </section>
+
+  <!-- Testimonios -->
+  <section class="testimonials">
+    <h2>Testimonios</h2>
+    <div class="testimonial">
+      <p>“Me encantó el conjunto deportivo, llegó rápido y en perfecto estado. ⭐⭐⭐⭐⭐”</p>
+    </div>
+    <div class="testimonial">
+      <p>“Excelente atención por WhatsApp, super recomendados.”</p>
+    </div>
+  </section>
+
+  <!-- Redes sociales -->
+  <section class="social" id="social">
+    <a href="https://www.instagram.com/maxiqueen_store" target="_blank">📸</a>
+    <a href="https://www.tiktok.com/@maxiqueen_store" target="_blank">🎵</a>
+    <a href="https://www.facebook.com/maxiqueenstore" target="_blank">📘</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    &copy; 2025 MAXIQUEEN STORE - Todos los derechos reservados
+  </footer>
+
+</body>
+</html>
