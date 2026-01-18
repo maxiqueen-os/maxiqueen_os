@@ -1,497 +1,206 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Maxiqueen OS | Juegos Psicológicos & Experiencias Interactivas</title>
-  <meta name="description" content="Maxiqueen OS integra juegos psicológicos, experiencias interactivas, sistemas digitales y lógicas de IA listas para monetizar y ofrecer insights profundos de cada usuario." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* Animaciones y efectos elegantes */
-    .link-block a {
-      @apply transition-all duration-300 ease-in-out;
-    }
-    .link-block a:hover {
-      transform: translateY(-3px) scale(1.05);
-      color: #FFD700;
-      text-decoration: underline;
-    }
-    .game-card, .cta-button {
-      transition: all 0.3s ease-in-out;
-    }
-    .game-card:hover {
-      transform: scale(1.05) rotate(-1deg);
-      box-shadow: 0 15px 35px rgba(255, 215, 0, 0.4);
-    }
-    .game-card button:hover {
-      transform: scale(1.1);
-      background-color: rgba(255, 215, 0, 0.2);
-    }
-    .cta-button:hover {
-      transform: scale(1.05) translateY(-3px);
-      box-shadow: 0 12px 30px rgba(255, 215, 0, 0.5);
-    }
-  </style>
-</head>
-<body class="bg-gradient-to-br from-black via-zinc-900 to-amber-950 text-white font-[Poppins]">
-
-  <!-- HERO -->
-  <section class="min-h-screen flex items-center justify-center px-6">
-    <div class="max-w-5xl text-center">
-      <h1 class="text-4xl md:text-6xl font-extrabold mb-6">MAXIQUEEN <span class="text-amber-400">OS</span></h1>
-      <p class="text-lg md:text-2xl text-zinc-300 mb-8">
-        Explora nuestros juegos psicológicos, experiencias interactivas, sistemas digitales con IA integrada y soluciones pensadas para viralidad, aprendizaje y monetización.
-      </p>
-      <div class="flex flex-col md:flex-row gap-4 justify-center">
-        <a href="https://maxiqueenos-ops.github.io/juego-psicologico/" class="cta-button px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-600 font-semibold shadow-lg">🎮 Probar juego</a>
-        <a href="#servicios" class="cta-button px-8 py-4 rounded-2xl bg-white/10 hover:bg-white/20 font-semibold">💼 Ver servicios</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- QUÉ ES -->
-  <section class="py-20 px-6 bg-black/40">
-    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-      <div>
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">¿Qué es Maxiqueen OS?</h2>
-        <p class="text-zinc-300 text-lg">
-          Maxiqueen OS es tu ecosistema digital integral donde combinamos <strong>psicología, gamificación, análisis de datos y tecnología avanzada</strong> para crear experiencias interactivas únicas y servicios que aportan valor real y medible.
-        </p>
-        <ul class="mt-4 text-lg space-y-2 text-zinc-300">
-          <li>🎮 Juegos psicológicos virales diseñados para captar la atención y generar insights sobre patrones de comportamiento.</li>
-          <li>📲 Apps interactivas listas para publicar y adaptables a diferentes plataformas digitales.</li>
-          <li>💡 Integración de lógicas de IA para personalizar experiencias según el comportamiento del usuario y maximizar la retención.</li>
-          <li>💰 Sistemas de monetización y funnels estratégicos que transforman la interacción en resultados tangibles.</li>
-          <li>🚀 Experiencias optimizadas para redes sociales, especialmente TikTok, Reels e Instagram, garantizando máxima viralidad y participación.</li>
-        </ul>
-      </div>
-      <div class="bg-gradient-to-br from-amber-500/20 to-yellow-500/10 p-8 rounded-3xl shadow-xl">
-        <p class="text-lg text-zinc-200">
-          Cada sección, juego y servicio está diseñado para que <strong>la interacción sea mínima, clara y efectiva</strong>, asegurando que el usuario siempre tenga un camino directo hacia compartir, descubrir más información relevante o desbloquear el Nivel 2, sin saturarlo ni perder el enfoque en la experiencia principal.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- SERVICIOS -->
-  <section id="servicios" class="py-20 px-6">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Nuestros Servicios</h2>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-white/5 p-8 rounded-3xl hover:bg-white/10 transition">
-          <h3 class="text-xl font-semibold mb-3">🎮 Juegos Psicológicos</h3>
-          <p class="text-zinc-300">Diseño detallado, narrativa interactiva, mecánicas inteligentes y código listo para viralizar, integrándose perfectamente a cualquier sistema o plataforma digital y ofreciendo al usuario experiencias profundas y atractivas.</p>
-        </div>
-        <div class="bg-white/5 p-8 rounded-3xl hover:bg-white/10 transition">
-          <h3 class="text-xl font-semibold mb-3">📲 Apps Web & Android</h3>
-          <p class="text-zinc-300">Transformamos tus juegos y experiencias en aplicaciones web y móviles, asegurando mínima fricción para el usuario, compatibilidad multiplataforma y preparación para la monetización, así como para integraciones futuras de IA y automatización.</p>
-        </div>
-        <div class="bg-white/5 p-8 rounded-3xl hover:bg-white/10 transition">
-          <h3 class="text-xl font-semibold mb-3">💰 Monetización & Funnels</h3>
-          <p class="text-zinc-300">Implementamos automatización de CTA, publicidad segmentada, copywriting persuasivo y embudos estratégicos, diseñados para transformar la interacción del usuario en conversiones concretas y sostenibles, con seguimiento y optimización continua.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- JUEGOS ADICIONALES -->
-  <section class="py-20 px-6 bg-black/30">
-    <div class="max-w-6xl mx-auto text-center">
-      <h2 class="text-3xl md:text-4xl font-bold mb-6">🎯 Juegos y Experiencias Interactivas</h2>
-      <p class="text-zinc-300 text-lg mb-8">
-        Dentro de Maxiqueen OS, los juegos psicológicos funcionan como un servicio adicional que enriquece la experiencia global. Cada juego está diseñado para viralizar contenido, generar insights significativos sobre los usuarios y preparar la plataforma para futuras lógicas de inteligencia artificial que personalicen la experiencia individual.
-      </p>
-      <div class="grid md:grid-cols-2 gap-8">
-        <a href="https://maxiqueenos-ops.github.io/juego-psicologico/" class="game-card p-6 bg-amber-500/30 hover:bg-amber-500/50 rounded-3xl shadow-lg">
-          <h3 class="text-xl font-semibold mb-2">🎮 Juego Psicológico Principal</h3>
-          <p class="text-zinc-200">Descubre patrones ocultos de pensamiento y comportamiento, obtén resultados detallados y comparte tus insights de manera viral para medir tu influencia y comprensión de la dinámica social.</p>
-          <button class="mt-4 px-6 py-2 bg-white/10 hover:bg-white/20 rounded-xl font-semibold transition">Compartir TikTok / Reels</button>
-        </a>
-        <a href="#" class="game-card p-6 bg-amber-500/30 hover:bg-amber-500/50 rounded-3xl shadow-lg">
-          <h3 class="text-xl font-semibold mb-2">🧠 Próximo Nivel / IA</h3>
-          <p class="text-zinc-200">Accede a un nivel avanzado de experiencia donde las decisiones del usuario y su interacción anterior se analizan mediante IA para ofrecer resultados personalizados, retos más profundos y contenido adaptado a su perfil, maximizando engagement y retención.</p>
-          <button class="mt-4 px-6 py-2 bg-white/10 hover:bg-white/20 rounded-xl font-semibold transition">Desbloquear Nivel 2</button>
-        </a>
-      </div>
-</section>
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Maxiqueen OS | Juegos Psicológicos & Experiencias Interactivas</title>
-  <meta name="description" content="Maxiqueen OS integra juegos psicológicos, experiencias interactivas, sistemas digitales y lógicas de IA listas para monetizar y ofrecer insights profundos de cada usuario." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* Animaciones y efectos elegantes */
-    .link-block a {
-      @apply transition-all duration-300 ease-in-out flex items-center gap-2;
-    }
-    .link-block a:hover {
-      transform: translateY(-3px) scale(1.05);
-      color: #FFD700;
-      text-decoration: underline;
-    }
-    .game-card, .cta-button {
-      transition: all 0.3s ease-in-out;
-    }
-    .game-card:hover {
-      transform: scale(1.05) rotate(-1deg);
-      box-shadow: 0 15px 35px rgba(255, 215, 0, 0.4);
-    }
-    .game-card button:hover {
-      transform: scale(1.1);
-      background-color: rgba(255, 215, 0, 0.2);
-    }
-    .cta-button:hover {
-      transform: scale(1.05) translateY(-3px);
-      box-shadow: 0 12px 30px rgba(255, 215, 0, 0.5);
-    }
-    .social-icon {
-      width: 24px;
-      height: 24px;
-      object-fit: contain;
-    }
-  </style>
-</head>
-<body class="bg-gradient-to-br from-black via-zinc-900 to-amber-950 text-white font-[Poppins]">
-
-  <!-- HERO OMITIDO -->
-
-  <!-- SECCIONES OMITIDAS PARA BREVEDAD -->
-
-  <!-- LINKS ADICIONALES CON ICONOS DE REDES SOCIALES -->
-  <section class="py-20 px-6 bg-black/30">
-    <div class="max-w-6xl mx-auto text-center link-block">
-      <h3 class="text-xl font-bold mb-6">Enlaces y Recursos</h3>
-      <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto text-left">
-        <li><a href="https://app-vlc.hotmart.com/affiliate-recruiting/view/6489M103285849" target="_blank">💻 Afiliate 1</a></li>
-        <li><a href="https://go.hotmart.com/P103285828N?dp=1" target="_blank">💻 hotmart marketplace 2</a></li>
-        <li><a href="https://pay.hotmart.com/P103285828N" target="_blank">💳 accede al proceso 3</a></li>
-        <li><a href="https://app.hotmart.com/membership/cesar-f9370874/community/management/15254181" target="_blank">📂 Página secundaria 4</a></li>
-        <li><a href="https://www.tiktok.com/@cesarbedoya9" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/TikTok_logo.svg" class="social-icon"> TikTok</a></li>
-        <li><a href="https://www.instagram.com/maxiqueen_store?igsh=MXV5eWM3azR1cWpkbA%3D%3D" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" class="social-icon"> Instagram</a></li>
-        <li><a href="https://www.facebook.com/share/1DVm7tXTEm/" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" class="social-icon"> Facebook</a></li>
-        <li><a href="https://www.youtube.com/@cesarbedoya2288" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" class="social-icon"> YouTube</a></li>
-        <li><a href="https://wa.me/573016625921?text=Hola%20MAXIQUEENOS.%20Vengo%20desde la página y quiero aplicar al PROCESO." target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="social-icon"> WhatsApp</a></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- CTA FINAL Y FOOTER OMITIDOS -->
-
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MaxiQueen OS – César Julio Bedoya</title>
-<meta name="description" content="Página oficial de César Julio Bedoya Barragán. Proyecto MAXIQUEEN: crecimiento personal, mentalidad y creatividad.">
+<title>Maxiqueen OS | Sistema Digital Integral</title>
+<meta name="description" content="MaxiQueen OS es un sistema digital integral diseñado para convertir ideas, historias y negocios en activos digitales rentables.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-  body {font-family: Arial, sans-serif; margin:0; background:#0f0f14; color:#f5f5f5; scroll-behavior:smooth;}
-  header, section, footer {padding:60px 20px; max-width:1100px; margin:auto;}
-  h1,h2,h3 {color:#facc15; margin-bottom:10px;}
-.btn {background:#facc15; color:#0f0f14; padding:14px 22px;}
-.btn:hover {background:#f59e0b;}
-  .card {background:#1a1a24; padding:20px; border-radius:12px; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.4);}
-  .grid {display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(250px,1fr));}
-  footer {text-align:center; font-size:14px; opacity:0.8;}
-  /* Animaciones */
+  body {font-family: 'Poppins', sans-serif; margin:0; padding:0;}
   .fade-in {opacity:0; transform:translateY(20px); animation:fadeIn 1s forwards;}
   @keyframes fadeIn {to{opacity:1; transform:translateY(0);}}
-  /* Chat */
-  .chat-box {position:fixed; bottom:20px; right:20px; background:#1a1a24; border-radius:12px; padding:10px; width:300px; max-height:400px; display:flex; flex-direction:column; z-index:1000;}
-  .chat-log {flex:1; overflow-y:auto; margin-bottom:10px;}
-  .chat-log div {margin-bottom:5px;}
-  .chat-input {display:flex;}
-  .chat-input input {flex:1; padding:8px; border-radius:8px; border:none; margin-right:5px;}
- .chat-input button {background:#facc15; color:#0f0f14;}
-.chat-input button:hover {background:#f59e0b;}
-  @media(max-width:600px){
-  h1{font-size:28px;}
-  h2{font-size:18px;}
-  .btn{width:100%; text-align:center;}
-}
+  body::-webkit-scrollbar {width:8px;} 
+  body::-webkit-scrollbar-thumb {background:#FFD700; border-radius:4px;}
 
+  /* CHAT */
+  .chat-box {position:fixed; bottom:20px; right:20px; background:#11101a; border-radius:16px; padding:12px; width:360px; max-height:520px; display:flex; flex-direction:column; z-index:1000; box-shadow:0 6px 35px rgba(0,0,0,0.7);}
+  .chat-log {flex:1; overflow-y:auto; margin-bottom:10px; font-size:0.95rem; line-height:1.5rem; padding:5px;}
+  .chat-log div {margin-bottom:10px; padding:6px 10px; border-radius:8px;}
+  .chat-log .user-msg {background:#2a2a38; text-align:right; color:#fff;}
+  .chat-log .bot-msg {background:#facc15; text-align:left; color:#0f0f14; font-weight:600;}
+  .chat-input {display:flex;}
+  .chat-input input {flex:1; padding:12px; border-radius:12px; border:none; margin-right:6px; background:#2a2a38; color:white; font-size:0.95rem;}
+  .chat-input input::placeholder {color:#aaa;}
+  .chat-input button {background:#facc15; color:#0f0f14; padding:8px 16px; border-radius:12px; font-weight:700; cursor:pointer; transition:all 0.3s ease;}
+  .chat-input button:hover {background:#f59e0b; transform:scale(1.05);}
+
+  /* LAYOUT */
+  header, section, footer {padding:60px 20px; max-width:1200px; margin:0 auto;}
+  h1,h2,h3 {margin-bottom:20px;}
+  .cta-button {background:#facc15; color:#0f0f14; padding:12px 24px; font-weight:700; border-radius:12px; text-decoration:none; display:inline-block; transition:all 0.3s ease;}
+  .cta-button:hover {background:#f59e0b; transform:scale(1.05);}
+
+  /* SOCIAL ICONS */
+  .social-icon {width:32px; height:32px; vertical-align:middle; margin-right:8px; object-fit:contain; transition: transform 0.3s ease, filter 0.3s ease;}
+  .social-icon:hover {transform: scale(1.2); filter: brightness(1.5);}
+  ul.grid li a {display:flex; align-items:center;}
 </style>
 </head>
-<body>
+<body class="bg-gradient-to-br from-black via-zinc-900 to-amber-950 text-white">
 
 <header class="fade-in">
- <h1>Si estás cansado de fingir que todo está bien, esto es para ti</h1>
-<h2>Un proceso real de 3 meses para reconstruir tu mente, tu disciplina y tu identidad</h2>
-<p>Sin motivación barata. Sin terapia blanda. Sin promesas mágicas.</p>
-
-<a class="btn" href="#ventas-comunidad">Aplicar al PROCESO</a>
-<a class="btn secundario" href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN.%20Quiero%20aplicar%20al%20PROCESO.">Hablar por WhatsApp</a>
-
+  <h1 class="text-4xl font-extrabold mb-4">👑 MaxiQueen OS</h1>
+  <p class="text-lg mb-6">Sistema Digital Integral de Contenido, Ventas y Automatización. Convierte tus ideas, historias y negocios en activos digitales rentables.</p>
+  <a href="#planes" class="cta-button">Quiero mi sistema ahora</a>
 </header>
 
-<section class="fade-in">
-  <div class="card">
-    <h2>La mayoría no está mal… está anestesiada</h2>
-    <ul>
-      <li>Empiezan mil veces y abandonan</li>
-      <li>Saben lo que deben hacer, pero no lo hacen</li>
-      <li>Viven con rabia, culpa o frustración acumulada</li>
-      <li>Consumen motivación, pero no cambian hábitos</li>
-    </ul>
-    <p>MAXIQUEEN no es para sentirse mejor un rato. Es para hacerse cargo.</p>
-  </div>
+<section id="que-es" class="fade-in">
+  <h2 class="text-3xl font-bold mb-4">¿Qué es MaxiQueen OS?</h2>
+  <p class="mb-4"><strong>MaxiQueen OS no es una marca. Es un sistema.</strong></p>
+  <p class="mb-4">MaxiQueen OS es un sistema digital integral diseñado para personas reales que quieren crear, vender, automatizar y crecer sin depender de soluciones fragmentadas.</p>
+  <p class="mb-4">Aquí no vendemos humo. Convertimos historias, ideas y proyectos en:</p>
+  <ul class="list-disc ml-6 mb-4">
+    <li>Contenido que conecta</li>
+    <li>Plataformas que venden</li>
+    <li>Sistemas que trabajan solos</li>
+  </ul>
+  <p class="mb-4">Todo desde un solo núcleo.</p>
+  <p class="italic mb-6">JavaScript es el cuerpo. Python es la mente. Tú eres la conciencia.</p>
+  <ul class="list-disc ml-6">
+    <li>🎨 Contenido creativo (historias, guiones, reels, TikTok)</li>
+    <li>📱 Crecimiento en redes con narrativa real</li>
+    <li>🌐 Webs, landings y tiendas listas para vender</li>
+    <li>🛒 Estructura comercial y funnels</li>
+    <li>⚙️ Automatización real (deploy, GitHub, VPS)</li>
+    <li>🧠 Asistencia estratégica</li>
+  </ul>
 </section>
 
-<section id="perfil" class="fade-in">
-  <h2>Perfil Profesional</h2>
-  <div class="card">
-    <p><strong>Formación:</strong></p>
-    <ul>
-      <li>Técnico en mantenimiento de equipos de cómputo</li>
-      <li>Tecnólogo en Gestión Administrativa</li>
-      <li>Especialización en diagnóstico y análisis organizacional</li>
-    </ul>
-    <p><strong>Experiencia y habilidades:</strong></p>
-    <ul>
-      <li>Liderazgo y coordinación de equipos</li>
-      <li>Gestión administrativa y operativa</li>
-      <li>Toma de decisiones bajo presión</li>
-      <li>Tolerancia a la frustración y resiliencia</li>
-    </ul>
-  </div>
+<section id="equipo" class="fade-in">
+  <h2 class="text-3xl font-bold mb-4">Equipo y Origen</h2>
+  <p class="mb-4"><strong>MAXIQUEEN nace como un proyecto familiar y evoluciona como un sistema profesional.</strong></p>
+  <p class="mb-4">La identidad visual y el nombre de la marca fueron creados por mis hermanas, quienes aportaron la base creativa y estética que dio origen a MAXIQUEEN.</p>
+  <p class="mb-4">A partir de ahí, todo el desarrollo, arquitectura y expansión del sistema ha sido diseñado y gestionado por mí: administración, estructura digital, contenido, automatización, estrategia comercial y evolución tecnológica.</p>
+  <p class="font-semibold">MAXIQUEEN OS no es una agencia ni un servicio genérico: es un sistema digital original construido desde la experiencia real, la organización del caos y la creación de soluciones humanas apoyadas por tecnología.</p>
 </section>
 
-<section id="contenido" class="fade-in">
-  <h2>Contenido Digital</h2>
-  <div class="card">
-    <ul>
-      <li>Transmisiones en vivo dibujando</li>
-      <li>Historias reales convertidas en caricatura</li>
-      <li>Reflexiones sobre disciplina, rabia y transformación</li>
-      <li>Videos sobre animales (15 gatos y 4 perros)</li>
-    </ul>
-    <p>Plataforma principal: <strong>TikTok</strong> (comunidad en crecimiento).</p>
+<section id="planes" class="fade-in">
+  <h2 class="text-3xl font-bold mb-4">Planes y Precios</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-zinc-900 p-6 rounded-xl">
+      <h3 class="text-xl font-bold mb-2">👑 STARTER</h3>
+      <p>Landing page básica, 5 guiones de contenido, hosting básico, asesoría inicial.</p>
+      <p class="font-semibold mt-2">USD $49 / mes</p>
+      <a href="#" class="cta-button mt-2 inline-block">Empezar ahora</a>
+    </div>
+    <div class="bg-zinc-900 p-6 rounded-xl">
+      <h3 class="text-xl font-bold mb-2">💰 PRO</h3>
+      <p>Web completa, 15 guiones optimizados, hosting + subdominios, automatización nivel 1, soporte estratégico.</p>
+      <p class="font-semibold mt-2">USD $99 / mes</p>
+      <a href="#" class="cta-button mt-2 inline-block">Quiero escalar</a>
+    </div>
+    <div class="bg-zinc-900 p-6 rounded-xl">
+      <h3 class="text-xl font-bold mb-2">🔵 ELITE</h3>
+      <p>Sistema web avanzado, contenido mensual continuo, hosting premium, automatización nivel 2, soporte prioritario.</p>
+      <p class="font-semibold mt-2">USD $199 / mes</p>
+      <a href="#" class="cta-button mt-2 inline-block">Quiero todo el sistema</a>
+    </div>
   </div>
-</section>
+</section>  
 
-<section id="vision" class="fade-in">
-  <h2>Visión</h2>
-  <div class="card">
-    <p>Convertir <strong>MAXIQUEEN</strong> en una comunidad privada, una marca registrada y un espacio seguro para personas que están cansadas de fingir y listas para reconstruirse de verdad.</p>
-  </div>
-</section>
-
-<section id="programa" class="fade-in">
-  <h2>Esto no es un curso</h2>
-<p><strong>MAXIQUEEN</strong> es un proceso estructurado para personas que dejaron de mentirse.</p>
-<p>Aquí no vienes a inspirarte. Vienes a trabajar tu mente, tu disciplina y tu conducta diaria.</p>
-
-    <p><strong>Importante:</strong> Los módulos se liberan <strong>mensualmente</strong>. Cada etapa se vive, se trabaja y se integra antes de avanzar.</p>
-  </div>
-
-  <div class="card"><h3>Módulo 1 · Despertar Brutal</h3>
-    <ul>
-      <li>Romper la negación</li>
-      <li>Aceptar la realidad actual sin maquillaje</li>
-      <li>Identificar patrones de autosabotaje</li>
-      <li>Responsabilidad personal</li>
-    </ul>
-  </div>
-
-  <div class="card"><h3>Módulo 2 · Gestión de Rabia y Frustración</h3>
-    <ul>
-      <li>Entender el origen de la rabia</li>
-      <li>Canalización consciente de emociones</li>
-      <li>Evitar la autodestrucción emocional</li>
-      <li>Transformar rabia en energía útil</li>
-    </ul>
-  </div>
-
-  <div class="card"><h3>Módulo 3 · Disciplina Mental y Hábitos Reales</h3>
-    <ul>
-      <li>Disciplina sin motivación</li>
-      <li>Creación de hábitos sostenibles</li>
-      <li>Eliminar excusas internas</li>
-      <li>Estructura diaria mínima viable</li>
-    </ul>
-  </div>
-
-  <div class="card"><h3>Módulo 4 · Identidad y Reconstrucción Personal</h3>
-    <ul>
-      <li>Quién eres sin máscaras</li>
-      <li>Reconstrucción de identidad</li>
-      <li>Autoestima basada en acciones</li>
-      <li>Coherencia entre pensamiento y conducta</li>
-    </ul>
-  </div>
-
-  <div class="card"><h3>Módulo 5 · Creatividad como Liberación</h3>
-    <ul>
-      <li>Creatividad aplicada a la vida diaria</li>
-      <li>Dibujo, escritura y expresión emocional</li>
-      <li>Usar la creatividad para sanar</li>
-      <li>Crear en lugar de destruir</li>
-    </ul>
-  </div>
-
-  <div class="card"><h3>Módulo 6 · Integración y Sostener el Proceso</h3>
-    <ul>
-      <li>Evitar recaídas mentales</li>
-      <li>Sostener disciplina en el tiempo</li>
-      <li>Autoseguimiento consciente</li>
-      <li>Convertir el proceso en estilo de vida</li>
+<section class="py-20 px-6 bg-black/30 fade-in">
+  <div class="max-w-6xl mx-auto text-center link-block">
+    <h3 class="text-xl font-bold mb-6">Enlaces y Recursos</h3>
+    <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto text-left">
+      <li><a href="https://app-vlc.hotmart.com/affiliate-recruiting/view/6489M103285849" target="_blank">💻 Afiliados</a></li>
+      <li><a href="https://go.hotmart.com/P103285828N?dp=1" target="_blank">💻 hotmart marketplaces </a></li>
+      <li><a href="https://pay.hotmart.com/P103285828N" target="_blank">💳 Adquiere la oferta 40% dcto </a></li>
+      <li><a href="https://app.hotmart.com/membership/cesar-f9370874/community/management/15254181" target="_blank">📂  comunidad hotmart </a></li>
+      <li><a href="https://www.tiktok.com/@cesarbedoya9" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/TikTok_logo.svg" class="social-icon"> TikTok</a></li>
+      <li><a href="https://www.instagram.com/maxiqueen_store?igsh=MXV5eWM3azR1cWpkbA%3D%3D" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" class="social-icon"> Instagram</a></li>
+      <li><a href="https://www.facebook.com/share/1DVm7tXTEm/" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" class="social-icon"> Facebook</a></li>
+      <li><a href="https://www.youtube.com/@cesarbedoya2288" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" class="social-icon"> YouTube</a></li>
+      <li><a href="https://wa.me/573016625921?text=Hola%20MAXIQUEENOS.%20Vengo%20desde la página y quiero aplicar al PROCESO." target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="social-icon"> WhatsApp</a></li>
     </ul>
   </div>
 </section>
 
-<section id="productos" class="fade-in">
-  <h2>Productos y Acceso</h2>
-
-  <div class="card">
-    <h3>Comunidad MAXIQUEEN – PROCESO</h3>
-    <p><strong>No es un curso. Es acompañamiento real.</strong></p>
-    <ul>
-      <li>Acceso a comunidad privada</li>
-      <li>Sesiones en vivo semanales</li>
-      <li>Retos de disciplina y enfoque</li>
-      <li>Material exclusivo</li>
-      <li>Seguimiento humano</li>
-    </ul>
-<p><strong>Inversión:</strong> Pago mensual</p>
-<p>Esto no es barato emocionalmente. Requiere compromiso, constancia y presencia.</p>
-<p>La permanencia mínima es de <strong>3 meses</strong>. No se entra a probar.</p>
-    <a class="btn" href="https://pay.hotmart.com/P103285828N?bid=1766543846189">Pagar ahora / Aplicar al PROCESO</a>
-    <a class="btn" href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN.%20Vengo%20desde%20la%20p%C3%A1gina%20y%20quiero%20aplicar%20al%20PROCESO.">Aplicar por WhatsApp</a>
-  </div>
-
-  <div class="card">
-    <h3>Accesos rápidos</h3>
-    <ul>
-      <li><a href="https://app-vlc.hotmart.com/affiliate-recruiting/view/6489M103285849" target="_blank">Página secundaria</a></li>
-      <li><a href="https://go.hotmart.com/P103285828N?dp=1" target="_blank">Página secundaria</a></li>
-      <li><a href="https://pay.hotmart.com/P103285828N" target="_blank">Página secundaria</a></li>
-      <li><a href="https://app.hotmart.com/membership/cesar-f9370874/community/management/15254181" target="_blank">Página secundaria</a></li>
-      <li><a href="https://www.tiktok.com/@cesarbedoya9" target="_blank">TikTok</a></li>
-      <li><a href="https://www.instagram.com/maxiqueen_store?igsh=MXV5eWM3azR1cWpkbA%3D%3D" target="_blank">Instagram</a></li>
-      <li><a href="https://www.facebook.com/share/1DVm7tXTEm/" target="_blank">Facebook</a></li>
-      <li><a href="https://www.youtube.com/@cesarbedoya2288" target="_blank">YouTube</a></li>
-    </ul>
-  </div>
-</section>
-
-<section id="ventas-comunidad" class="fade-in">
-  <h2>Comunidad MAXIQUEEN</h2>
-
-  <div class="card">
-    <h3>No es motivación. Es reconstrucción.</h3>
-    <p>La <strong>Comunidad MAXIQUEEN</strong> es para personas que están cansadas de empezar mil veces y abandonar. Aquí no se viene a sentirse bien un rato: se viene a <strong>hacerse cargo</strong>.</p>
-  </div>
-
-  <div class="card">
-    <h3>¿Para quién es?</h3>
-    <ul>
-      <li>Personas cansadas de fingir que están bien</li>
-      <li>Quienes han intentado cambiar solos y no han podido</li>
-      <li>Personas con rabia, culpa o bloqueo interno</li>
-      <li>Quienes quieren disciplina, no frases bonitas</li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h3>¿Qué trabajamos dentro?</h3>
-    <ul>
-      <li>Disciplina diaria y estructura mental</li>
-      <li>Gestión de rabia, frustración y culpa</li>
-      <li>Reconstrucción de hábitos reales</li>
-      <li>Conciencia emocional aplicada a la vida diaria</li>
-      <li>Creatividad como herramienta de liberación</li>
-    </ul>
-  </div>
-
-  <div class="card" style="text-align:center;">
-  <h3>Si esto te incomoda, es buena señal</h3>
-  <p>El proceso dura mínimo 3 meses. No es negociable.</p>
-  <a class="btn" href="#ventas-comunidad">Quiero aplicar al PROCESO</a>
-</div>
-
-</section>
-
-<section id="contacto" class="fade-in">
-  <h2>Contacto</h2>
-  <div class="card">
-    <p>Si llegaste hasta aquí, no fue por casualidad.</p>
-    <p>Escríbeme directamente y empezamos tu PROCESO.</p>
-    <p><strong>Contacto principal:</strong> WhatsApp</p>
-    <a class="btn" href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN.%20Vengo%20desde%20la%20p%C3%A1gina%20y%20quiero%20aplicar%20al%20PROCESO.">Hablar ahora</a>
-  </div>
-</section>
-
-<footer class="fade-in">
-<p><strong>Si buscas motivación, este no es tu lugar.</strong></p>
-<p>Si estás listo para dejar de fingir y empezar a responder por tu vida, aplica.</p>
-  <p>© 2025 – César Bedoya Barragán | MAXIQUEEN</p>
-  <p>
-    <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN.%20Quiero%20informaci%C3%B3n%20sobre%20la%20comunidad.">WhatsApp</a> ·
-    <a href="https://www.tiktok.com/@cesarbedoya9">TikTok</a> ·
-    <a href="https://www.instagram.com/maxiqueen_store?igsh=MXV5eWM3azR1cWpkbA==">Instagram</a> ·
-    <a href="https://www.facebook.com/share/1DVm7tXTEm/">Facebook</a> ·
-    <a href="https://www.youtube.com/@cesarbedoya2288">YouTube</a>
-  </p>
+<footer class="fade-in text-center mt-20 mb-10">
+  <p>© 2026 MaxiQueen OS – Todos los derechos reservados.</p>
 </footer>
 
+<!-- CHAT -->
 <div class="chat-box" id="chatBox">
   <div class="chat-log" id="chatLog"></div>
   <div class="chat-input">
-    <input type="text" id="userInput" placeholder="Escribe tu pregunta...">
+    <input type="text" id="userInput" placeholder="Escribe tu pregunta o indica tu necesidad...">
     <button onclick="sendMessage()">Enviar</button>
   </div>
 </div>
-
 <script>
-  const chatLog = document.getElementById('chatLog');
-  const triggers = {
-    precio: 'MaxiQueen OS: Los planes disponibles son Starter $49, Pro $99 y OS Completo $199 por mes.',
-    contacto: 'MaxiQueen OS: Puedes contactarnos vía WhatsApp, Instagram, Facebook o YouTube, todos los links están en la sección de contacto y comunidad.',
-    onboarding: 'MaxiQueen OS: Vamos a organizar esto primero. Quieres que te guíe para activar tu sistema paso a paso?',
-    comunidad: 'MaxiQueen OS: La Comunidad MAXIQUEEN es un espacio seguro, con sesiones en vivo y seguimiento humano. ¿Quieres saber cómo aplicar?'
-  };
-  const phrases = [
-    'MaxiQueen OS: Esto funciona mejor paso a paso.',
-    'MaxiQueen OS: Recuerda: el sistema piensa contigo, no por ti.',
-    'MaxiQueen OS: Orden antes de automatizar.',
-    'MaxiQueen OS: No improvisamos, operamos.'
-  ];
+// =============================
+// CHAT MAXIQUEEN OS – SCRIPT LIMPIO Y FUNCIONAL
+// =============================
 
-  function sendMessage() {
-    const input = document.getElementById('userInput');
-    if(input.value.trim()==='') return;
-    const userText = input.value;
-    const userMsg = document.createElement('div'); userMsg.textContent = 'Tú: ' + userText; chatLog.appendChild(userMsg);
-    input.value = '';
+const chatLog = document.getElementById('chatLog');
+const userInput = document.getElementById('userInput');
 
-    let response = phrases[Math.floor(Math.random()*phrases.length)];
-    const text = userText.toLowerCase();
+const assistantState = {
+  memory: [],
+  context: 'MaxiQueen OS: Copiloto estratégico y comercial.'
+};
 
-    if(text.includes('precio') || text.includes('planes')) response = triggers.precio;
-    else if(text.includes('contacto') || text.includes('whatsapp') || text.includes('instagram')) response = triggers.contacto;
-    else if(text.includes('onboarding') || text.includes('activar sistema') || text.includes('ayuda')) response = triggers.onboarding;
-    else if(text.includes('comunidad')) response = triggers.comunidad;
-    else if(text.includes('humano') || text.includes('asistencia')) response = 'MaxiQueen OS: He escalado tu consulta a un humano. Pronto recibirás ayuda personalizada.';
-
-    const botMsg = document.createElement('div'); botMsg.textContent = response;
-    chatLog.appendChild(botMsg);
-    chatLog.scrollTop = chatLog.scrollHeight;
+// BASE DE CONOCIMIENTO ÚNICA (JSON válido)
+const knowledgeBase = {
+  identidad: {
+    definicion: 'Sistema digital integral diseñado para convertir ideas, historias y negocios en activos digitales rentables.',
+    mantra: 'JavaScript es el cuerpo. Python es la mente. Tú eres la conciencia.'
+  },
+  propuestaValor: {
+    resumen: 'Un solo sistema que integra contenido, web, ventas, automatización y estrategia.',
+    promesa: 'Creamos tu contenido, construimos tu web, automatizamos el proceso y te dejamos listo para vender.'
+  },
+  planes: {
+    starter: 'Starter: sistema básico ordenado.',
+    pro: 'Pro: negocio digital vendible.',
+    os: 'OS Completo: empresa digital automatizada.'
   }
-</script>
+};
 
+const assistantPhrases = [
+  'Perfecto. Cuéntame qué tienes hoy y qué quieres lograr.',
+  'Vamos paso a paso. ¿Idea, negocio activo o contenido?',
+  'MaxiQueen OS está diseñado para ordenar y escalar.'
+];
+
+function sendMessage(){
+  const text = userInput.value.trim();
+  if(!text) return;
+
+  // Mensaje usuario
+  const userMsg = document.createElement('div');
+  userMsg.className = 'user-msg';
+  userMsg.textContent = text;
+  chatLog.appendChild(userMsg);
+
+  userInput.value = '';
+
+  let response = '';
+  const lower = text.toLowerCase();
+
+  if(lower.includes('precio') || lower.includes('plan')){
+    response = 'Tenemos Starter, Pro y OS Completo. ¿Cuál te interesa?';
+  } else if(lower.includes('qué es')){
+    response = knowledgeBase.identidad.definicion;
+  } else {
+    response = assistantPhrases[Math.floor(Math.random()*assistantPhrases.length)];
+  }
+
+  const botMsg = document.createElement('div');
+  botMsg.className = 'bot-msg';
+  botMsg.textContent = response;
+  chatLog.appendChild(botMsg);
+
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+userInput.addEventListener('keypress', e => {
+  if(e.key === 'Enter') sendMessage();
+});
+</script>
 </body>
 </html>
-
