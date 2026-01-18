@@ -1,0 +1,1 @@
+// Lógica mínima para MaxiQueen OS

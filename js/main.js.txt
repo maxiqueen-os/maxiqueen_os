@@ -1,0 +1,9 @@
+main.js
+
+// Lógica mínima para MaxiQueen OS
+
+/index.html      → la estructura (lo que se ve)
+/css/            → los estilos (colores, tamaños)
+/js/             → el comportamiento (lo que hace)
+/js/main.js      → el archivo principal de acciones
+
