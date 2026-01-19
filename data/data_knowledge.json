@@ -1,0 +1,20 @@
+{
+  "faq": [
+    {
+      "keyword": "precio",
+      "response": "MaxiQueen OS trabaja con tres planes: Starter, Pro y Elite. Cada uno responde a un nivel distinto de necesidad y compromiso."
+    },
+    {
+      "keyword": "planes",
+      "response": "Actualmente ofrecemos Starter, Pro y Elite. No vendemos herramientas sueltas, vendemos sistema y acompañamiento."
+    },
+    {
+      "keyword": "que es",
+      "response": "MaxiQueen OS es un sistema operativo digital humano que integra contenido, web, ventas y automatización con acompañamiento real."
+    },
+    {
+      "keyword": "whatsapp",
+      "response": "Si necesitas hablar con una persona del equipo, el siguiente paso es aplicar por WhatsApp para validar si este proceso es para ti."
+    }
+  ]
+}
