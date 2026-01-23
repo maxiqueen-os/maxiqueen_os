@@ -1,6 +1,48 @@
 (function () {
   const chatLog = document.getElementById('chatLog');
   const input = document.getElementById('userInput');
+const STATE_KEY = 'maxiqueen_session';
+
+let ctaState = {
+  shown: false,
+  meaningfulInputs: 0
+};
+
+function isMeaningfulInput(text) {
+  return text.length > 3 && !['hola', 'ok', 'si', 'no', 'gracias'].includes(text);
+}
+
+function getSmartWhatsAppLink() {
+  let message = "Hola MAXIQUEEN OS. Vengo desde la página.";
+
+  if (userState?.interest) {
+    message += ` Tengo un ${userState.interest}.`;
+  }
+
+  if (userState?.lastPlan) {
+    message += ` Me interesa el PLAN ${userState.lastPlan.toUpperCase()}.`;
+  }
+
+  message += " Quiero ordenar y avanzar con el sistema.";
+
+  return "https://wa.me/573016625921?text=" + encodeURIComponent(message);
+}
+
+let sessionState = {
+  visited: false,
+  lastIntent: null,
+  lastBotMessage: null
+};
+
+function loadState() {
+  const saved = sessionStorage.getItem(STATE_KEY);
+  if (saved) sessionState = JSON.parse(saved);
+}
+
+function saveState() {
+  sessionStorage.setItem(STATE_KEY, JSON.stringify(sessionState));
+}
+
 
   if (!chatLog || !input) return;
 
@@ -20,7 +62,27 @@
 
   window.sendMessage = function () {
     const text = input.value.trim();
-    if (!text) return;
+    if (!text) return;if (isMeaningfulInput(text)) {
+  ctaState.meaningfulInputs++;
+}
+
+if (
+  !ctaState.shown &&
+  ctaState.meaningfulInputs >= 3 &&
+  ['precio','plan','whatsapp','ayuda','empezar'].some(k => text.toLowerCase().includes(k))
+) {
+  ctaState.shown = true;
+
+  const ctaMsg = document.createElement('div');
+  ctaMsg.className = 'bot-msg';
+  ctaMsg.innerHTML = `
+    👑 Veo intención real.<br>
+    <a href="${getSmartWhatsAppLink()}" target="_blank" style="text-decoration:underline;">
+      Continuar por WhatsApp
+    </a>
+  `;
+  chatLog.appendChild(ctaMsg);
+}
 
     const userMsg = document.createElement('div');
     userMsg.textContent = 'Tú: ' + text;
@@ -38,10 +100,6 @@
       }
     }
 
-    const botMsg = document.createElement('div');
-    botMsg.textContent = 'MaxiQueen OS: ' + response;
-    chatLog.appendChild(botMsg);
-
-    chatLog.scrollTop = chatLog.scrollHeight;
-  };
-})();
+// memoria de último mensaje del bot
+sessionState.lastBotMessage = response;
+saveState();
