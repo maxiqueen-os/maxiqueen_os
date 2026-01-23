@@ -303,38 +303,6 @@ if (text.includes('elite')) userState.lastPlan = 'elite';
   </div>
 </div>
 <script>
-const knowledgeBase = {
-  identidad: {
-    definicion: "MaxiQueen OS es un sistema digital humano que convierte caos en sistemas que venden.",
-    filosofia: "Orden antes de automatizar. Sistema antes que herramientas. Conciencia antes que código.",
-    mantra: "JavaScript es el cuerpo. Python es la mente. Tú eres la conciencia."
-  },
-  ventas: {
-    resumen: "No vendemos páginas. Vendemos sistemas digitales funcionales."
-  }
-};
-
-function maxiQueenResponder(texto) {
-  texto = texto.toLowerCase();
-
-  if (texto.includes("qué es") || texto.includes("maxiqueen")) {
-    return knowledgeBase.identidad.definicion;
-  }
-
-  if (texto.includes("filosofía") || texto.includes("filosofia")) {
-    return knowledgeBase.identidad.filosofia;
-  }
-
-  if (texto.includes("mantra")) {
-    return knowledgeBase.identidad.mantra;
-  }
-
-if (
-  !ctaState.shown &&
-  userState.steps >= 4 &&
-  ['precio','plan','empezar','ayuda','whatsapp'].some(k => text.includes(k))
-) {
-  ctaState.shown = true;
 
   const cta = document.createElement('div');
   cta.className = 'bot-msg';
@@ -364,9 +332,6 @@ function enviarMensaje() {
   const pregunta = input.value;
 
 
-
-
-
   if (!pregunta) return;
 
   chatLog.innerHTML += `<div><strong>Tú:</strong> ${pregunta}</div>`;
@@ -379,3 +344,4 @@ function enviarMensaje() {
 </script>
 </body>
 </html>
+
