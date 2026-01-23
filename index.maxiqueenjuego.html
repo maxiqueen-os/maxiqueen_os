@@ -25,74 +25,12 @@
   .company-image {max-width:100%; height:auto; border-radius:1rem; margin-top:2rem;}
   .gallery {display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:1rem; margin-top:3rem;}
   .gallery img {width:100%; border-radius:1rem; object-fit:cover; transition:transform 0.3s;}
-<<<<<<< Updated upstream
-  .gallery img:hover {transform:scale(1.05);}  
-
-  /* HERO CINEMATIC */
-  .hero-avatar {
-    position: relative;
-    filter: grayscale(20%) contrast(115%) brightness(90%);
-    animation: floatAvatar 6s ease-in-out infinite;
-  }
-  .hero-avatar::after {
-    content: '';
-    position: absolute;
-    inset: -6px;
-    border-radius: 9999px;
-    background: radial-gradient(circle at top, rgba(251,191,36,0.6), transparent 70%);
-    filter: blur(12px);
-    z-index: -1;
-  }
-  @keyframes floatAvatar {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-=======
   .gallery img:hover {transform:scale(1.05);}
->>>>>>> Stashed changes
 </style>
 </head>
 <body class="bg-gradient-to-br from-black via-zinc-900 to-amber-950 text-white font-[Poppins]">
 
 <!-- HERO -->
-<<<<<<< Updated upstream
-  <section class="hero-netflix min-h-screen flex items-center justify-center text-center px-6">
-
-  <div class="relative z-10 fade-in">
-
-   <img
-  src="https://maxiqueenOS-ops.github.io/maxiqueen-os/logo-maxiqueen-original.png"
-  alt="Logo original MaxiQueen"
-  class="w-36 md:w-44 mx-auto rounded-full
-         shadow-[0_0_60px_rgba(251,191,36,0.35)]
-         border border-white/20
-         bg-black/40
-         backdrop-blur-sm
-         hero-avatar"
-/>
-
-    <h1 class="mt-6 text-4xl md:text-6xl font-extrabold tracking-tight">
-      MaxiQueen <span class="text-amber-400">OS</span>
-    </h1>
-
-    <p class="mt-4 text-zinc-300 text-lg md:text-xl max-w-xl mx-auto">
-      Donde las historias reales se convierten en sistemas digitales vivos.
-    Es un sistema real para personas reales</span>
-      que quieren orden, control y crecimiento digital.
-    </p>
-
-    <!-- CTA HERO -->
-    <div class="mt-10 flex gap-4 flex-wrap justify-center">
-      <a href="#planes" class="px-8 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-black font-semibold shadow-xl transition">
-        Activar el Sistema
-      </a>
-      <a href="#equipo" class="px-8 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-medium transition">
-        Ver Origen
-      </a>
-    </div>
-
-    <p class="mt-8 text-sm text-zinc-400">Creado desde experiencia real · Optimizado para TikTok · Operado paso a paso</p>
-=======
 <section class="min-h-screen flex flex-col items-center justify-center px-6 fade-in">
   <div class="max-w-5xl text-center">
     <h1 class="text-4xl md:text-6xl font-extrabold mb-6">👑 MaxiQueen OS</h1>
@@ -100,7 +38,6 @@
     <a href="#planes" class="px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-600 font-semibold shadow-lg transition-transform transform hover:-translate-y-1 hover:scale-105">👉 Quiero mi sistema ahora</a>
     <!-- Imagen de la empresa -->
     <img src="maxiqueen-os-logo.png" alt="Logo de MaxiQueen OS" class="company-image fade-in">
->>>>>>> Stashed changes
   </div>
 </section>
 
@@ -135,102 +72,29 @@
   <p class="font-semibold">MAXIQUEEN OS no es una agencia ni un servicio genérico: es un sistema digital original construido desde la experiencia real, la organización del caos y la creación de soluciones humanas apoyadas por tecnología.</p>
 </section>
 
-<!-- GALERÍA DE MÓDULOS / CASOS DE ESTUDIO -->
-<section class="py-20 px-6 fade-in bg-black/30">
-  <div class="max-w-6xl mx-auto text-center">
-    <h2 class="text-3xl md:text-4xl font-bold mb-4">Galería de Módulos y Casos de Estudio</h2>
-    <p class="text-zinc-400 mb-10">Toca para ver en grande · Optimizado para tráfico desde TikTok</p>
-
-    <div class="gallery" id="dynamicGallery"></div>
-  </div>
-</section>
-
-<!-- LIGHTBOX -->
-<div id="lightbox" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
-  <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl">✕</button>
-  <div id="lightboxContent" class="max-w-4xl w-full px-4"></div>
-</div>
-
-<script>
-// CONTENIDO DINÁMICO (IMÁGENES / VIDEOS)
-const galleryData = [
-  { type: 'image', src: 'modulo-creativo.jpg', title: 'Módulo Creativo' },
-  { type: 'video', src: 'https://www.youtube.com/embed/dQw4w9WgXcQ', title: 'Sistema en acción' },
-  { type: 'image', src: 'modulo-social.jpg', title: 'Social Media' },
-  { type: 'image', src: 'modulo-web.jpg', title: 'Web & Hosting' },
-  { type: 'video', src: 'https://www.youtube.com/embed/dQw4w9WgXcQ', title: 'Automatización real' },
-  { type: 'image', src: 'modulo-automatizacion.jpg', title: 'Automatización' }
-];
-
-const gallery = document.getElementById('dynamicGallery');
-
-// RENDER GALERÍA
-if (gallery) {
-  galleryData.forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'relative cursor-pointer group';
-
-    if (item.type === 'image') {
-      card.innerHTML = `<img src="${item.src}" alt="${item.title}" class="rounded-2xl w-full h-full object-cover">`;
-    } else {
-      card.innerHTML = `<div class="rounded-2xl bg-black aspect-video flex items-center justify-center text-white">▶ Video</div>`;
-    }
-
-    card.onclick = () => openLightbox(item);
-    gallery.appendChild(card);
-  });
-}
-
-// LIGHTBOX
-function openLightbox(item) {
-  const box = document.getElementById('lightbox');
-  const content = document.getElementById('lightboxContent');
-
-  if (item.type === 'image') {
-    content.innerHTML = `<img src="${item.src}" class="rounded-2xl w-full">`;
-  } else {
-    content.innerHTML = `<iframe class="w-full aspect-video rounded-2xl" src="${item.src}" frameborder="0" allowfullscreen></iframe>`;
-  }
-
-  box.classList.remove('hidden');
-  box.classList.add('flex');
-}
-
-function closeLightbox() {
-  const box = document.getElementById('lightbox');
-  const content = document.getElementById('lightboxContent');
-  content.innerHTML = '';
-  box.classList.add('hidden');
-  box.classList.remove('flex');
-}
-</script>
-
-<!-- PLANES Y PRECIOS -->
-<section id="planes" class="py-20 px-6 fade-in bg-black/30">
-  <div class="max-w-6xl mx-auto text-center">
-    <h2 class="text-3xl md:text-4xl font-bold mb-12">Planes y Precios</h2>
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="bg-white/5 p-8 rounded-3xl hover:bg-white/10 transition">
-        <h3 class="text-xl font-semibold mb-3">👑 Starter</h3>
-        <p class="text-zinc-300 mb-4">Landing page básica, 5 guiones de contenido, hosting básico, asesoría inicial</p>
-        <p class="font-bold mb-4">💰 USD $49 / mes</p>
-        <button class="px-6 py-2 bg-amber-500 hover:bg-amber-600 rounded-xl font-semibold">Empezar Ahora</button>
-      </div>
-      <div class="bg-white/5 p-8 rounded-3xl hover:bg-white/10 transition">
-        <h3 class="text-xl font-semibold mb-3">💰 Pro</h3>
-        <p class="text-zinc-300 mb-4">Web completa, 15 guiones optimizados, hosting + subdominios, automatización nivel 1, soporte estratégico</p>
-        <p class="font-bold mb-4">💰 USD $99 / mes</p>
-        <button class="px-6 py-2 bg-amber-500 hover:bg-amber-600 rounded-xl font-semibold">Quiero Escalar</button>
-      </div>
-      <div class="bg-white/5 p-8 rounded-3xl hover:bg-white/10 transition">
-        <h3 class="text-xl font-semibold mb-3">🔵 Elite</h3>
-        <p class="text-zinc-300 mb-4">Sistema web avanzado, contenido mensual continuo, hosting premium, automatización nivel 2, soporte prioritario</p>
-        <p class="font-bold mb-4">💰 USD $199 / mes</p>
-        <button class="px-6 py-2 bg-amber-500 hover:bg-amber-600 rounded-xl font-semibold">Quiero Todo el Sistema</button>
-      </div>
+<section id="planes" class="fade-in">
+  <h2 class="text-3xl font-bold mb-4">Planes y Precios</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-zinc-900 p-6 rounded-xl">
+      <h3 class="text-xl font-bold mb-2">👑 STARTER</h3>
+      <p>Landing page básica, 5 guiones de contenido, hosting básico, asesoría inicial.</p>
+      <p class="font-semibold mt-2">USD $49 / mes</p>
+      <a href="#" class="cta-button mt-2 inline-block">Empezar ahora</a>
+    </div>
+    <div class="bg-zinc-900 p-6 rounded-xl">
+      <h3 class="text-xl font-bold mb-2">💰 PRO</h3>
+      <p>Web completa, 15 guiones optimizados, hosting + subdominios, automatización nivel 1, soporte estratégico.</p>
+      <p class="font-semibold mt-2">USD $99 / mes</p>
+      <a href="#" class="cta-button mt-2 inline-block">Quiero escalar</a>
+    </div>
+    <div class="bg-zinc-900 p-6 rounded-xl">
+      <h3 class="text-xl font-bold mb-2">🔵 ELITE</h3>
+      <p>Sistema web avanzado, contenido mensual continuo, hosting premium, automatización nivel 2, soporte prioritario.</p>
+      <p class="font-semibold mt-2">USD $199 / mes</p>
+      <a href="#" class="cta-button mt-2 inline-block">Quiero todo el sistema</a>
     </div>
   </div>
-</section>
+</section>  
 
 <section class="py-20 px-6 bg-black/30 fade-in">
   <div class="max-w-6xl mx-auto text-center link-block">
@@ -253,58 +117,6 @@ function closeLightbox() {
   <p>© 2026 MaxiQueen OS – Todos los derechos reservados.</p>
 </footer>
 
-<<<<<<< Updated upstream
-<!-- CHAT INTERACTIVO -->
-<div class="chat-box" id="chatBox">
-  <div class="chat-log" id="chatLog"></div>
-  <input id="userInput">
-  <button onclick="sendMessage()">Enviar</button>
-</div>
-<script>
-const chatLog = document.getElementById('chatLog');
-const triggers = {
-  precio: 'MaxiQueen OS: Los planes disponibles son Starter $49, Pro $99 y OS Completo $199 por mes.',
-  contacto: 'MaxiQueen OS: Puedes contactarnos vía WhatsApp, Instagram, Facebook o YouTube.',
-  onboarding: 'MaxiQueen OS: Vamos a organizar esto primero. ¿Quieres que te guíe paso a paso?',
-  comunidad: 'MaxiQueen OS: La Comunidad MAXIQUEEN es un espacio seguro, con sesiones en vivo y seguimiento humano.'
-};
-const phrases = [
-  'MaxiQueen OS: Esto funciona mejor paso a paso.',
-  'MaxiQueen OS: Recuerda: el sistema piensa contigo, no por ti.',
-  'MaxiQueen OS: Orden antes de automatizar.',
-  'MaxiQueen OS: No improvisamos, operamos.'
-];
-function sendMessage(){
-  const input = document.getElementById('userInput');
-  if(input.value.trim()==='') return;
-  const userText = input.value;
-  const userMsg = document.createElement('div'); userMsg.textContent = 'Tú: ' + userText; chatLog.appendChild(userMsg);
-  input.value='';
-  let response = phrases[Math.floor(Math.random()*phrases.length)];
-  const text = userText.toLowerCase();
-  if(text.includes('precio') || text.includes('planes')) response = triggers.precio;
-  else if(text.includes('contacto') || text.includes('whatsapp') || text.includes('instagram')) response = triggers.contacto;
-  else if(text.includes('onboarding') || text.includes('activar sistema') || text.includes('ayuda')) response = triggers.onboarding;
-  else if(text.includes('comunidad')) response = triggers.comunidad;
-  else if(text.includes('humano') || text.includes('asistencia')) response='MaxiQueen OS: He escalado tu consulta a un humano.';
-  const botMsg = document.createElement('div'); botMsg.textContent = response;
-  chatLog.appendChild(botMsg);
-  chatLog.scrollTop = chatLog.scrollHeight;
-}
-document.getElementById('userInput').addEventListener('keypress', function(e){if(e.key==='Enter') sendMessage();});
-const userState = {
-  interest: null,
-  lastPlan: null,
-  steps: 0
-};
-
-const ctaState = {
-  shown: false,
-  meaningfulInputs: 0
-};
-</script>
-
-=======
 <!-- GALERÍA DE MÓDULOS / CASOS DE ESTUDIO -->
 <section class="py-20 px-6 fade-in bg-black/30">
   <div class="max-w-6xl mx-auto text-center">
@@ -403,97 +215,10 @@ function closeLightbox() {
 </section>
 
 <!-- CHAT INTERACTIVO -->
->>>>>>> Stashed changes
 <div class="chat-box" id="chatBox">
   <div class="chat-log" id="chatLog"></div>
   <div class="chat-input">
     <input type="text" id="userInput" placeholder="Escribe tu pregunta...">
-<<<<<<< Updated upstream
-    <button onclick="sendMessage(userState.steps++;
-
-if (text.includes('negocio')) userState.interest = 'negocio';
-if (text.includes('starter')) userState.lastPlan = 'starter';
-if (text.includes('pro')) userState.lastPlan = 'pro';
-if (text.includes('elite')) userState.lastPlan = 'elite';
-)">Enviar</button>
-  </div>
-</div>
-<script>
-const knowledgeBase = {
-  identidad: {
-    definicion: "MaxiQueen OS es un sistema digital humano que convierte caos en sistemas que venden.",
-    filosofia: "Orden antes de automatizar. Sistema antes que herramientas. Conciencia antes que código.",
-    mantra: "JavaScript es el cuerpo. Python es la mente. Tú eres la conciencia."
-  },
-  ventas: {
-    resumen: "No vendemos páginas. Vendemos sistemas digitales funcionales."
-  }
-};
-
-function maxiQueenResponder(texto) {
-  texto = texto.toLowerCase();
-
-  if (texto.includes("qué es") || texto.includes("maxiqueen")) {
-    return knowledgeBase.identidad.definicion;
-  }
-
-  if (texto.includes("filosofía") || texto.includes("filosofia")) {
-    return knowledgeBase.identidad.filosofia;
-  }
-
-  if (texto.includes("mantra")) {
-    return knowledgeBase.identidad.mantra;
-  }
-
-if (
-  !ctaState.shown &&
-  userState.steps >= 4 &&
-  ['precio','plan','empezar','ayuda','whatsapp'].some(k => text.includes(k))
-) {
-  ctaState.shown = true;
-
-  const cta = document.createElement('div');
-  cta.className = 'bot-msg';
-  cta.innerHTML = `
-    👑 Veo intención real.<br>
-    <a href="https://wa.me/573016625921?text=${encodeURIComponent(
-      'Hola MAXIQUEEN OS. Tengo un ' + (userState.interest || 'proyecto') +
-      ' y me interesa el plan ' + (userState.lastPlan || 'correcto')
-    )}" target="_blank">
-      Continuar por WhatsApp
-    </a>
-  `;
-  chatLog.appendChild(cta);
-}
-
-  if (texto.includes("vendes") || texto.includes("servicio")) {
-    return knowledgeBase.ventas.resumen;
-  }
-
-  return "MaxiQueen OS necesita una pregunta más clara para ayudarte.";
-}
-
-function enviarMensaje() {
-  const input = document.getElementById("userInput");
-  const chatLog = document.getElementById("chat-log");
-
-  const pregunta = input.value;
-
-
-
-
-
-  if (!pregunta) return;
-
-  chatLog.innerHTML += `<div><strong>Tú:</strong> ${pregunta}</div>`;
-
-  const respuesta = maxiQueenResponder(pregunta);
-  chatLog.innerHTML += `<div><strong>MaxiQueen OS:</strong> ${respuesta}</div>`;
-
-  input.value = "";
-}
-</script>
-=======
     <button onclick="sendMessage()">Enviar</button>
   </div>
 </div>
@@ -531,6 +256,5 @@ function sendMessage(){
 document.getElementById('userInput').addEventListener('keypress', function(e){if(e.key==='Enter') sendMessage();});
 </script>
 
->>>>>>> Stashed changes
 </body>
 </html>

@@ -1,0 +1,28 @@
+/js/knowledge.js
+window.KNOWLEDGE = {
+  loaded: false,
+  data: [],
+
+  async load() {
+    if (this.loaded) return;
+
+    try {
+      const res = await fetch('data/knowledge.json');
+      const json = await res.json();
+      this.data = json.faq || [];
+      this.loaded = true;
+    } catch (e) {
+      console.error('Knowledge load error:', e);
+    }
+  },
+
+  findAnswer(text) {
+    const lower = text.toLowerCase();
+    for (const item of this.data) {
+      if (lower.includes(item.keyword)) {
+        return item.response;
+      }
+    }
+    return null;
+  }
+};
