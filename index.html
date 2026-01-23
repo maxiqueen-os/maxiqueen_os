@@ -46,11 +46,14 @@
     0%,100% { transform: translateY(0); }
     50% { transform: translateY(-8px); }
   }
+  .gallery img:hover {transform:scale(1.05);}
+>>>>>>> Stashed changes
 </style>
 </head>
 <body class="bg-gradient-to-br from-black via-zinc-900 to-amber-950 text-white font-[Poppins]">
 
 <!-- HERO -->
+
   <section class="hero-netflix min-h-screen flex items-center justify-center text-center px-6">
 
   <div class="relative z-10 fade-in">
@@ -66,27 +69,16 @@
          hero-avatar"
 />
 
-    <h1 class="mt-6 text-4xl md:text-6xl font-extrabold tracking-tight">
-      MaxiQueen <span class="text-amber-400">OS</span>
-    </h1>
-
-    <p class="mt-4 text-zinc-300 text-lg md:text-xl max-w-xl mx-auto">
-      Donde las historias reales se convierten en sistemas digitales vivos.
-    Es un sistema real para personas reales</span>
-      que quieren orden, control y crecimiento digital.
-    </p>
-
-    <!-- CTA HERO -->
-    <div class="mt-10 flex gap-4 flex-wrap justify-center">
-      <a href="#planes" class="px-8 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-black font-semibold shadow-xl transition">
-        Activar el Sistema
-      </a>
-      <a href="#equipo" class="px-8 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-medium transition">
-        Ver Origen
-      </a>
-    </div>
-
     <p class="mt-8 text-sm text-zinc-400">Creado desde experiencia real · Optimizado para TikTok · Operado paso a paso</p>
+=======
+<section class="min-h-screen flex flex-col items-center justify-center px-6 fade-in">
+  <div class="max-w-5xl text-center">
+    <h1 class="text-4xl md:text-6xl font-extrabold mb-6">👑 MaxiQueen OS</h1>
+    <p class="text-lg md:text-2xl text-zinc-300 mb-8">Sistema Digital Integral para convertir ideas, historias y negocios en activos digitales rentables.<br>JavaScript es el cuerpo, Python es la mente, tú eres la conciencia.</p>
+    <a href="#planes" class="px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-600 font-semibold shadow-lg transition-transform transform hover:-translate-y-1 hover:scale-105">👉 Quiero mi sistema ahora</a>
+    <!-- Imagen de la empresa -->
+    <img src="maxiqueen-os-logo.png" alt="Logo de MaxiQueen OS" class="company-image fade-in">
+>>>>>>> Stashed changes
   </div>
 </section>
 
@@ -234,317 +226,7 @@ function closeLightbox() {
     </ul>
   </div>
 </section>
-
-// =============================
-// ESTADO CON MEMORIA
-// =============================
-const saved = sessionStorage.getItem("mq_state");
-let state = saved ? JSON.parse(saved) : {
-  stage: "nuevo",
-  interest: null,
-  plan: null,
-  steps: 0,
-  ctaShown: false
-};
-
-function saveState() {
-  sessionStorage.setItem("mq_state", JSON.stringify(state));
-}
-
-// =============================
-// INTENCIÓN
-// =============================
-function intent(text) {
-  text = text.toLowerCase();
-  if (text.includes("idea")) return "idea";
-  if (text.includes("negocio")) return "negocio";
-  if (text.includes("contenido")) return "contenido";
-  if (text.includes("ordenar")) return "ordenar";
-  if (text.includes("escalar")) return "escalar";
-  if (text.includes("starter")) return "starter";
-  if (text.includes("pro")) return "pro";
-  if (text.includes("elite")) return "elite";
-  if (text.includes("precio") || text.includes("plan")) return "precio";
-  if (text.includes("whatsapp")) return "whatsapp";
-  if (text === "si" || text === "sí") return "confirmar";
-  return "general";
-}
-
-// =============================
-// RESPUESTAS
-// =============================
-function reply(type) {
-  switch (type) {
-
-    case "general":
-      if (state.stage === "nuevo") {
-        state.stage = "diagnostico";
-        saveState();
-        return "Antes de seguir dime algo clave: ¿tienes una idea, un negocio activo o vendes contenido?";
-      }
-      return "MaxiQueen OS: Orden antes de automatizar.";
-
-    case "idea":
-    case "negocio":
-    case "contenido":
-      state.interest = type;
-      saveState();
-      return "Perfecto. ¿Qué necesitas ahora mismo: ordenar o escalar?";
-
-    case "ordenar":
-      state.plan = "starter";
-      state.stage = "listo";
-      saveState();
-      return "Bien. Empezar por orden evita perder dinero. El plan Starter es el punto de entrada correcto.";
-
-    case "escalar":
-      state.plan = "pro";
-      state.stage = "listo";
-      saveState();
-      return "Escalar sin estructura rompe negocios. El sistema Pro es el camino lógico.";
-
-    case "starter":
-    case "pro":
-    case "elite":
-      state.plan = type;
-      state.stage = "listo";
-      saveState();
-      return `Excelente. ${type.toUpperCase()} es una buena decisión.`;
-
-    case "precio":
-      return "Tenemos Starter, Pro y Elite. No vendemos páginas, vendemos sistema.";
-
-    case "whatsapp":
-    case "confirmar":
-      openWhatsApp();
-      return "Perfecto. Te llevo a WhatsApp 👑";
-
-    default:
-      return "MaxiQueen OS: El sistema piensa contigo.";
-  }
-}
-
-// =============================
-// WHATSAPP
-// =============================
-function openWhatsApp() {
-  const msg =
-    `Hola MAXIQUEEN OS. Tengo un ${state.interest || "proyecto"} y me interesa el plan ${state.plan || "correcto"}.`;
-  window.open(
-    "https://wa.me/573016625921?text=" + encodeURIComponent(msg),
-    "_blank"
-  );
-}
-
-// =============================
-// CHAT
-// =============================
-function sendMessage() {
-  const input = document.getElementById("userInput");
-  const log = document.getElementById("chatLog");
-  const text = input.value.trim();
-  if (!text) return;
-
-  state.steps++;
-  saveState();
-
-  log.innerHTML += `<div class="user-msg">Tú: ${text}</div>`;
-  const r = reply(intent(text));
-
-  let finalResponse = r;
-
-  if (state.stage === "listo" && !state.ctaShown) {
-    finalResponse += " 👉 ¿Continuamos por WhatsApp?";
-    state.ctaShown = true;
-    saveState();
-  }
-
-  log.innerHTML += `<div class="bot-msg">MaxiQueen OS: ${finalResponse}</div>`;
-  log.scrollTop = log.scrollHeight;
-  input.value = "";
-}
-
-document
-  .getElementById("userInput")
-  .addEventListener("keypress", e => {
-    if (e.key === "Enter") sendMessage();
-  });
-</script>
-
-const knowledgeBase = {
-  identidad: {
-    definicion: "MaxiQueen OS es un sistema digital humano que convierte caos en sistemas que venden.",
-    filosofia: "Orden antes de automatizar. Sistema antes que herramientas. Conciencia antes que código.",
-    mantra: "JavaScript es el cuerpo. Python es la mente. Tú eres la conciencia."
-  },
-  ventas: {
-    resumen: "No vendemos páginas. Vendemos sistemas digitales funcionales."
-  }
-};
-
-function maxiQueenResponder(texto) {
-  texto = texto.toLowerCase();
-
-  if (texto.includes("qué es") || texto.includes("maxiqueen")) {
-    return knowledgeBase.identidad.definicion;
-  }
-
-  if (texto.includes("filosofía") || texto.includes("filosofia")) {
-    return knowledgeBase.identidad.filosofia;
-  }
-
-  if (texto.includes("mantra")) {
-    return knowledgeBase.identidad.mantra;
-  }
-
-if (
-  !ctaState.shown &&
-  userState.steps >= 4 &&
-  ['precio','plan','empezar','ayuda','whatsapp'].some(k => text.includes(k))
-) {
-  ctaState.shown = true;
-
-  const cta = document.createElement('div');
-  cta.className = 'bot-msg';
-  cta.innerHTML = `
-    👑 Veo intención real.<br>
-    <a href="https://wa.me/573016625921?text=${encodeURIComponent(
-      'Hola MAXIQUEEN OS. Tengo un ' + (userState.interest || 'proyecto') +
-      ' y me interesa el plan ' + (userState.lastPlan || 'correcto')
-    )}" target="_blank">
-      Continuar por WhatsApp
-    </a>
-  `;
-  chatLog.appendChild(cta);
-}
-
-  if (texto.includes("vendes") || texto.includes("servicio")) {
-    return knowledgeBase.ventas.resumen;
-  }
-
-  return "MaxiQueen OS necesita una pregunta más clara para ayudarte.";
-}
-
-function sendMessage() {
-  const input = document.getElementById("userInput");
-  const chatLog = document.getElementById("chat-log");
-  const text = userText.toLowerCase();
-  userState.steps++;
-
-if (text.includes('negocio')) userState.interest = 'negocio';
-if (text.includes('idea')) userState.interest = 'idea';
-if (text.includes('starter')) userState.lastPlan = 'starter';
-if (text.includes('pro')) userState.lastPlan = 'pro';
-if (text.includes('elite')) userState.lastPlan = 'elite';
-
-
-  const pregunta = input.value;
-
-
-
-
-
-  if (!pregunta) return;
-
-  chatLog.innerHTML += `<div><strong>Tú:</strong> ${pregunta}</div>`;
-
-  const respuesta = maxiQueenResponder(pregunta);
-  chatLog.innerHTML += `<div><strong>MaxiQueen OS:</strong> ${respuesta}</div>`;
-
-  input.value = "";
-}
-<!-- CHAT MAXIQUEEN OS -->
-<div class="chat-box">
-  <div class="chat-log" id="chatLog"></div>
-  <div class="chat-input">
-    <input id="userInput" type="text" placeholder="Escribe aquí…" />
-    <button id="sendBtn">Enviar</button>
-  </div>
-</div>
-
-<script>
-const chatLog = document.getElementById("chatLog");
-const input = document.getElementById("userInput");
-const button = document.getElementById("sendBtn");
-
-let state = JSON.parse(sessionStorage.getItem("mq_state")) || {
-  stage: "nuevo",
-  interest: null,
-  plan: null,
-  steps: 0,
-  ctaShown: false
-};
-
-function save() {
-  sessionStorage.setItem("mq_state", JSON.stringify(state));
-}
-
-function bot(msg) {
-  chatLog.innerHTML += `<div><strong>MaxiQueen OS:</strong> ${msg}</div>`;
-  chatLog.scrollTop = chatLog.scrollHeight;
-}
-
-function intent(t) {
-  t = t.toLowerCase();
-  if (t.includes("idea")) return "idea";
-  if (t.includes("negocio")) return "negocio";
-  if (t.includes("contenido")) return "contenido";
-  if (t.includes("ordenar")) return "ordenar";
-  if (t.includes("escalar")) return "escalar";
-  if (t.includes("starter")) return "starter";
-  if (t.includes("pro")) return "pro";
-  if (t.includes("elite")) return "elite";
-  if (t.includes("precio") || t.includes("plan")) return "precio";
-  if (t.includes("whatsapp") || t === "si" || t === "sí") return "cta";
-  return "otro";
-}
-
-function reply(type) {
-  switch (type) {
-    case "idea":
-    case "negocio":
-    case "contenido":
-      state.interest = type;
-      save();
-      return "Perfecto. ¿Quieres ordenar o escalar?";
-    case "ordenar":
-      state.plan = "starter";
-      save();
-      return "Orden primero. Starter es el inicio correcto.";
-    case "escalar":
-      state.plan = "pro";
-      save();
-      return "Escalar con sistema. Pro es el camino.";
-    case "precio":
-      return "Tenemos Starter, Pro y Elite. Vendemos sistema, no páginas.";
-    case "cta":
-      const msg = `Hola MAXIQUEEN OS. Tengo un ${state.interest || "proyecto"} y me interesa el plan ${state.plan || "correcto"}.`;
-      window.open("https://wa.me/573016625921?text=" + encodeURIComponent(msg), "_blank");
-      return "Perfecto. Continuamos por WhatsApp 👑";
-    default:
-      if (state.stage === "nuevo") {
-        state.stage = "diagnostico";
-        save();
-        return "¿Tienes una idea, un negocio o contenido?";
-      }
-      return "Orden antes de automatizar.";
-  }
-}
-
-function send() {
-  const text = input.value.trim();
-  if (!text) return;
-
-  chatLog.innerHTML += `<div><strong>Tú:</strong> ${text}</div>`;
-  const r = reply(intent(text));
-  bot(r);
-  input.value = "";
-}
-
-button.onclick = send;
-input.addEventListener("keypress", e => {
-  if (e.key === "Enter") send();
-});
-</script>
 </body>
 </html>
+
+oooooo

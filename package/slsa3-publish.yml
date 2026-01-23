@@ -1,0 +1,50 @@
+name: SLSA generic generator
+
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      digests: ${{ steps.hash.outputs.digests }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # STEP 1: Build real artifacts
+      - name: Build artifacts
+        run: |
+          mkdir dist
+          echo "MaxiQueen OS – build oficial" > dist/maxiqueen-os.txt
+
+      # STEP 2: Generate hashes
+      - name: Generate hashes
+        id: hash
+        run: |
+          cd dist
+          sha256sum * > checksums.txt
+          echo "digests=$(cat checksums.txt | base64 -w0)" >> "$GITHUB_OUTPUT"
+
+      # STEP 3: Upload artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: maxiqueen-os-artifacts
+          path: dist/
+
+  provenance:
+    needs: build
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
+    permissions:
+      contents: write
+      id-token: write
+    with:
+      base64-subjects: ${{ needs.build.outputs.digests }}

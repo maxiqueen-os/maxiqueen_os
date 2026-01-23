@@ -1,0 +1,14 @@
+{
+  "name": "@maxiqueen/core",
+  "version": "0.1.1",
+  "description": "Core oficial del ecosistema MaxiQueen OS
+git tag v0.1.1
+git push origin v0.1.1
+",
+  "main": "index.js",
+  "author": "MaxiQueen OS",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
+}
