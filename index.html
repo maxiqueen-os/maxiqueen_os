@@ -239,12 +239,6 @@ function closeLightbox() {
   <p>© 2026 MaxiQueen OS – Todos los derechos reservados.</p>
 </footer>
 
-<!-- CHAT INTERACTIVO -->
-<div class="chat-box" id="chatBox">
-  <div class="chat-log" id="chatLog"></div>
-  <input id="userInput">
-  <button onclick="sendMessage()">Enviar</button>
-</div>
 <script>
 const chatLog = document.getElementById('chatLog');
 const triggers = {
@@ -267,6 +261,14 @@ function sendMessage(){
   input.value='';
   let response = phrases[Math.floor(Math.random()*phrases.length)];
   const text = userText.toLowerCase();
+
+// 🧠 MEMORIA DE SESIÓN (F.5 LIMPIO)
+const userState = {
+  interest: null,
+  lastPlan: null,
+  steps: 0
+};
+
   if(text.includes('precio') || text.includes('planes')) response = triggers.precio;
   else if(text.includes('contacto') || text.includes('whatsapp') || text.includes('instagram')) response = triggers.contacto;
   else if(text.includes('onboarding') || text.includes('activar sistema') || text.includes('ayuda')) response = triggers.onboarding;
@@ -289,20 +291,6 @@ const ctaState = {
 };
 </script>
 
-<div class="chat-box" id="chatBox">
-  <div class="chat-log" id="chatLog"></div>
-  <div class="chat-input">
-    <input type="text" id="userInput" placeholder="Escribe tu pregunta...">
-    <button onclick="sendMessage(userState.steps++;
-
-if (text.includes('negocio')) userState.interest = 'negocio';
-if (text.includes('starter')) userState.lastPlan = 'starter';
-if (text.includes('pro')) userState.lastPlan = 'pro';
-if (text.includes('elite')) userState.lastPlan = 'elite';
-)">Enviar</button>
-  </div>
-</div>
-<script>
 const knowledgeBase = {
   identidad: {
     definicion: "MaxiQueen OS es un sistema digital humano que convierte caos en sistemas que venden.",
@@ -357,9 +345,18 @@ if (
   return "MaxiQueen OS necesita una pregunta más clara para ayudarte.";
 }
 
-function enviarMensaje() {
+function sendMessage() {
   const input = document.getElementById("userInput");
   const chatLog = document.getElementById("chat-log");
+  const text = userText.toLowerCase();
+  userState.steps++;
+
+if (text.includes('negocio')) userState.interest = 'negocio';
+if (text.includes('idea')) userState.interest = 'idea';
+if (text.includes('starter')) userState.lastPlan = 'starter';
+if (text.includes('pro')) userState.lastPlan = 'pro';
+if (text.includes('elite')) userState.lastPlan = 'elite';
+
 
   const pregunta = input.value;
 

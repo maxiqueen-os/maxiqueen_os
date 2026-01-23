@@ -7,3 +7,14 @@ MaxiQueen OS es un sistema operativo digital humano para personas que quieren **
 Aquí la tecnología no manda. **Sirve.**
 
 No alojamos archivos. **Alojamos decisiones.**
+
+
+
+**## Autor ##**
+
+**César Julio Bedoya Barragán**  
+
+**ORCID: https://orcid.org/0009-0004-4946-1374**
+
+
+
