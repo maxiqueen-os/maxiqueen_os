@@ -46,11 +46,15 @@
     0%,100% { transform: translateY(0); }
     50% { transform: translateY(-8px); }
   }
+=======
+  .gallery img:hover {transform:scale(1.05);}
+>>>>>>> Stashed changes
 </style>
 </head>
 <body class="bg-gradient-to-br from-black via-zinc-900 to-amber-950 text-white font-[Poppins]">
 
 <!-- HERO -->
+
   <section class="hero-netflix min-h-screen flex items-center justify-center text-center px-6">
 
   <div class="relative z-10 fade-in">
@@ -65,28 +69,14 @@
          backdrop-blur-sm
          hero-avatar"
 />
-
-    <h1 class="mt-6 text-4xl md:text-6xl font-extrabold tracking-tight">
-      MaxiQueen <span class="text-amber-400">OS</span>
-    </h1>
-
-    <p class="mt-4 text-zinc-300 text-lg md:text-xl max-w-xl mx-auto">
-      Donde las historias reales se convierten en sistemas digitales vivos.
-    Es un sistema real para personas reales</span>
-      que quieren orden, control y crecimiento digital.
-    </p>
-
-    <!-- CTA HERO -->
-    <div class="mt-10 flex gap-4 flex-wrap justify-center">
-      <a href="#planes" class="px-8 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-black font-semibold shadow-xl transition">
-        Activar el Sistema
-      </a>
-      <a href="#equipo" class="px-8 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-medium transition">
-        Ver Origen
-      </a>
-    </div>
-
     <p class="mt-8 text-sm text-zinc-400">Creado desde experiencia real · Optimizado para TikTok · Operado paso a paso</p>
+<section class="min-h-screen flex flex-col items-center justify-center px-6 fade-in">
+  <div class="max-w-5xl text-center">
+    <h1 class="text-4xl md:text-6xl font-extrabold mb-6">👑 MaxiQueen OS</h1>
+    <p class="text-lg md:text-2xl text-zinc-300 mb-8">Sistema Digital Integral para convertir ideas, historias y negocios en activos digitales rentables.<br>JavaScript es el cuerpo, Python es la mente, tú eres la conciencia.</p>
+    <a href="#planes" class="px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-600 font-semibold shadow-lg transition-transform transform hover:-translate-y-1 hover:scale-105">👉 Quiero mi sistema ahora</a>
+    <!-- Imagen de la empresa -->
+    <img src="maxiqueen-os-logo.png" alt="Logo de MaxiQueen OS" class="company-image fade-in">
   </div>
 </section>
 
@@ -94,7 +84,8 @@
 <section class="py-20 px-6 bg-black/40 fade-in">
   <div class="max-w-6xl mx-auto">
     <h2 class="text-3xl md:text-4xl font-bold mb-6">¿Qué es MaxiQueen OS?</h2>
-    <p class="text-lg text-zinc-300 mb-4">MaxiQueen OS no es una marca. Es un sistema digital integral diseñado para personas reales que quieren crear, vender, automatizar y crecer sin depender de soluciones fragmentadas.</p>
+    <p class="text-lg text-zinc-300 mb-4">MaxiQueen OS no es una marca. Es un sistema digital integral diseñado para personas reales que quieren crear, vender, automatizar y crecer sin depender de soluciones fragmentadas. Sistema Digital Integral para convertir ideas, historias y negocios en activos digitales rentables.
+JavaScript es el cuerpo, Python es la mente, tú eres la conciencia.</p>
     <p class="text-lg text-zinc-300 mb-4">Aquí no vendemos humo. Convertimos historias, ideas y proyectos en:</p>
     <ul class="list-disc pl-6 text-zinc-300 space-y-2">
       <li>Contenido que conecta</li>
@@ -234,114 +225,7 @@ function closeLightbox() {
     </ul>
   </div>
 </section>
-
-<footer class="fade-in text-center mt-20 mb-10">
-  <p>© 2026 MaxiQueen OS – Todos los derechos reservados.</p>
-</footer>
-
-<!-- CHAT INTERACTIVO -->
-<div class="chat-box" id="chatBox">
-  <div class="chat-log" id="chatLog"></div>
-  <input id="userInput">
-  <button onclick="sendMessage()">Enviar</button>
-</div>
-<script>
-const chatLog = document.getElementById('chatLog');
-const triggers = {
-  precio: 'MaxiQueen OS: Los planes disponibles son Starter $49, Pro $99 y OS Completo $199 por mes.',
-  contacto: 'MaxiQueen OS: Puedes contactarnos vía WhatsApp, Instagram, Facebook o YouTube.',
-  onboarding: 'MaxiQueen OS: Vamos a organizar esto primero. ¿Quieres que te guíe paso a paso?',
-  comunidad: 'MaxiQueen OS: La Comunidad MAXIQUEEN es un espacio seguro, con sesiones en vivo y seguimiento humano.'
-};
-const phrases = [
-  'MaxiQueen OS: Esto funciona mejor paso a paso.',
-  'MaxiQueen OS: Recuerda: el sistema piensa contigo, no por ti.',
-  'MaxiQueen OS: Orden antes de automatizar.',
-  'MaxiQueen OS: No improvisamos, operamos.'
-];
-function sendMessage(){
-  const input = document.getElementById('userInput');
-  if(input.value.trim()==='') return;
-  const userText = input.value;
-  const userMsg = document.createElement('div'); userMsg.textContent = 'Tú: ' + userText; chatLog.appendChild(userMsg);
-  input.value='';
-  let response = phrases[Math.floor(Math.random()*phrases.length)];
-  const text = userText.toLowerCase();
-  if(text.includes('precio') || text.includes('planes')) response = triggers.precio;
-  else if(text.includes('contacto') || text.includes('whatsapp') || text.includes('instagram')) response = triggers.contacto;
-  else if(text.includes('onboarding') || text.includes('activar sistema') || text.includes('ayuda')) response = triggers.onboarding;
-  else if(text.includes('comunidad')) response = triggers.comunidad;
-  else if(text.includes('humano') || text.includes('asistencia')) response='MaxiQueen OS: He escalado tu consulta a un humano.';
-  const botMsg = document.createElement('div'); botMsg.textContent = response;
-  chatLog.appendChild(botMsg);
-  chatLog.scrollTop = chatLog.scrollHeight;
-}
-document.getElementById('userInput').addEventListener('keypress', function(e){if(e.key==='Enter') sendMessage();});
-const userState = {
-  interest: null,
-  lastPlan: null,
-  steps: 0
-};
-
-const ctaState = {
-  shown: false,
-  meaningfulInputs: 0
-};
-</script>
-
-<div class="chat-box" id="chatBox">
-  <div class="chat-log" id="chatLog"></div>
-  <div class="chat-input">
-    <input type="text" id="userInput" placeholder="Escribe tu pregunta...">
-    <button onclick="sendMessage(userState.steps++;
-
-if (text.includes('negocio')) userState.interest = 'negocio';
-if (text.includes('starter')) userState.lastPlan = 'starter';
-if (text.includes('pro')) userState.lastPlan = 'pro';
-if (text.includes('elite')) userState.lastPlan = 'elite';
-)">Enviar</button>
-  </div>
-</div>
-<script>
-
-  const cta = document.createElement('div');
-  cta.className = 'bot-msg';
-  cta.innerHTML = `
-    👑 Veo intención real.<br>
-    <a href="https://wa.me/573016625921?text=${encodeURIComponent(
-      'Hola MAXIQUEEN OS. Tengo un ' + (userState.interest || 'proyecto') +
-      ' y me interesa el plan ' + (userState.lastPlan || 'correcto')
-    )}" target="_blank">
-      Continuar por WhatsApp
-    </a>
-  `;
-  chatLog.appendChild(cta);
-}
-
-  if (texto.includes("vendes") || texto.includes("servicio")) {
-    return knowledgeBase.ventas.resumen;
-  }
-
-  return "MaxiQueen OS necesita una pregunta más clara para ayudarte.";
-}
-
-function enviarMensaje() {
-  const input = document.getElementById("userInput");
-  const chatLog = document.getElementById("chat-log");
-
-  const pregunta = input.value;
-
-
-  if (!pregunta) return;
-
-  chatLog.innerHTML += `<div><strong>Tú:</strong> ${pregunta}</div>`;
-
-  const respuesta = maxiQueenResponder(pregunta);
-  chatLog.innerHTML += `<div><strong>MaxiQueen OS:</strong> ${respuesta}</div>`;
-
-  input.value = "";
-}
-</script>
 </body>
 </html>
 
+oooooo
