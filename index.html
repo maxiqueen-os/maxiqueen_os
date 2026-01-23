@@ -240,55 +240,140 @@ function closeLightbox() {
 </footer>
 
 <script>
-const chatLog = document.getElementById('chatLog');
-const triggers = {
-  precio: 'MaxiQueen OS: Los planes disponibles son Starter $49, Pro $99 y OS Completo $199 por mes.',
-  contacto: 'MaxiQueen OS: Puedes contactarnos vía WhatsApp, Instagram, Facebook o YouTube.',
-  onboarding: 'MaxiQueen OS: Vamos a organizar esto primero. ¿Quieres que te guíe paso a paso?',
-  comunidad: 'MaxiQueen OS: La Comunidad MAXIQUEEN es un espacio seguro, con sesiones en vivo y seguimiento humano.'
-};
-const phrases = [
-  'MaxiQueen OS: Esto funciona mejor paso a paso.',
-  'MaxiQueen OS: Recuerda: el sistema piensa contigo, no por ti.',
-  'MaxiQueen OS: Orden antes de automatizar.',
-  'MaxiQueen OS: No improvisamos, operamos.'
-];
-function sendMessage(){
-  const input = document.getElementById('userInput');
-  if(input.value.trim()==='') return;
-  const userText = input.value;
-  const userMsg = document.createElement('div'); userMsg.textContent = 'Tú: ' + userText; chatLog.appendChild(userMsg);
-  input.value='';
-  let response = phrases[Math.floor(Math.random()*phrases.length)];
-  const text = userText.toLowerCase();
-
-// 🧠 MEMORIA DE SESIÓN (F.5 LIMPIO)
-const userState = {
+// =============================
+// ESTADO CON MEMORIA
+// =============================
+const saved = sessionStorage.getItem("mq_state");
+let state = saved ? JSON.parse(saved) : {
+  stage: "nuevo",
   interest: null,
-  lastPlan: null,
-  steps: 0
+  plan: null,
+  steps: 0,
+  ctaShown: false
 };
 
-  if(text.includes('precio') || text.includes('planes')) response = triggers.precio;
-  else if(text.includes('contacto') || text.includes('whatsapp') || text.includes('instagram')) response = triggers.contacto;
-  else if(text.includes('onboarding') || text.includes('activar sistema') || text.includes('ayuda')) response = triggers.onboarding;
-  else if(text.includes('comunidad')) response = triggers.comunidad;
-  else if(text.includes('humano') || text.includes('asistencia')) response='MaxiQueen OS: He escalado tu consulta a un humano.';
-  const botMsg = document.createElement('div'); botMsg.textContent = response;
-  chatLog.appendChild(botMsg);
-  chatLog.scrollTop = chatLog.scrollHeight;
+function saveState() {
+  sessionStorage.setItem("mq_state", JSON.stringify(state));
 }
-document.getElementById('userInput').addEventListener('keypress', function(e){if(e.key==='Enter') sendMessage();});
-const userState = {
-  interest: null,
-  lastPlan: null,
-  steps: 0
-};
 
-const ctaState = {
-  shown: false,
-  meaningfulInputs: 0
-};
+// =============================
+// INTENCIÓN
+// =============================
+function intent(text) {
+  text = text.toLowerCase();
+  if (text.includes("idea")) return "idea";
+  if (text.includes("negocio")) return "negocio";
+  if (text.includes("contenido")) return "contenido";
+  if (text.includes("ordenar")) return "ordenar";
+  if (text.includes("escalar")) return "escalar";
+  if (text.includes("starter")) return "starter";
+  if (text.includes("pro")) return "pro";
+  if (text.includes("elite")) return "elite";
+  if (text.includes("precio") || text.includes("plan")) return "precio";
+  if (text.includes("whatsapp")) return "whatsapp";
+  if (text === "si" || text === "sí") return "confirmar";
+  return "general";
+}
+
+// =============================
+// RESPUESTAS
+// =============================
+function reply(type) {
+  switch (type) {
+
+    case "general":
+      if (state.stage === "nuevo") {
+        state.stage = "diagnostico";
+        saveState();
+        return "Antes de seguir dime algo clave: ¿tienes una idea, un negocio activo o vendes contenido?";
+      }
+      return "MaxiQueen OS: Orden antes de automatizar.";
+
+    case "idea":
+    case "negocio":
+    case "contenido":
+      state.interest = type;
+      saveState();
+      return "Perfecto. ¿Qué necesitas ahora mismo: ordenar o escalar?";
+
+    case "ordenar":
+      state.plan = "starter";
+      state.stage = "listo";
+      saveState();
+      return "Bien. Empezar por orden evita perder dinero. El plan Starter es el punto de entrada correcto.";
+
+    case "escalar":
+      state.plan = "pro";
+      state.stage = "listo";
+      saveState();
+      return "Escalar sin estructura rompe negocios. El sistema Pro es el camino lógico.";
+
+    case "starter":
+    case "pro":
+    case "elite":
+      state.plan = type;
+      state.stage = "listo";
+      saveState();
+      return `Excelente. ${type.toUpperCase()} es una buena decisión.`;
+
+    case "precio":
+      return "Tenemos Starter, Pro y Elite. No vendemos páginas, vendemos sistema.";
+
+    case "whatsapp":
+    case "confirmar":
+      openWhatsApp();
+      return "Perfecto. Te llevo a WhatsApp 👑";
+
+    default:
+      return "MaxiQueen OS: El sistema piensa contigo.";
+  }
+}
+
+// =============================
+// WHATSAPP
+// =============================
+function openWhatsApp() {
+  const msg =
+    `Hola MAXIQUEEN OS. Tengo un ${state.interest || "proyecto"} y me interesa el plan ${state.plan || "correcto"}.`;
+  window.open(
+    "https://wa.me/573016625921?text=" + encodeURIComponent(msg),
+    "_blank"
+  );
+}
+
+// =============================
+// CHAT
+// =============================
+function sendMessage() {
+  const input = document.getElementById("userInput");
+  const log = document.getElementById("chatLog");
+  const text = input.value.trim();
+  if (!text) return;
+
+  state.steps++;
+  saveState();
+
+  log.innerHTML += `<div class="user-msg">Tú: ${text}</div>`;
+  const r = reply(intent(text));
+
+  let finalResponse = r;
+
+  if (state.stage === "listo" && !state.ctaShown) {
+    finalResponse += " 👉 ¿Continuamos por WhatsApp?";
+    state.ctaShown = true;
+    saveState();
+  }
+
+  log.innerHTML += `<div class="bot-msg">MaxiQueen OS: ${finalResponse}</div>`;
+  log.scrollTop = log.scrollHeight;
+  input.value = "";
+}
+
+document
+  .getElementById("userInput")
+  .addEventListener("keypress", e => {
+    if (e.key === "Enter") sendMessage();
+  });
 </script>
 
 const knowledgeBase = {
@@ -373,6 +458,98 @@ if (text.includes('elite')) userState.lastPlan = 'elite';
 
   input.value = "";
 }
+<!-- CHAT MAXIQUEEN OS -->
+<div class="chat-box">
+  <div class="chat-log" id="chatLog"></div>
+  <div class="chat-input">
+    <input id="userInput" type="text" placeholder="Escribe aquí…" />
+    <button id="sendBtn">Enviar</button>
+  </div>
+</div>
+
+<script>
+const chatLog = document.getElementById("chatLog");
+const input = document.getElementById("userInput");
+const button = document.getElementById("sendBtn");
+
+let state = JSON.parse(sessionStorage.getItem("mq_state")) || {
+  stage: "nuevo",
+  interest: null,
+  plan: null,
+  steps: 0,
+  ctaShown: false
+};
+
+function save() {
+  sessionStorage.setItem("mq_state", JSON.stringify(state));
+}
+
+function bot(msg) {
+  chatLog.innerHTML += `<div><strong>MaxiQueen OS:</strong> ${msg}</div>`;
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+function intent(t) {
+  t = t.toLowerCase();
+  if (t.includes("idea")) return "idea";
+  if (t.includes("negocio")) return "negocio";
+  if (t.includes("contenido")) return "contenido";
+  if (t.includes("ordenar")) return "ordenar";
+  if (t.includes("escalar")) return "escalar";
+  if (t.includes("starter")) return "starter";
+  if (t.includes("pro")) return "pro";
+  if (t.includes("elite")) return "elite";
+  if (t.includes("precio") || t.includes("plan")) return "precio";
+  if (t.includes("whatsapp") || t === "si" || t === "sí") return "cta";
+  return "otro";
+}
+
+function reply(type) {
+  switch (type) {
+    case "idea":
+    case "negocio":
+    case "contenido":
+      state.interest = type;
+      save();
+      return "Perfecto. ¿Quieres ordenar o escalar?";
+    case "ordenar":
+      state.plan = "starter";
+      save();
+      return "Orden primero. Starter es el inicio correcto.";
+    case "escalar":
+      state.plan = "pro";
+      save();
+      return "Escalar con sistema. Pro es el camino.";
+    case "precio":
+      return "Tenemos Starter, Pro y Elite. Vendemos sistema, no páginas.";
+    case "cta":
+      const msg = `Hola MAXIQUEEN OS. Tengo un ${state.interest || "proyecto"} y me interesa el plan ${state.plan || "correcto"}.`;
+      window.open("https://wa.me/573016625921?text=" + encodeURIComponent(msg), "_blank");
+      return "Perfecto. Continuamos por WhatsApp 👑";
+    default:
+      if (state.stage === "nuevo") {
+        state.stage = "diagnostico";
+        save();
+        return "¿Tienes una idea, un negocio o contenido?";
+      }
+      return "Orden antes de automatizar.";
+  }
+}
+
+function send() {
+  const text = input.value.trim();
+  if (!text) return;
+
+  chatLog.innerHTML += `<div><strong>Tú:</strong> ${text}</div>`;
+  const r = reply(intent(text));
+  bot(r);
+  input.value = "";
+}
+
+button.onclick = send;
+input.addEventListener("keypress", e => {
+  if (e.key === "Enter") send();
+});
 </script>
 </body>
 </html>
