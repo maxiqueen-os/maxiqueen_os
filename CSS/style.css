@@ -62,4 +62,18 @@
   pointer-events: none;
 }
 
+.hero-netflix {
+  position: relative;
+  background:
+    radial-gradient(circle at top, rgba(251,191,36,0.18), transparent 60%),
+    linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(0,0,0,0.95));
+}
+.hero-netflix::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.06;
+  pointer-events: none;
+}
 
