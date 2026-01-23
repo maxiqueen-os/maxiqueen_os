@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MaxiQueen OS | Sistema Digital Integral</title>
-<meta name="description" content="MaxiQueen OS es un sistema digital integral diseñado para convertir ideas, historias y negocios en activos digitales rentables.">
+<meta name="description" content="JavaScript es el cuerpo, Python es la mente, tú eres la conciencia. MaxiQueen OS es un sistema digital integral diseñado para convertir ideas, historias y negocios en activos digitales rentables.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -301,6 +301,25 @@ body{
   </div>
 </section>
 
+<!-- ================= RECURSOS DE REFUERZO ================= -->
+<section class="py-24 px-6 bg-black/30 fade-in">
+  <div class="max-w-5xl mx-auto text-center">
+    <h3 class="section-title text-2xl font-bold mb-10">Enlaces y Recursos</h3>
+
+    <ul class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto text-left text-zinc-300">
+      <li><a class="hover:text-amber-400" href="https://app-vlc.hotmart.com/affiliate-recruiting/view/6489M103285849" target="_blank">💻 Afiliados</a></li>
+      <li><a class="hover:text-amber-400" href="https://go.hotmart.com/P103285828N?dp=1" target="_blank">🛒 Hotmart Marketplace</a></li>
+      <li><a class="hover:text-amber-400" href="https://pay.hotmart.com/P103285828N" target="_blank">💳 Oferta 40% descuento</a></li>
+      <li><a class="hover:text-amber-400" href="https://app.hotmart.com/membership/cesar-f9370874/community/management/15254181" target="_blank">📂 Comunidad Hotmart</a></li>
+      <li><a class="hover:text-amber-400 flex items-center gap-2" href="https://www.tiktok.com/@cesarbedoya9" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/TikTok_logo.svg" class="social-icon"> TikTok</a></li>
+      <li><a class="hover:text-amber-400 flex items-center gap-2" href="https://www.instagram.com/maxiqueen_store?igsh=MXV5eWM3azR1cWpkbA%3D%3D" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" class="social-icon"> Instagram</a></li>
+      <li><a class="hover:text-amber-400 flex items-center gap-2" href="https://www.facebook.com/share/1DVm7tXTEm/" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" class="social-icon"> Facebook</a></li>
+      <li><a class="hover:text-amber-400 flex items-center gap-2" href="https://www.youtube.com/@cesarbedoya2288" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" class="social-icon"> YouTube</a></li>
+      <li><a class="hover:text-amber-400 flex items-center gap-2" href="https://wa.me/573016625921?text=Hola%20MAXIQUEENOS.%20Vengo%20desde%20la%20página%20y%20quiero%20aplicar%20al%20PROCESO." target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="social-icon"> WhatsApp</a></li>
+    </ul>
+  </div>
+</section>
+
 <!-- ================= CTA FINAL ================= -->
 <section class="py-24 px-6 fade-in bg-black/40">
   <div class="max-w-4xl mx-auto text-center">
@@ -376,6 +395,20 @@ function closeLightbox() {
   content.innerHTML = '';
   box.classList.add('hidden');
   box.classList.remove('flex');
+}
+
+// ================= ESTADO CON MEMORIA =================
+const savedState = sessionStorage.getItem('mq_state');
+
+let mqState = savedState ? JSON.parse(savedState) : {
+  stage: 'nuevo',
+  interest: null,
+  intentCount: 0,
+  ctaShown: false
+};
+
+function saveState() {
+  sessionStorage.setItem('mq_state', JSON.stringify(mqState));
 }
 
 // ================= CHAT =================
