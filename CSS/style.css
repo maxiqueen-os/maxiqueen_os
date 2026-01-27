@@ -1,80 +1,125 @@
-.chat-box {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 300px;
-  background: #1a1a24;
-  padding: 10px;
-  border-radius: 12px;
-  color: white;
-  z-index: 9999;
+<style>
+body { 
+  margin:0; 
+  font-family:'Arial', sans-serif; 
+  background:#120f1f; /* fondo oscuro MaxiQueen */
+  color:#f0e6d2; /* texto dorado claro */
+  transition: background 0.5s, color 0.5s; 
 }
 
-.chat-log {
-  max-height: 200px;
-  overflow-y: auto;
-  margin-bottom: 10px;
-  font-size: 14px;
+[data-theme="light"] .chat-input input{
+  background:var(--bg-main);
+  color:var(--text-main);
+}
+[data-theme="light"]{
+  --bg-main:#f6f7f9;
+  --bg-soft:#eef0f3;
+  --text-main:#111827;
+  --text-soft:#374151;
+  --accent:#f59e0b;
+}
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4 {
+  color:#050505;
 }
 
-.chat-box input {
-  width: 100%;
-  margin-bottom: 5px;
+[data-theme="light"] p,
+[data-theme="light"] li,
+[data-theme="light"] span {
+  color:#1f2937;
 }
 
-.chat-box button {
-  width: 100%;
+.container { 
+  display:flex; flex-direction:column; align-items:center; padding:20px; 
 }
 
-@keyframes logoFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+.layer { 
+  border-radius:15px; padding:20px; margin:15px 0; width:95%; max-width:1200px; 
+  background: linear-gradient(145deg, #2c1a4d, #3b0f65); 
+  box-shadow:0 8px 25px rgba(0,0,0,0.9); position:relative; transition: all 0.5s; 
 }
 
-.animate-logoFloat {
-  animation: logoFloat 6s ease-in-out infinite;
+h2 { 
+  display:flex; align-items:center; gap:10px; margin-bottom:10px; color:#d4af37; 
 }
 
-.msg-user {
-  text-align: right;
-  margin: 4px 0;
-  color: #b9b9ff;
+.layer div { 
+  margin-top:10px; background: rgba(255,255,255,0.05); padding:15px; border-radius:10px; 
+  transition: all 0.5s; 
 }
 
-.msg-bot {
-  text-align: left;
-  margin: 4px 0;
-  color: #ffffff;
-  opacity: 0.95;
-}
-.hero-netflix {
-  position: relative;
-  background:
-    radial-gradient(circle at top, rgba(251,191,36,0.15), transparent 60%),
-    linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9));
-}
-.hero-netflix::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
-  opacity: 0.06;
-  pointer-events: none;
+input { 
+  width:100%; padding:12px; border-radius:10px; border:none; margin-top:10px; font-size:16px; 
 }
 
-.hero-netflix {
-  position: relative;
-  background:
-    radial-gradient(circle at top, rgba(251,191,36,0.18), transparent 60%),
-    linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(0,0,0,0.95));
-}
-.hero-netflix::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
-  opacity: 0.06;
-  pointer-events: none;
+.module { 
+  position:relative; padding:15px; background:rgba(255,255,255,0.05); border-radius:10px; 
+  flex:1; min-width:120px; text-align:center; cursor:pointer; transition: transform 0.3s, background 0.3s; 
 }
 
+.module:hover { 
+  transform: translateY(-5px); 
+  background: rgba(212,175,55,0.3); /* dorado brillante hover */ 
+}
 
+.module-tooltip { 
+  position:absolute; background: rgba(0,0,0,0.85); color:#f0e6d2; padding:5px 10px; 
+  border-radius:8px; font-size:14px; pointer-events:none; opacity:0; transition: opacity 0.3s; z-index:10; 
+}
+
+/* Flechas curvas animadas */
+.curve-arrow svg { width:100%; height:80px; overflow: visible; }
+.curve-arrow path { stroke:#d4af37; stroke-width:3; fill:none; stroke-dasharray:300; stroke-dashoffset:300; animation: dash 2s infinite linear; }
+@keyframes dash { 0% { stroke-dashoffset:300; } 50% { stroke-dashoffset:0; } 100% { stroke-dashoffset:300; } }
+
+.arrow { width:4px; height:50px; background:linear-gradient(to bottom, #d4af37,#3498db); animation: pulse 1.5s infinite alternate; }
+.arrow::after { content:''; position:absolute; bottom:-10px; left:-6px; border-left:10px solid transparent; border-right:10px solid transparent; border-top:10px solid #d4af37; }
+@keyframes pulse { 0% { background:linear-gradient(to bottom, #d4af37,#3498db); } 50% { background:linear-gradient(to bottom, #d4af37,#8e44ad); } 100% { background:linear-gradient(to bottom, #d4af37,#d4af37); } }
+/* === PASO 5 – INTERACTIVIDAD AVANZADA CLOUD === */
+
+.tooltip {
+  position:absolute;
+  background:#0b1d3a;
+  color:#f1c40f;
+  padding:8px 12px;
+  border-radius:8px;
+  font-size:14px;
+  pointer-events:none;
+  opacity:0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  box-shadow:0 10px 25px rgba(0,0,0,0.7);
+  z-index:1000;
+}
+
+.module.active {
+  background: rgba(212,175,55,0.35);
+  box-shadow:0 0 25px rgba(212,175,55,0.6);
+}
+
+.cloud-link {
+  display:block;
+  margin-top:8px;
+  font-size:13px;
+  color:#3498db;
+  text-decoration:underline;
+  cursor:pointer;
+}
+
+.cloud-subflow {
+  margin-top:10px;
+  font-size:13px;
+  color:#ecf0f1;
+  opacity:0;
+  max-height:0;
+  overflow:hidden;
+  transition: all 0.4s ease;
+}
+
+.module.active .cloud-subflow {
+  opacity:1;
+  max-height:200px;
+}
+</style>
