@@ -1,177 +1,56 @@
 <style>
-/* ==========================
-   Tema Oscuro MaxiQueen OS
-   ========================== */
-body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background: #120f1f; /* Fondo oscuro profundo */
-    color: #f0e6d2; /* Texto claro dorado */
-    transition: background 0.5s, color 0.5s;
+body { 
+  margin:0; 
+  font-family:'Arial', sans-serif; 
+  background:#120f1f; /* fondo oscuro MaxiQueen */
+  color:#f0e6d2; /* texto dorado claro */
+  transition: background 0.5s, color 0.5s; 
 }
 
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
+.container { 
+  display:flex; flex-direction:column; align-items:center; padding:20px; 
 }
 
-.layer {
-    border-radius: 15px;
-    padding: 20px;
-    margin: 15px 0;
-    width: 95%;
-    max-width: 1200px;
-    background: linear-gradient(145deg, #2c1a4d, #3b0f65); /* Morado oscuro + azul */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.9);
-    position: relative;
-    transition: all 0.5s;
+.layer { 
+  border-radius:15px; padding:20px; margin:15px 0; width:95%; max-width:1200px; 
+  background: linear-gradient(145deg, #2c1a4d, #3b0f65); 
+  box-shadow:0 8px 25px rgba(0,0,0,0.9); position:relative; transition: all 0.5s; 
 }
 
-h2 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    color: #d4af37; /* Dorado */
+h2 { 
+  display:flex; align-items:center; gap:10px; margin-bottom:10px; color:#d4af37; 
 }
 
-.layer div {
-    margin-top: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 15px;
-    border-radius: 10px;
-    transition: all 0.5s;
+.layer div { 
+  margin-top:10px; background: rgba(255,255,255,0.05); padding:15px; border-radius:10px; 
+  transition: all 0.5s; 
 }
 
-input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    margin-top: 10px;
-    font-size: 16px;
+input { 
+  width:100%; padding:12px; border-radius:10px; border:none; margin-top:10px; font-size:16px; 
 }
 
-.arrow, .curve-arrow {
-    position: relative;
-    margin: 20px auto;
+.module { 
+  position:relative; padding:15px; background:rgba(255,255,255,0.05); border-radius:10px; 
+  flex:1; min-width:120px; text-align:center; cursor:pointer; transition: transform 0.3s, background 0.3s; 
 }
 
-.arrow {
-    width: 4px;
-    height: 50px;
-    background: linear-gradient(to bottom, #d4af37, #3498db);
-    animation: pulse 1.5s infinite alternate;
+.module:hover { 
+  transform: translateY(-5px); 
+  background: rgba(212,175,55,0.3); /* dorado brillante hover */ 
 }
 
-.arrow::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: -6px;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid #d4af37;
+.module-tooltip { 
+  position:absolute; background: rgba(0,0,0,0.85); color:#f0e6d2; padding:5px 10px; 
+  border-radius:8px; font-size:14px; pointer-events:none; opacity:0; transition: opacity 0.3s; z-index:10; 
 }
 
-.curve-arrow svg {
-    width: 100%;
-    height: 80px;
-    overflow: visible;
-}
+/* Flechas curvas animadas */
+.curve-arrow svg { width:100%; height:80px; overflow: visible; }
+.curve-arrow path { stroke:#d4af37; stroke-width:3; fill:none; stroke-dasharray:300; stroke-dashoffset:300; animation: dash 2s infinite linear; }
+@keyframes dash { 0% { stroke-dashoffset:300; } 50% { stroke-dashoffset:0; } 100% { stroke-dashoffset:300; } }
 
-.curve-arrow path {
-    stroke: #d4af37;
-    stroke-width: 3;
-    fill: none;
-    stroke-dasharray: 300;
-    stroke-dashoffset: 300;
-    animation: dash 2s infinite linear;
-}
-
-@keyframes dash {
-    0% { stroke-dashoffset: 300; }
-    50% { stroke-dashoffset: 0; }
-    100% { stroke-dashoffset: 300; }
-}
-
-@keyframes pulse {
-    0% { background: linear-gradient(to bottom, #d4af37, #3498db); }
-    50% { background: linear-gradient(to bottom, #d4af37, #8e44ad); }
-    100% { background: linear-gradient(to bottom, #d4af37, #d4af37); }
-}
-
-.state-badge {
-    display: inline-block;
-    padding: 5px 10px;
-    border-radius: 8px;
-    font-weight: bold;
-    margin: 2px;
-    transition: all 0.5s;
-}
-
-.state-diagnostico { background: #f1c40f; color: black; }
-.state-estructurando { background: #3498db; color: white; }
-.state-construyendo { background: #9b59b6; color: white; }
-.state-vendiendo { background: #2ecc71; color: black; }
-.state-escalando { background: #e74c3c; color: white; }
-
-.logo {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(45deg, #d4af37, #3498db);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 20px;
-    color: white;
-    margin-right: 10px;
-}
-
-.curve-arrow .highlight {
-    stroke: #d4af37;
-    stroke-width: 4;
-    stroke-dasharray: 300;
-    stroke-dashoffset: 300;
-    animation: dash-highlight 1.5s linear forwards;
-}
-
-@keyframes dash-highlight {
-    0% { stroke-dashoffset: 300; }
-    100% { stroke-dashoffset: 0; }
-}
-
-/* Módulos interativos */
-.module {
-    position: relative;
-    padding: 15px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 10px;
-    flex: 1;
-    min-width: 120px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.3s, background 0.3s;
-}
-.module:hover {
-    transform: translateY(-5px);
-    background: rgba(212,175,55,0.3); /* Dorado brillante */
-}
-
-.module-tooltip {
-    position: absolute;
-    background: rgba(0,0,0,0.85);
-    color: #f0e6d2; /* Dorado suave para tooltips */
-    padding: 5px 10px;
-    border-radius: 8px;
-    font-size: 14px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: 10;
-}
+.arrow { width:4px; height:50px; background:linear-gradient(to bottom, #d4af37,#3498db); animation: pulse 1.5s infinite alternate; }
+.arrow::after { content:''; position:absolute; bottom:-10px; left:-6px; border-left:10px solid transparent; border-right:10px solid transparent; border-top:10px solid #d4af37; }
+@keyframes pulse { 0% { background:linear-gradient(to bottom, #d4af37,#3498db); } 50% { background:linear-gradient(to bottom, #d4af37,#8e44ad); } 100% { background:linear-gradient(to bottom, #d4af37,#d4af37); } }
 </style>
