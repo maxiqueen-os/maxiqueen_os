@@ -525,6 +525,63 @@ para pensar, construir y sostener procesos.
   }
 };
 
+const intents = [
+  {
+    keywords: ["precio", "costos", "cuánto vale", "cuanto cuesta", "planes", "pago"],
+    response: () => triggers.ventas.planes
+  },
+  {
+    keywords: ["empezar", "inicio", "onboarding", "arrancar", "comenzar"],
+    response: () => triggers.onboarding.onboarding
+  },
+  {
+    keywords: ["ayuda", "soporte", "contacto", "problema", "hablar con alguien"],
+    response: () => triggers.soporte.contacto
+  },
+  {
+    keywords: ["comunidad", "grupo", "acompañamiento", "personas"],
+    response: () => triggers.comunidad.comunidad
+  },
+  {
+    keywords: ["hola", "buenas", "hey", "saludos"],
+    response: () => `
+Hola 👑  
+Estoy aquí para ayudarte con calma.  
+¿En qué punto estás ahora mismo?
+`
+  },
+  {
+    keywords: ["no sé", "confundido", "perdido", "no entiendo"],
+    response: () => `
+Está bien no tener claridad aún.  
+Este sistema existe justo para eso.
+
+¿Quieres:
+1️⃣ Ordenar ideas  
+2️⃣ Crear algo vendible  
+3️⃣ Hablar con alguien humano  
+`
+  }
+];
+
+function getResponse(message) {
+  const text = message.toLowerCase();
+
+  for (const intent of intents) {
+    if (intent.keywords.some(k => text.includes(k))) {
+      return intent.response();
+    }
+  }
+
+  // Fallback humano (no silencio)
+  return `
+Te leo 👀  
+No quiero responderte con algo genérico.
+
+¿Puedes contarme un poco más qué necesitas ahora mismo?
+`;
+}
+
 const keywordMap = {
   // Ventas reales
   precio: triggers.ventas.planes,
@@ -666,12 +723,19 @@ function toggleTheme(){
   document.body.setAttribute('data-theme',saved);
 })();
 function toggleTheme(){
-  const html=document.documentElement;
-  const current=html.getAttribute('data-theme')||'dark';
-  const next=current==='dark'?'light':current==='light'?'gold':'dark';
-  html.setAttribute('data-theme',next);
-  document.body.setAttribute('data-theme',next);
-  localStorage.setItem('mq-theme',next);
+  const html = document.documentElement;
+  const btn = document.querySelector('.toggle-theme');
+  const current = html.getAttribute('data-theme') || 'dark';
+
+  let next, label;
+  if (current === 'dark'){ next='light'; label='☀️ Light'; }
+  else if (current === 'light'){ next='gold'; label='👑 Gold'; }
+  else { next='dark'; label='🌑 Dark'; }
+
+  html.setAttribute('data-theme', next);
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('mq-theme', next);
+  btn.textContent = label;
 }
 </script>
 </body></html>
