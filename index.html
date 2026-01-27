@@ -120,7 +120,7 @@ body{
 }
 :root[data-theme="light"]{
   --bg-main:#e9eaec; /* gris claro más notorio */
-  --text-main:#050505; /* texto aún más oscuro para light */ /* texto más oscuro */
+ --text-main: #0B1220; /* negro profundo suave (SaaS premium) */
   --card-bg:#fdfdfd;
   --border-soft:#d1d5db;
   --btn-bg:#111111;
@@ -675,51 +675,3 @@ function toggleTheme(){
 }
 </script>
 </body></html>
-
-/* ========== Estados disabled (todos los temas) ========== */
-button:disabled,
-.btn:disabled,
-input:disabled,
-textarea:disabled,
-select:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-  filter:grayscale(.3);
-}
-
-/* ========== Loading states ========== */
-.btn.loading{
-  position:relative;
-  pointer-events:none;
-  color:transparent !important;
-}
-.btn.loading::after{
-  content:"";
-  width:18px;
-  height:18px;
-  border:2px solid rgba(255,255,255,.4);
-  border-top-color:#fff;
-  border-radius:50%;
-  position:absolute;
-  inset:0;
-  margin:auto;
-  animation:spin .8s linear infinite;
-}
-
-@keyframes spin{
-  to{ transform:rotate(360deg); }
-}
-
-/* ========== Micro‑animaciones globales ========== */
-button,
-.btn,
-input,
-textarea,
-select{
-  transition:background .2s, color .2s, box-shadow .2s, transform .12s;
-}
-
-button:active,
-.btn:active{
-  transform:scale(.97);
-}
