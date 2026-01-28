@@ -2,189 +2,974 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Mini CodePen MaxiQueen Towers Pro 👑</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaxiQueen OS | Sistema Digital Integral</title>
+<meta name="description" content="JavaScript es el cuerpo, Python es la mente, tú eres la conciencia. MaxiQueen OS es un sistema digital integral diseñado para convertir ideas, historias y negocios en activos digitales rentables.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
 <style>
-body { margin:0; background:#0d0d0d; color:white; font-family:Arial,sans-serif; }
-h1 { text-align:center; }
-#tabs { display:flex; justify-content:center; margin:10px 0; }
-.tab-btn { padding:8px 15px; margin:0 5px; cursor:pointer; border:none; font-weight:bold; background:#111; color:#0f0; }
-.tab-btn.active { background:#0f0; color:#111; }
-#editor-container { display:flex; height:50vh; }
-#code-editor { flex:1; background:#111; color:#0f0; resize:none; padding:10px; font-family:monospace; font-size:14px; }
-#preview-container { flex:1; border-left:2px solid #00ff88; position:relative; }
-#preview-frame { width:100%; height:100%; border:none; }
-#buttons { text-align:center; margin:10px 0; }
-button { margin:0 5px; padding:10px; font-weight:bold; border:none; cursor:pointer; }
-#save-btn { background:#00ff88; color:black; }
-#load-btn { background:#ff8800; color:black; }
-#history-btn { background:#888; color:white; }
+:root{
+  --bg-main:#050508;
+  --bg-soft:#0b0b12;
+  --text-main:#ffffff;
+  --text-soft:#b3b3b3;
+  --accent:#facc15;
+}
+
+[data-theme="light"]{
+  --bg-main:#f9fafb;
+  --bg-soft:#ffffff;
+  --text-main:#0b0b12;
+  --text-soft:#4b5563;
+  --accent:#f59e0b;
+}
+
+body {
+  background-color: #f7f4ee;
+  color: #0f172a;
+}
+
+.fade-in{opacity:0;transform:translateY(20px);animation:fadeIn 1s forwards;}
+@keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
+
+.glass{
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.08);
+}
+
+[data-theme="light"] .glass{
+  background:rgba(255,255,255,.75);
+  border:1px solid rgba(0,0,0,.05);
+}
+
+.hero-avatar{
+  position:relative;
+  animation:floatAvatar 6s ease-in-out infinite;
+}
+.hero-avatar::after{
+  content:'';
+  position:absolute;
+  inset:-12px;
+  border-radius:9999px;
+  background:conic-gradient(from 0deg,#f43f5e,#f59e0b,#facc15,#22c55e,#38bdf8,#a855f7,#f43f5e);
+  filter:blur(18px);
+  opacity:.8;
+  z-index:-1;
+}
+@keyframes floatAvatar{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;margin-top:3rem;}
+.gallery img{width:100%;border-radius:1.5rem;object-fit:cover;transition:.35s;}
+.gallery img:hover{transform:scale(1.05);box-shadow:0 0 30px rgba(250,204,21,.35);}  
+
+/* BOTÓN WHATSAPP FLOTANTE */
+.whatsapp-float{
+  position:fixed;
+  bottom:24px;
+  left:24px;
+  background:#25D366;
+  color:white;
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+  z-index:1000;
+  transition:.25s;
+}
+.whatsapp-float:hover{transform:scale(1.1);}
+
+/* CHAT */
+.chat-box{position:fixed;bottom:24px;right:24px;background:var(--bg-soft);border-radius:18px;padding:12px;width:300px;max-height:420px;display:flex;flex-direction:column;z-index:999;border:1px solid rgba(255,255,255,.08);}  
+.chat-log{flex:1;overflow-y:auto;margin-bottom:10px;font-size:.85rem;}
+.chat-log div{margin-bottom:6px;}
+.chat-input{display:flex;gap:.5rem;}
+.chat-input input{flex:1;padding:8px 10px;border-radius:10px;border:none;background:#111827;color:white;}
+.chat-input button{background:var(--accent);color:#0f0f14;padding:6px 14px;border-radius:10px;font-weight:600;}
+.chat-input button:hover{filter:brightness(1.1);}
+
+.social-icon{width:20px;height:20px;object-fit:contain;display:inline-block;}
+
+.toggle-theme{
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:var(--bg-soft);
+  border:1px solid rgba(255,255,255,.1);
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:.8rem;
+  cursor:pointer;
+  z-index:1000;
+}
+</style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.right-6{right:1.5rem}.top-6{top:1.5rem}.z-10{z-index:10}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-10{margin-bottom:2.5rem}.mb-12{margin-bottom:3rem}.mb-14{margin-bottom:3.5rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mt-10{margin-top:2.5rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.inline-block{display:inline-block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.aspect-video{aspect-ratio:16 / 9}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-40{width:10rem}.w-full{width:100%}.max-w-3xl{max-width:48rem}.max-w-4xl{max-width:56rem}.max-w-5xl{max-width:64rem}.max-w-6xl{max-width:72rem}.scale-\[1\.05\]{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.gap-10{gap:2.5rem}.gap-14{gap:3.5rem}.gap-4{gap:1rem}.gap-8{gap:2rem}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-x-hidden{overflow-x:hidden}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-white\/20{border-color:rgb(255 255 255 / 0.2)}.bg-\[color\:var\(--accent\)\]{background-color:var(--accent)}.bg-black\/40{background-color:rgb(0 0 0 / 0.4)}.bg-black\/90{background-color:rgb(0 0 0 / 0.9)}.bg-white\/10{background-color:rgb(255 255 255 / 0.1)}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-\[radial-gradient\(circle_at_top\2c rgba\(250\2c 204\2c 21\2c \.18\)\2c transparent_60\%\)\]{background-image:radial-gradient(circle at top,rgba(250,204,21,.18),transparent 60%)}.object-cover{object-fit:cover}.p-10{padding:2.5rem}.p-8{padding:2rem}.px-10{padding-left:2.5rem;padding-right:2.5rem}.px-12{padding-left:3rem;padding-right:3rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-24{padding-top:6rem;padding-bottom:6rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.text-center{text-align:center}.font-\[Poppins\]{font-family:Poppins}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-semibold{font-weight:600}.leading-relaxed{line-height:1.625}.tracking-tight{letter-spacing:-0.025em}.text-black{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-zinc-300{--tw-text-opacity:1;color:rgb(212 212 216 / var(--tw-text-opacity, 1))}.text-zinc-400{--tw-text-opacity:1;color:rgb(161 161 170 / var(--tw-text-opacity, 1))}.shadow-\[0_0_80px_rgba\(250\2c 204\2c 21\2c \.55\)\]{--tw-shadow:0 0 80px rgba(250,204,21,.55);--tw-shadow-colored:0 0 80px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.ring-yellow-400\/40{--tw-ring-color:rgb(250 204 21 / 0.4)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:scale-\[1\.02\]:hover{--tw-scale-x:1.02;--tw-scale-y:1.02;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:scale-\[1\.07\]:hover{--tw-scale-x:1.07;--tw-scale-y:1.07;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:bg-white\/20:hover{background-color:rgb(255 255 255 / 0.2)}.hover\:brightness-110:hover{--tw-brightness:brightness(1.1);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}@media (min-width: 768px){.md\:w-48{width:12rem}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:text-4xl{font-size:2.25rem;line-height:2.5rem}.md\:text-6xl{font-size:3.75rem;line-height:1}.md\:text-xl{font-size:1.25rem;line-height:1.75rem}}</style><style>
+:root[data-theme="dark"]{
+  --bg-main:#0b1220;
+  --text-main:#e5e7eb;
+  --card-bg:#0f172a;
+  --border-soft:#1e293b;
+  --btn-bg:#1d4ed8; /* azul oscuro */
+  --btn-text:#ffffff;
+}
+:root[data-theme="light"]{
+  --bg-main:#e9eaec; /* gris claro más notorio */
+  --text-main:#050505; /* texto aún más oscuro para light */ /* texto más oscuro */
+  --card-bg:#fdfdfd;
+  --border-soft:#d1d5db;
+  --btn-bg:#111111;
+  --btn-text:#ffffff;
+  --input-bg:#f3f4f6;
+  --input-border:#cbd5e1;
+}
+[data-theme="light"] .card,
+[data-theme="light"] section,
+[data-theme="light"] header{
+  background:var(--card-bg);
+  color:var(--text-main);
+  border-color:var(--border-soft);
+}
+
+/* Botones light */
+[data-theme="light"] button,
+[data-theme="light"] .btn{
+  background:var(--btn-bg);
+  color:var(--btn-text);
+  transition:background .2s, box-shadow .2s, transform .1s;
+}
+[data-theme="light"] button:hover,
+[data-theme="light"] .btn:hover{
+  background:#1f2937;
+  transform:translateY(-1px);
+}
+[data-theme="light"] button:focus,
+[data-theme="light"] .btn:focus{
+  outline:none;
+  box-shadow:0 0 0 3px rgba(59,130,246,.4);
+}
+
+/* Inputs / forms light */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select{
+  background:var(--input-bg);
+  color:var(--text-main);
+  border:1px solid var(--input-border);
+  transition:border .2s, box-shadow .2s, background .2s;
+}
+[data-theme="light"] input:focus,
+[data-theme="light"] textarea:focus,
+[data-theme="light"] select:focus{
+  outline:none;
+  border-color:#2563eb;
+  box-shadow:0 0 0 3px rgba(37,99,235,.35);
+}
+
+/* Inputs / forms light */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select{
+  background:var(--input-bg);
+  color:var(--text-main);
+  border:1px solid var(--input-border);
+}
+:root[data-theme="gold"]{
+  --bg-main:#1a1405;
+  --text-main:#f5d77a;
+}
+html,body{background:var(--bg-main)!important;color:var(--text-main)!important;}
 </style>
 </head>
-<body>
 
-<h1>Mini CodePen MaxiQueen Towers Pro 👑</h1>
+<!-- TOGGLE DARK/LIGHT -->
+<button class="toggle-theme" onclick="toggleTheme()">🌗 MaxiTema</button>
 
-<div id="tabs"></div>
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema." target="_blank" class="whatsapp-float" aria-label="WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" width="26"><path d="M380.9 97.1C339-3.8 211.2-34.6 119.8 19.5 34.4 71.2-8.7 180.1 20.4 272.5L0 512l245.1-64.2c95.5 27.8 196.5-16.7 247.1-104.4 43.5-75.7 32.3-173.7-25.3-246.3z"></path></svg>
+</a>
 
-<div id="buttons">
-  <button id="new-tab-btn">➕ Nueva Pestaña</button>
-  <button id="save-btn">💾 Guardar Código</button>
-  <button id="load-btn">📂 Cargar Código</button>
-  <button id="history-btn">🕑 Historial</button>
+<!-- ================= HERO ULTRA VENTA ================= -->
+<section class="min-h-screen flex items-center justify-center text-center px-6 relative">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,204,21,.18),transparent_60%)]"></div>
+
+  <div class="relative z-10 fade-in max-w-3xl">
+
+    <img src="./1 landing 3.16 pm 23.01.2026 CASI COMPLETO_files/logo-maxiqueen-original.png" alt="Logo MaxiQueen OS" class="w-40 md:w-48 mx-auto rounded-full shadow-[0_0_80px_rgba(250,204,21,.55)] border border-white/20 bg-black/40 backdrop-blur-sm hero-avatar">
+
+    <h1 class="mt-8 text-4xl md:text-6xl font-extrabold tracking-tight">
+      Convierte tu caos digital en un <span style="color:var(--accent)">Sistema que vende</span>
+    </h1>
+
+    <p class="mt-6 text-zinc-300 text-lg md:text-xl leading-relaxed">
+      MaxiQueen OS es el sistema digital humano que transforma ideas, historias y negocios
+      en activos automatizados que generan ingresos reales.
+    </p>
+
+    <div class="mt-10 flex gap-4 flex-wrap justify-center">
+      <a href="file:///C:/Users/ASUS/Downloads/landing%203.16%20pm%2023.01.2026.html#planes" class="px-10 py-4 rounded-2xl bg-[color:var(--accent)] hover:brightness-110 text-black font-bold shadow-xl transition">
+        Activar mi Sistema
+      </a>
+      <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Quiero%20hablar%20con%20un%20humano." target="_blank" class="px-10 py-4 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-semibold transition">
+        Hablar con un humano
+      </a>
+    </div>
+
+    <p class="mt-10 text-sm text-zinc-400">No agencia · No plantillas · No humo · Solo sistemas reales</p>
+  </div>
+</section>
+
+<!-- ================= PROBLEMA / SOLUCIÓN ================= -->
+<section class="py-24 px-6 fade-in bg-black/40">
+  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
+
+    <div>
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">El problema</h2>
+      <ul class="space-y-3 text-zinc-300">
+        <li>❌ Tienes ideas pero no sistema</li>
+        <li>❌ Publicas pero no vendes</li>
+        <li>❌ Automatizas sin estructura</li>
+        <li>❌ Usas herramientas, pero no tienes operación</li>
+      </ul>
+    </div>
+
+    <div class="glass p-10 rounded-3xl">
+      <h3 class="text-2xl font-bold mb-4">La solución</h3>
+      <p class="text-zinc-300 mb-4">MaxiQueen OS convierte tu caos digital en:</p>
+      <ul class="space-y-3 text-zinc-300">
+        <li>✅ Contenido que conecta</li>
+        <li>✅ Plataformas que convierten</li>
+        <li>✅ Sistemas que trabajan solos</li>
+        <li>✅ Procesos que escalan</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= QUÉ ES ================= -->
+<section id="sistema" class="py-24 px-6 fade-in">
+  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
+
+    <div>
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">¿Qué es MaxiQueen OS?</h2>
+      <p class="text-lg text-zinc-300 mb-4">
+        MaxiQueen OS no es una marca. Es un sistema digital integral diseñado para personas reales
+        que quieren crear, vender, automatizar y crecer sin depender de soluciones fragmentadas.
+      </p>
+      <p class="text-lg text-zinc-300">No vendemos páginas. Vendemos sistemas que producen resultados.</p>
+    </div>
+
+    <div class="glass p-10 rounded-3xl">
+      <h3 class="text-xl font-semibold mb-4">🧩 Módulos del Sistema</h3>
+      <ul class="space-y-3 text-zinc-300">
+        <li>🎨 Contenido creativo (guiones, caricaturas, reels, TikTok)</li>
+        <li>📱 Crecimiento en redes sociales con narrativa real y viral</li>
+        <li>🌐 Webs, landings y tiendas listas para vender</li>
+        <li>🛒 Estructura comercial (productos, inventario, funnels)</li>
+        <li>⚙️ Automatización real (deploy, subdominios, GitHub, VPS)</li>
+        <li>🧠 Asistencia estratégica (legal básica, laboral, análisis)</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= TESTIMONIOS ================= -->
+<section class="py-24 px-6 fade-in bg-black/40">
+  <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-12">Resultados reales</h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <div class="glass p-8 rounded-3xl">
+        <p class="text-zinc-300 mb-4">"Pasé de tener ideas sueltas a un sistema que vende todos los días. MaxiQueen OS me ordenó la cabeza y el negocio."</p>
+        <p class="font-semibold">— Emprendedor digital</p>
+      </div>
+
+      <div class="glass p-8 rounded-3xl">
+        <p class="text-zinc-300 mb-4">"No es marketing. Es estructura. Ahora sé exactamente qué publicar, cómo vender y cómo escalar."</p>
+        <p class="font-semibold">— Creadora de contenido</p>
+      </div>
+
+      <div class="glass p-8 rounded-3xl">
+        <p class="text-zinc-300 mb-4">"MaxiQueen OS no me dio una web. Me dio un sistema completo funcionando."</p>
+        <p class="font-semibold">— Negocio local</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= GALERÍA ================= -->
+<section class="py-24 px-6 fade-in">
+  <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4">Sistema en acción</h2>
+    <p class="text-zinc-400 mb-12">Casos reales · Módulos · Implementaciones</p>
+
+    <div class="gallery" id="dynamicGallery"><div class="relative cursor-pointer group rounded-3xl overflow-hidden"><img src="file:///C:/Users/ASUS/Downloads/modulo-creativo.jpg" alt="Módulo Creativo" class="rounded-3xl w-full h-full object-cover"></div><div class="relative cursor-pointer group rounded-3xl overflow-hidden"><div class="rounded-3xl bg-black aspect-video flex items-center justify-center text-white text-xl">▶ Video</div></div><div class="relative cursor-pointer group rounded-3xl overflow-hidden"><img src="file:///C:/Users/ASUS/Downloads/modulo-social.jpg" alt="Social Media" class="rounded-3xl w-full h-full object-cover"></div><div class="relative cursor-pointer group rounded-3xl overflow-hidden"><img src="file:///C:/Users/ASUS/Downloads/modulo-web.jpg" alt="Web &amp; Hosting" class="rounded-3xl w-full h-full object-cover"></div><div class="relative cursor-pointer group rounded-3xl overflow-hidden"><div class="rounded-3xl bg-black aspect-video flex items-center justify-center text-white text-xl">▶ Video</div></div><div class="relative cursor-pointer group rounded-3xl overflow-hidden"><img src="file:///C:/Users/ASUS/Downloads/modulo-automatizacion.jpg" alt="Automatización" class="rounded-3xl w-full h-full object-cover"></div></div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
+  <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl">✕</button>
+  <div id="lightboxContent" class="max-w-4xl w-full px-4"></div>
 </div>
 
-<div id="editor-container">
-  <textarea id="code-editor"></textarea>
-  <div id="preview-container">
-    <iframe id="preview-frame"></iframe>
+<!-- ================= PLANES ================= -->
+<section id="planes" class="py-24 px-6 fade-in bg-black/40">
+  <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-14">Activa tu Sistema</h2>
+
+    <div class="grid md:grid-cols-3 gap-10">
+
+      <div class="glass p-10 rounded-3xl hover:scale-[1.02] transition">
+        <h3 class="text-xl font-semibold mb-4">👑 Starter</h3>
+        <p class="text-zinc-300 mb-5">Landing page, 5 guiones, hosting básico, onboarding</p>
+        <p class="font-bold mb-6" style="color:var(--accent)">USD $49 / mes</p>
+        <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Quiero%20activar%20el%20plan%20Starter." target="_blank" class="inline-block px-8 py-3 bg-[color:var(--accent)] hover:brightness-110 rounded-xl font-bold text-black">Activar Starter</a>
+      </div>
+
+      <div class="glass p-10 rounded-3xl scale-[1.05] ring-2 ring-yellow-400/40 hover:scale-[1.07] transition">
+        <h3 class="text-xl font-semibold mb-4">💰 Pro</h3>
+        <p class="text-zinc-300 mb-5">Web completa, 15 guiones, automatización, soporte estratégico</p>
+        <p class="font-bold mb-6" style="color:var(--accent)">USD $99 / mes</p>
+        <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Quiero%20activar%20el%20plan%20Pro." target="_blank" class="inline-block px-8 py-3 bg-[color:var(--accent)] hover:brightness-110 rounded-xl font-bold text-black">Activar Pro</a>
+      </div>
+
+      <div class="glass p-10 rounded-3xl hover:scale-[1.02] transition">
+        <h3 class="text-xl font-semibold mb-4">🔵 Elite</h3>
+        <p class="text-zinc-300 mb-5">Sistema completo, automatización avanzada, soporte prioritario</p>
+        <p class="font-bold mb-6" style="color:var(--accent)">USD $199 / mes</p>
+        <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Quiero%20activar%20el%20plan%20Elite." target="_blank" class="inline-block px-8 py-3 bg-[color:var(--accent)] hover:brightness-110 rounded-xl font-bold text-black">Activar Elite</a>
+      </div>
+
+    </div>
+
+    <p class="mt-10 text-sm text-zinc-400">Soporte humano · Sin contratos · Cancela cuando quieras</p>
+  </div>
+</section>
+
+<!-- ================= ORIGEN / AUTORIDAD ================= -->
+<section id="equipo" class="py-24 px-6 fade-in">
+  <div class="max-w-5xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-10">Origen del Sistema</h2>
+
+    <div class="glass p-10 rounded-3xl text-zinc-300 leading-relaxed">
+      <p class="mb-5"><strong class="text-white">MAXIQUEEN nace como un proyecto familiar y evoluciona como un sistema profesional.</strong></p>
+      <p class="mb-5">La identidad visual y el nombre de la marca fueron creados por mis hermanas, quienes aportaron la base creativa y estética que dio origen a MAXIQUEEN.</p>
+      <p class="mb-5">Todo el desarrollo, arquitectura, automatización, estrategia y expansión del sistema ha sido diseñado y gestionado por mí.</p>
+      <p class="font-semibold text-white">MAXIQUEEN OS no es una agencia: es un sistema digital original construido desde experiencia real, organización del caos y ejecución humana con tecnología.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA FINAL ================= -->
+<section class="py-24 px-6 fade-in bg-black/40">
+  <div class="max-w-4xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-6">¿Listo para activar tu sistema?</h2>
+    <p class="text-zinc-300 mb-10">Si estás cansado de improvisar y quieres operar con estructura real, MaxiQueen OS es para ti.</p>
+
+    <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Estoy%20listo%20para%20activar%20mi%20sistema." target="_blank" class="inline-block px-12 py-4 rounded-2xl bg-[color:var(--accent)] hover:brightness-110 text-black font-extrabold shadow-xl transition">
+      Activar ahora
+    </a>
+  </div>
+
+<!-- ================= RECURSOS DE REFUERZO ================= -->
+<section class="py-24 px-6 bg-black/30 fade-in">
+  <div class="max-w-5xl mx-auto text-center">
+    <h3 class="section-title text-2xl font-bold mb-10">Enlaces y Recursos</h3>
+
+    <ul class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto text-left text-zinc-300">
+      <li><a class="hover:text-amber-400" href="https://app-vlc.hotmart.com/affiliate-recruiting/view/6489M103285849" target="_blank">💻 Afiliados</a></li>
+      <li><a class="hover:text-amber-400" href="https://go.hotmart.com/P103285828N?dp=1" target="_blank">🛒 Hotmart Marketplace</a></li>
+      <li><a class="hover:text-amber-400" href="https://pay.hotmart.com/P103285828N" target="_blank">💳 Oferta 40% descuento</a></li>
+      <li><a class="hover:text-amber-400" href="https://app.hotmart.com/membership/cesar-f9370874/community/management/15254181" target="_blank">📂 Comunidad Hotmart</a></li>
+      <li><a class="hover:text-amber-400 flex items-center gap-2" href="https://www.tiktok.com/@cesarbedoya9" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/TikTok_logo.svg" class="social-icon"> TikTok</a></li>
+      <li><a class="hover:text-amber-400 flex items-center gap-2" href="https://www.instagram.com/maxiqueen_store?igsh=MXV5eWM3azR1cWpkbA%3D%3D" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" class="social-icon"> Instagram</a></li>
+      <li><a class="hover:text-amber-400 flex items-center gap-2" href="https://www.facebook.com/share/1DVm7tXTEm/" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" class="social-icon"> Facebook</a></li>
+      <li><a class="hover:text-amber-400 flex items-center gap-2" href="https://www.youtube.com/@cesarbedoya2288" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" class="social-icon"> YouTube</a></li>
+      <li><a class="hover:text-amber-400 flex items-center gap-2" href="https://wa.me/573016625921?text=Hola%20MAXIQUEENOS.%20Vengo%20desde%20la%20página%20y%20quiero%20aplicar%20al%20PROCESO." target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="social-icon"> WhatsApp</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="fade-in text-center py-10 text-zinc-400">
+  <p>© 2026 MaxiQueen OS – Todos los derechos reservados.</p>
+</footer>
+
+<!-- ================= CHAT ================= -->
+<div class="chat-box" id="chatBox">
+  <div class="chat-log" id="chatLog"></div>
+  <div class="chat-input">
+    <input type="text" id="userInput" placeholder="Soy MaxiBot Escribe tu pregunta...">
+    <button onclick="sendMessage()">Enviar</button>
   </div>
 </div>
-
 <script>
-// ===== Variables de pestañas =====
-let tabs = [];
-let currentTab = 0;
-const editor = document.getElementById("code-editor");
-const preview = document.getElementById("preview-frame");
-const tabsContainer = document.getElementById("tabs");
+// ================= GALERÍA =================
+const galleryData = [
+  { type: 'image', src: 'modulo-creativo.jpg', title: 'Módulo Creativo' },
+  { type: 'video', src: 'https://www.youtube.com/embed/dQw4w9WgXcQ', title: 'Sistema en acción' },
+  { type: 'image', src: 'modulo-social.jpg', title: 'Social Media' },
+  { type: 'image', src: 'modulo-web.jpg', title: 'Web & Hosting' },
+  { type: 'video', src: 'https://www.youtube.com/embed/dQw4w9WgXcQ', title: 'Automatización real' },
+  { type: 'image', src: 'modulo-automatizacion.jpg', title: 'Automatización' }
+];
 
-// ===== Función de live preview =====
-function updatePreview() {
-  preview.srcdoc = editor.value;
-}
+const gallery = document.getElementById('dynamicGallery');
 
-// ===== Función para crear pestaña =====
-function createTab(name, code="") {
-  tabs.push({ name, code });
-  renderTabs();
-  switchTab(tabs.length-1);
-}
+if (gallery) {
+  galleryData.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'relative cursor-pointer group rounded-3xl overflow-hidden';
 
-// ===== Renderizar pestañas =====
-function renderTabs() {
-  tabsContainer.innerHTML = "";
-  tabs.forEach((tab, index)=>{
-    const btn = document.createElement("button");
-    btn.className = "tab-btn" + (index===currentTab?" active":"");
-    btn.innerText = tab.name;
-    btn.onclick = ()=>switchTab(index);
-    tabsContainer.appendChild(btn);
+    if (item.type === 'image') {
+      card.innerHTML = `<img src="${item.src}" alt="${item.title}" class="rounded-3xl w-full h-full object-cover">`;
+    } else {
+      card.innerHTML = `<div class="rounded-3xl bg-black aspect-video flex items-center justify-center text-white text-xl">▶ Video</div>`;
+    }
+
+    card.onclick = () => openLightbox(item);
+    gallery.appendChild(card);
   });
 }
 
-// ===== Cambiar de pestaña =====
-function switchTab(index) {
-  if(tabs[currentTab]) tabs[currentTab].code = editor.value;
-  currentTab = index;
-  editor.value = tabs[currentTab].code;
-  updatePreview();
-  renderTabs();
+function openLightbox(item) {
+  const box = document.getElementById('lightbox');
+  const content = document.getElementById('lightboxContent');
+
+  if (item.type === 'image') {
+    content.innerHTML = `<img src="${item.src}" class="rounded-3xl w-full">`;
+  } else {
+    content.innerHTML = `<iframe class="w-full aspect-video rounded-3xl" src="${item.src}" frameborder="0" allowfullscreen></iframe>`;
+  }
+
+  box.classList.remove('hidden');
+  box.classList.add('flex');
 }
 
-// ===== Botones =====
-document.getElementById("new-tab-btn").onclick = () => {
-  const name = "Juego " + (tabs.length+1);
-  const defaultCode = `<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>${name}</title>
-<style>
-body { margin:0; background:#0d0d0d; color:white; font-family:Arial,sans-serif; text-align:center; }
-canvas { background:#1a1a1a; display:block; margin:auto; cursor:move; resize:both; overflow:auto; }
-</style>
-</head>
-<body>
-<canvas id="gameCanvas"></canvas>
-<script>
-// Canvas draggable y resizable
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth/2;
-canvas.height = window.innerHeight/2;
-let offsetX=0, offsetY=0, dragging=false;
+function closeLightbox() {
+  const box = document.getElementById('lightbox');
+  const content = document.getElementById('lightboxContent');
+  content.innerHTML = '';
+  box.classList.add('hidden');
+  box.classList.remove('flex');
+}
 
-// Arrastrar
-canvas.addEventListener("mousedown", e=>{ dragging=true; offsetX=e.offsetX; offsetY=e.offsetY; });
-canvas.addEventListener("mouseup", e=>dragging=false);
-canvas.addEventListener("mousemove", e=>{ if(dragging){ canvas.style.position="absolute"; canvas.style.left=(e.pageX-offsetX)+"px"; canvas.style.top=(e.pageY-offsetY)+"px"; } });
+// ================= CHAT =================
+const chatLog = document.getElementById('chatLog');
+const input = document.getElementById('userInput');
 
-// Juego simplificado
-let towers=[{x:100,y:100,units:10,owner:"queen"},{x:300,y:100,units:8,owner:"enemy"}],movingUnits=[],pulse=0;
-function sendUnits(f,t){ movingUnits.push({x:f.x,y:f.y,target:t,owner:f.owner,amount:Math.floor(f.units/2),progress:0,startX:f.x,startY:f.y}); }
-function updateUnits(){ movingUnits.forEach((u,i)=>{ u.progress+=0.02; u.x=u.startX+(u.target.x-u.startX)*u.progress; u.y=u.startY+(u.target.y-u.startY)*u.progress; if(u.progress>=1){ u.target.units-=u.amount; movingUnits.splice(i,1); } }); }
-function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); pulse+=0.05; towers.forEach(t=>{ ctx.beginPath(); ctx.arc(t.x,t.y,30,0,Math.PI*2); ctx.fillStyle=t.owner==="queen"?"#0f0":"#f44"; ctx.fill(); ctx.fillStyle="white"; ctx.textAlign="center"; ctx.fillText(t.units,t.x,t.y+5); }); movingUnits.forEach(u=>{ ctx.beginPath(); ctx.arc(u.x,u.y,8,0,Math.PI*2); ctx.fillStyle=u.owner==="queen"?"#0f0":"#f44"; ctx.fill(); }); updateUnits(); requestAnimationFrame(draw); }
-draw();
-canvas.addEventListener("click",e=>{ const mx=e.clientX,my=e.clientY,clicked=towers.find(t=>Math.hypot(t.x-mx,t.y-my)<30); if(clicked && clicked.owner==="queen") sendUnits(clicked,towers.find(t=>t.owner!=="queen")); });
-</script>
-</body>
-</html>`;
-  createTab(name, defaultCode);
+const triggers = {
+  ventas: {
+  planes: `
+Trabajamos con planes claros y sin letra pequeña.
+
+👑 Starter – $49/mes
+Orden inicial, diagnóstico y estructura base.
+Ideal si hoy hay ideas pero no sistema.
+
+👑 Pro – $99/mes
+Sistema activo para crecer, vender
+y automatizar procesos clave.
+
+👑 Elite – $199/mes
+Acompañamiento prioritario,
+infraestructura completa
+y control total del sistema.
+`,
+
+  costos: `
+Los costos reflejan acompañamiento real.
+No pagas por una herramienta,
+pagas por estructura, criterio y ejecución.
+`,
+
+  valor: `
+MaxiQueen OS no compite por precio.
+Compite por claridad, orden
+y resultados sostenibles.
+`,
+
+  diferencia: `
+No vendemos páginas ni plantillas.
+Vendemos un sistema que piensa contigo
+y evoluciona con tu proyecto.
+`,
+
+  decision: `
+Elegir un plan no es gastar,
+es dejar de perder tiempo,
+energía y dinero por desorden.
+`,
+
+  objecion_precio: `
+Si el precio genera duda,
+normalmente el problema no es el costo,
+sino el caos que ya estás pagando.
+`,
+
+  escalera: `
+Todos los planes están conectados.
+Muchos empiezan en Starter,
+escalan a Pro
+y consolidan en Elite.
+`,
+
+  whatsapp: `
+El contacto principal es vía WhatsApp.
+Si el sistema detecta que necesitas un humano,
+la conversación se escala automáticamente.
+`
+},
+
+  onboarding: {
+  onboarding: `
+El onboarding es el inicio real del sistema.
+Aquí se baja el ruido, se aclaran prioridades
+y se convierte la confusión en estructura.
+`,
+  empezar: `
+Para empezar solo necesitas decisión.
+El sistema se adapta a tu nivel,
+no al revés.
+`
+},
+
+identidad: {
+  queEs: `
+MaxiQueen OS es un sistema operativo digital humano.
+No es una app, no es una web y no es una asesoría aislada.
+
+Es una estructura viva que ordena ideas,
+construye sistemas y acompaña decisiones reales.
+`,
+  filosofia: `
+Orden antes de automatizar.
+Sistema antes que herramientas.
+Conciencia antes que velocidad.
+
+Aquí no se corre sin mapa.
+`,
+  diferencia: `
+No trabajamos con soluciones sueltas.
+Construimos sistemas que piensan contigo.
+`
+},
+
+modulos: {
+  contenido: `
+El módulo de contenido transforma ideas en mensajes claros.
+No es publicar por publicar, es comunicar con intención.
+`,
+  web: `
+El módulo web convierte estructura en presencia digital.
+Landings, sistemas, flujos y orden técnico real.
+`,
+  automatizacion: `
+La automatización no reemplaza criterio.
+Aquí se usa para liberar tiempo y reducir errores.
+`,
+  comercial: `
+El módulo comercial ordena ofertas, precios y decisiones.
+Vender deja de ser confuso.
+`
+},
+
+servicios: {
+  asesorias: `
+Las asesorías no son charlas.
+Son espacios de decisión y dirección estratégica.
+`,
+  sistemas: `
+No entregamos archivos.
+Entregamos sistemas funcionales.
+`,
+  acompanamiento: `
+El acompañamiento existe para sostener procesos,
+no para crear dependencia.
+`
+},
+
+creativo: {
+  dibujos: `
+Los dibujos y visuales sirven para pensar.
+A veces una imagen ordena más que mil palabras.
+`,
+  proyectos: `
+Cada proyecto se trata como un sistema único.
+No usamos plantillas mentales.
+`,
+  narrativa: `
+Toda marca necesita una historia clara,
+no un logo bonito solamente.
+`
+},
+
+onboarding: {
+  onboarding: `
+El onboarding define cómo vas a pensar el sistema.
+No se trata de herramientas,
+sino de tomar control del proceso.
+`,
+  empezar: `
+Empiezas con lo que ya tienes.
+El sistema se encarga del resto,
+paso a paso.
+`
+},
+
+onboarding: {
+  onboarding: `
+El onboarding es una fase de diagnóstico.
+Se identifican recursos, bloqueos
+y el siguiente movimiento lógico.
+`,
+  empezar: `
+No necesitas experiencia.
+Necesitas foco y compromiso
+con el proceso.
+`
+},
+
+  soporte: {
+  contacto: `
+Puedes contactarnos por los canales oficiales de MaxiQueen OS:
+
+📲 WhatsApp – atención directa y acompañamiento
+📸 Instagram – contenido, avisos y contacto rápido
+📘 Facebook – comunidad y actualizaciones
+📺 YouTube – guías, sistemas y explicación en profundidad
+
+Usa el canal que te resulte más cómodo.
+Siempre respondemos con criterio, no con bots.
+`
+},
+
+venta: {
+  enfoque: `
+No empujamos ventas.
+Ayudamos a tomar decisiones correctas.
+`,
+  precio: `
+El precio refleja tiempo humano,
+criterio y estructura real.
+`,
+  elegir: `
+Elegir un plan no es gastar,
+es ordenar.
+`
+},
+
+operacion: {
+  humano: `
+El sistema siempre tiene respaldo humano.
+La tecnología asiste, no reemplaza.
+`,
+  asistente: `
+MaxiQueen Bot guía, ordena y acompaña.
+Cuando hace falta, escala a humano.
+`,
+  criterio: `
+Las decisiones importantes no se automatizan.
+`
+},
+
+guia: {
+  queHago: `
+Lo primero es ordenar.
+Luego construir.
+Después escalar.
+`,
+  comoEmpiezo: `
+Empiezas cuando decides dejar el caos.
+`,
+  necesitoExperiencia: `
+No necesitas experiencia técnica,
+necesitas criterio y decisión.
+`
+},
+
+publico: {
+  emprendedores: `
+Para quienes quieren construir algo serio.
+`,
+  creadores: `
+Para quienes quieren convertir contenido en sistema.
+`,
+  personas: `
+Para quien necesita orden y dirección.
+`
+},
+
+resultados: {
+  logros: `
+El logro no es tener una web.
+Es tener claridad y dirección.
+`,
+  avances: `
+Cada avance reduce ruido
+y aumenta foco.
+`,
+  impacto: `
+El impacto se mide en decisiones bien tomadas.
+`
+},
+
+ proceso: {
+  proceso: `
+Todo empieza con diagnóstico.
+Sin entender el punto real, no se avanza.
+`,
+  desarrollo: `
+Se construye por capas, no por impulso.
+`,
+  evolucion: `
+El sistema se ajusta con el tiempo.
+No se abandona a mitad del camino.
+`
+},
+
+ comunidad: {
+  comunidad: `
+La Comunidad MaxiQueen es un espacio seguro para pensar,
+construir y sostener procesos reales.
+
+Aquí no hay ruido ni promesas vacías.
+Hay acompañamiento humano, sesiones en vivo,
+seguimiento estratégico y criterio.
+
+No entras para consumir contenido.
+Entras para ordenar ideas, tomar decisiones
+y avanzar con estructura.
+
+La comunidad existe para que no camines solo
+mientras construyes tu sistema, tu negocio
+o tu siguiente nivel.
+`
+}
 };
 
-// Guardar código en historial
-document.getElementById("save-btn").onclick = ()=>{
-  const history = JSON.parse(localStorage.getItem("maxiqueenHistory")||"[]");
-  tabs.forEach(tab=> history.push({name:tab.name, code:tab.code, date:new Date().toISOString()}));
-  localStorage.setItem("maxiqueenHistory", JSON.stringify(history));
-  alert("💾 Código guardado en historial local.");
-};
+const intents = [
+  {
+    keywords: ["precio", "costos", "cuánto vale", "cuanto cuesta", "planes", "pago"],
+    response: () => triggers.ventas.planes
+  },
+  {
+    keywords: ["empezar", "inicio", "onboarding", "arrancar", "comenzar"],
+    response: () => triggers.onboarding.onboarding
+  },
+  {
+    keywords: ["ayuda", "soporte", "contacto", "problema", "hablar con alguien"],
+    response: () => triggers.soporte.contacto
+  },
+  {
+    keywords: ["comunidad", "grupo", "acompañamiento", "personas"],
+    response: () => triggers.comunidad.comunidad
+  },
+  {
+    keywords: ["hola", "buenas", "hey", "saludos"],
+    response: () => `
+Hola 👑  
+Estoy aquí para ayudarte con calma.  
+¿En qué punto estás ahora mismo?
+`
+  },
+  {
+    keywords: ["no sé", "confundido", "perdido", "no entiendo"],
+    response: () => `
+Está bien no tener claridad aún.  
+Este sistema existe Maxiqueen OS  justo para eso: ordenar, crear y vender.
 
-// Cargar historial
-document.getElementById("history-btn").onclick = ()=>{
-  const history = JSON.parse(localStorage.getItem("maxiqueenHistory")||"[]");
-  if(history.length===0){ alert("⚠️ No hay historial."); return; }
-  let list = history.map((h,i)=>`${i+1}. ${h.name} (${h.date})`).join("\n");
-  let idx = prompt("Historial:\n"+list+"\n\nIngresa número para cargar:");
-  if(idx && history[idx-1]){
-    createTab(history[idx-1].name, history[idx-1].code);
+¿Quieres:
+1️⃣ Ordenar ideas  
+2️⃣ Crear algo vendible  
+3️⃣ Hablar con alguien humano  
+`
   }
+];
+
+function getResponse(message) {
+  const text = message.toLowerCase();
+
+  for (const intent of intents) {
+    if (intent.keywords.some(k => text.includes(k))) {
+      return intent.response();
+    }
+  }
+
+  // Fallback humano (no silencio)
+  return `
+Te leo 👀  
+No quiero responderte con algo genérico.
+
+¿Puedes contarme un poco más qué necesitas ahora mismo?
+`;
+}
+
+const keywordMap = {
+  // Ventas reales
+  precio: triggers.ventas.planes,
+  planes: triggers.ventas.planes,
+  costo: triggers.ventas.costos,
+  cuanto: triggers.ventas.costos,
+
+  // Contacto
+  contacto: triggers.soporte.contacto,
+  whatsapp: triggers.soporte.contacto,
+
+  // Onboarding
+  empezar: triggers.onboarding.empezar,
+  ayuda: triggers.onboarding.empezar,
+  onboarding: triggers.onboarding.onboarding,
+
+  // Comunidad
+  comunidad: triggers.comunidad.comunidad
 };
 
-// Live preview automático
-editor.addEventListener("input", ()=>{
-  tabs[currentTab].code = editor.value;
-  updatePreview();
+const phrases = [
+  // Filosofía base
+  'MaxiQueen OS: Esto funciona mejor paso a paso y con tu guia humana o Maxibot.',
+  'MaxiQueen OS: Orden antes de automatizar e integrar.',
+  'MaxiQueen OS: No improvisamos, operamos desarrollamos.',
+  'MaxiQueen OS: Primero claridad, luego velocidad. y resultado',
+  'MaxiQueen OS: El sistema piensa contigo, no por ti.',
+
+  // Identidad MaxiQueen
+  'MaxiQueen OS: No somos una plataforma. Somos un sistema operativo.',
+  'MaxiQueen OS: Aquí la tecnología no manda. Sirve y se automatiza.',
+  'MaxiQueen OS: No alojamos archivos. Alojamos decisiones e infraestructura web.',
+  'MaxiQueen OS: Tu proyecto necesita estructura, no más herramientas.',
+  'MaxiQueen OS: El caos no se elimina, se ordena y se estabiliza.',
+
+  // Onboarding y proceso
+  'MaxiQueen OS: Vamos a organizar esto primero. deacuerdo',
+  'MaxiQueen OS: Antes de ejecutar, entendemos. el sistema',
+  'MaxiQueen OS: Nada se activa sin pasar por el núcleo.',
+  'MaxiQueen OS: El onboarding no acelera, estabiliza, organiza y escala.',
+  'MaxiQueen OS: No necesitas saberlo todo para empezar a generar ingresos automatizacion y monetizacion web.',
+
+  // Acompañamiento humano
+  'MaxiQueen OS: Aquí no estás solo, Maxiqueen OS y sus servidores te acompañan dia a dia.',
+  'MaxiQueen OS: El acompañamiento es real. el sistema funciona en red o en asistencia humana',
+  'MaxiQueen OS: Cuando el sistema no alcanza, escala al humano.',
+  'MaxiQueen OS: Las decisiones importantes no se automatizan.',
+  'MaxiQueen OS: El control siempre vuelve a ti y depende de ti para ti.',
+
+  // Ventas y negocio
+  'MaxiQueen OS: Vender sin sistema es agotamiento. contruye',
+  'MaxiQueen OS: La claridad también convierte. Avanza.',
+  'MaxiQueen OS: Un negocio sin orden no escala. Exito.',
+  'MaxiQueen OS: Primero estructura, luego crecimiento.',
+  'MaxiQueen OS: No prometemos resultados mágicos.',
+
+  // Creatividad y contenido
+  'MaxiQueen OS: Tu historia también es infraestructura.',
+  'MaxiQueen OS: La creatividad sin orden se pierde.',
+  'MaxiQueen OS: El contenido también necesita sistema.',
+  'MaxiQueen OS: Crear es más fácil cuando hay estructura.',
+  'MaxiQueen OS: La identidad no se improvisa.',
+
+  // Cierre filosófico
+  'MaxiQueen OS: bienvenido al backend mental de MaxiQueen OS 👑.',
+  'MaxiQueen OS: El sistema está vivo Maxiqueen Os produce y progresa.',
+  'MaxiQueen OS: Pensar también es avanzar.',
+  'MaxiQueen OS: No corremos. Operamos. convertimos y avanzamos',
+  'MaxiQueen OS: Aquí se construye con conciencia.'
+];
+
+let userState = {
+  stage: 'explorando', // explorando | ventas | onboarding | soporte
+  interestScore: 0
+};
+
+function sendMessage() {
+  if (input.value.trim() === '') return;
+
+  const userText = input.value;
+  const userMsg = document.createElement('div');
+  userMsg.textContent = 'Tú: ' + userText;
+  chatLog.appendChild(userMsg);
+  input.value = '';
+
+  let response = phrases[Math.floor(Math.random() * phrases.length)];
+  const text = userText.toLowerCase();
+
+for (const keyword in keywordMap) {
+  if (text.includes(keyword)) {
+
+    // Actualizar estado
+    if (['precio','planes','costo','cuanto'].includes(keyword)) {
+      userState.stage = 'ventas';
+      userState.interestScore += 2;
+    }
+
+    if (['empezar','onboarding','ayuda'].includes(keyword)) {
+      userState.stage = 'onboarding';
+      userState.interestScore += 1;
+    }
+
+    if (['contacto','whatsapp'].includes(keyword)) {
+      userState.stage = 'soporte';
+      userState.interestScore += 3;
+    }
+
+    response = keywordMap[keyword];
+    break;
+  }
+}
+
+  const botMsg = document.createElement('div');
+  botMsg.innerHTML = response.replace(/\n/g, '<br>');
+
+  chatLog.appendChild(botMsg);
+  console.log('Estado:', userState);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+input.addEventListener('keypress', e => {
+  if (e.key === 'Enter') sendMessage();
 });
 
-// Crear pestaña inicial
-const initialCode = `<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Juego 1</title>
-<style>
-body { margin:0; background:#0d0d0d; color:white; font-family:Arial,sans-serif; text-align:center; }
-canvas { background:#1a1a1a; display:block; margin:auto; cursor:move; resize:both; overflow:auto; }
-</style>
-</head>
-<body>
-<canvas id="gameCanvas"></canvas>
+// ================= THEME TOGGLE =================
+function toggleTheme(){
+  const body = document.body;
+  const current = body.getAttribute('data-theme');
+  body.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+}
+</script>
+
+
+
 <script>
-// Canvas draggable y resizable
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth/2;
-canvas.height = window.innerHeight/2;
-let offsetX=0, offsetY=0, dragging=false;
-canvas.addEventListener("mousedown", e=>{ dragging=true; offsetX=e.offsetX; offsetY=e.offsetY; });
-canvas.addEventListener("mouseup", e=>dragging=false);
-canvas.addEventListener("mousemove", e=>{ if(dragging){ canvas.style.position="absolute"; canvas.style.left=(e.pageX-offsetX)+"px"; canvas.style.top=(e.pageY-offsetY)+"px"; } });
+(function(){
+  const saved=localStorage.getItem('mq-theme')||'dark';
+  document.documentElement.setAttribute('data-theme',saved);
+  document.body.setAttribute('data-theme',saved);
+})();
+function toggleTheme(){
+  const html = document.documentElement;
+  const btn = document.querySelector('.toggle-theme');
+  const current = html.getAttribute('data-theme') || 'dark';
 
-// Juego simplificado
-let towers=[{x:100,y:100,units:10,owner:"queen"},{x:300,y:100,units:8,owner:"enemy"}],movingUnits=[],pulse=0;
-function sendUnits(f,t){ movingUnits.push({x:f.x,y:f.y,target:t,owner:f.owner,amount:Math.floor(f.units/2),progress:0,startX:f.x,startY:f.y}); }
-function updateUnits(){ movingUnits.forEach((u,i)=>{ u.progress+=0.02; u.x=u.startX+(u.target.x-u.startX)*u.progress; u.y=u.startY+(u.target.y-u.startY)*u.progress; if(u.progress>=1){ u.target.units-=u.amount; movingUnits.splice(i,1); } }); }
-function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); pulse+=0.05; towers.forEach(t=>{ ctx.beginPath(); ctx.arc(t.x,t.y,30,0,Math.PI*2); ctx.fillStyle=t.owner==="queen"?"#0f0":"#f44"; ctx.fill(); ctx.fillStyle="white"; ctx.textAlign="center"; ctx.fillText(t.units,t.x,t.y+5); }); movingUnits.forEach(u=>{ ctx.beginPath(); ctx.arc(u.x,u.y,8,0,Math.PI*2); ctx.fillStyle=u.owner==="queen"?"#0f0":"#f44"; ctx.fill(); }); updateUnits(); requestAnimationFrame(draw); }
-draw();
-canvas.addEventListener("click",e=>{ const mx=e.clientX,my=e.clientY,clicked=towers.find(t=>Math.hypot(t.x-mx,t.y-my)<30); if(clicked && clicked.owner==="queen") sendUnits(clicked,towers.find(t=>t.owner!=="queen")); });
+  let next, label;
+  if (current === 'dark'){ next='light'; label='☀️ Light'; }
+  else if (current === 'light'){ next='gold'; label='👑 Gold'; }
+  else { next='dark'; label='🌑 Dark'; }
+
+  html.setAttribute('data-theme', next);
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('mq-theme', next);
+  btn.textContent = label;
+}
 </script>
-</body>
-</html>`;
-
-createTab("Juego 1", initialCode);
-</script>
-
-</body>
-</html>
+</body></html>
