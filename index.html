@@ -27,9 +27,9 @@
   --accent:#f59e0b;
 }
 
-body{
-  background:var(--bg-main);
-  color:var(--text-main);
+body {
+  background-color: #f7f4ee;
+  color: #0f172a;
 }
 
 .fade-in{opacity:0;transform:translateY(20px);animation:fadeIn 1s forwards;}
@@ -187,10 +187,8 @@ html,body{background:var(--bg-main)!important;color:var(--text-main)!important;}
 </style>
 </head>
 
-<body class="font-[Poppins] overflow-x-hidden" data-theme="dark">
-
 <!-- TOGGLE DARK/LIGHT -->
-<button class="toggle-theme" onclick="toggleTheme()">🌗 Tema</button>
+<button class="toggle-theme" onclick="toggleTheme()">🌗 MaxiTema</button>
 
 <!-- WHATSAPP FLOAT -->
 <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema." target="_blank" class="whatsapp-float" aria-label="WhatsApp">
@@ -473,56 +471,292 @@ const input = document.getElementById('userInput');
 
 const triggers = {
   ventas: {
-    planes: `
+  planes: `
 Trabajamos con planes claros y sin letra pequeña.
 
 👑 Starter – $49/mes
-Orden inicial y estructura base.
+Orden inicial, diagnóstico y estructura base.
+Ideal si hoy hay ideas pero no sistema.
 
 👑 Pro – $99/mes
-Sistema activo para crecer y vender.
+Sistema activo para crecer, vender
+y automatizar procesos clave.
 
 👑 Elite – $199/mes
-Acompañamiento prioritario y sistema completo.
+Acompañamiento prioritario,
+infraestructura completa
+y control total del sistema.
 `,
-    costos: `
-Los costos reflejan acompañamiento real,
-no acceso a una herramienta vacía.
+
+  costos: `
+Los costos reflejan acompañamiento real.
+No pagas por una herramienta,
+pagas por estructura, criterio y ejecución.
 `,
-    whatsapp: `
+
+  valor: `
+MaxiQueen OS no compite por precio.
+Compite por claridad, orden
+y resultados sostenibles.
+`,
+
+  diferencia: `
+No vendemos páginas ni plantillas.
+Vendemos un sistema que piensa contigo
+y evoluciona con tu proyecto.
+`,
+
+  decision: `
+Elegir un plan no es gastar,
+es dejar de perder tiempo,
+energía y dinero por desorden.
+`,
+
+  objecion_precio: `
+Si el precio genera duda,
+normalmente el problema no es el costo,
+sino el caos que ya estás pagando.
+`,
+
+  escalera: `
+Todos los planes están conectados.
+Muchos empiezan en Starter,
+escalan a Pro
+y consolidan en Elite.
+`,
+
+  whatsapp: `
 El contacto principal es vía WhatsApp.
-Si el sistema detecta que necesitas humano,
-la conversación se escala.
+Si el sistema detecta que necesitas un humano,
+la conversación se escala automáticamente.
 `
-  },
+},
 
   onboarding: {
-    onboarding: `
+  onboarding: `
 El onboarding es el inicio real del sistema.
-Aquí se baja el ruido y se ordena el camino.
+Aquí se baja el ruido, se aclaran prioridades
+y se convierte la confusión en estructura.
 `,
-    empezar: `
-Para empezar solo necesitas decisión,
-no experiencia técnica.
+  empezar: `
+Para empezar solo necesitas decisión.
+El sistema se adapta a tu nivel,
+no al revés.
 `
-  },
+},
+
+identidad: {
+  queEs: `
+MaxiQueen OS es un sistema operativo digital humano.
+No es una app, no es una web y no es una asesoría aislada.
+
+Es una estructura viva que ordena ideas,
+construye sistemas y acompaña decisiones reales.
+`,
+  filosofia: `
+Orden antes de automatizar.
+Sistema antes que herramientas.
+Conciencia antes que velocidad.
+
+Aquí no se corre sin mapa.
+`,
+  diferencia: `
+No trabajamos con soluciones sueltas.
+Construimos sistemas que piensan contigo.
+`
+},
+
+modulos: {
+  contenido: `
+El módulo de contenido transforma ideas en mensajes claros.
+No es publicar por publicar, es comunicar con intención.
+`,
+  web: `
+El módulo web convierte estructura en presencia digital.
+Landings, sistemas, flujos y orden técnico real.
+`,
+  automatizacion: `
+La automatización no reemplaza criterio.
+Aquí se usa para liberar tiempo y reducir errores.
+`,
+  comercial: `
+El módulo comercial ordena ofertas, precios y decisiones.
+Vender deja de ser confuso.
+`
+},
+
+servicios: {
+  asesorias: `
+Las asesorías no son charlas.
+Son espacios de decisión y dirección estratégica.
+`,
+  sistemas: `
+No entregamos archivos.
+Entregamos sistemas funcionales.
+`,
+  acompanamiento: `
+El acompañamiento existe para sostener procesos,
+no para crear dependencia.
+`
+},
+
+creativo: {
+  dibujos: `
+Los dibujos y visuales sirven para pensar.
+A veces una imagen ordena más que mil palabras.
+`,
+  proyectos: `
+Cada proyecto se trata como un sistema único.
+No usamos plantillas mentales.
+`,
+  narrativa: `
+Toda marca necesita una historia clara,
+no un logo bonito solamente.
+`
+},
+
+onboarding: {
+  onboarding: `
+El onboarding define cómo vas a pensar el sistema.
+No se trata de herramientas,
+sino de tomar control del proceso.
+`,
+  empezar: `
+Empiezas con lo que ya tienes.
+El sistema se encarga del resto,
+paso a paso.
+`
+},
+
+onboarding: {
+  onboarding: `
+El onboarding es una fase de diagnóstico.
+Se identifican recursos, bloqueos
+y el siguiente movimiento lógico.
+`,
+  empezar: `
+No necesitas experiencia.
+Necesitas foco y compromiso
+con el proceso.
+`
+},
 
   soporte: {
-    contacto: `
-Puedes escribirnos por:
-📲 WhatsApp
-📸 Instagram
-📘 Facebook
-📺 YouTube
-`
-  },
+  contacto: `
+Puedes contactarnos por los canales oficiales de MaxiQueen OS:
 
-  comunidad: {
-    comunidad: `
-La Comunidad MaxiQueen es un espacio seguro
-para pensar, construir y sostener procesos.
+📲 WhatsApp – atención directa y acompañamiento
+📸 Instagram – contenido, avisos y contacto rápido
+📘 Facebook – comunidad y actualizaciones
+📺 YouTube – guías, sistemas y explicación en profundidad
+
+Usa el canal que te resulte más cómodo.
+Siempre respondemos con criterio, no con bots.
 `
-  }
+},
+
+venta: {
+  enfoque: `
+No empujamos ventas.
+Ayudamos a tomar decisiones correctas.
+`,
+  precio: `
+El precio refleja tiempo humano,
+criterio y estructura real.
+`,
+  elegir: `
+Elegir un plan no es gastar,
+es ordenar.
+`
+},
+
+operacion: {
+  humano: `
+El sistema siempre tiene respaldo humano.
+La tecnología asiste, no reemplaza.
+`,
+  asistente: `
+MaxiQueen Bot guía, ordena y acompaña.
+Cuando hace falta, escala a humano.
+`,
+  criterio: `
+Las decisiones importantes no se automatizan.
+`
+},
+
+guia: {
+  queHago: `
+Lo primero es ordenar.
+Luego construir.
+Después escalar.
+`,
+  comoEmpiezo: `
+Empiezas cuando decides dejar el caos.
+`,
+  necesitoExperiencia: `
+No necesitas experiencia técnica,
+necesitas criterio y decisión.
+`
+},
+
+publico: {
+  emprendedores: `
+Para quienes quieren construir algo serio.
+`,
+  creadores: `
+Para quienes quieren convertir contenido en sistema.
+`,
+  personas: `
+Para quien necesita orden y dirección.
+`
+},
+
+resultados: {
+  logros: `
+El logro no es tener una web.
+Es tener claridad y dirección.
+`,
+  avances: `
+Cada avance reduce ruido
+y aumenta foco.
+`,
+  impacto: `
+El impacto se mide en decisiones bien tomadas.
+`
+},
+
+ proceso: {
+  proceso: `
+Todo empieza con diagnóstico.
+Sin entender el punto real, no se avanza.
+`,
+  desarrollo: `
+Se construye por capas, no por impulso.
+`,
+  evolucion: `
+El sistema se ajusta con el tiempo.
+No se abandona a mitad del camino.
+`
+},
+
+ comunidad: {
+  comunidad: `
+La Comunidad MaxiQueen es un espacio seguro para pensar,
+construir y sostener procesos reales.
+
+Aquí no hay ruido ni promesas vacías.
+Hay acompañamiento humano, sesiones en vivo,
+seguimiento estratégico y criterio.
+
+No entras para consumir contenido.
+Entras para ordenar ideas, tomar decisiones
+y avanzar con estructura.
+
+La comunidad existe para que no camines solo
+mientras construyes tu sistema, tu negocio
+o tu siguiente nivel.
+`
+}
 };
 
 const intents = [
@@ -554,7 +788,7 @@ Estoy aquí para ayudarte con calma.
     keywords: ["no sé", "confundido", "perdido", "no entiendo"],
     response: () => `
 Está bien no tener claridad aún.  
-Este sistema existe Maxiqueen OS  justo para eso.
+Este sistema existe Maxiqueen OS  justo para eso: ordenar, crear y vender.
 
 ¿Quieres:
 1️⃣ Ordenar ideas  
@@ -604,37 +838,37 @@ const keywordMap = {
 
 const phrases = [
   // Filosofía base
-  'MaxiQueen OS: Esto funciona mejor paso a paso.',
-  'MaxiQueen OS: Orden antes de automatizar.',
-  'MaxiQueen OS: No improvisamos, operamos.',
-  'MaxiQueen OS: Primero claridad, luego velocidad.',
+  'MaxiQueen OS: Esto funciona mejor paso a paso y con tu guia humana o Maxibot.',
+  'MaxiQueen OS: Orden antes de automatizar e integrar.',
+  'MaxiQueen OS: No improvisamos, operamos desarrollamos.',
+  'MaxiQueen OS: Primero claridad, luego velocidad. y resultado',
   'MaxiQueen OS: El sistema piensa contigo, no por ti.',
 
   // Identidad MaxiQueen
-  'MaxiQueen OS: No somos una plataforma. Somos un sistema.',
-  'MaxiQueen OS: Aquí la tecnología no manda. Sirve.',
-  'MaxiQueen OS: No alojamos archivos. Alojamos decisiones.',
+  'MaxiQueen OS: No somos una plataforma. Somos un sistema operativo.',
+  'MaxiQueen OS: Aquí la tecnología no manda. Sirve y se automatiza.',
+  'MaxiQueen OS: No alojamos archivos. Alojamos decisiones e infraestructura web.',
   'MaxiQueen OS: Tu proyecto necesita estructura, no más herramientas.',
-  'MaxiQueen OS: El caos no se elimina, se ordena.',
+  'MaxiQueen OS: El caos no se elimina, se ordena y se estabiliza.',
 
   // Onboarding y proceso
-  'MaxiQueen OS: Vamos a organizar esto primero.',
-  'MaxiQueen OS: Antes de ejecutar, entendemos.',
+  'MaxiQueen OS: Vamos a organizar esto primero. deacuerdo',
+  'MaxiQueen OS: Antes de ejecutar, entendemos. el sistema',
   'MaxiQueen OS: Nada se activa sin pasar por el núcleo.',
-  'MaxiQueen OS: El onboarding no acelera, estabiliza.',
-  'MaxiQueen OS: No necesitas saberlo todo para empezar.',
+  'MaxiQueen OS: El onboarding no acelera, estabiliza, organiza y escala.',
+  'MaxiQueen OS: No necesitas saberlo todo para empezar a generar ingresos automatizacion y monetizacion web.',
 
   // Acompañamiento humano
-  'MaxiQueen OS: Aquí no estás solo.',
-  'MaxiQueen OS: El acompañamiento es real.',
+  'MaxiQueen OS: Aquí no estás solo, Maxiqueen OS y sus servidores te acompañan dia a dia.',
+  'MaxiQueen OS: El acompañamiento es real. el sistema funciona en red o en asistencia humana',
   'MaxiQueen OS: Cuando el sistema no alcanza, escala al humano.',
   'MaxiQueen OS: Las decisiones importantes no se automatizan.',
-  'MaxiQueen OS: El control siempre vuelve a ti.',
+  'MaxiQueen OS: El control siempre vuelve a ti y depende de ti para ti.',
 
   // Ventas y negocio
-  'MaxiQueen OS: Vender sin sistema es agotamiento.',
-  'MaxiQueen OS: La claridad también convierte.',
-  'MaxiQueen OS: Un negocio sin orden no escala.',
+  'MaxiQueen OS: Vender sin sistema es agotamiento. contruye',
+  'MaxiQueen OS: La claridad también convierte. Avanza.',
+  'MaxiQueen OS: Un negocio sin orden no escala. Exito.',
   'MaxiQueen OS: Primero estructura, luego crecimiento.',
   'MaxiQueen OS: No prometemos resultados mágicos.',
 
@@ -647,9 +881,9 @@ const phrases = [
 
   // Cierre filosófico
   'MaxiQueen OS: bienvenido al backend mental de MaxiQueen OS 👑.',
-  'MaxiQueen OS: El sistema está vivo.',
+  'MaxiQueen OS: El sistema está vivo Maxiqueen Os produce y progresa.',
   'MaxiQueen OS: Pensar también es avanzar.',
-  'MaxiQueen OS: No corremos. Operamos.',
+  'MaxiQueen OS: No corremos. Operamos. convertimos y avanzamos',
   'MaxiQueen OS: Aquí se construye con conciencia.'
 ];
 
