@@ -195,17 +195,19 @@ html,body{background:var(--bg-main)!important;color:var(--text-main)!important;}
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" width="26"><path d="M380.9 97.1C339-3.8 211.2-34.6 119.8 19.5 34.4 71.2-8.7 180.1 20.4 272.5L0 512l245.1-64.2c95.5 27.8 196.5-16.7 247.1-104.4 43.5-75.7 32.3-173.7-25.3-246.3z"></path></svg>
 </a>
 
-<!-- ================= HERO ULTRA VENTA ================= -->
-<section class="min-h-screen flex items-center justify-center text-center px-6 relative">
-  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,204,21,.18),transparent_60%)]"></div>
+<!-- ================= HERO ULTRA-PRO ================= -->
+<section class="min-h-screen flex items-center justify-center text-center px-6 relative bg-[radial-gradient(circle_at_top,rgba(250,204,21,.18),transparent_60%)] overflow-hidden">
 
-  <div class="relative z-10 fade-in max-w-3xl">
+  <!-- ANIMACIÓN SUTIL DE FONDO -->
+  <div class="absolute inset-0 animate-pulse-slow opacity-20 bg-[url('assets/MAXIQUEEN_LOGO.png')] bg-no-repeat bg-center bg-contain"></div>
 
-    <img src="assets/MAXIQUEEN_LOGO.png">
+  <div class="relative z-10 max-w-3xl">
 
+    <!-- LOGO CON ANIMACIÓN -->
+    <img src="assets/MAXIQUEEN_LOGO.png" alt="MaxiQueen OS Logo" class="w-40 md:w-48 mx-auto animate-bounce-slow">
 
-    <h1 class="mt-8 text-4xl md:text-6xl font-extrabold tracking-tight">
-       Maxiqueen OS <span style="color:var(--accent)">Convierte tu caos digital en un</span>
+    <h1 class="mt-8 text-4xl md:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-400">
+      Maxiqueen OS <span class="text-zinc-200 block mt-2 text-lg md:text-2xl font-semibold">Convierte tu caos digital en un sistema inteligente</span>
     </h1>
 
     <p class="mt-6 text-zinc-300 text-lg md:text-xl leading-relaxed">
@@ -214,10 +216,10 @@ html,body{background:var(--bg-main)!important;color:var(--text-main)!important;}
     </p>
 
     <div class="mt-10 flex gap-4 flex-wrap justify-center">
-      <a href="file:///C:/Users/ASUS/Downloads/landing%203.16%20pm%2023.01.2026.html#planes" class="px-10 py-4 rounded-2xl bg-[color:var(--accent)] hover:brightness-110 text-black font-bold shadow-xl transition">
+      <a href="#planes" class="px-10 py-4 rounded-2xl bg-gradient-to-r from-amber-400 to-rose-400 hover:scale-105 hover:brightness-110 transition-transform text-black font-bold shadow-lg">
         Activar mi Sistema
       </a>
-      <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Quiero%20hablar%20con%20un%20humano." target="_blank" class="px-10 py-4 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-semibold transition">
+      <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Quiero%20hablar%20con%20un%20humano." target="_blank" class="px-10 py-4 rounded-2xl border border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-black transition-all font-semibold">
         Hablar con un humano
       </a>
     </div>
@@ -225,6 +227,35 @@ html,body{background:var(--bg-main)!important;color:var(--text-main)!important;}
     <p class="mt-10 text-sm text-zinc-400">No agencia · No plantillas · No humo · Solo sistemas reales</p>
   </div>
 </section>
+
+<!-- ================= FOOTER FLOATEANTE ================= -->
+<footer class="py-6 mt-12 mx-6 text-center bg-black/50 backdrop-blur-md text-zinc-300 rounded-full shadow-inner">
+  <p class="mb-2 text-lg md:text-base">Sistema desarrollado por <strong>César Julio Bedoya Barragán</strong></p>
+  <p>
+    <a href="https://orcid.org/0009-0004-4946-1374" target="_blank" class="text-amber-400 hover:underline hover:text-rose-400 transition-colors">
+      ORCID: 0009-0004-4946-1374
+    </a>
+  </p>
+</footer>
+
+<!-- ================= ANIMACIONES CSS ================= -->
+<style>
+  @keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+  .animate-bounce-slow {
+    animation: bounce-slow 3s infinite;
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.35; }
+  }
+  .animate-pulse-slow {
+    animation: pulse-slow 6s infinite;
+  }
+</style>
 
 <!-- ================= PROBLEMA / SOLUCIÓN ================= -->
 <section class="py-24 px-6 fade-in bg-black/40">
@@ -401,14 +432,6 @@ html,body{background:var(--bg-main)!important;color:var(--text-main)!important;}
     </ul>
   </div>
 </section>
-
-<!-- ================= FOOTER ================= -->
-<div style="margin-top:15px;font-size:0.9rem;">
-  Sistema desarrollado por <strong>César Julio Bedoya Barragán</strong><br>
-  <a href="https://orcid.org/0009-0004-4946-1374" target="_blank" style="color:#f5c77a;text-decoration:none;">
-    ORCID: 0009-0004-4946-1374
-  </a>
-</div>
 
 <!-- ================= CHAT ================= -->
 <div class="chat-box" id="chatBox">
@@ -982,8 +1005,7 @@ function toggleTheme(){
  <header class="text-center py-6 bg-[var(--bg-soft)] shadow-lg">
   <!-- Logo con halo -->
   <div class="queen-logo mx-auto">
-      <img src="assets/MAXIQUEEN_LOGO.png" alt="Logo MaxiQueen OS">
-  </div>
+       </div>
   
   <h1 class="text-3xl font-extrabold mt-4 text-[var(--text-main)]">Bienvenido a MaxiQueen OS</h1>
   <p class="text-[var(--text-soft)] mt-2 max-w-xl mx-auto">
