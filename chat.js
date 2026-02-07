@@ -158,34 +158,29 @@ function openWhatsApp() {
 }
 
 // ===== CHAT =====
-function sendMessage() {
-  const text = input.value.trim();
-  if (!text) return;
+function decideNextStep(intent, text) {
+  // Estado cognitivo
+  if (silentMode) return "silencio";
 
-  // Reactivar chat si escriben algo diferente a silencio
-  if(text.toLowerCase() !== "solo mirando") silentMode = false;
+  if (intent === "precio" && !sessionMemory.askedPrice)
+    return "pedir_contexto_precio";
 
-  if (silentMode) return;
+  if (["idea","negocio","contenido"].includes(intent))
+    return "diagnostico_basico";
 
-  state.steps++; saveState();
+  if (intent === "ordenar")
+    return "recomendar_starter";
 
-  const intent = detectIntent(text);
-  updateMemory(intent);
+  if (intent === "escalar")
+    return "recomendar_pro";
 
-  const response = getReply(intent);
+  if (["starter","pro","elite"].includes(intent))
+    return "confirmar_plan";
 
-  log.innerHTML += `<div><strong>Tú:</strong> ${text}</div>`;
-  setTimeout(() => {
-    log.innerHTML += `<div><strong>MaxiQueen OS:</strong> ${response}</div>`;
-    log.scrollTop = log.scrollHeight;
-  }, humanDelay());
+  if (intent === "whatsapp" || intent === "confirmar")
+    return state.stage === "listo" ? "cta_whatsapp" : "pedir_claridad";
 
-  // Guardar métricas
-  const metrics = JSON.parse(localStorage.getItem("mq_metrics")||"[]");
-  metrics.push({ text, intent, lead: classifyLead(), stage: state.stage, time: new Date().toISOString() });
-  localStorage.setItem("mq_metrics", JSON.stringify(metrics));
-
-  input.value = "";
+  return "continuar_conversacion";
 }
 
 // ENTER
