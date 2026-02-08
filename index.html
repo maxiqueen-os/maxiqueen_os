@@ -341,7 +341,6 @@ html,body{
   </div>
 </section>
 
-
 <!-- ================= FOOTER FLOATEANTE ================= -->
 <footer class="py-6 mt-12 mx-6 text-center bg-black/50 backdrop-blur-md text-zinc-300 rounded-full shadow-inner fade-in">
   <p class="mb-2 text-lg md:text-base">
@@ -355,8 +354,13 @@ html,body{
       ORCID: 0009-0004-4946-1374
     </a>
   </p>
-</footer>
+<div class="mt-4 flex justify-center gap-4 text-sm text-zinc-400">
+  <button onclick="openLegal('privacy')" class="hover:text-amber-400 transition">Privacidad</button>
+  <button onclick="openLegal('cookies')" class="hover:text-amber-400 transition">Cookies</button>
+  <button onclick="openLegal('terms')" class="hover:text-amber-400 transition">Términos</button>
+</div>
 
+</footer>
 <!-- ================= JS 3D HOVER ================= -->
 <script>
 const floatElements = document.querySelectorAll('.float-3d');
@@ -1703,3 +1707,4 @@ input.addEventListener("keydown", e => {
 
 </body>
 </html>
+
