@@ -717,7 +717,7 @@ window.addEventListener('scroll', () => {
   <div class="chat-log" id="chatLog" aria-live="polite"></div>
   <div class="chat-input">
     <input type="text" id="userInput" placeholder="Soy MaxiBot. Escribe tu pregunta..." aria-label="Mensaje">
-    
+    <button onclick="sendMessage()">Enviar</button>
   </div>
 </div>
 
@@ -741,7 +741,7 @@ function toggleTheme(){
 /* =======================
    LIGHTBOX
 ======================= */
-   
+const lightbox = document.getElementById('lightbox');   
 const lightboxContent = document.getElementById('lightboxContent');
 
 function openLightbox(src){
@@ -1742,6 +1742,7 @@ See the LICENSE file for full details.
 
 </body>
 </html>
+
 
 
 
