@@ -275,10 +275,17 @@ html,body{
     <p>Finaliza tu compra usando MercadoPago.</p>
 
     <!-- BOTÓN MERCADOPAGO -->
-    <script src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js">
+    <script
+      src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js"
+      data-preference-id="453634078-e7931b13-abe1-45f2-95db-398ab50f1db0"
+      data-source="button">
+    </script>
+
+  </div>
 
 <!-- ================= TOGGLE DARK/LIGHT ================= -->
 <button class="toggle-theme" onclick="toggleTheme()" aria-label="Cambiar tema">🌗 MaxiTema</button>
+
 
 <!-- ================= WHATSAPP FLOAT ================= -->
 <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema."
@@ -300,6 +307,54 @@ html,body{
     Demo / contenido en desarrollo – MaxiQueen OS
   </div>
 </section>
+
+<script>
+const legalTexts = {
+  privacy: {
+    title: "Política de Privacidad",
+    content: `
+      <p>Respetamos tu privacidad. No recopilamos datos personales sin tu consentimiento explícito.</p>
+      <p>Este sistema opera localmente y no comparte información con terceros.</p>
+    `
+  },
+  cookies: {
+    title: "Política de Cookies",
+    content: `
+      <p>Este sitio solo usa cookies técnicas necesarias para su funcionamiento.</p>
+      <p>No usamos cookies de seguimiento ni publicidad.</p>
+    `
+  },
+  terms: {
+    title: "Términos y Condiciones",
+    content: `
+      <p>Este sistema se ofrece "tal cual", sin garantías explícitas o implícitas.</p>
+      <p>El uso implica aceptación de estos términos.</p>
+    `
+  }
+};
+
+const modal = document.getElementById("legalModal");
+const title = document.getElementById("legalTitle");
+const content = document.getElementById("legalContent");
+const closeBtn = document.getElementById("closeLegal");
+
+document.querySelectorAll("[data-legal]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const type = btn.dataset.legal;
+    title.textContent = legalTexts[type].title;
+    content.innerHTML = legalTexts[type].content;
+    modal.classList.remove("hidden");
+  });
+});
+
+closeBtn.addEventListener("click", () => {
+  modal.classList.add("hidden");
+});
+
+modal.addEventListener("click", e => {
+  if (e.target === modal) modal.classList.add("hidden");
+});
+</script>
 
 <!-- ================= HERO ULTRA-PRO ================= -->
 <section class="min-h-screen flex items-center justify-center text-center px-6 relative bg-[radial-gradient(circle_at_top,rgba(250,204,21,.18),transparent_60%)] overflow-hidden">
@@ -365,11 +420,12 @@ html,body{
   </p>
 
   <div class="mt-4 flex justify-center gap-4 text-sm text-zinc-400">
-  <a href="privacidad.html" class="hover:text-amber-400 transition">Privacidad</a>
-  <a href="cookies.html" class="hover:text-amber-400 transition">Cookies</a>
-  <a href="terminos.html" class="hover:text-amber-400 transition">Términos</a>
-</div>
-          
+    <button data-legal="privacy" class="hover:text-amber-400 transition">Privacidad</button>
+    <button data-legal="cookies" class="hover:text-amber-400 transition">Cookies</button>
+    <button data-legal="terms" class="hover:text-amber-400 transition">Términos</button>
+  </div>
+</footer>
+
 <!-- Modal legal -->
 <div id="legalModal" class="fixed inset-0 hidden bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
   <div class="bg-zinc-900 text-zinc-200 max-w-xl w-full p-6 rounded-xl shadow-xl relative">
@@ -378,7 +434,7 @@ html,body{
     <div id="legalContent" class="text-sm leading-relaxed space-y-3 max-h-[60vh] overflow-y-auto"></div>
   </div>
 </div>
-         
+
 <!-- ================= JS 3D HOVER ================= -->
 <script>
 const floatElements = document.querySelectorAll('.float-3d');
@@ -527,16 +583,7 @@ window.addEventListener('scroll', () => {
 
     <div class="gallery grid grid-cols-1 md:grid-cols-3 gap-6" id="dynamicGallery">
 
-      <!-- Módulo Hosting -->
-      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <img src="assets/img/modulo-hosting.png"
-             alt="Módulo Hosting"
-             class="rounded-3xl w-full h-full object-cover"
-             loading="lazy"
-             onclick="openLightbox(this.src)">
-      </div>
-
-        <!-- Módulo Creativo -->
+      <!-- Módulo Creativo -->
       <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
         <img src="assets/img/modulo-creativo.png"
              alt="Módulo Creativo"
@@ -575,7 +622,6 @@ window.addEventListener('scroll', () => {
     </div>
   </div>
 </section>
-
 
 <!-- ================= LIGHTBOX ================= -->
 const lightbox = document.getElementById('lightbox');
@@ -776,7 +822,7 @@ function toggleTheme(){
 /* =======================
    LIGHTBOX
 ======================= */
-const lightbox = document.getElementById('lightbox');   
+const lightbox = document.getElementById('lightbox');
 const lightboxContent = document.getElementById('lightboxContent');
 
 function openLightbox(src){
@@ -1671,7 +1717,7 @@ Perfecto 👑
 Aquí tienes acceso directo a una persona real:
 
 📲 WhatsApp:
-👉 https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema."
+👉 https://wa.me/573016625921  
 
 (Escríbenos y seguimos contigo sin bots.)
 
@@ -1747,7 +1793,7 @@ function openLegal(type) {
   const url = pages[type];
   if (url) window.open(url, "_blank");
 }
-
+   
 function sendMessage(){
   const message = input.value.trim();
   if(!message) return;
@@ -1776,5 +1822,3 @@ See the LICENSE file for full details.
 
 </body>
 </html>
-
-
