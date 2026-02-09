@@ -280,7 +280,6 @@ html,body{
 <!-- ================= TOGGLE DARK/LIGHT ================= -->
 <button class="toggle-theme" onclick="toggleTheme()" aria-label="Cambiar tema">🌗 MaxiTema</button>
 
-
 <!-- ================= WHATSAPP FLOAT ================= -->
 <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema."
    target="_blank"
@@ -380,8 +379,6 @@ html,body{
   </div>
 </div>
          
-</footer>
-
 <!-- ================= JS 3D HOVER ================= -->
 <script>
 const floatElements = document.querySelectorAll('.float-3d');
@@ -530,7 +527,16 @@ window.addEventListener('scroll', () => {
 
     <div class="gallery grid grid-cols-1 md:grid-cols-3 gap-6" id="dynamicGallery">
 
-      <!-- Módulo Creativo -->
+      <!-- Módulo Hosting -->
+      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+        <img src="assets/img/modulo-hosting.png"
+             alt="Módulo Hosting"
+             class="rounded-3xl w-full h-full object-cover"
+             loading="lazy"
+             onclick="openLightbox(this.src)">
+      </div>
+
+        <!-- Módulo Creativo -->
       <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
         <img src="assets/img/modulo-creativo.png"
              alt="Módulo Creativo"
@@ -572,10 +578,30 @@ window.addEventListener('scroll', () => {
 
 
 <!-- ================= LIGHTBOX ================= -->
-<div id="lightbox" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
-  <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl" aria-label="Cerrar">✕</button>
-  <div id="lightboxContent" class="max-w-4xl w-full px-4"></div>
-</div>
+const lightbox = document.getElementById('lightbox');
+  const lightboxContent = document.getElementById('lightboxContent');
+  const closeLightboxBtn = document.getElementById('closeLightbox');
+
+  document.querySelectorAll('[data-lightbox]').forEach(img => {
+    img.addEventListener('click', () => {
+      lightboxContent.innerHTML = \`<img src="\${img.src}" class="w-full rounded-2xl shadow-xl" alt="">\`;
+      lightbox.classList.remove('hidden');
+      lightbox.classList.add('flex');
+    });
+  });
+
+  if(closeLightboxBtn){
+    closeLightboxBtn.addEventListener('click', () => closeLightbox());
+  }
+  if(lightbox){
+    lightbox.addEventListener('click', e => {
+      if(e.target === lightbox) closeLightbox();
+    });
+  }
+  function closeLightbox(){
+    lightbox.classList.add('hidden');
+    lightbox.classList.remove('flex');
+  }
 
 <!-- ================= PLANES ================= -->
 <section id="planes" class="py-24 px-6 fade-in bg-black/40">
@@ -765,7 +791,6 @@ function closeLightbox(){
 lightbox.addEventListener('click', e => {
   if(e.target === lightbox) closeLightbox();
 });
-
 
 /* =======================
    LICENCIA CHECK
@@ -1751,4 +1776,5 @@ See the LICENSE file for full details.
 
 </body>
 </html>
+
 
