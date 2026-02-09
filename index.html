@@ -1,4 +1,14 @@
 <!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Export MAXIQUEEN</title>
+<style>
+
+</style>
+</head>
+<body>
+<!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -268,6 +278,21 @@ html,body{
 
 <body>
 
+<!-- ================= MERCADO PAGO/MAXIQUEEN OS ================= -->
+
+ <div class="box">
+    <h1>Pago seguro MAXIQUEEN OS</h1>
+    <p>Finaliza tu compra usando MercadoPago.</p>
+
+    <!-- BOTÓN MERCADOPAGO -->
+    <script
+      src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js"
+      data-preference-id="453634078-e7931b13-abe1-45f2-95db-398ab50f1db0"
+      data-source="button">
+    </script>
+
+  </div>
+
 <!-- ================= TOGGLE DARK/LIGHT ================= -->
 <button class="toggle-theme" onclick="toggleTheme()" aria-label="Cambiar tema">🌗 MaxiTema</button>
 
@@ -297,13 +322,13 @@ html,body{
 <section class="min-h-screen flex items-center justify-center text-center px-6 relative bg-[radial-gradient(circle_at_top,rgba(250,204,21,.18),transparent_60%)] overflow-hidden">
 
   <!-- FONDO SUTIL -->
-  <div class="absolute inset-0 animate-pulse-slow opacity-20 bg-[url('assets/MAXIQUEEN_LOGO.png')] bg-no-repeat bg-center bg-contain pointer-events-none"></div>
+  <div class="absolute inset-0 animate-pulse-slow opacity-20 bg-[url('MAXIQUEEN_LOGO.png')] bg-no-repeat bg-center bg-contain pointer-events-none"></div>
 
   <div class="relative z-10 max-w-3xl fade-in">
 
     <!-- LOGO -->
     <div class="hero-avatar inline-block mb-2">
-      <img src="assets/MAXIQUEEN_LOGO.png"
+      <img src="MAXIQUEEN_LOGO.png"
            alt="MaxiQueen OS Logo"
            class="w-40 md:w-48 mx-auto animate-bounce-slow"
            loading="eager"
@@ -355,6 +380,12 @@ html,body{
       ORCID: 0009-0004-4946-1374
     </a>
   </p>
+<div class="mt-4 flex justify-center gap-4 text-sm text-zinc-400">
+  <button onclick="openLegal('privacy')" class="hover:text-amber-400 transition">Privacidad</button>
+  <button onclick="openLegal('cookies')" class="hover:text-amber-400 transition">Cookies</button>
+  <button onclick="openLegal('terms')" class="hover:text-amber-400 transition">Términos</button>
+</div>
+
 </footer>
 
 <!-- ================= JS 3D HOVER ================= -->
@@ -671,30 +702,31 @@ window.addEventListener('scroll', () => {
     </ul>
   </div>
 </section>
-
 <!-- ================= LICENCIA ================= -->
 <section class="mq-license-box fade-in">
-  <h3>👑 Licencia MaxiQueen OS</h3>
 
-  <p class="mq-license-text">
-    MaxiQueen OS es una <strong>infraestructura de conciencia digital</strong>.
-    Al utilizar este sistema aceptas:
-  </p>
+  <h3>Antes de entrar al sistema</h3>
+  <p>Este sistema funciona bajo principios humanos y estructurales:</p>
 
-  <ul>
+  <ul class="mq-rules">
     <li>Mantener criterio humano en decisiones críticas</li>
     <li>Respetar el Método MaxiQueen OS</li>
     <li>No usar automatización deshumanizada</li>
   </ul>
 
   <label class="mq-license-check">
-    <input type="checkbox" id="acceptMQ">
-    Acepto la <a href="/licencia-maxiqueenos.pdf" target="_blank" rel="noopener" class="text-amber-400 hover:underline">Licencia MaxiQueen OS</a>
+    <input type="checkbox" id="acceptMQ" />
+    Acepto la
+    <a href="/licencia-maxiqueenos.pdf" target="_blank" rel="noopener" class="text-amber-400 hover:underline">
+      Licencia MaxiQueen OS
+    </a>
   </label>
 
-  <button id="continueMQ" disabled>Entrar al sistema</button>
-</section>
+  <button id="continueMQ" disabled>
+    Entrar al sistema
+  </button>
 
+</section>
 <!-- ================= CHAT ================= -->
 <div class="chat-box" id="chatBox" role="dialog" aria-label="Chat MaxiQueen OS">
   <div class="chat-log" id="chatLog" aria-live="polite"></div>
@@ -705,7 +737,6 @@ window.addEventListener('scroll', () => {
 </div>
 
 <script>
-
 
 /* =======================
    THEME TOGGLE
@@ -740,6 +771,7 @@ function closeLightbox(){
 lightbox.addEventListener('click', e => {
   if(e.target === lightbox) closeLightbox();
 });
+
 
 /* =======================
    LICENCIA CHECK
@@ -1685,6 +1717,17 @@ function appendMessage(text, sender="bot"){
   chatLog.appendChild(msg);
   chatLog.scrollTop = chatLog.scrollHeight;
 }
+   
+function openLegal(type) {
+  const pages = {
+    privacy: "privacidad.html",
+    cookies: "cookies.html",
+    terms: "terminos.html"
+  };
+
+  const url = pages[type];
+  if (url) window.open(url, "_blank");
+}
 
 function sendMessage(){
   const message = input.value.trim();
@@ -1699,7 +1742,19 @@ function sendMessage(){
 input.addEventListener("keydown", e => {
   if(e.key === "Enter") sendMessage();
 });
+
 </script>
+
+## License
+
+MaxiQueen OS is licensed under the **Apache License 2.0**.
+
+You are free to use, modify, and distribute the core system, including for commercial purposes.
+However, the **MaxiQueen OS name, branding, and premium modules are protected and not included
+under this license**.
+
+See the LICENSE file for full details.
 
 </body>
 </html>
+
