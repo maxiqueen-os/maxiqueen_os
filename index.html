@@ -275,13 +275,7 @@ html,body{
     <p>Finaliza tu compra usando MercadoPago.</p>
 
     <!-- BOTÓN MERCADOPAGO -->
-    <script
-      src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js"
-      data-preference-id="453634078-e7931b13-abe1-45f2-95db-398ab50f1db0"
-      data-source="button">
-    </script>
-
-  </div>
+    <script src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js">
 
 <!-- ================= TOGGLE DARK/LIGHT ================= -->
 <button class="toggle-theme" onclick="toggleTheme()" aria-label="Cambiar tema">🌗 MaxiTema</button>
@@ -375,15 +369,6 @@ html,body{
   <a href="privacidad.html" class="hover:text-amber-400 transition">Privacidad</a>
   <a href="cookies.html" class="hover:text-amber-400 transition">Cookies</a>
   <a href="terminos.html" class="hover:text-amber-400 transition">Términos</a>
-</div>
-
-<!-- Modal legal -->
-<div id="legalModal" class="fixed inset-0 hidden bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
-  <div class="bg-zinc-900 text-zinc-200 max-w-xl w-full p-6 rounded-xl shadow-xl relative">
-    <button id="closeLegal" class="absolute top-3 right-3 text-zinc-400 hover:text-red-400 text-xl">✕</button>
-    <h2 id="legalTitle" class="text-xl font-bold mb-4"></h2>
-    <div id="legalContent" class="text-sm leading-relaxed space-y-3 max-h-[60vh] overflow-y-auto"></div>
-  </div>
 </div>
 
 </footer>
@@ -732,7 +717,7 @@ window.addEventListener('scroll', () => {
   <div class="chat-log" id="chatLog" aria-live="polite"></div>
   <div class="chat-input">
     <input type="text" id="userInput" placeholder="Soy MaxiBot. Escribe tu pregunta..." aria-label="Mensaje">
-    <button onclick="sendMessage()">Enviar</button>
+    
   </div>
 </div>
 
@@ -756,7 +741,7 @@ function toggleTheme(){
 /* =======================
    LIGHTBOX
 ======================= */
-const lightbox = document.getElementById('lightbox');
+   
 const lightboxContent = document.getElementById('lightboxContent');
 
 function openLightbox(src){
@@ -1652,7 +1637,7 @@ Perfecto 👑
 Aquí tienes acceso directo a una persona real:
 
 📲 WhatsApp:
-👉 https://wa.me/573016625921  
+👉 https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema."
 
 (Escríbenos y seguimos contigo sin bots.)
 
@@ -1757,6 +1742,7 @@ See the LICENSE file for full details.
 
 </body>
 </html>
+
 
 
 
