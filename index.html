@@ -1717,6 +1717,17 @@ function appendMessage(text, sender="bot"){
   chatLog.appendChild(msg);
   chatLog.scrollTop = chatLog.scrollHeight;
 }
+   
+function openLegal(type) {
+  const pages = {
+    privacy: "privacidad.html",
+    cookies: "cookies.html",
+    terms: "terminos.html"
+  };
+
+  const url = pages[type];
+  if (url) window.open(url, "_blank");
+}
 
 function sendMessage(){
   const message = input.value.trim();
@@ -1746,6 +1757,7 @@ See the LICENSE file for full details.
 
 </body>
 </html>
+
 
 
 
