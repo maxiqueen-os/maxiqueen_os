@@ -380,10 +380,21 @@ html,body{
       ORCID: 0009-0004-4946-1374
     </a>
   </p>
-<div class="mt-4 flex justify-center gap-4 text-sm text-zinc-400">
-  <button onclick="openLegal('privacy')" class="hover:text-amber-400 transition">Privacidad</button>
-  <button onclick="openLegal('cookies')" class="hover:text-amber-400 transition">Cookies</button>
-  <button onclick="openLegal('terms')" class="hover:text-amber-400 transition">Términos</button>
+
+  <div class="mt-4 flex justify-center gap-4 text-sm text-zinc-400">
+    <button data-legal="privacy" class="hover:text-amber-400 transition">Privacidad</button>
+    <button data-legal="cookies" class="hover:text-amber-400 transition">Cookies</button>
+    <button data-legal="terms" class="hover:text-amber-400 transition">Términos</button>
+  </div>
+</footer>
+
+<!-- Modal legal -->
+<div id="legalModal" class="fixed inset-0 hidden bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+  <div class="bg-zinc-900 text-zinc-200 max-w-xl w-full p-6 rounded-xl shadow-xl relative">
+    <button id="closeLegal" class="absolute top-3 right-3 text-zinc-400 hover:text-red-400 text-xl">✕</button>
+    <h2 id="legalTitle" class="text-xl font-bold mb-4"></h2>
+    <div id="legalContent" class="text-sm leading-relaxed space-y-3 max-h-[60vh] overflow-y-auto"></div>
+  </div>
 </div>
 
 </footer>
@@ -1757,6 +1768,7 @@ See the LICENSE file for full details.
 
 </body>
 </html>
+
 
 
 
