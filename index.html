@@ -268,6 +268,17 @@ html,body{
 
 <body>
 
+   function openLegal(type) {
+  const pages = {
+    privacy: "privacidad.html",
+    cookies: "cookies.html",
+    terms: "terminos.html"
+  };
+
+  const url = pages[type];
+  if (url) window.open(url, "_blank");
+}
+
 <!-- ================= MERCADO PAGO/MAXIQUEEN OS ================= -->
 
  <div class="box">
@@ -1822,3 +1833,4 @@ See the LICENSE file for full details.
 
 </body>
 </html>
+
