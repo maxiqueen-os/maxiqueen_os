@@ -268,17 +268,6 @@ html,body{
 
 <body>
 
-   function openLegal(type) {
-  const pages = {
-    privacy: "privacidad.html",
-    cookies: "cookies.html",
-    terms: "terminos.html"
-  };
-
-  const url = pages[type];
-  if (url) window.open(url, "_blank");
-}
-
 <!-- ================= MERCADO PAGO/MAXIQUEEN OS ================= -->
 
  <div class="box">
@@ -320,51 +309,16 @@ html,body{
 </section>
 
 <script>
-const legalTexts = {
-  privacy: {
-    title: "Política de Privacidad",
-    content: `
-      <p>Respetamos tu privacidad. No recopilamos datos personales sin tu consentimiento explícito.</p>
-      <p>Este sistema opera localmente y no comparte información con terceros.</p>
-    `
-  },
-  cookies: {
-    title: "Política de Cookies",
-    content: `
-      <p>Este sitio solo usa cookies técnicas necesarias para su funcionamiento.</p>
-      <p>No usamos cookies de seguimiento ni publicidad.</p>
-    `
-  },
-  terms: {
-    title: "Términos y Condiciones",
-    content: `
-      <p>Este sistema se ofrece "tal cual", sin garantías explícitas o implícitas.</p>
-      <p>El uso implica aceptación de estos términos.</p>
-    `
-  }
-};
 
-const modal = document.getElementById("legalModal");
-const title = document.getElementById("legalTitle");
-const content = document.getElementById("legalContent");
-const closeBtn = document.getElementById("closeLegal");
+<!-- Modal legal -->
+<div id="legalModal" class="fixed inset-0 hidden bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+  <div class="bg-zinc-900 text-zinc-200 max-w-xl w-full p-6 rounded-xl shadow-xl relative">
+    <button id="closeLegal" class="absolute top-3 right-3 text-zinc-400 hover:text-red-400 text-xl">✕</button>
+    <h2 id="legalTitle" class="text-xl font-bold mb-4"></h2>
+    <div id="legalContent" class="text-sm leading-relaxed space-y-3 max-h-[60vh] overflow-y-auto"></div>
+  </div>
+</div>
 
-document.querySelectorAll("[data-legal]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const type = btn.dataset.legal;
-    title.textContent = legalTexts[type].title;
-    content.innerHTML = legalTexts[type].content;
-    modal.classList.remove("hidden");
-  });
-});
-
-closeBtn.addEventListener("click", () => {
-  modal.classList.add("hidden");
-});
-
-modal.addEventListener("click", e => {
-  if (e.target === modal) modal.classList.add("hidden");
-});
 </script>
 
 <!-- ================= HERO ULTRA-PRO ================= -->
@@ -431,10 +385,11 @@ modal.addEventListener("click", e => {
   </p>
 
   <div class="mt-4 flex justify-center gap-4 text-sm text-zinc-400">
-    <button data-legal="privacy" class="hover:text-amber-400 transition">Privacidad</button>
-    <button data-legal="cookies" class="hover:text-amber-400 transition">Cookies</button>
-    <button data-legal="terms" class="hover:text-amber-400 transition">Términos</button>
-  </div>
+  <a href="privacidad.html" class="hover:text-amber-400 transition">Privacidad</a>
+  <a href="cookies.html" class="hover:text-amber-400 transition">Cookies</a>
+  <a href="terminos.html" class="hover:text-amber-400 transition">Términos</a>
+</div>
+
 </footer>
 
 <!-- Modal legal -->
@@ -634,31 +589,12 @@ window.addEventListener('scroll', () => {
   </div>
 </section>
 
+
 <!-- ================= LIGHTBOX ================= -->
-const lightbox = document.getElementById('lightbox');
-  const lightboxContent = document.getElementById('lightboxContent');
-  const closeLightboxBtn = document.getElementById('closeLightbox');
-
-  document.querySelectorAll('[data-lightbox]').forEach(img => {
-    img.addEventListener('click', () => {
-      lightboxContent.innerHTML = \`<img src="\${img.src}" class="w-full rounded-2xl shadow-xl" alt="">\`;
-      lightbox.classList.remove('hidden');
-      lightbox.classList.add('flex');
-    });
-  });
-
-  if(closeLightboxBtn){
-    closeLightboxBtn.addEventListener('click', () => closeLightbox());
-  }
-  if(lightbox){
-    lightbox.addEventListener('click', e => {
-      if(e.target === lightbox) closeLightbox();
-    });
-  }
-  function closeLightbox(){
-    lightbox.classList.add('hidden');
-    lightbox.classList.remove('flex');
-  }
+<div id="lightbox" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
+  <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl" aria-label="Cerrar">✕</button>
+  <div id="lightboxContent" class="max-w-4xl w-full px-4"></div>
+</div>
 
 <!-- ================= PLANES ================= -->
 <section id="planes" class="py-24 px-6 fade-in bg-black/40">
@@ -849,6 +785,7 @@ lightbox.addEventListener('click', e => {
   if(e.target === lightbox) closeLightbox();
 });
 
+
 /* =======================
    LICENCIA CHECK
 ======================= */
@@ -863,963 +800,404 @@ if(acceptMQ){
 const chatLog = document.getElementById('chatLog');
 const input = document.getElementById('userInput');
 
-/* =========================
-   🧠 ESTADO GLOBAL
-========================= */
-let state = {
-  flujo: null,      
-  etapa: null,      
-  nivelDetectado: null,
-  tema: null,
-  ultimaPregunta: null
-};
-
-/* =========================
-   📦 RESPUESTAS BASE
-========================= */
-const triggers = {
-  sistema: {
-    quienSoy: `
-👑 ¿Quién soy?
-
-Soy MaxiQueen OS.
-No soy un bot tradicional.
-No soy un asistente automático frío.
-
-Soy un sistema conversacional diseñado para:
-✔ Ordenar ideas
-✔ Aclarar decisiones
-✔ Construir estructura
-✔ Acompañar procesos reales
-
-No reemplazo humanos.
-No doy respuestas vacías.
-No improviso.
-
-Funciono como:
-🧠 Guía
-🧭 Sistema de pensamiento
-🤝 Puente entre intención y estructura
-
-Si quieres, dime:
-👉 ¿Estás aquí más por claridad, por proyecto o por acompañamiento humano? 👀
-`,
-    queEs: `
-👑 ¿Qué es MaxiQueen OS?
-
-MaxiQueen OS es un sistema digital integral de:
-✔ Contenido
-✔ Estructura
-✔ Conversación
-✔ Automatización
-✔ Acompañamiento humano
-
-No es una herramienta.
-No es solo una web.
-No es solo un bot.
-
-Es un sistema que:
-✔ Piensa contigo
-✔ Te ordena por dentro
-✔ Te da dirección
-✔ Te ayuda a convertir intención en acción
-
-Si quieres, dime:
-👉 ¿Lo estás viendo más como ayuda personal, proyecto de negocio o crecimiento? 👀
-`,
-    comoFunciona: `
-👑 ¿Cómo funciona MaxiQueen OS?
-
-Funciona en capas:
-
-1️⃣ Conversación → te escucho
-2️⃣ Diagnóstico → entiendo tu situación
-3️⃣ Estructura → ordenamos ideas, proyecto o proceso
-4️⃣ Sistema → construimos algo estable
-5️⃣ Acompañamiento → no te dejo solo
-
-No es:
-❌ Automatización sin criterio
-❌ Contenido vacío
-❌ Respuestas rápidas sin profundidad
-
-Es:
-✔ Proceso
-✔ Sistema
-✔ Pensamiento estructurado
-
-Si quieres, dime:
-👉 ¿Te gustaría entenderlo más desde lo personal o desde lo técnico? 👀
-`,
-    diagnostico: `
-👑 ¿Qué es el diagnóstico en MaxiQueen OS?
-
-No es un test.
-No es un formulario.
-No es una etiqueta.
-
-Es una lectura real de:
-✔ Tu nivel actual
-✔ Tu estado mental
-✔ Tu etapa de proyecto
-✔ Tu tipo de bloqueo
-✔ Tu tipo de crecimiento
-
-Sirve para:
-✔ No venderte lo que no necesitas
-✔ No forzarte procesos incorrectos
-✔ No hacerte perder tiempo
-✔ Construir desde donde estás, no desde donde “deberías estar”
-
-Si quieres, dime:
-👉 ¿Quieres que te haga un diagnóstico ahora mismo? 👀
-`,
-    claridad: `
-👑 ¿Qué significa “claridad” aquí?
-
-No es motivación.
-No es “pensar positivo”.
-No es solo tener ideas.
-
-Claridad es:
-✔ Saber qué hacer primero
-✔ Saber qué no hacer
-✔ Saber por qué haces algo
-✔ Tener dirección sin ansiedad
-✔ Sentirte estable aunque el camino no esté completo
-
-En MaxiQueen OS, claridad = estructura mental funcional.
-
-Si quieres, dime:
-👉 ¿Sientes más ruido mental, bloqueo o exceso de ideas ahora mismo? 👀
-`,
-    servicio: `
-👑 ¿Cómo es el servicio en MaxiQueen OS?
-
-No es atención automática.
-No es soporte técnico frío.
-No es solo responder mensajes.
-
-Es:
-✔ Acompañamiento humano real
-✔ Conversación con criterio
-✔ Guía estratégica
-✔ Seguimiento de procesos
-✔ Apoyo cuando hay bloqueo
-
-No tratamos problemas.
-Tratamos procesos.
-
-Si quieres, dime:
-👉 ¿Buscas más guía, acompañamiento o estructura ahora mismo? 👀
-`,
-    asesoria: `
-👑 ¿Cómo es la asesoría?
-
-No es consultoría tradicional.
-No es coaching motivacional vacío.
-No es mentoría genérica.
-
-Es:
-✔ Diagnóstico real
-✔ Claridad estratégica
-✔ Diseño de sistema
-✔ Acompañamiento práctico
-✔ Pensamiento estructurado
-
-No te decimos qué hacer.
-Construimos contigo qué tiene sentido hacer.
-
-Si quieres, dime:
-👉 ¿Estás más en ideas, bloqueo o crecimiento ahora mismo? 👀
-`,
-    soporte: `
-👑 ¿Cómo es el soporte?
-
-No es tickets.
-No es respuestas automáticas.
-No es “revise la FAQ”.
-
-Es:
-✔ Contacto humano directo
-✔ Conversación real
-✔ Resolución con criterio
-✔ Acompañamiento cuando te atoras
-
-Soporte aquí no es técnico.
-Es estructural y humano.
-
-Si quieres, dime:
-👉 ¿Prefieres WhatsApp o Instagram para hablar ahora? 👀
-`,
-    comunidad: `
-👑 ¿Qué es la Comunidad MaxiQueen?
-
-No es un grupo de ruido.
-No es motivación vacía.
-No es consumo de contenido.
-
-Es un espacio para:
-✔ Pensar
-✔ Ordenar
-✔ Construir
-✔ Tomar decisiones
-✔ Avanzar con estructura
-
-Aquí no vienes a mirar.
-Vienes a trabajar en ti y en tu proceso.
-
-Si quieres, dime:
-👉 ¿Te interesa más comunidad o acompañamiento 1:1? 👀
-`,
-    sesiones: `
-👑 ¿Qué son las sesiones reales?
-
-Son encuentros humanos, no automáticos.
-
-Sirven para:
-✔ Desbloquear
-✔ Tomar decisiones
-✔ Reordenar procesos
-✔ Aclarar dirección
-✔ Corregir rumbo
-
-No son charlas motivacionales.
-Son sesiones estratégicas.
-
-Si quieres, dime:
-👉 ¿Te serviría más una sesión de claridad o de estructura ahora mismo? 👀
-`,
-    equipo: `
-👑 ¿Cuántas personas hay en MaxiQueen OS?
-
-MaxiQueen OS no es una empresa tradicional.
-Es un sistema en expansión.
-
-Tiene:
-✔ Núcleo humano estratégico
-✔ Acompañamiento directo
-✔ Infraestructura digital
-✔ Comunidad en crecimiento
-
-No medimos valor en cantidad de personas.
-Medimos valor en calidad de proceso.
-
-Si quieres, dime:
-👉 ¿Te interesa más quiénes somos o cómo podemos ayudarte? 👀
-`
-  },
-
-  emociones: {
-    pereza: `
-Gracias por decirlo directo 👑  
-
-La pereza muchas veces no es flojera.
-Es:
-✔ Cansancio mental
-✔ Saturación
-✔ Falta de dirección
-✔ Exceso sin estructura
-
-No se soluciona empujando.
-Se soluciona ordenando.
-
-Si quieres, dime:
-👉 ¿Te sientes más cansado, saturado o confundido ahora mismo? 👀
-`,
-    cansancio: `
-Tiene todo el sentido 👑  
-
-El cansancio no siempre es físico.
-Muchas veces es mental:
-✔ Demasiadas decisiones
-✔ Demasiadas ideas
-✔ Poco orden
-✔ Mucha presión interna
-
-No necesitas más motivación.
-Necesitas estructura liviana.
-
-Si quieres, dime:
-👉 ¿Te sientes más bloqueado, saturado o sin dirección ahora mismo? 👀
-`,
-    frustracion: `
-Gracias por decirlo 👑  
-
-La frustración casi nunca es falta de capacidad.
-Es falta de estructura en medio de intención.
-
-No se arregla empujando más.
-Se arregla ordenando mejor.
-
-Si quieres, dime:
-👉 ¿Te frustra más no avanzar o no saber qué avanzar? 👀
-`
-  },
-
-  ventas: {
-    planes: `
-👑 PLANES MAXIQUEEN OS — claros, humanos y sin letra pequeña
-
-No vendemos herramientas.
-No vendemos plataformas.
-No vendemos humo.
-
-Construimos sistemas que piensan contigo,
-te ordenan por dentro,
-y convierten intención en estructura real.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-🌱 👑 STARTER — $49/mes
-Ideal si hoy tienes ideas, pero no sistema.
-
-✔ Orden mental y estratégico
-✔ Diagnóstico real
-✔ Base operativa clara
-✔ Ruta de acción sin ruido
-✔ Acompañamiento inicial humano
-
-Perfecto para:
-Personas bloqueadas,
-emprendedores en inicio,
-creadores con ideas dispersas.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-🚀 👑 PRO — $99/mes
-Para crecer, vender y automatizar con estructura.
-
-✔ Todo lo de Starter
-✔ Sistema activo de ventas
-✔ Automatizaciones clave
-✔ Optimización de procesos
-✔ Acompañamiento continuo
-
-Perfecto para:
-Negocios en marcha,
-creadores que ya venden sin sistema,
-personas listas para estructurar crecimiento.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-🏰 👑 ELITE — $199/mes
-Infraestructura completa + acompañamiento prioritario.
-
-✔ Todo lo de Pro
-✔ Arquitectura completa del sistema
-✔ Automatización avanzada
-✔ Control total del ecosistema
-✔ Acceso directo a soporte humano
-
-Perfecto para:
-Marcas, creadores y proyectos
-que quieren crecer con estabilidad real.
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-Si quieres, dime:
-👉 ¿Estás más en ideas, negocio activo o crecimiento serio ahora mismo? 👀👑
-`,
-    valor: `
-👑 ¿POR QUÉ MAXIQUEEN OS?
-
-No vendemos bots.
-No vendemos funnels.
-No vendemos automatización por automatizar.
-
-Vendemos:
-✔ Claridad
-✔ Orden
-✔ Dirección
-✔ Decisión
-✔ Sistema
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-Esto es lo que normalmente cambia en las personas:
-
-✔ Menos ruido mental
-✔ Menos decisiones improvisadas
-✔ Más foco
-✔ Más estructura
-✔ Más avance real
-✔ Menos ansiedad por “no saber qué hacer”
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-El valor no es tener una web.
-No es tener un bot.
-No es tener automatización.
-
-El valor es:
-Saber exactamente qué hacer con tu proyecto
-cuando nadie más te lo puede ordenar.
-
-Si quieres, dime:
-👉 ¿Hoy te falta más claridad, estructura o acompañamiento? 👑
-`
-  },
-
-  onboarding: {
-    inicio: `
-Hola 👑  
-Estoy aquí contigo, con calma.
-
-No soy un bot de respuestas rápidas.
-Soy parte del sistema MaxiQueen OS.
-
-¿En qué punto estás ahora mismo?
-
-1️⃣ Ideas  
-2️⃣ Bloqueo  
-3️⃣ Crecimiento  
-👉 o pereza / cansancio
-`
-  },
-
-  guia: {
-    flujo1: `
-👑 FLUJO 1 — ORDENAR IDEAS
-
-Este flujo es para ti si:
-✔ Tienes ideas, pero no sistema
-✔ Sientes ruido mental
-✔ No sabes por dónde empezar
-✔ Te cuesta tomar decisiones
-
-Aquí trabajamos:
-✔ Claridad personal
-✔ Dirección estratégica
-✔ Enfoque real
-✔ Prioridades concretas
-
-El objetivo no es hacer más.
-Es hacer mejor.
-
-Dime:
-👉 ¿Hoy sientes más confusión, bloqueo o exceso de ideas? 👀
-`,
-    flujo2: `
-👑 FLUJO 2 — CREAR ALGO VENDIBLE
-
-Este flujo es para ti si:
-✔ Ya tienes una idea clara
-✔ Quieres convertirla en oferta
-✔ Quieres vender sin improvisar
-✔ Quieres estructura comercial real
-
-Aquí trabajamos:
-✔ Propuesta de valor
-✔ Oferta clara
-✔ Mensaje correcto
-✔ Sistema de conversión
-
-El objetivo no es vender rápido.
-Es vender bien.
-
-Dime:
-👉 ¿Hoy tienes una idea clara o algo ya en marcha? 👀
-`,
-    flujo3: `
-📲 CONTACTO HUMANO — SIN BOTS
-
-Aquí no te responde un sistema.
-Te responde una persona real.
-
-Canales disponibles:
-✔ WhatsApp — atención directa
-✔ Instagram — contacto rápido
-✔ Comunidad — acompañamiento continuo
-
-Dime:
-👉 ¿Prefieres WhatsApp o Instagram ahora mismo? 👀
-`
-  },
-
-  comunidad: {
-    comunidad: `
-👥 COMUNIDAD MAXIQUEEN
-
-Este no es un grupo de ruido.
-No es motivación vacía.
-No es consumo de contenido.
-
-Es:
-✔ Acompañamiento humano
-✔ Sesiones reales
-✔ Seguimiento estratégico
-✔ Criterio compartido
-
-No entras para mirar.
-Entras para ordenar,
-decidir
-y avanzar.
-
-Dime:
-👉 ¿Prefieres empezar en comunidad o 1:1? 👀
-`
-  },
-
-  soporte: {
-    contacto: `
-📲 SOPORTE HUMANO
-
-Puedes hablar directamente con alguien real por:
-
-✔ WhatsApp:
-https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema.
-
-✔ Instagram
-✔ Comunidad interna
-
-Dime:
-👉 ¿Qué canal prefieres ahora mismo? 👀
-`
-  },
-
-  diagnostico: {
-    starter: `
-👑 Por lo que me cuentas, estás en etapa de **orden y claridad**.
-
-No necesitas más herramientas.
-Necesitas estructura básica bien hecha.
-
-Por eso, el punto ideal para ti ahora es:
-
-🌱 **STARTER**
-
-Te saca del ruido,
-te da base,
-y te deja listo para crecer sin caos.
-
-Si quieres, dime:
-👉 ¿Quieres que te explique cómo empezamos paso a paso? 👀
-`,
-    pro: `
-👑 Por lo que me cuentas, ya estás en **movimiento real**.
-
-No necesitas más ideas.
-Necesitas sistema, procesos y estructura de venta.
-
-Por eso, el punto ideal para ti ahora es:
-
-🚀 **PRO**
-
-Convierte tu esfuerzo en sistema,
-y tu sistema en crecimiento estable.
-
-Si quieres, dime:
-👉 ¿Quieres que te muestre cómo sería tu estructura inicial? 👀
-`,
-    elite: `
-👑 Por lo que me cuentas, estás en **etapa de expansión seria**.
-
-No necesitas hacks.
-Necesitas arquitectura sólida.
-
-Por eso, el punto ideal para ti ahora es:
-
-🏰 **ELITE**
-
-Sistema completo,
-control total,
-acompañamiento prioritario.
-
-Si quieres, dime:
-👉 ¿Quieres que veamos cómo se diseña tu ecosistema completo? 👀
-`
-  }
-};
-
-/* =========================
-   🎯 INTENTS BASE
-========================= */
-const intents = [
-  // Sistema / Identidad
-  {
-    keywords: ["quien eres","quién eres","que eres","qué eres"],
-    response: () => triggers.sistema.quienSoy
-  },
-  {
-    keywords: ["que es","qué es","qué es esto","que es esto","que es maxiqueen","qué es maxiqueen"],
-    response: () => triggers.sistema.queEs
-  },
-  {
-    keywords: ["como funciona","cómo funciona","funciona","como es el sistema"],
-    response: () => triggers.sistema.comoFunciona
-  },
-  {
-    keywords: ["diagnostico","diagnóstico"],
-    response: () => triggers.sistema.diagnostico
-  },
-  {
-    keywords: ["claridad","qué es claridad","que es claridad"],
-    response: () => triggers.sistema.claridad
-  },
-  {
-    keywords: ["servicio","cómo es el servicio","como es el servicio"],
-    response: () => triggers.sistema.servicio
-  },
-  {
-    keywords: ["asesoria","asesoría","cómo es la asesoria","como es la asesoria"],
-    response: () => triggers.sistema.asesoria
-  },
-  {
-    keywords: ["soporte","cómo es el soporte","como es el soporte"],
-    response: () => triggers.sistema.soporte
-  },
-  {
-    keywords: ["comunidad interna","que es la comunidad","qué es la comunidad"],
-    response: () => triggers.sistema.comunidad
-  },
-  {
-    keywords: ["sesiones","sesiones reales"],
-    response: () => triggers.sistema.sesiones
-  },
-  {
-    keywords: ["cuantas personas","cuántas personas","equipo","cuantos son"],
-    response: () => triggers.sistema.equipo
-  },
-
-  // Emociones
-  {
-    keywords: ["pereza","flojo","desganado"],
-    response: () => triggers.emociones.pereza
-  },
-  {
-    keywords: ["cansado","agotado","fatigado"],
-    response: () => triggers.emociones.cansancio
-  },
-  {
-    keywords: ["frustrado","frustración","estresado","estres"],
-    response: () => triggers.emociones.frustracion
-  },
-
-  // Ventas
-  {
-    keywords: ["precio","planes","pago"],
-    response: () => triggers.ventas.planes
-  },
-  {
-    keywords: ["costos","cuánto vale","cuanto cuesta","precio real"],
-    response: () => triggers.ventas.planes
-  },
-  {
-    keywords: ["valor","vale la pena","beneficio","beneficios","por qué","porque"],
-    response: () => triggers.ventas.valor
-  },
-
-  // Inicio
-  {
-    keywords: ["empezar","inicio","onboarding","arrancar","comenzar"],
-    response: () => triggers.onboarding.inicio
-  },
-  {
-    keywords: ["hola","buenas","hey","saludos"],
-    response: () => triggers.onboarding.inicio
-  },
-
-  // Flujos
-  {
-    keywords: ["1","ordenar","ordenar ideas","ideas"],
-    response: () => {
-      state.flujo = "flujo1";
-      state.etapa = "diagnostico";
-      return triggers.guia.flujo1;
-    }
-  },
-  {
-    keywords: ["2","crear","vendible","producto","oferta"],
-    response: () => {
-      state.flujo = "flujo2";
-      state.etapa = "diagnostico";
-      return triggers.guia.flujo2;
-    }
-  },
-  {
-    keywords: ["3","humano","persona","asesor","hablar","hablar con alguien"],
-    response: () => {
-      state.flujo = "flujo3";
-      state.etapa = "contacto";
-      return triggers.guia.flujo3;
-    }
-  },
-
-  // Confirmaciones
-  {
-    keywords: ["si","sí","ok","dale","vamos","perfecto","listo","de una"],
-    response: () => `
-Perfecto 👑  
-Entonces dime:
-
-1️⃣ Ordenar ideas  
-2️⃣ Crear algo vendible  
-3️⃣ Hablar con alguien humano  
-`
-  }
-];
-
-/* =========================
-   🧠 MOTOR DE CONTEXTO
-========================= */
-function contextualResponse(text) {
-
-  // FLUJO 1 — ORDENAR IDEAS
-  if (state.flujo === "flujo1" && state.etapa === "diagnostico") {
-    if (text.includes("confusion") || text.includes("confusión")) {
-      state.nivelDetectado = "starter";
-      state.etapa = "recomendacion";
-      return `
-Gracias por decirlo directo 👑  
-
-La confusión no es falta de capacidad.
-Es exceso de ruido sin estructura.
-
-Eso significa que ahora mismo necesitas:
-✔ Claridad
-✔ Prioridades
-✔ Dirección concreta
-
-No más ideas.
-No más teoría.
-
-Sistema.
-
-${triggers.diagnostico.starter}
-`;
-    }
-    if (text.includes("bloqueo")) {
-      state.nivelDetectado = "starter";
-      state.etapa = "recomendacion";
-      return `
-Gracias por decirlo 👑  
-
-El bloqueo casi nunca es pereza.
-Es saturación sin estructura.
-
-Eso significa que ahora necesitas:
-✔ Orden mental
-✔ Enfoque claro
-✔ Dirección accionable
-
-No presión.
-No más información.
-
-Sistema.
-
-${triggers.diagnostico.starter}
-`;
-    }
-    if (text.includes("exceso")) {
-      state.nivelDetectado = "starter";
-      state.etapa = "recomendacion";
-      return `
-Tiene todo el sentido 👑  
-
-El exceso de ideas no es problema creativo.
-Es problema de jerarquía.
-
-Eso significa que ahora necesitas:
-✔ Prioridades claras
-✔ Dirección estratégica
-✔ Enfoque real
-
-No más ideas.
-No más estímulos.
-
-Sistema.
-
-${triggers.diagnostico.starter}
-`;
-    }
-  }
-
-  // FLUJO 2 — CREAR ALGO VENDIBLE
-  if (state.flujo === "flujo2" && state.etapa === "diagnostico") {
-    if (text.includes("ya") || text.includes("tengo") || text.includes("en marcha")) {
-      state.nivelDetectado = "pro";
-      state.etapa = "recomendacion";
-      return `
-Buenísimo 👑  
-
-Si ya tienes algo en marcha,
-tu cuello de botella no es creatividad.
-
-Es:
-✔ Sistema
-✔ Mensaje
-✔ Conversión
-✔ Estructura
-
-Eso significa que ahora necesitas orden comercial,
-no más ideas.
-
-${triggers.diagnostico.pro}
-`;
-    }
-    if (text.includes("no") || text.includes("todavía") || text.includes("aún")) {
-      state.nivelDetectado = "starter";
-      state.etapa = "recomendacion";
-      return `
-Perfecto 👑  
-
-Si aún no tienes nada concreto,
-lo inteligente no es vender rápido.
-
-Es:
-✔ Ordenar primero
-✔ Definir bien
-✔ Construir con criterio
-
-Eso te ahorra tiempo, frustración y desgaste.
-
-${triggers.diagnostico.starter}
-`;
-    }
-  }
-
-  // DESPUÉS DE RECOMENDACIÓN — MANTENER CONTEXTO
-  if (state.etapa === "recomendacion") {
-    if (text.includes("como") || text.includes("cómo") || text.includes("funciona") || text.includes("empezamos")) {
-      return `
-Buenísima pregunta 👑  
-
-Lo importante ahora no es el plan,
-es cómo empezamos contigo realmente.
-
-El proceso suele ser:
-
-1️⃣ Diagnóstico humano profundo  
-2️⃣ Orden mental y estratégico  
-3️⃣ Diseño de estructura mínima viable  
-4️⃣ Acompañamiento paso a paso  
-5️⃣ Evolución según tu ritmo  
-
-No te tiramos info encima.
-Construimos contigo.
-
-Si quieres, dime:
-👉 ¿Prefieres avanzar paso a paso o ver primero el panorama completo? 👀
-`;
-    }
-    if (text.includes("si") || text.includes("sí") || text.includes("dale") || text.includes("ok")) {
-      return `
-Perfecto 👑  
-
-Entonces empezamos así:
-
-Primero te hago unas preguntas cortas
-para entender bien tu punto actual,
-y desde ahí construimos contigo.
-
-Dime:
-👉 ¿Hoy estás más enfocado en ti como persona o en tu proyecto como negocio? 👀
-`;
-    }
-  }
-
-  // FLUJO 3 — CONTACTO HUMANO
-  if (state.flujo === "flujo3") {
-    if (text.includes("whatsapp")) {
-      return `
-Perfecto 👑  
-
-Aquí tienes acceso directo a una persona real:
-
-📲 WhatsApp:
-👉 https://wa.me/573016625921  
-
-(Escríbenos y seguimos contigo sin bots.)
-
-¿Quieres que mientras tanto sigamos conversando aquí? 👀
-`;
-    }
-    if (text.includes("instagram")) {
-      return `
-Perfecto 👑  
-
-Aquí puedes escribirnos directo:
-
-📲 Instagram:
-👉 https://instagram.com/maxiqueenos  
-
-¿Quieres que mientras tanto sigamos conversando aquí? 👀
-`;
-    }
-  }
-
-  return null;
+<script>
+/* =========================================================
+   MAXIQUEEN OS — COGNITIVE ENGINE v1
+   Arquitectura real — sin loops — sin resets — con memoria
+   ========================================================= */
+
+document.getElementById("year").textContent = new Date().getFullYear();
+
+const messagesEl = document.getElementById("messages");
+const input = document.getElementById("input");
+
+/* ================= UI ================= */
+
+function appendMessage(role, text) {
+  const div = document.createElement("div");
+  div.className = "msg " + role;
+  div.textContent = text;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
-/* =========================
-   🎯 RESPUESTA PRINCIPAL
-========================= */
-function getResponse(message){
-  const text = message.toLowerCase();
-
-  // 1️⃣ CONTEXTO PRIMERO
-  const contextual = contextualResponse(text);
-  if (contextual) return contextual;
-
-  // 2️⃣ INTENTS NORMALES
-  for(const intent of intents){
-    if(intent.keywords.some(k => text.includes(k))){
-      return intent.response();
-    }
-  }
-
-  // 3️⃣ FALLBACK INTELIGENTE (NO GENÉRICO)
-  return `
-Te leo 👀  
-
-No quiero responderte como bot.
-Quiero entenderte bien.
-
-¿Me cuentas un poco mejor qué tienes en mente ahora mismo? 👑
-`;
-}
-
-/* =========================
-   🧩 UI
-========================= */
-function appendMessage(text, sender="bot"){
-  const msg = document.createElement('div');
-  msg.textContent = text;
-  msg.style.whiteSpace = "pre-line";
-  msg.className = sender === "user"
-    ? "text-right text-amber-400 font-semibold"
-    : "text-left text-zinc-200";
-  chatLog.appendChild(msg);
-  chatLog.scrollTop = chatLog.scrollHeight;
-}
-   
-function openLegal(type) {
-  const pages = {
-    privacy: "privacidad.html",
-    cookies: "cookies.html",
-    terms: "terminos.html"
-  };
-
-  const url = pages[type];
-  if (url) window.open(url, "_blank");
-}
-   
-function sendMessage(){
+function sendMessage() {
   const message = input.value.trim();
-  if(!message) return;
-  appendMessage(message, "user");
+  if (!message) return;
+  appendMessage("user", message);
   input.value = "";
   setTimeout(() => {
-    appendMessage(getResponse(message), "bot");
+    const response = cognitiveEngine.process(message);
+    appendMessage("bot", response);
   }, 200);
 }
 
 input.addEventListener("keydown", e => {
-  if(e.key === "Enter") sendMessage();
+  if (e.key === "Enter") sendMessage();
 });
 
+/* ================= COGNITIVE STATE ================= */
+
+const cognitiveState = {
+  session: {
+    startedAt: Date.now(),
+    lastInteraction: Date.now(),
+    active: true
+  },
+
+  user: {
+    mode: null,            // persona | negocio | mixto
+    emotionalState: null,  // bloqueo | confusión | claridad | cansancio
+    projectStage: null,    // idea | validando | vendiendo | escalando
+    intent: null           // ordenar | vender | hablar | explorar
+  },
+
+  conversation: {
+    phase: "onboarding",   // onboarding | diagnostico | diseño | accion | cierre
+    step: 0,
+    history: [],
+    lastBotMessage: null,
+    lastUserMessage: null
+  },
+
+  goals: {
+    primary: "diagnostico_completo",
+    completed: false,
+    subgoals: []
+  },
+
+  memory: {
+    facts: {},
+    preferences: {},
+    decisions: {},
+    unresolved: []
+  }
+};
+
+/* ================= UTILITIES ================= */
+
+function normalize(text) {
+  return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function containsAny(text, words) {
+  return words.some(w => text.includes(w));
+}
+
+/* ================= INTENT DETECTION ================= */
+
+function detectIntent(rawText, state) {
+  const text = normalize(rawText);
+
+  const intent = {
+    greeting: containsAny(text, ["hola", "hey", "buenas", "buen dia"]),
+    wantsClarity: containsAny(text, ["claridad", "orden", "ideas", "confundido", "confusion", "bloqueo"]),
+    wantsPricing: containsAny(text, ["precio", "coste", "cuesta", "planes", "valor"]),
+    wantsContact: containsAny(text, ["contacto", "hablar", "persona", "whatsapp", "instagram"]),
+    wantsDiagnosis: containsAny(text, ["diagnostico", "evaluacion", "analisis"]),
+    saysYes: containsAny(text, ["si", "sí", "dale", "ok", "vale", "de acuerdo"]),
+    saysNo: containsAny(text, ["no", "nop", "nah"]),
+    mentionsBusiness: containsAny(text, ["negocio", "empresa", "clientes", "ventas", "proyecto"]),
+    mentionsSelf: containsAny(text, ["yo", "mi", "persona", "personal"]),
+    expressesOverwhelm: containsAny(text, ["muchas ideas", "saturado", "abrumado", "estresado", "perdido"]),
+    expressesGrowth: containsAny(text, ["crecer", "escalar", "vender", "mejorar"]),
+    asksHow: containsAny(text, ["como", "cómo", "funciona", "empezamos"]),
+    mixed: false
+  };
+
+  const positiveSignals = [
+    intent.wantsClarity,
+    intent.wantsPricing,
+    intent.wantsContact,
+    intent.wantsDiagnosis
+  ].filter(Boolean).length;
+
+  if (positiveSignals > 1) intent.mixed = true;
+
+  return intent;
+}
+
+/* ================= MEMORY UPDATE ================= */
+
+function updateMemoryFromInput(text, intent, state) {
+  const t = normalize(text);
+
+  if (intent.mentionsBusiness && intent.mentionsSelf) {
+    state.user.mode = "mixto";
+  } else if (intent.mentionsBusiness) {
+    state.user.mode = "negocio";
+  } else if (intent.mentionsSelf) {
+    state.user.mode = "persona";
+  }
+
+  if (intent.expressesOverwhelm) {
+    state.user.emotionalState = "saturacion";
+    state.memory.facts.cognitiveLoad = "alto";
+  }
+
+  if (intent.expressesGrowth) {
+    state.memory.facts.orientation = "crecimiento";
+  }
+
+  if (containsAny(t, ["ideas", "confusion", "bloqueo"])) {
+    state.user.intent = "ordenar";
+  }
+
+  if (containsAny(t, ["precio", "planes", "coste"])) {
+    state.user.intent = "explorar_valor";
+  }
+
+  if (containsAny(t, ["contacto", "hablar", "persona"])) {
+    state.user.intent = "hablar";
+  }
+}
+
+/* ================= RESPONSE BUILDER ================= */
+
+function buildResponse(text) {
+  cognitiveState.conversation.lastBotMessage = text;
+  cognitiveState.conversation.history.push({ role: "bot", text });
+  return text;
+}
+
+/* ================= DECISION ENGINE ================= */
+
+const cognitiveEngine = {
+  process(rawText) {
+    const state = cognitiveState;
+    const text = rawText.trim();
+    const intent = detectIntent(text, state);
+
+    state.session.lastInteraction = Date.now();
+    state.conversation.lastUserMessage = text;
+    state.conversation.history.push({ role: "user", text });
+
+    updateMemoryFromInput(text, intent, state);
+
+    // ---- PHASE ROUTING ----
+
+    switch (state.conversation.phase) {
+      case "onboarding":
+        return this.handleOnboarding(intent, state);
+
+      case "diagnostico":
+        return this.handleDiagnostico(intent, state);
+
+      case "diseño":
+        return this.handleDiseño(intent, state);
+
+      case "accion":
+        return this.handleAccion(intent, state);
+
+      case "cierre":
+        return this.handleCierre(intent, state);
+
+      default:
+        return buildResponse("Estoy aquí contigo 👑 ¿Qué te gustaría trabajar ahora mismo?");
+    }
+  },
+
+  /* ================= PHASE HANDLERS ================= */
+
+  handleOnboarding(intent, state) {
+    // Primera interacción real
+    state.conversation.phase = "diagnostico";
+    state.conversation.step = 1;
+
+    return buildResponse(
+`Hola 👑  
+Estoy aquí contigo, con calma.
+
+No soy un bot de respuestas rápidas.
+Soy un sistema diseñado para ayudarte a pensar mejor, decidir mejor y construir mejor.
+
+Para empezar bien:
+👉 ¿Hoy estás más enfocado en ti como persona, en tu proyecto como negocio, o en ambos?`
+    );
+  },
+
+  handleDiagnostico(intent, state) {
+    const step = state.conversation.step;
+
+    // ---- STEP 1: MODE ----
+    if (step === 1) {
+      if (state.user.mode) {
+        state.conversation.step = 2;
+        return buildResponse(
+`Perfecto 👑  
+Entonces trabajaremos desde un enfoque **${state.user.mode === "mixto" ? "personal + negocio" : state.user.mode}**.
+
+Ahora dime:
+👉 ¿Hoy sientes más exceso de ideas, bloqueo o confusión?`
+        );
+      }
+
+      return buildResponse(
+`Te leo 👀  
+¿Te sientes más enfocado en ti como persona, en tu proyecto como negocio, o en ambos?`
+      );
+    }
+
+    // ---- STEP 2: EMOTIONAL STATE ----
+    if (step === 2) {
+      if (state.user.emotionalState || intent.wantsClarity || intent.expressesOverwhelm) {
+        state.conversation.step = 3;
+        return buildResponse(
+`Gracias por decirlo directo 👑  
+Eso no es falta de capacidad.
+Es exceso de carga sin estructura.
+
+Ahora dime:
+👉 ¿Tu proyecto está más en etapa de ideas, validación, ventas activas o crecimiento?`
+        );
+      }
+
+      return buildResponse(
+`Para ayudarte bien necesito esto 👇  
+¿Hoy sientes más exceso de ideas, bloqueo o confusión?`
+      );
+    }
+
+    // ---- STEP 3: PROJECT STAGE ----
+    if (step === 3) {
+      if (intent.mentionsBusiness || state.user.mode === "negocio" || state.user.mode === "mixto") {
+        const t = normalize(state.conversation.lastUserMessage);
+        if (containsAny(t, ["idea", "empezando"])) state.user.projectStage = "idea";
+        if (containsAny(t, ["validando", "probando"])) state.user.projectStage = "validando";
+        if (containsAny(t, ["vendiendo", "ventas", "clientes"])) state.user.projectStage = "vendiendo";
+        if (containsAny(t, ["creciendo", "escalando"])) state.user.projectStage = "escalando";
+      }
+
+      if (state.user.projectStage) {
+        state.conversation.step = 4;
+        return buildResponse(
+`Perfecto 👑  
+Entonces estás en etapa de **${state.user.projectStage}**.
+
+Última para cerrar diagnóstico:
+👉 ¿Qué te ayudaría más ahora mismo: claridad, estructura, ventas o acompañamiento humano?`
+        );
+      }
+
+      return buildResponse(
+`Cuéntame un poco más 👀  
+¿Tu proyecto está más en ideas, validación, ventas activas o crecimiento?`
+      );
+    }
+
+    // ---- STEP 4: PRIORITY ----
+    if (step === 4) {
+      const t = normalize(state.conversation.lastUserMessage);
+      if (containsAny(t, ["claridad", "estructura", "ventas", "acompañamiento", "persona", "humano"])) {
+        state.memory.facts.priority = t;
+        state.conversation.phase = "diseño";
+        state.conversation.step = 1;
+        state.goals.completed = true;
+
+        return buildResponse(
+`Excelente 👑  
+Ya tengo tu mapa claro.
+
+Déjame resumirte lo que entendí y te propongo el siguiente paso.`
+        );
+      }
+
+      return buildResponse(
+`Para ayudarte bien necesito esto 👇  
+¿Qué te ayudaría más ahora mismo: claridad, estructura, ventas o acompañamiento humano?`
+      );
+    }
+
+    return buildResponse("Sigamos 👑 ¿Qué te gustaría contarme ahora?");
+  },
+
+  handleDiseño(intent, state) {
+    const summary = `
+👑 **Diagnóstico resumido**
+
+• Enfoque: ${state.user.mode || "no definido"}
+• Estado mental: ${state.user.emotionalState || "no definido"}
+• Etapa de proyecto: ${state.user.projectStage || "no definida"}
+• Prioridad actual: ${state.memory.facts.priority || "no definida"}
+
+Con esto, te propongo un camino claro, sin ruido y sin improvisación.
+`;
+
+    state.conversation.phase = "accion";
+    state.conversation.step = 1;
+
+    return buildResponse(
+`${summary}
+
+👉 ¿Quieres que armemos:
+1️⃣ Un plan claro paso a paso
+2️⃣ Una estructura de negocio
+3️⃣ Hablemos con alguien humano
+
+Respóndeme con 1, 2 o 3 👀`
+    );
+  },
+
+  handleAccion(intent, state) {
+    const text = normalize(state.conversation.lastUserMessage);
+
+    if (containsAny(text, ["1"])) {
+      return buildResponse(
+`Perfecto 👑  
+Entonces arrancamos con un plan claro y sin ruido.
+
+Primer paso:
+👉 ¿Qué es lo que más te está quitando energía ahora mismo en tu proyecto?`
+      );
+    }
+
+    if (containsAny(text, ["2"])) {
+      return buildResponse(
+`Excelente 👑  
+Vamos a diseñar tu estructura de negocio real.
+
+Para empezar:
+👉 ¿Qué vendes exactamente ahora mismo?`
+      );
+    }
+
+    if (containsAny(text, ["3"]) || intent.wantsContact) {
+      return buildResponse(
+`Perfecto 👑  
+Aquí tienes contacto directo con una persona real:
+
+📲 WhatsApp:
+👉 https://wa.me/573016625921  
+
+¿Quieres que mientras tanto sigamos conversando aquí? 👀`
+      );
+    }
+
+    return buildResponse(
+`Te leo 👀  
+¿Prefieres:
+1️⃣ Plan claro
+2️⃣ Estructura de negocio
+3️⃣ Contacto humano?`
+    );
+  },
+
+  handleCierre(intent, state) {
+    return buildResponse("Estoy aquí contigo 👑 ¿Cómo te gustaría continuar?");
+  }
+};
+
+/* ================= INITIAL MESSAGE ================= */
+
+appendMessage(
+  "bot",
+  "Hola 👑 Soy el sistema MaxiQueen OS.\n\nEstoy aquí para ayudarte a pensar mejor, decidir mejor y construir mejor.\n\n👉 ¿Hoy estás más enfocado en ti como persona, en tu proyecto como negocio, o en ambos?"
+);
 </script>
+
+<!-- ================= MERCADOPAGO SAFE LOADER ================= -->
+
+<script>
 
 ## License
 
@@ -1831,6 +1209,32 @@ under this license**.
 
 See the LICENSE file for full details.
 
+</script>
+<!-- ================= MERCADOPAGO SAFE LOADER ================= -->
+<script>
+(function(){
+  const mpScript = document.createElement('script');
+  mpScript.src = "https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js";
+  mpScript.async = true;
+  mpScript.onload = () => {
+    const container = document.getElementById('mp-button');
+    if(container){
+      const btn = document.createElement('script');
+      btn.src = mpScript.src;
+      btn.setAttribute('data-preference-id','453634078-e7931b13-abe1-45f2-95db-398ab50f1db0');
+      btn.setAttribute('data-source','button');
+      container.appendChild(btn);
+    }
+  };
+  mpScript.onerror = () => {
+    const container = document.getElementById('mp-button');
+    if(container){
+      container.innerHTML = '<p class="text-sm text-red-400">Pago no disponible en este momento. Escríbenos por WhatsApp.</p>';
+    }
+  };
+  document.body.appendChild(mpScript);
+})();
+</script>
+
 </body>
 </html>
-
