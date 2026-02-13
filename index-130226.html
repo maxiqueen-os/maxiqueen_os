@@ -304,19 +304,6 @@ html,body{
   </div>
 </section>
 
-<script>
-
-<!-- Modal legal -->
-<div id="legalModal" class="fixed inset-0 hidden bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
-  <div class="bg-zinc-900 text-zinc-200 max-w-xl w-full p-6 rounded-xl shadow-xl relative">
-    <button id="closeLegal" class="absolute top-3 right-3 text-zinc-400 hover:text-red-400 text-xl">✕</button>
-    <h2 id="legalTitle" class="text-xl font-bold mb-4"></h2>
-    <div id="legalContent" class="text-sm leading-relaxed space-y-3 max-h-[60vh] overflow-y-auto"></div>
-  </div>
-</div>
-
-</script>
-
 <!-- ================= HERO ULTRA-PRO ================= -->
 <section class="min-h-screen flex items-center justify-center text-center px-6 relative bg-[radial-gradient(circle_at_top,rgba(250,204,21,.18),transparent_60%)] overflow-hidden">
 
@@ -585,7 +572,6 @@ window.addEventListener('scroll', () => {
   </div>
 </section>
 
-
 <!-- ================= LIGHTBOX ================= -->
 <div id="lightbox" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
   <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl" aria-label="Cerrar">✕</button>
@@ -711,8 +697,10 @@ window.addEventListener('scroll', () => {
     </ul>
   </div>
 </section>
+   
 <!-- ================= LICENCIA ================= -->
-<section class="mq-license-box fade-in">
+
+   <section class="mq-license-box fade-in">
 
   <h3>Antes de entrar al sistema</h3>
   <p>Este sistema funciona bajo principios humanos y estructurales:</p>
@@ -736,6 +724,7 @@ window.addEventListener('scroll', () => {
   </button>
 
 </section>
+   
 <!-- ================= CHAT ================= -->
 <div class="chat-box" id="chatBox" role="dialog" aria-label="Chat MaxiQueen OS">
   <div class="chat-log" id="chatLog" aria-live="polite"></div>
@@ -780,7 +769,6 @@ function closeLightbox(){
 lightbox.addEventListener('click', e => {
   if(e.target === lightbox) closeLightbox();
 });
-
 
 /* =======================
    LICENCIA CHECK
@@ -1786,4 +1774,5 @@ See the LICENSE file for full details.
 
 </body>
 </html>
+
 
