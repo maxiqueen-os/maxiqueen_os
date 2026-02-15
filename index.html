@@ -306,19 +306,6 @@ html,body{
   </div>
 </section>
 
-<script>
-
-<!-- Modal legal -->
-<div id="legalModal" class="fixed inset-0 hidden bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
-  <div class="bg-zinc-900 text-zinc-200 max-w-xl w-full p-6 rounded-xl shadow-xl relative">
-    <button id="closeLegal" class="absolute top-3 right-3 text-zinc-400 hover:text-red-400 text-xl">✕</button>
-    <h2 id="legalTitle" class="text-xl font-bold mb-4"></h2>
-    <div id="legalContent" class="text-sm leading-relaxed space-y-3 max-h-[60vh] overflow-y-auto"></div>
-  </div>
-</div>
-
-</script>
-
 <!-- ================= HERO ULTRA-PRO ================= -->
 <section class="min-h-screen flex items-center justify-center text-center px-6 relative bg-[radial-gradient(circle_at_top,rgba(250,204,21,.18),transparent_60%)] overflow-hidden">
 
@@ -799,441 +786,278 @@ const chatLog = document.getElementById('chatLog');
 const input = document.getElementById('userInput');
 
 <script>
-/* =========================================================
-   MAXIQUEEN OS — COGNITIVE ENGINE v1
-   Arquitectura real — sin loops — sin resets — con memoria
-   ========================================================= */
+/* ==========================================================
+   MAXIQUEEN OS — CHAT ENGINE v4
+   Arquitectura profesional + tu cerebro integrado
+========================================================== */
 
-document.getElementById("year").textContent = new Date().getFullYear();
+/* =========================
+   CONFIG
+========================= */
 
-const messagesEl = document.getElementById("messages");
-const input = document.getElementById("input");
+const CONFIG = {
+  storageKey: "maxiqueen_chat_session",
+  maxMessages: 100
+};
 
-/* ================= UI ================= */
+/* =========================
+   UTILIDADES
+========================= */
 
-function appendMessage(role, text) {
-  const div = document.createElement("div");
-  div.className = "msg " + role;
-  div.textContent = text;
-  messagesEl.appendChild(div);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-
-function sendMessage() {
-  const message = input.value.trim();
-  if (!message) return;
-  appendMessage("user", message);
-  input.value = "";
-  setTimeout(() => {
-    const response = cognitiveEngine.process(message);
-    appendMessage("bot", response);
-  }, 200);
-}
-
-input.addEventListener("keydown", e => {
-  if (e.key === "Enter") sendMessage();
-});
-
-/* ================= COGNITIVE STATE ================= */
-
-const cognitiveState = {
-  session: {
-    startedAt: Date.now(),
-    lastInteraction: Date.now(),
-    active: true
+const Utils = {
+  normalize(text) {
+    return text.toLowerCase().trim();
   },
-
-  user: {
-    mode: null,            // persona | negocio | mixto
-    emotionalState: null,  // bloqueo | confusión | claridad | cansancio
-    projectStage: null,    // idea | validando | vendiendo | escalando
-    intent: null           // ordenar | vender | hablar | explorar
-  },
-
-  conversation: {
-    phase: "onboarding",   // onboarding | diagnostico | diseño | accion | cierre
-    step: 0,
-    history: [],
-    lastBotMessage: null,
-    lastUserMessage: null
-  },
-
-  goals: {
-    primary: "diagnostico_completo",
-    completed: false,
-    subgoals: []
-  },
-
-  memory: {
-    facts: {},
-    preferences: {},
-    decisions: {},
-    unresolved: []
+  safeJSONParse(str, fallback) {
+    try { return JSON.parse(str); }
+    catch { return fallback; }
   }
 };
 
-/* ================= UTILITIES ================= */
+/* =========================
+   CONTEXTO GLOBAL
+========================= */
 
-function normalize(text) {
-  return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
+const ConversationContext = {
+  history: []
+};
 
-function containsAny(text, words) {
-  return words.some(w => text.includes(w));
-}
+/* =========================
+   STORAGE
+========================= */
 
-/* ================= INTENT DETECTION ================= */
-
-function detectIntent(rawText, state) {
-  const text = normalize(rawText);
-
-  const intent = {
-    greeting: containsAny(text, ["hola", "hey", "buenas", "buen dia"]),
-    wantsClarity: containsAny(text, ["claridad", "orden", "ideas", "confundido", "confusion", "bloqueo"]),
-    wantsPricing: containsAny(text, ["precio", "coste", "cuesta", "planes", "valor"]),
-    wantsContact: containsAny(text, ["contacto", "hablar", "persona", "whatsapp", "instagram"]),
-    wantsDiagnosis: containsAny(text, ["diagnostico", "evaluacion", "analisis"]),
-    saysYes: containsAny(text, ["si", "sí", "dale", "ok", "vale", "de acuerdo"]),
-    saysNo: containsAny(text, ["no", "nop", "nah"]),
-    mentionsBusiness: containsAny(text, ["negocio", "empresa", "clientes", "ventas", "proyecto"]),
-    mentionsSelf: containsAny(text, ["yo", "mi", "persona", "personal"]),
-    expressesOverwhelm: containsAny(text, ["muchas ideas", "saturado", "abrumado", "estresado", "perdido"]),
-    expressesGrowth: containsAny(text, ["crecer", "escalar", "vender", "mejorar"]),
-    asksHow: containsAny(text, ["como", "cómo", "funciona", "empezamos"]),
-    mixed: false
-  };
-
-  const positiveSignals = [
-    intent.wantsClarity,
-    intent.wantsPricing,
-    intent.wantsContact,
-    intent.wantsDiagnosis
-  ].filter(Boolean).length;
-
-  if (positiveSignals > 1) intent.mixed = true;
-
-  return intent;
-}
-
-/* ================= MEMORY UPDATE ================= */
-
-function updateMemoryFromInput(text, intent, state) {
-  const t = normalize(text);
-
-  if (intent.mentionsBusiness && intent.mentionsSelf) {
-    state.user.mode = "mixto";
-  } else if (intent.mentionsBusiness) {
-    state.user.mode = "negocio";
-  } else if (intent.mentionsSelf) {
-    state.user.mode = "persona";
-  }
-
-  if (intent.expressesOverwhelm) {
-    state.user.emotionalState = "saturacion";
-    state.memory.facts.cognitiveLoad = "alto";
-  }
-
-  if (intent.expressesGrowth) {
-    state.memory.facts.orientation = "crecimiento";
-  }
-
-  if (containsAny(t, ["ideas", "confusion", "bloqueo"])) {
-    state.user.intent = "ordenar";
-  }
-
-  if (containsAny(t, ["precio", "planes", "coste"])) {
-    state.user.intent = "explorar_valor";
-  }
-
-  if (containsAny(t, ["contacto", "hablar", "persona"])) {
-    state.user.intent = "hablar";
-  }
-}
-
-/* ================= RESPONSE BUILDER ================= */
-
-function buildResponse(text) {
-  cognitiveState.conversation.lastBotMessage = text;
-  cognitiveState.conversation.history.push({ role: "bot", text });
-  return text;
-}
-
-/* ================= DECISION ENGINE ================= */
-
-const cognitiveEngine = {
-  process(rawText) {
-    const state = cognitiveState;
-    const text = rawText.trim();
-    const intent = detectIntent(text, state);
-
-    state.session.lastInteraction = Date.now();
-    state.conversation.lastUserMessage = text;
-    state.conversation.history.push({ role: "user", text });
-
-    updateMemoryFromInput(text, intent, state);
-
-    // ---- PHASE ROUTING ----
-
-    switch (state.conversation.phase) {
-      case "onboarding":
-        return this.handleOnboarding(intent, state);
-
-      case "diagnostico":
-        return this.handleDiagnostico(intent, state);
-
-      case "diseño":
-        return this.handleDiseño(intent, state);
-
-      case "accion":
-        return this.handleAccion(intent, state);
-
-      case "cierre":
-        return this.handleCierre(intent, state);
-
-      default:
-        return buildResponse("Estoy aquí contigo 👑 ¿Qué te gustaría trabajar ahora mismo?");
-    }
+const Storage = {
+  save() {
+    const payload = {
+      history: ConversationContext.history.slice(-CONFIG.maxMessages)
+    };
+    sessionStorage.setItem(CONFIG.storageKey, JSON.stringify(payload));
   },
 
-  /* ================= PHASE HANDLERS ================= */
+  load() {
+    const raw = sessionStorage.getItem(CONFIG.storageKey);
+    if (!raw) return false;
 
-  handleOnboarding(intent, state) {
-    // Primera interacción real
-    state.conversation.phase = "diagnostico";
-    state.conversation.step = 1;
+    const data = Utils.safeJSONParse(raw, null);
+    if (!data || !Array.isArray(data.history)) return false;
 
-    return buildResponse(
-`Hola 👑  
+    ConversationContext.history = data.history;
+    return true;
+  },
+
+  clear() {
+    sessionStorage.removeItem(CONFIG.storageKey);
+  }
+};
+
+/* =========================
+   🧠 TU ESTADO INTERNO
+========================= */
+
+let state = {
+  flujo: null,
+  etapa: null,
+  nivelDetectado: null
+};
+
+/* =========================
+   📦 TUS TRIGGERS (RESUMIDO)
+========================= */
+
+const triggers = {
+  onboarding: {
+    inicio: `
+Hola 👑  
 Estoy aquí contigo, con calma.
 
-No soy un bot de respuestas rápidas.
-Soy un sistema diseñado para ayudarte a pensar mejor, decidir mejor y construir mejor.
+¿En qué punto estás ahora mismo?
 
-Para empezar bien:
-👉 ¿Hoy estás más enfocado en ti como persona, en tu proyecto como negocio, o en ambos?`
-    );
+1️⃣ Ideas  
+2️⃣ Bloqueo  
+3️⃣ Crecimiento  
+`
   },
+  fallback: `
+Te leo 👀  
 
-  handleDiagnostico(intent, state) {
-    const step = state.conversation.step;
+No quiero responderte como bot.
+Quiero entenderte bien.
 
-    // ---- STEP 1: MODE ----
-    if (step === 1) {
-      if (state.user.mode) {
-        state.conversation.step = 2;
-        return buildResponse(
-`Perfecto 👑  
-Entonces trabajaremos desde un enfoque **${state.user.mode === "mixto" ? "personal + negocio" : state.user.mode}**.
+¿Me cuentas un poco mejor qué tienes en mente ahora mismo? 👑
+`
+};
 
-Ahora dime:
-👉 ¿Hoy sientes más exceso de ideas, bloqueo o confusión?`
-        );
-      }
+/* =========================
+   🎯 TUS INTENTS BASE
+========================= */
 
-      return buildResponse(
-`Te leo 👀  
-¿Te sientes más enfocado en ti como persona, en tu proyecto como negocio, o en ambos?`
-      );
+const intents = [
+  {
+    keywords: ["hola","buenas","hey"],
+    response: () => triggers.onboarding.inicio
+  }
+];
+
+/* =========================
+   🧠 MOTOR CONTEXTUAL
+========================= */
+
+function contextualResponse(text) {
+  return null; // aquí puedes seguir ampliando tu lógica
+}
+
+/* =========================
+   🎯 RESPUESTA PRINCIPAL
+========================= */
+
+function getResponse(message) {
+  const text = Utils.normalize(message);
+
+  const contextual = contextualResponse(text);
+  if (contextual) return contextual;
+
+  for (const intent of intents) {
+    if (intent.keywords.some(k => text.includes(k))) {
+      return intent.response();
     }
+  }
 
-    // ---- STEP 2: EMOTIONAL STATE ----
-    if (step === 2) {
-      if (state.user.emotionalState || intent.wantsClarity || intent.expressesOverwhelm) {
-        state.conversation.step = 3;
-        return buildResponse(
-`Gracias por decirlo directo 👑  
-Eso no es falta de capacidad.
-Es exceso de carga sin estructura.
+  return triggers.fallback;
+}
 
-Ahora dime:
-👉 ¿Tu proyecto está más en etapa de ideas, validación, ventas activas o crecimiento?`
-        );
-      }
+/* =========================
+   FLOW ENGINE
+========================= */
 
-      return buildResponse(
-`Para ayudarte bien necesito esto 👇  
-¿Hoy sientes más exceso de ideas, bloqueo o confusión?`
-      );
+const FlowEngine = {
+  decide(userText) {
+    try {
+      const reply = getResponse(userText);
+      return { reply };
+    } catch (error) {
+      console.error("FlowEngine error:", error);
+      return {
+        reply: "⚠️ Error interno procesando mensaje."
+      };
     }
-
-    // ---- STEP 3: PROJECT STAGE ----
-    if (step === 3) {
-      if (intent.mentionsBusiness || state.user.mode === "negocio" || state.user.mode === "mixto") {
-        const t = normalize(state.conversation.lastUserMessage);
-        if (containsAny(t, ["idea", "empezando"])) state.user.projectStage = "idea";
-        if (containsAny(t, ["validando", "probando"])) state.user.projectStage = "validando";
-        if (containsAny(t, ["vendiendo", "ventas", "clientes"])) state.user.projectStage = "vendiendo";
-        if (containsAny(t, ["creciendo", "escalando"])) state.user.projectStage = "escalando";
-      }
-
-      if (state.user.projectStage) {
-        state.conversation.step = 4;
-        return buildResponse(
-`Perfecto 👑  
-Entonces estás en etapa de **${state.user.projectStage}**.
-
-Última para cerrar diagnóstico:
-👉 ¿Qué te ayudaría más ahora mismo: claridad, estructura, ventas o acompañamiento humano?`
-        );
-      }
-
-      return buildResponse(
-`Cuéntame un poco más 👀  
-¿Tu proyecto está más en ideas, validación, ventas activas o crecimiento?`
-      );
-    }
-
-    // ---- STEP 4: PRIORITY ----
-    if (step === 4) {
-      const t = normalize(state.conversation.lastUserMessage);
-      if (containsAny(t, ["claridad", "estructura", "ventas", "acompañamiento", "persona", "humano"])) {
-        state.memory.facts.priority = t;
-        state.conversation.phase = "diseño";
-        state.conversation.step = 1;
-        state.goals.completed = true;
-
-        return buildResponse(
-`Excelente 👑  
-Ya tengo tu mapa claro.
-
-Déjame resumirte lo que entendí y te propongo el siguiente paso.`
-        );
-      }
-
-      return buildResponse(
-`Para ayudarte bien necesito esto 👇  
-¿Qué te ayudaría más ahora mismo: claridad, estructura, ventas o acompañamiento humano?`
-      );
-    }
-
-    return buildResponse("Sigamos 👑 ¿Qué te gustaría contarme ahora?");
-  },
-
-  handleDiseño(intent, state) {
-    const summary = `
-👑 **Diagnóstico resumido**
-
-• Enfoque: ${state.user.mode || "no definido"}
-• Estado mental: ${state.user.emotionalState || "no definido"}
-• Etapa de proyecto: ${state.user.projectStage || "no definida"}
-• Prioridad actual: ${state.memory.facts.priority || "no definida"}
-
-Con esto, te propongo un camino claro, sin ruido y sin improvisación.
-`;
-
-    state.conversation.phase = "accion";
-    state.conversation.step = 1;
-
-    return buildResponse(
-`${summary}
-
-👉 ¿Quieres que armemos:
-1️⃣ Un plan claro paso a paso
-2️⃣ Una estructura de negocio
-3️⃣ Hablemos con alguien humano
-
-Respóndeme con 1, 2 o 3 👀`
-    );
-  },
-
-  handleAccion(intent, state) {
-    const text = normalize(state.conversation.lastUserMessage);
-
-    if (containsAny(text, ["1"])) {
-      return buildResponse(
-`Perfecto 👑  
-Entonces arrancamos con un plan claro y sin ruido.
-
-Primer paso:
-👉 ¿Qué es lo que más te está quitando energía ahora mismo en tu proyecto?`
-      );
-    }
-
-    if (containsAny(text, ["2"])) {
-      return buildResponse(
-`Excelente 👑  
-Vamos a diseñar tu estructura de negocio real.
-
-Para empezar:
-👉 ¿Qué vendes exactamente ahora mismo?`
-      );
-    }
-
-    if (containsAny(text, ["3"]) || intent.wantsContact) {
-      return buildResponse(
-`Perfecto 👑  
-Aquí tienes contacto directo con una persona real:
-
-📲 WhatsApp:
-👉 https://wa.me/573016625921  
-
-¿Quieres que mientras tanto sigamos conversando aquí? 👀`
-      );
-    }
-
-    return buildResponse(
-`Te leo 👀  
-¿Prefieres:
-1️⃣ Plan claro
-2️⃣ Estructura de negocio
-3️⃣ Contacto humano?`
-    );
-  },
-
-  handleCierre(intent, state) {
-    return buildResponse("Estoy aquí contigo 👑 ¿Cómo te gustaría continuar?");
   }
 };
 
-/* ================= INITIAL MESSAGE ================= */
+/* =========================
+   UI ADAPTER
+========================= */
 
-appendMessage(
-  "bot",
-  "Hola 👑 Soy el sistema MaxiQueen OS.\n\nEstoy aquí para ayudarte a pensar mejor, decidir mejor y construir mejor.\n\n👉 ¿Hoy estás más enfocado en ti como persona, en tu proyecto como negocio, o en ambos?"
-);
-</script>
+const UIAdapter = {
+  elements: {},
 
+  init() {
+    this.elements.form = document.querySelector("#chat-form");
+    this.elements.input = document.querySelector("#chat-input");
+    this.elements.messages = document.querySelector("#chat-messages");
+  },
 
-<!-- ================= MERCADOPAGO SAFE LOADER ================= -->
+  renderUserMessage(text) {
+    this._renderBubble(text, "user");
+  },
 
-<script>
+  renderBotMessage(text) {
+    this._renderBubble(text, "bot");
+  },
 
-## License
+  _renderBubble(text, sender) {
+    const bubble = document.createElement("div");
+    bubble.className = `message ${sender}`;
+    bubble.style.whiteSpace = "pre-line";
+    bubble.textContent = text;
+    this.elements.messages.appendChild(bubble);
+    this.scrollToBottom();
+  },
 
-MaxiQueen OS is licensed under the **Apache License 2.0**.
+  scrollToBottom() {
+    this.elements.messages.scrollTop =
+      this.elements.messages.scrollHeight;
+  },
 
-You are free to use, modify, and distribute the core system, including for commercial purposes.
-However, the **MaxiQueen OS name, branding, and premium modules are protected and not included
-under this license**.
+  clearInput() {
+    this.elements.input.value = "";
+  }
+};
 
-See the LICENSE file for full details.
+/* =========================
+   APP CONTROLLER
+========================= */
 
-</script>
-<!-- ================= MERCADOPAGO SAFE LOADER ================= -->
-<script>
-(function(){
-  const mpScript = document.createElement('script');
-  mpScript.src = "https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js";
-  mpScript.async = true;
-  mpScript.onload = () => {
-    const container = document.getElementById('mp-button');
-    if(container){
-      const btn = document.createElement('script');
-      btn.src = mpScript.src;
-      btn.setAttribute('data-preference-id','453634078-e7931b13-abe1-45f2-95db-398ab50f1db0');
-      btn.setAttribute('data-source','button');
-      container.appendChild(btn);
+const AppController = {
+  init() {
+    UIAdapter.init();
+
+    const restored = Storage.load();
+    if (restored) {
+      this.restoreHistory();
+    } else {
+      this.sendBotMessage(
+        "👑 Bienvenido a MaxiQueen OS. ¿En qué puedo ayudarte hoy?"
+      );
     }
-  };
-  mpScript.onerror = () => {
-    const container = document.getElementById('mp-button');
-    if(container){
-      container.innerHTML = '<p class="text-sm text-red-400">Pago no disponible en este momento. Escríbenos por WhatsApp.</p>';
-    }
-  };
-  document.body.appendChild(mpScript);
-})();
+
+    this.bindEvents();
+  },
+
+  bindEvents() {
+    UIAdapter.elements.form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const text = UIAdapter.elements.input.value.trim();
+      if (!text) return;
+
+      this.handleUserMessage(text);
+    });
+  },
+
+  handleUserMessage(text) {
+    UIAdapter.renderUserMessage(text);
+    UIAdapter.clearInput();
+
+    ConversationContext.history.push({
+      sender: "user",
+      text
+    });
+
+    const decision = FlowEngine.decide(text);
+
+    this.sendBotMessage(decision.reply);
+
+    ConversationContext.history.push({
+      sender: "bot",
+      text: decision.reply
+    });
+
+    Storage.save();
+  },
+
+  sendBotMessage(text) {
+    UIAdapter.renderBotMessage(text);
+  },
+
+  restoreHistory() {
+    ConversationContext.history.forEach(msg => {
+      if (msg.sender === "user")
+        UIAdapter.renderUserMessage(msg.text);
+      else
+        UIAdapter.renderBotMessage(msg.text);
+    });
+  }
+};
+
+/* =========================
+   BOOTSTRAP
+========================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  AppController.init();
+});
+
 </script>
 
 </body>
 </html>
+
