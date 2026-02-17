@@ -71,10 +71,17 @@ const Storage = {
 /* =========================
    🧠 TU ESTADO INTERNO
 ========================= */
+
+const chatLog = document.getElementById('chatLog');
+const input = document.getElementById('userInput');
+
 let state = {
-  flujo: null,
-  etapa: null,
-  nivelDetectado: null
+  etapa: 'inicio',         // Etapa actual del flujo
+  flujo: [],               // Historial de preguntas/respuestas
+  contexto: {},            // Variables contextuales dinámicas
+  ultimaPregunta: null,    // Última pregunta del usuario
+  nivelUsuario: null,      // Nivel detectado (diagnóstico)
+  preferencias: {}         // Preferencias y estilo de respuesta
 };
 
 /* =========================
@@ -114,7 +121,7 @@ Cuéntame un poco más para afinar el diagnóstico 👑
 ========================= */
 const intents = [
   {
-    keywords: ["hola","buenas","hey"],
+    keywords: ["hola","buenas","quien eres","quién eres","que eres","qué eres"],
     response: () => triggers.onboarding.inicio
   }
 ];
@@ -144,22 +151,60 @@ function inferProfile(text) {
 /* =========================
    🎯 RESPUESTA PRINCIPAL
 ========================= */
-function getResponse(message) {
-  const text = Utils.normalize(message);
+const MessageRouter = {
 
-  inferProfile(text);
+  route(message) {
 
-  const contextual = contextualResponse(text);
-  if (contextual) return contextual;
+    const text = Utils.normalize(message);
 
-  for (const intent of intents) {
-    if (intent.keywords.some(k => text.includes(k))) {
-      return intent.response();
-    }
+    ProfileEngine.analyze(text);
+
+    const intentReply = IntentEngine.detect(text);
+    if (intentReply) return intentReply;
+
+    const contextualReply = ContextEngine.process(text);
+    if (contextualReply) return contextualReply;
+
+    return FallbackEngine.reply();
   }
 
-  return triggers.fallback();
-}
+};
+
+const ProfileEngine = {
+  analyze(text) {
+    if (text.includes("negocio") || text.includes("ventas"))
+      ConversationContext.perfil.orientacion = "negocio";
+
+    if (text.includes("bloqueo") || text.includes("cansado"))
+      ConversationContext.perfil.energia = "baja";
+
+    if (text.includes("crecer") || text.includes("expandir"))
+      ConversationContext.perfil.nivel = "pro";
+  }
+};
+
+const IntentEngine = {
+  detect(text) {
+    for (const intent of intents) {
+      if (intent.keywords.some(k => text.includes(k))) {
+        return intent.response();
+      }
+    }
+    return null;
+  }
+};
+
+const ContextEngine = {
+  process(text) {
+    return null; // luego lo haremos inteligente
+  }
+};
+
+const FallbackEngine = {
+  reply() {
+    return triggers.fallback();
+  }
+};
 
 /* =========================
    FLOW ENGINE
@@ -167,13 +212,11 @@ function getResponse(message) {
 const FlowEngine = {
   decide(userText) {
     try {
-      const reply = getResponse(userText);
+      const reply = MessageRouter.route(userText);
       return { reply };
     } catch (error) {
       console.error("FlowEngine error:", error);
-      return {
-        reply: "⚠️ Error interno procesando mensaje."
-      };
+      return { reply: "⚠️ Error interno procesando mensaje." };
     }
   }
 };
@@ -190,15 +233,10 @@ const UIAdapter = {
     this.elements.messages = document.querySelector("#chat-messages");
   },
 
-  renderUserMessage(text) {
-    this._renderBubble(text, "user");
-  },
+  renderUserMessage(text) { this._renderBubble(text,"user"); },
+  renderBotMessage(text) { this._renderBubble(text,"bot"); },
 
-  renderBotMessage(text) {
-    this._renderBubble(text, "bot");
-  },
-
-  _renderBubble(text, sender) {
+  _renderBubble(text, sender){
     const bubble = document.createElement("div");
     bubble.className = `message ${sender}`;
     bubble.style.whiteSpace = "pre-line";
@@ -208,40 +246,47 @@ const UIAdapter = {
   },
 
   scrollToBottom() {
-    this.elements.messages.scrollTop =
-      this.elements.messages.scrollHeight;
+    this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
   },
 
-  clearInput() {
-    this.elements.input.value = "";
-  }
+  clearInput() { this.elements.input.value = ""; }
 };
 
 /* =========================
    APP CONTROLLER
 ========================= */
 const AppController = {
+
   init() {
+
     UIAdapter.init();
 
-    const restored = Storage.load();
-    if (restored) {
-      this.restoreHistory();
-    } else {
-      this.sendBotMessage(
-        "👑 Bienvenido a MaxiQueen OS. ¿En qué puedo ayudarte hoy?"
-      );
+    const acceptMQ = document.getElementById('acceptMQ');
+    const continueMQ = document.getElementById('continueMQ');
+
+    if (acceptMQ && continueMQ) {
+      continueMQ.addEventListener('click', () => {
+        if(acceptMQ.checked){
+          sessionStorage.setItem('mq-accepted-license', 'true');
+          alert("✅ Licencia aceptada. Entrando al sistema...");
+        }
+      });
     }
+
+    const restored = Storage.load();
+    if (restored) this.restoreHistory();
+    else this.sendBotMessage("👑 Bienvenido a MaxiQueen OS. ¿En qué puedo ayudarte hoy?");
 
     this.bindEvents();
   },
 
   bindEvents() {
+    if (!UIAdapter.elements.form) return;
+
     UIAdapter.elements.form.addEventListener("submit", (e) => {
       e.preventDefault();
       const text = UIAdapter.elements.input.value.trim();
       if (!text) return;
-
       this.handleUserMessage(text);
     });
   },
@@ -251,12 +296,8 @@ const AppController = {
     UIAdapter.clearInput();
 
     ConversationContext.history.push({ sender: "user", text });
-    if (ConversationContext.history.length > 10) {
-      ConversationContext.history.shift();
-    }
 
     const decision = FlowEngine.decide(text);
-
     this.sendBotMessage(decision.reply);
 
     ConversationContext.history.push({ sender: "bot", text: decision.reply });
@@ -264,23 +305,54 @@ const AppController = {
     Storage.save();
   },
 
-  sendBotMessage(text) {
+  sendBotMessage(text){
     UIAdapter.renderBotMessage(text);
   },
 
-  restoreHistory() {
+  restoreHistory(){
     ConversationContext.history.forEach(msg => {
-      if (msg.sender === "user")
-        UIAdapter.renderUserMessage(msg.text);
-      else
-        UIAdapter.renderBotMessage(msg.text);
+      if(msg.sender==="user") UIAdapter.renderUserMessage(msg.text);
+      else UIAdapter.renderBotMessage(msg.text);
     });
   }
+
 };
+
+ bindEvents() {
+  if (!UIAdapter.elements.form) return;
+
+  UIAdapter.elements.form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = UIAdapter.elements.input.value.trim();
+    if (!text) return;
+    this.handleUserMessage(text);
+  });
+},
+
+  handleUserMessage(text) {
+    UIAdapter.renderUserMessage(text);
+    UIAdapter.clearInput();
+
+    ConversationContext.history.push({ sender: "user", text });
+    if (ConversationContext.history.length > 100)ConversationContext.history.shift();
+
+    const decision = FlowEngine.decide(text);
+    this.sendBotMessage(decision.reply);
+    ConversationContext.history.push({ sender: "bot", text: decision.reply });
+
+    Storage.save();
+  },
+
+  sendBotMessage(text){ UIAdapter.renderBotMessage(text); },
+
+  restoreHistory(){
+    ConversationContext.history.forEach(msg => {
+      if(msg.sender==="user") UIAdapter.renderUserMessage(msg.text);
+      else UIAdapter.renderBotMessage(msg.text);
+    });
+  };
 
 /* =========================
    BOOTSTRAP
 ========================= */
-document.addEventListener("DOMContentLoaded", () => {
-  AppController.init();
-});
+document.addEventListener("DOMContentLoaded", () => { AppController.init(); });
