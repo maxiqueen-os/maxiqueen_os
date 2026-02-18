@@ -696,9 +696,11 @@ window.addEventListener('scroll', () => {
     </a>
   </label>
 
+  
   <button id="continueMQ" disabled>
     Entrar al sistema
   </button>
+
 
 </section>
 
@@ -707,7 +709,8 @@ window.addEventListener('scroll', () => {
   <div class="chat-log" id="chatLog" aria-live="polite"></div>
   <div class="chat-input">
     <input type="text" id="userInput" placeholder="Soy MaxiBot. Escribe tu pregunta..." aria-label="Mensaje">
-    <button onclick="sendMessage()">Enviar</button>
+   <button id="sendBtn">Enviar</button>
+
   </div>
 </div>
 
@@ -1759,29 +1762,78 @@ under this license**.
 See the LICENSE file for full details.
 
 <!-- ================= MERCADOPAGO SAFE LOADER ================= -->
+<script src="https://sdk.mercadopago.com/js/v2"></script>
 <script>
+  // Inicializa MercadoPago
+  const mp = new MercadoPago('PUBLIC_KEY_AQUI', { locale: 'es-CO' });
+
+  // Crea el checkout
+  mp.checkout({
+    preference: {
+      id: 'PREFERENCE_ID_AQUI'
+    },
+    render: {
+      container: '#mp-button', // Aquí se renderiza el botón
+      label: 'Pagar ahora'     // Texto del botón
+    }
+  });
+</script>
+
+<script>
+/* =========================
+   GALERÍA DINÁMICA + LIGHTBOX
+========================= */
 (function(){
-  const mpScript = document.createElement('script');
-  mpScript.src = "https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js";
-  mpScript.async = true;
-  mpScript.onload = () => {
-    const container = document.getElementById('mp-button');
-    if(container){
-      const btn = document.createElement('script');
-      btn.src = mpScript.src;
-      btn.setAttribute('data-preference-id','453634078-e7931b13-abe1-45f2-95db-398ab50f1db0');
-      btn.setAttribute('data-source','button');
-      container.appendChild(btn);
-    }
-  };
-  mpScript.onerror = () => {
-    const container = document.getElementById('mp-button');
-    if(container){
-      container.innerHTML = '<p class="text-sm text-red-400">Pago no disponible en este momento. Escríbenos por WhatsApp.</p>';
-    }
-  };
-  document.body.appendChild(mpScript);
+  const gallery = document.getElementById('dynamicGallery');
+  if(!gallery) return;
+
+  // Lista de imágenes a mostrar
+  const images = [
+    {src:'assets/img/modulo-creativo.png', alt:'Módulo Creativo'},
+    {src:'assets/img/modulo-social.png', alt:'Social Media'},
+    {src:'assets/img/modulo-web.png', alt:'Web & Hosting'},
+    {src:'assets/img/modulo-automatizacion.png', alt:'Automatización'},
+    {src:'assets/img/modulo-ejemplo1.png', alt:'Ejemplo Extra 1'},
+    {src:'assets/img/modulo-ejemplo2.png', alt:'Ejemplo Extra 2'}
+  ];
+
+  // Limpiar contenido existente (opcional si quieres regenerar)
+  gallery.innerHTML = '';
+
+  // Crear elementos de galería
+  images.forEach(img=>{
+    const div = document.createElement('div');
+    div.className = 'relative cursor-pointer group rounded-3xl overflow-hidden';
+    div.innerHTML = `
+      <img src="${img.src}" 
+           alt="${img.alt}" 
+           class="rounded-3xl w-full h-full object-cover" 
+           loading="lazy" 
+           onclick="openLightbox(this.src)">
+    `;
+    gallery.appendChild(div);
+  });
+
+  // Lightbox ya está definido en tu script actual
 })();
+</script>
+
+<!-- ================= MERCADOPAGO SAFE LOADER ================= -->
+<script src="https://sdk.mercadopago.com/js/v3"></script>
+<script>
+  // Inicializa MercadoPago
+  const mp = new MercadoPago('PUBLIC_KEY_AQUI', { locale: 'es-CO' });
+
+  // Crea el checkout
+  mp.checkout({
+    preference: {
+      id: 'PREFERENCE_ID_AQUI'
+    },
+    render: {
+      container: '#mp-button', // Aquí se renderiza el botón
+      label: 'Pagar ahora'     // Texto del botón
+    }
+  });
 </script>
 
 </body>
