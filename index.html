@@ -266,21 +266,20 @@ html,body{
 
 <body>
 
+<!-- ================= TOGGLE DARK/LIGHT ================= -->
+<button class="toggle-theme" onclick="toggleTheme()" aria-label="Cambiar tema">🌗 MaxiTema</button>
+
 <!-- ================= MERCADO PAGO / MAXIQUEEN OS ================= -->
 <section class="py-10 text-center">
   <div class="glass inline-block px-10 py-8 rounded-3xl">
     <h1 class="text-2xl font-bold mb-2">Pago seguro MAXIQUEEN OS</h1>
     <p class="mb-4 text-zinc-300">Finaliza tu compra usando MercadoPago.</p>
 
-    <!-- BOTÓN MERCADOPAGO (async-safe) -->
-    <div id="mp-button"></div>
-  </div>
-</section>
-
-<!-- ================= TOGGLE DARK/LIGHT ================= -->
-<button class="toggle-theme" onclick="toggleTheme()" aria-label="Cambiar tema">🌗 MaxiTema</button>
-
-
+<script
+  src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js"
+  data-preference-id="453634078-e7931b13-abe1-45f2-95db-398ab50f1db0"
+  data-source="button">
+</script>
 <!-- ================= WHATSAPP FLOAT ================= -->
 <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema."
    target="_blank"
@@ -293,14 +292,62 @@ html,body{
 </a>
 
 <!-- ================= PRUEBA CRM LABORATORIO ================= -->
-<section class="py-8 text-center">
-  <a href="/labs/crm-demo/" target="_blank" rel="noopener" class="text-amber-400 hover:underline font-semibold">
-    Ver demo CRM (laboratorio)
-  </a>
-  <div class="mt-3 text-xs text-zinc-400">
-    Demo / contenido en desarrollo – MaxiQueen OS
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>MaxiQueen OS Labs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body{
+      font-family:Poppins,sans-serif;
+      background:#050508;
+      color:#fff;
+      margin:0;
+      padding:2rem;
+    }
+    .lab{
+      max-width:900px;
+      margin:auto;
+    }
+    .card{
+      background:#0b0b12;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:20px;
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+    }
+    a{color:#facc15;text-decoration:none;font-weight:600;}
+    a:hover{opacity:.85;}
+  </style>
+</head>
+<body>
+
+<div class="lab">
+  <h1>🧪 MaxiQueen OS — LABS</h1>
+  <p>Laboratorios, demos y módulos experimentales del sistema.</p>
+
+  <div class="card">
+    <h2>CRM Demo</h2>
+    <p>Prototipo de estructura CRM en evolución.</p>
+    <a href="crm-demo/" target="_blank">Abrir demo →</a>
   </div>
-</section>
+
+  <div class="card">
+    <h2>Próximos Labs</h2>
+    <p>Story Engine · QueenBlocks · Automatizaciones</p>
+  </div>
+
+  <p style="opacity:.6;margin-top:3rem;">
+    Labs ≠ producto final. Aquí se prueba, se rompe y se aprende.
+  </p>
+</div>
+
+</body>
+</html>
+
 
 <!-- Modal legal -->
 <div id="legalModal" class="fixed inset-0 hidden bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -415,6 +462,7 @@ window.addEventListener('scroll', () => {
   footer.style.transform = `translateY(-${footerLift}px)`;
   footer.style.boxShadow = `0 ${10 + footerLift/2}px ${20 + footerLift/2}px rgba(0,0,0,0.45)`;
 });
+
 </script>
 
 <!-- ================= PROBLEMA / SOLUCIÓN ================= -->
@@ -696,11 +744,9 @@ window.addEventListener('scroll', () => {
     </a>
   </label>
 
-  
   <button id="continueMQ" disabled>
     Entrar al sistema
   </button>
-
 
 </section>
 
@@ -709,8 +755,7 @@ window.addEventListener('scroll', () => {
   <div class="chat-log" id="chatLog" aria-live="polite"></div>
   <div class="chat-input">
     <input type="text" id="userInput" placeholder="Soy MaxiBot. Escribe tu pregunta..." aria-label="Mensaje">
-   <button id="sendBtn">Enviar</button>
-
+    <button onclick="sendMessage()">Enviar</button>
   </div>
 </div>
 
@@ -1761,83 +1806,17 @@ under this license**.
 
 See the LICENSE file for full details.
 
-<!-- ================= MERCADOPAGO SAFE LOADER ================= -->
-<script src="https://sdk.mercadopago.com/js/v2"></script>
-<script>
-  // Inicializa MercadoPago
-  const mp = new MercadoPago('PUBLIC_KEY_AQUI', { locale: 'es-CO' });
+<!-- ================= MERCADO PAGO / MAXIQUEEN OS ================= -->
+<section class="py-10 text-center">
+  <div class="glass inline-block px-10 py-8 rounded-3xl">
+    <h1 class="text-2xl font-bold mb-2">Pago seguro MAXIQUEEN OS</h1>
+    <p class="mb-4 text-zinc-300">Finaliza tu compra usando MercadoPago.</p>
 
-  // Crea el checkout
-  mp.checkout({
-    preference: {
-      id: 'PREFERENCE_ID_AQUI'
-    },
-    render: {
-      container: '#mp-button', // Aquí se renderiza el botón
-      label: 'Pagar ahora'     // Texto del botón
-    }
-  });
+<script
+  src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js"
+  data-preference-id="453634078-e7931b13-abe1-45f2-95db-398ab50f1db0"
+  data-source="button">
 </script>
-
-<script>
-/* =========================
-   GALERÍA DINÁMICA + LIGHTBOX
-========================= */
-(function(){
-  const gallery = document.getElementById('dynamicGallery');
-  if(!gallery) return;
-
-  // Lista de imágenes a mostrar
-  const images = [
-    {src:'assets/img/modulo-creativo.png', alt:'Módulo Creativo'},
-    {src:'assets/img/modulo-social.png', alt:'Social Media'},
-    {src:'assets/img/modulo-web.png', alt:'Web & Hosting'},
-    {src:'assets/img/modulo-automatizacion.png', alt:'Automatización'},
-    {src:'assets/img/modulo-ejemplo1.png', alt:'Ejemplo Extra 1'},
-    {src:'assets/img/modulo-ejemplo2.png', alt:'Ejemplo Extra 2'}
-  ];
-
-  // Limpiar contenido existente (opcional si quieres regenerar)
-  gallery.innerHTML = '';
-
-  // Crear elementos de galería
-  images.forEach(img=>{
-    const div = document.createElement('div');
-    div.className = 'relative cursor-pointer group rounded-3xl overflow-hidden';
-    div.innerHTML = `
-      <img src="${img.src}" 
-           alt="${img.alt}" 
-           class="rounded-3xl w-full h-full object-cover" 
-           loading="lazy" 
-           onclick="openLightbox(this.src)">
-    `;
-    gallery.appendChild(div);
-  });
-
-  // Lightbox ya está definido en tu script actual
-})();
-</script>
-
-<!-- ================= MERCADOPAGO SAFE LOADER ================= -->
-<script src="https://sdk.mercadopago.com/js/v2"></script>
-<script>
-  // Inicializa MercadoPago
-  const mp = new MercadoPago('PUBLIC_KEY_AQUI', { locale: 'es-CO' });
-
-  // Crea el checkout
-  mp.checkout({
-    preference: {
-      id: 'PREFERENCE_ID_AQUI'
-    },
-    render: {
-      container: '#mp-button', // Aquí se renderiza el botón
-      label: 'Pagar ahora'     // Texto del botón
-    }
-  });
-</script>
-
 </body>
 </html>
-
-
 
