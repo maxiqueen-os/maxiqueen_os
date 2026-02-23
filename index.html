@@ -1722,7 +1722,13 @@ function appendMessage(text, sender="bot"){
 function sendMessage(){
   const message = input.value.trim();
   if(!message) return;
-  
+   
+   appendMessage(message, "user");
+  input.value = "";
+  setTimeout(() => {
+    appendMessage(getResponse(message), "bot");
+  }, 200);
+   
  logMessage("👤 " + message, "user");
 
  const response = getResponse(message);
@@ -1738,10 +1744,6 @@ input.addEventListener("keypress", function(e){
   if(e.key === "Enter"){
     sendMessage();
   }
-});
-
-input.addEventListener("keydown", e => {
-  if(e.key === "Enter") sendMessage();
 });
 
 </script>
@@ -1771,6 +1773,7 @@ See the LICENSE file for full details.
 </script>
 </body>
 </html>
+
 
 
 
