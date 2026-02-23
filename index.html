@@ -1723,12 +1723,6 @@ function sendMessage(){
   const message = input.value.trim();
   if(!message) return;
   
-  appendMessage(message, "user");
-  input.value = "";
-  setTimeout(() => {
-    appendMessage(getResponse(message), "bot");
-  }, 200);
-
  logMessage("👤 " + message, "user");
 
  const response = getResponse(message);
@@ -1777,6 +1771,7 @@ See the LICENSE file for full details.
 </script>
 </body>
 </html>
+
 
 
 
