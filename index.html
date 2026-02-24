@@ -384,41 +384,6 @@ html,body{
 
 </footer>
 
-<!-- ================= JS 3D HOVER ================= -->
-<script>
-const floatElements = document.querySelectorAll('.float-3d');
-const bgCircles = document.querySelectorAll('.background-circle');
-
-document.addEventListener('mousemove', e => {
-  const x = e.clientX / window.innerWidth - 0.5;
-  const y = e.clientY / window.innerHeight - 0.5;
-
-  floatElements.forEach(el => {
-    const depth = 18;
-    el.style.transform = `rotateY(${x * depth}deg) rotateX(${-y * depth}deg) translateZ(0)`;
-  });
-
-  bgCircles.forEach((el, i) => {
-    const factor = (i + 1) * 28;
-    el.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
-  });
-});
-
-// Footer flotante con scroll (optimizado)
-const footer = document.querySelector('footer');
-let lastScrollY = 0;
-window.addEventListener('scroll', () => {
-  const scrollY = window.scrollY;
-  if (Math.abs(scrollY - lastScrollY) < 4) return;
-  lastScrollY = scrollY;
-
-  const maxScroll = document.body.scrollHeight - window.innerHeight || 1;
-  const footerLift = (scrollY / maxScroll) * 26;
-  footer.style.transform = `translateY(-${footerLift}px)`;
-  footer.style.boxShadow = `0 ${10 + footerLift/2}px ${20 + footerLift/2}px rgba(0,0,0,0.45)`;
-});
-</script>
-
 <!-- ================= PROBLEMA / SOLUCIÓN ================= -->
 <section class="py-24 px-6 fade-in bg-black/40">
   <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
@@ -709,7 +674,7 @@ window.addEventListener('scroll', () => {
   <div class="chat-log" id="chatLog" aria-live="polite"></div>
   <div class="chat-input">
     <input type="text" id="userInput" placeholder="Soy MaxiBot. Escribe tu pregunta..." aria-label="Mensaje">
-    <button onclick="sendMessage()">Enviar</button>
+    <button id="sendButton">Enviar</button>
   </div>
 </div>
 
