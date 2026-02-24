@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
-   <link rel="icon" type="image/png" href="images/favicon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MaxiQueen OS | Sistema Digital Integral</title>
-   <p style="font-weight:600; color:#f59e0b; text-align:center;">
-Ecosistema Digital Profesional
-</p>
-
 <meta name="description" content="JavaScript es el cuerpo, Python es la mente, tú eres la conciencia. MaxiQueen OS es un sistema digital integral diseñado para convertir ideas, historias y negocios en activos digitales rentables.">
 
 <!-- Fonts -->
@@ -279,6 +274,7 @@ html,body{
   <div class="glass inline-block px-10 py-8 rounded-3xl">
     <h1 class="text-2xl font-bold mb-2">Pago seguro MAXIQUEEN OS</h1>
     <p class="mb-4 text-zinc-300">Finaliza tu compra usando MercadoPago.</p>
+
 <script
   src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js"
   data-preference-id="453634078-e7931b13-abe1-45f2-95db-398ab50f1db0"
@@ -286,6 +282,7 @@ html,body{
 </script>
 </div>
 </section>
+
 <!-- ================= WHATSAPP FLOAT ================= -->
 <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema."
    target="_blank"
@@ -299,7 +296,7 @@ html,body{
 
 <!-- ================= PRUEBA CRM LABORATORIO ================= -->
 <section class="py-8 text-center">
-  <a href="/labs/Prototipo de estructura CRM en evolución..html" target="_blank" rel="noopener" class="text-amber-400 hover:underline font-semibold">
+  <a href="/labs/crm-demo/" target="_blank" rel="noopener" class="text-amber-400 hover:underline font-semibold">
     Ver demo CRM (laboratorio)
   </a>
   <div class="mt-3 text-xs text-zinc-400">
@@ -420,7 +417,6 @@ window.addEventListener('scroll', () => {
   footer.style.transform = `translateY(-${footerLift}px)`;
   footer.style.boxShadow = `0 ${10 + footerLift/2}px ${20 + footerLift/2}px rgba(0,0,0,0.45)`;
 });
-
 </script>
 
 <!-- ================= PROBLEMA / SOLUCIÓN ================= -->
@@ -1703,7 +1699,7 @@ Quiero entenderte bien.
 
 ¿Me cuentas un poco mejor qué tienes en mente ahora mismo? 👑
 `;
-
+}
 
 /* =========================
    🧩 UI
@@ -1722,7 +1718,7 @@ function appendMessage(text, sender="bot"){
 function sendMessage(){
   const message = input.value.trim();
   if(!message) return;
-
+  
   appendMessage(message, "user");
   input.value = "";
   setTimeout(() => {
@@ -1770,18 +1766,11 @@ See the LICENSE file for full details.
     <h1 class="text-2xl font-bold mb-2">Pago seguro MAXIQUEEN OS</h1>
     <p class="mb-4 text-zinc-300">Finaliza tu compra usando MercadoPago.</p>
 
-<script>
+<script
   src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js"
   data-preference-id="453634078-e7931b13-abe1-45f2-95db-398ab50f1db0"
   data-source="button">
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
 
