@@ -30,18 +30,21 @@
 }
 
 [data-theme="light"] {
-  --accent:#f59e0b;
-  --bg-main:#e9eaec;
-  --text-main:#050505;
-  --card-bg:#ffffff;
-  --border-soft:#d1d5db;
-  --btn-bg:#111111;
-  --btn-text:#ffffff;
-  --bg-soft:rgba(255,255,255,.75);
+  --accent:#0ff50b;
+  --bg-main:#25365c;
+  --text-main:#0fe124;
+  --card-bg:#0f2727;
+  --border-soft:#152641;
+  --btn-bg:#4a835a;
+  --btn-text:#1a0808;
+  --bg-soft:rgba(20, 20, 48, 0.75);
 }
 
 html,body{
-  background:var(--bg-main)!important;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(250,204,21,0.08), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(244,63,94,0.08), transparent 40%),
+    linear-gradient(180deg, #0b1220 0%, #060a14 100%);
   color:var(--text-main)!important;
   font-family:'Poppins',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   overflow-x:hidden;
@@ -196,12 +199,12 @@ html,body{
   padding:8px 10px;
   border-radius:10px;
   border:none;
-  background:#111827;
+  background:#101f40;
   color:white;
 }
 .chat-input button{
   background:var(--accent);
-  color:#0f0f14;
+  color:#2e2e3e;
   padding:6px 14px;
   border-radius:10px;
   font-weight:600;
@@ -248,7 +251,7 @@ html,body{
   padding:.7rem 1.6rem;
   border-radius:999px;
   background:var(--accent);
-  color:#000;
+  color:#120834;
   font-weight:700;
   transition:.2s;
 }
@@ -266,6 +269,7 @@ html,body{
 
 <body>
 
+  <div class="mq-grid-bg"></div>
 <!-- ================= TOGGLE DARK/LIGHT ================= -->
 <button class="toggle-theme" onclick="toggleTheme()" aria-label="Cambiar tema">🌗 MaxiTema</button>
 
@@ -282,7 +286,6 @@ html,body{
 </script>
 </div>
 </section>
-
 <!-- ================= WHATSAPP FLOAT ================= -->
 <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema."
    target="_blank"
@@ -293,6 +296,7 @@ html,body{
     <path d="M380.9 97.1C339-3.8 211.2-34.6 119.8 19.5 34.4 71.2-8.7 180.1 20.4 272.5L0 512l245.1-64.2c95.5 27.8 196.5-16.7 247.1-104.4 43.5-75.7 32.3-173.7-25.3-246.3z"/>
   </svg>
 </a>
+
 
 <!-- ================= PRUEBA CRM LABORATORIO ================= -->
 <section class="py-8 text-center">
@@ -383,6 +387,42 @@ html,body{
 </div>
 
 </footer>
+
+<!-- ================= JS 3D HOVER ================= -->
+<script>
+const floatElements = document.querySelectorAll('.float-3d');
+const bgCircles = document.querySelectorAll('.background-circle');
+
+document.addEventListener('mousemove', e => {
+  const x = e.clientX / window.innerWidth - 0.5;
+  const y = e.clientY / window.innerHeight - 0.5;
+
+  floatElements.forEach(el => {
+    const depth = 18;
+    el.style.transform = `rotateY(${x * depth}deg) rotateX(${-y * depth}deg) translateZ(0)`;
+  });
+
+  bgCircles.forEach((el, i) => {
+    const factor = (i + 1) * 28;
+    el.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
+  });
+});
+
+// Footer flotante con scroll (optimizado)
+const footer = document.querySelector('footer');
+let lastScrollY = 0;
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY;
+  if (Math.abs(scrollY - lastScrollY) < 4) return;
+  lastScrollY = scrollY;
+
+  const maxScroll = document.body.scrollHeight - window.innerHeight || 1;
+  const footerLift = (scrollY / maxScroll) * 26;
+  footer.style.transform = `translateY(-${footerLift}px)`;
+  footer.style.boxShadow = `0 ${10 + footerLift/2}px ${20 + footerLift/2}px rgba(0,0,0,0.45)`;
+});
+
+</script>
 
 <!-- ================= PROBLEMA / SOLUCIÓN ================= -->
 <section class="py-24 px-6 fade-in bg-black/40">
@@ -674,7 +714,7 @@ html,body{
   <div class="chat-log" id="chatLog" aria-live="polite"></div>
   <div class="chat-input">
     <input type="text" id="userInput" placeholder="Soy MaxiBot. Escribe tu pregunta..." aria-label="Mensaje">
-    <button id="sendButton">Enviar</button>
+    <button onclick="sendMessage()">Enviar</button>
   </div>
 </div>
 
