@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAXIQUEEN STORE</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Open+Sans&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --black:#0f0f0f;
+  --dark:#1a1a1a;
+  --gold:#ffd700;
+  --pink:#ff69b4;
+  --white:#ffffff;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Open Sans',sans-serif;
+  background:var(--black);
+  color:var(--white);
+  line-height:1.6;
+}
+
+h1,h2,h3{
+  font-family:'Montserrat',sans-serif;
+}
+
+a{text-decoration:none;color:inherit;}
+
+section{padding:80px 10%;}
+
+.btn{
+  display:inline-block;
+  padding:15px 35px;
+  border-radius:40px;
+  font-weight:600;
+  background:linear-gradient(45deg,var(--gold),var(--pink));
+  color:#000;
+  transition:.3s;
+}
+.btn:hover{
+  transform:scale(1.07);
+  box-shadow:0 10px 30px rgba(255,215,0,.4);
+}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:
+    linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.9)),
+    url("https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9") center/cover;
+}
+.hero h1{
+  font-size:3rem;
+  animation:fadeUp 1s ease forwards;
+}
+.hero p{
+  color:var(--gold);
+  margin:20px 0;
+  animation:fadeUp 1.3s ease forwards;
+}
+
+/* ABOUT */
+.about{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:40px;
+  background:var(--dark);
+  border-radius:30px;
+}
+.about img{
+  width:100%;
+  border-radius:25px;
+}
+.about h2{color:var(--gold);}
+
+/* PRODUCTS */
+.products{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:30px;
+}
+.card{
+  background:var(--dark);
+  padding:30px;
+  border-radius:25px;
+  transition:.3s;
+}
+.card:hover{
+  transform:translateY(-10px);
+  box-shadow:0 20px 40px rgba(255,215,0,.2);
+}
+.card img{
+  width:100%;
+  border-radius:20px;
+}
+.card h3{color:var(--gold);margin:15px 0;}
+
+/* WHATSAPP */
+.whatsapp{
+  text-align:center;
+  background:linear-gradient(180deg,#000,#111);
+}
+.whatsapp h2{color:var(--white);}
+.whatsapp p{color:var(--gold);margin:15px 0 30px;}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:40px;
+  background:#000;
+  font-size:.9rem;
+  color:#aaa;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(30px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+@media(max-width:600px){
+  .hero h1{font-size:2.2rem;}
+  section{padding:60px 6%;}
+}
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <h1>MAXIQUEEN STORE</h1>
+    <p>Elegancia, visión y poder femenino</p>
+    <a class="btn" href="https://api.whatsapp.com/send/?phone=573016625921" target="_blank">
+      Hablar por WhatsApp
+    </a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about">
+  <div>
+    <h2>¿Quiénes somos?</h2>
+    <p>
+      MAXIQUEEN es una marca creada para mujeres visionarias,
+      emprendedoras y decididas a crecer con estilo, seguridad y propósito.
+    </p>
+  </div>
+  <div>
+    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9" alt="MAXIQUEEN">
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section>
+  <h2 style="text-align:center;color:var(--gold);margin-bottom:40px;">
+    Nuestros productos
+  </h2>
+
+  <div class="products">
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff">
+      <h3>Producto Premium</h3>
+      <p>Diseñado para mujeres que lideran.</p>
+      <a class="btn" href="#">Comprar ahora</a>
+    </div>
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f">
+      <h3>Oferta Especial</h3>
+      <p>Estilo, calidad y oportunidad.</p>
+      <a class="btn" href="#">Pedir por WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<!-- WHATSAPP -->
+<section class="whatsapp">
+  <h2>¿Lista para empezar hoy?</h2>
+  <p>Escríbenos directamente y comienza ahora</p>
+  <a class="btn" href="https://api.whatsapp.com/send/?phone=573016625921" target="_blank">
+    Contactar WhatsApp
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  © 2025 MAXIQUEEN STORE · Elegancia que empodera
+</footer>
+
+</body>
+</html>

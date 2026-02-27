@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAXIQUEEN STORE | Moda y Tecnología</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: #0f0f0f;
+  color: #fff;
+}
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #000, #1a1a1a);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #f5c77a;
+}
+
+.hero p {
+  margin: 20px 0;
+  font-size: 1.1rem;
+  max-width: 600px;
+  color: #ddd;
+}
+
+.btn {
+  background: linear-gradient(135deg, #f5c77a, #d4a84f);
+  color: #000;
+  padding: 15px 30px;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+/* SECTIONS */
+.section {
+  padding: 60px 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.section h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 2.2rem;
+  color: #f5c77a;
+}
+
+/* PRODUCTS */
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.card {
+  background: #1a1a1a;
+  border-radius: 20px;
+  padding: 25px;
+  transition: 0.3s;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}
+
+.card h3 {
+  color: #f5c77a;
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 0.95rem;
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+.price {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.card a {
+  display: inline-block;
+  background: #f5c77a;
+  color: #000;
+  padding: 10px 20px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* WHATSAPP FLOAT */
+.whatsapp {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #25D366;
+  color: #fff;
+  padding: 15px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+
+/* FOOTER */
+footer {
+  background: #000;
+  padding: 30px;
+  text-align: center;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>MAXIQUEEN STORE</h1>
+  <p>Moda deportiva, accesorios y tecnología al mejor precio. Compra rápida y atención directa por WhatsApp.</p>
+  <a class="btn" href="https://api.whatsapp.com/send/?phone=TU_NUMERO_AQUI&text=Hola+MAXIQUEEN,+quiero+comprar">Comprar por WhatsApp</a>
+</section>
+
+<!-- DAMA -->
+<section class="section">
+  <h2>Moda Deportiva Dama</h2>
+  <div class="products">
+
+    <div class="card">
+      <h3>Conjunto Deportivo Chinzado</h3>
+      <p>Diseño moderno, cómodo y resistente.</p>
+      <p class="price">$47.000 COP</p>
+      <a href="https://api.whatsapp.com/send/?phone=TU_NUMERO_AQUI&text=Quiero+el+conjunto+chinzado">Comprar</a>
+    </div>
+
+    <div class="card">
+      <h3>Leggins Chinzado con Logo</h3>
+      <p>Ajuste perfecto y tela de alta calidad.</p>
+      <p class="price">$48.000 COP</p>
+      <a href="https://api.whatsapp.com/send/?phone=TU_NUMERO_AQUI&text=Quiero+el+leggins+chinzado">Comprar</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- CABALLERO -->
+<section class="section">
+  <h2>Moda Deportiva Caballero</h2>
+  <div class="products">
+
+    <div class="card">
+      <h3>Conjunto Multimarca Importado</h3>
+      <p>Ideal para entrenar o uso diario.</p>
+      <p class="price">$60.000 COP</p>
+      <a href="https://api.whatsapp.com/send/?phone=3016625921&text=Quiero+el+conjunto+caballero">Comprar</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- TECNOLOGÍA -->
+<section class="section">
+  <h2>Tecnología y Accesorios</h2>
+  <div class="products">
+
+    <div class="card">
+      <h3>Auriculares Inalámbricos TWS F9</h3>
+      <p>Bluetooth, sonido HD y estuche con batería.</p>
+      <p class="price">$60.000 COP</p>
+      <a href="https://api.whatsapp.com/send/?phone=TU_NUMERO_AQUI&text=Quiero+los+auriculares+TWS+F9">Comprar</a>
+    </div>
+
+    <div class="card">
+      <h3>Mini Ventilador USB</h3>
+      <p>Portátil, práctico y potente.</p>
+      <p class="price">$43.990 COP</p>
+      <a href="https://api.whatsapp.com/send/?phone=TU_NUMERO_AQUI&text=Quiero+el+mini+ventilador">Comprar</a>
+    </div>
+
+    <div class="card">
+      <h3>Reloj Digital Vintage</h3>
+      <p>Estilo urbano y ligero.</p>
+      <p class="price">$13.990 COP</p>
+      <a href="custom:
+  - https://wa.me/573016625921?text=Hola,%20vengo%20desde%20GitHub%20y%20quiero%20activar%20MaxiQueen%20OS
+">Comprar</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  © MAXIQUEEN STORE · Moda · Tecnología · WhatsApp Directo
+</footer>
+
+<a class="whatsapp" href="https://api.whatsapp.com/send/?phone=TU_NUMERO_AQUI&text=Hola+MAXIQUEEN">WhatsApp</a>
+
+</body>
+</html>
+
+<header>Hero + CTA</header>
+<section id="que-es">¿Qué es MaxiQueen OS?</section>
+<section id="como-funciona">Cómo funciona</section>
+<section id="modulos">Módulos del sistema</section>
+<section id="para-quien">Para quién es</section>
+<section id="vision">Visión</section>
+<section id="cta-final">Llamado a la acción</section>
+<footer>Redes sociales + contacto</footer>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>MAXIQUEEN OS — Builder OS 👑</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+
+<style>
+:root{
+  --bg:#0b0b0f;
+  --panel:#111;
+  --accent:#FFD700;
+}
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  background:var(--bg);
+  color:white;
+  font-family:Arial;
+}
+#sidebar{
+  width:260px;
+  background:#0b0b0b;
+  border-right:2px solid var(--accent);
+  padding:12px;
+  overflow:auto;
+}
+#sidebar h2{
+  color:var(--accent);
+  margin-top:0;
+}
+.component{
+  background:#1a1a1a;
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:10px;
+  cursor:pointer;
+  transition:.2s;
+}
+.component:hover{
+  transform:translateY(-3px);
+  box-shadow:0 6px 20px rgba(0,0,0,.5);
+}
+#main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+#toolbar{
+  background:black;
+  padding:8px;
+  border-bottom:2px solid var(--accent);
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+button{
+  background:var(--accent);
+  border:none;
+  padding:6px 12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+input, select{
+  padding:6px;
+  border-radius:6px;
+  border:none;
+}
+#editor{
+  flex:1;
+}
+#preview{
+  height:40%;
+  border:none;
+  border-top:2px solid var(--accent);
+}
+#projects{
+  background:#0b0b0b;
+  padding:6px;
+  border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="sidebar">
+  <h2>🧩 Componentes</h2>
+  <div class="component" onclick="insert(hero)">Hero</div>
+  <div class="component" onclick="insert(cta)">CTA</div>
+  <div class="component" onclick="insert(pricing)">Pricing</div>
+  <div class="component" onclick="insert(features)">Features</div>
+  <hr>
+  <h2>📂 Proyectos</h2>
+  <div id="projects"></div>
+</div>
+
+<div id="main">
+  <div id="toolbar">
+    <button onclick="run()">▶ Run</button>
+    <button onclick="saveProject()">💾 Guardar</button>
+    <button onclick="newProject()">🆕 Nuevo</button>
+    <button onclick="exportProject()">📦 Exportar HTML</button>
+    <input id="projectName" placeholder="Nombre del proyecto">
+    <select id="projectList" onchange="loadProject()"></select>
+  </div>
+  <div id="editor"></div>
+  <iframe id="preview"></iframe>
+</div>
+
+<script>
+const editor = CodeMirror(document.getElementById("editor"),{
+  mode:"htmlmixed",
+  theme:"material-darker",
+  lineNumbers:true
+});
+
+const baseTemplate = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Proyecto MAXIQUEEN</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{margin:0;font-family:Arial;background:#0e0f1a;color:#fff}
+.mq-btn{display:inline-block;padding:10px 16px;background:#FFD700;color:#000;text-decoration:none;border-radius:8px;font-weight:bold}
+</style>
+</head>
+<body>
+
+<!-- Empieza aquí -->
+
+</body>
+</html>`;
+
+/* ============================
+   SISTEMA DE PLANTILLAS OFFLINE
+============================ */
+
+const TEMPLATES = {
+  "landing-pro.html": `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Landing Pro — MaxiQueen OS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{margin:0;font-family:Arial;background:#0e0f1a;color:#fff}
+.hero{padding:100px 20px;text-align:center;background:linear-gradient(135deg,#1d2040,#1a1d36)}
+.hero h1{font-size:48px}
+.btn{display:inline-block;padding:12px 20px;background:#FFD700;color:#000;border-radius:10px;text-decoration:none;font-weight:bold}
+.section{padding:60px 20px;max-width:1000px;margin:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+.card{background:#1a1d36;padding:24px;border-radius:16px}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <h1 contenteditable="true">🚀 Convierte más clientes hoy</h1>
+  <p contenteditable="true">Tu solución premium empieza aquí</p>
+  <a href="#" class="btn" contenteditable="true">Empezar ahora</a>
+</section>
+
+<section class="section">
+  <h2 contenteditable="true">Beneficios</h2>
+  <div class="grid">
+    <div class="card" contenteditable="true">⚡ Rápido</div>
+    <div class="card" contenteditable="true">🔐 Seguro</div>
+    <div class="card" contenteditable="true">🚀 Escalable</div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 contenteditable="true">Testimonios</h2>
+  <div class="grid">
+    <div class="card" contenteditable="true">Cliente feliz #1</div>
+    <div class="card" contenteditable="true">Cliente feliz #2</div>
+  </div>
+</section>
+
+<section class="hero">
+  <h2 contenteditable="true">¿Listo para empezar?</h2>
+  <a href="#" class="btn" contenteditable="true">Comprar ahora</a>
+</section>
+
+</body>
+</html>`,
+
+  "funnel-pro.html": `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Funnel Pro — MaxiQueen OS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{margin:0;font-family:Arial;background:#0e0f1a;color:#fff}
+.section{padding:80px 20px;text-align:center}
+.hero{background:linear-gradient(135deg,#1d2040,#1a1d36)}
+.btn{display:inline-block;padding:12px 20px;background:#FFD700;color:#000;border-radius:10px;text-decoration:none;font-weight:bold}
+.card{background:#1a1d36;padding:24px;border-radius:16px;margin:20px auto;max-width:800px}
+</style>
+</head>
+<body>
+
+<section class="section hero">
+  <h1 contenteditable="true">👑 Sistema completo de ventas</h1>
+  <p contenteditable="true">Transforma visitantes en clientes</p>
+  <a href="#" class="btn" contenteditable="true">Acceder ahora</a>
+</section>
+
+<section class="section">
+  <div class="card" contenteditable="true">Paso 1 — Atracción</div>
+  <div class="card" contenteditable="true">Paso 2 — Confianza</div>
+  <div class="card" contenteditable="true">Paso 3 — Conversión</div>
+</section>
+
+<section class="section hero">
+  <h2 contenteditable="true">Empieza hoy</h2>
+  <a href="#" class="btn" contenteditable="true">Comprar</a>
+</section>
+
+</body>
+</html>`,
+
+  "store-pro.html": `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Tienda Pro — MaxiQueen OS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{margin:0;font-family:Arial;background:#0e0f1a;color:#fff}
+.header{padding:40px 20px;text-align:center;background:linear-gradient(135deg,#1d2040,#1a1d36)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;padding:40px 20px}
+.card{background:#1a1d36;padding:24px;border-radius:16px;text-align:center}
+.btn{display:inline-block;padding:10px 16px;background:#FFD700;color:#000;border-radius:8px;text-decoration:none;font-weight:bold}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <h1 contenteditable="true">🛒 Tienda MaxiQueen</h1>
+  <p contenteditable="true">Productos digitales premium</p>
+</header>
+
+<section class="grid">
+  <div class="card">
+    <h3 contenteditable="true">Producto 1</h3>
+    <p contenteditable="true">$49.000 COP</p>
+    <a href="#" class="btn" contenteditable="true">Comprar</a>
+  </div>
+  <div class="card">
+    <h3 contenteditable="true">Producto 2</h3>
+    <p contenteditable="true">$99.000 COP</p>
+    <a href="#" class="btn" contenteditable="true">Comprar</a>
+  </div>
+</section>
+
+</body>
+</html>`,
+
+  "portfolio-pro.html": `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Portfolio Pro — MaxiQueen OS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{margin:0;font-family:Arial;background:#0e0f1a;color:#fff}
+.hero{padding:100px 20px;text-align:center;background:linear-gradient(135deg,#1d2040,#1a1d36)}
+.section{padding:60px 20px;max-width:1000px;margin:auto}
+.card{background:#1a1d36;padding:24px;border-radius:16px;margin-bottom:20px}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <h1 contenteditable="true">👑 Tu Nombre</h1>
+  <p contenteditable="true">Especialista en soluciones digitales</p>
+</section>
+
+<section class="section">
+  <h2 contenteditable="true">Proyectos</h2>
+  <div class="card" contenteditable="true">Proyecto destacado #1</div>
+  <div class="card" contenteditable="true">Proyecto destacado #2</div>
+</section>
+
+<section class="section">
+  <h2 contenteditable="true">Contacto</h2>
+  <p contenteditable="true">email@dominio.com</p>
+</section>
+
+</body>
+</html>`,
+
+  "dashboard-pro.html": `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Pro — MaxiQueen OS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{margin:0;font-family:Arial;background:#0e0f1a;color:#fff}
+.header{padding:40px 20px;text-align:center;background:linear-gradient(135deg,#1d2040,#1a1d36)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;padding:40px 20px}
+.card{background:#1a1d36;padding:24px;border-radius:16px;text-align:center}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <h1 contenteditable="true">📊 Dashboard Ejecutivo</h1>
+  <p contenteditable="true">Panel de control interno</p>
+</header>
+
+<section class="grid">
+  <div class="card" contenteditable="true">Usuarios</div>
+  <div class="card" contenteditable="true">Ventas</div>
+  <div class="card" contenteditable="true">Proyectos</div>
+  <div class="card" contenteditable="true">Automatización</div>
+</section>
+
+</body>
+</html>`
+};
+
+/* ============================
+   CARGA DE PLANTILLA POR URL
+============================ */
+
+const params = new URLSearchParams(window.location.search);
+const tpl = params.get("template");
+
+if(tpl && TEMPLATES[tpl]){
+  editor.setValue(TEMPLATES[tpl]);
+}else{
+  editor.setValue(baseTemplate);
+}
+
+/* ============================
+   COMPONENTES
+============================ */
+
+const hero = `<section style="background:linear-gradient(135deg,#1d2040,#1a1d36);padding:80px 20px;text-align:center">
+  <h1 contenteditable="true">👑 Título Principal</h1>
+  <p contenteditable="true">Subtítulo editable aquí</p>
+  <a href="#" class="mq-btn" contenteditable="true">Llamado a la acción</a>
+</section>`;
+
+const cta = `<section style="background:#FFD700;color:#000;padding:60px 20px;text-align:center;border-radius:24px">
+  <h2 contenteditable="true">¿Listo para avanzar?</h2>
+  <p contenteditable="true">Contáctanos ahora mismo</p>
+  <a href="#" class="mq-btn" contenteditable="true">Hablar ahora</a>
+</section>`;
+
+const pricing = `<section style="padding:60px 20px">
+  <h2 contenteditable="true">Planes</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px">
+    <div style="background:#1a1d36;padding:24px;border-radius:16px" contenteditable="true">
+      <h3>Starter</h3>
+      <p>$49.000 COP</p>
+      <p>Acceso inicial</p>
+    </div>
+    <div style="background:#1a1d36;padding:24px;border-radius:16px" contenteditable="true">
+      <h3>Pro</h3>
+      <p>$99.000 COP</p>
+      <p>Auditoría completa</p>
+    </div>
+  </div>
+</section>`;
+
+const features = `<section style="padding:60px 20px">
+  <h2 contenteditable="true">Beneficios</h2>
+  <ul>
+    <li contenteditable="true">⚡ Rápido</li>
+    <li contenteditable="true">🔐 Seguro</li>
+    <li contenteditable="true">🚀 Escalable</li>
+  </ul>
+</section>`;
+
+/* ============================
+   FUNCIONES CORE
+============================ */
+
+function insert(component){
+  editor.replaceRange("\n\n"+component+"\n\n", editor.getCursor());
+  autosave();
+  run();
+}
+
+function run(){
+  const html = editor.getValue();
+  document.getElementById("preview").srcdoc = html;
+}
+
+function getProjects(){
+  return JSON.parse(localStorage.getItem("mq-projects") || "{}");
+}
+
+function saveProjects(data){
+  localStorage.setItem("mq-projects", JSON.stringify(data));
+}
+
+function refreshProjectList(){
+  const projects = getProjects();
+  const list = document.getElementById("projectList");
+  list.innerHTML = "<option value=''>Abrir proyecto</option>";
+  for(const name in projects){
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    list.appendChild(opt);
+  }
+}
+
+function saveProject(){
+  const name = document.getElementById("projectName").value.trim();
+  if(!name){ alert("Pon un nombre al proyecto"); return; }
+  const projects = getProjects();
+  projects[name] = editor.getValue();
+  saveProjects(projects);
+  localStorage.removeItem("mq-autosave");
+  refreshProjectList();
+  alert("💾 Proyecto guardado");
+}
+
+function loadProject(){
+  const name = document.getElementById("projectList").value;
+  if(!name) return;
+  const projects = getProjects();
+  editor.setValue(projects[name]);
+  document.getElementById("projectName").value = name;
+  run();
+}
+
+function newProject(){
+  if(confirm("¿Nuevo proyecto? Se perderán cambios no guardados.")){
+    editor.setValue(baseTemplate);
+    document.getElementById("projectName").value = "";
+    localStorage.removeItem("mq-autosave");
+    run();
+  }
+}
+
+function exportProject(){
+  const html = editor.getValue();
+  const blob = new Blob([html], {type:"text/html"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = (document.getElementById("projectName").value || "index") + ".html";
+  a.click();
+}
+
+/* ============================
+   AUTOSAVE + RECOVERY
+============================ */
+
+function autosave(){
+  localStorage.setItem("mq-autosave", editor.getValue());
+}
+
+editor.on("change", ()=> autosave());
+
+const autosaved = localStorage.getItem("mq-autosave");
+if(autosaved){
+  if(confirm("🔁 Hay un borrador sin guardar. ¿Recuperarlo?")){
+    editor.setValue(autosaved);
+  }
+}
+
+/* ============================
+   INIT
+============================ */
+
+refreshProjectList();
+run();
+</script>
+
+</body>
+</html>

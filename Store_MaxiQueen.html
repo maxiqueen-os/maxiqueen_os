@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>MaxiQueen OS — Convierte tu idea en negocio real</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO -->
+  <meta name="description" content="Sistema operativo para emprendedores, creadores y profesionales que quieren estructura, ejecución y resultados reales. Activación rápida o sistema completo." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0b0b0f;
+      --card: #14141b;
+      --text: #ffffff;
+      --muted: #b3b3c2;
+      --accent: #00ffc6;
+      --accent-2: #7c7cff;
+      --border: rgba(255,255,255,0.08);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: radial-gradient(circle at 20% 10%, #12121a, #050507 60%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      padding: 28px 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      font-size: 20px;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 22px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 14px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #050507;
+      box-shadow: 0 10px 30px rgba(0,255,198,0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 36px rgba(0,255,198,0.35);
+    }
+
+    .btn-outline {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      border-color: rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* HERO */
+    .hero {
+      padding: 72px 0 64px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 48px 0 40px;
+      }
+    }
+
+    .hero h1 {
+      font-size: clamp(34px, 5vw, 56px);
+      line-height: 1.05;
+      margin: 0 0 16px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--muted);
+      margin: 0 0 28px;
+      max-width: 520px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* CARD */
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    /* HERO CARD */
+    .hero-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at 50% 50%, rgba(0,255,198,0.15), transparent 60%);
+      z-index: 0;
+    }
+
+    .hero-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .hero-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .hero-card ul {
+      padding-left: 18px;
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .hero-card li {
+      margin-bottom: 8px;
+    }
+
+    /* SECTIONS */
+    section {
+      padding: 64px 0;
+    }
+
+    .section-title {
+      font-size: clamp(26px, 4vw, 36px);
+      margin: 0 0 12px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      text-align: center;
+    }
+
+    .section-subtitle {
+      margin: 0 auto 40px;
+      max-width: 640px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    /* PROBLEM / SOLUTION */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .problem-item h4 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .problem-item p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* OFFERS */
+    .offers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 900px) {
+      .offers {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .offer {
+      position: relative;
+      padding: 34px 28px 30px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .offer.highlight {
+      border: 1px solid rgba(0,255,198,0.5);
+      box-shadow: 0 30px 70px rgba(0,255,198,0.18);
+      transform: translateY(-2px);
+    }
+
+    .offer-badge {
+      position: absolute;
+      top: -12px;
+      left: 24px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #050507;
+      letter-spacing: 0.3px;
+    }
+
+    .offer h3 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .offer .price {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      margin: 2px 0 4px;
+    }
+
+    .offer .price span {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-left: 6px;
+    }
+
+    .offer p {
+      margin: 0 0 6px;
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .offer ul {
+      padding-left: 18px;
+      margin: 6px 0 18px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .offer li {
+      margin-bottom: 8px;
+    }
+
+    .offer .btn {
+      margin-top: auto;
+      width: 100%;
+      font-size: 15px;
+      padding: 16px 22px;
+    }
+
+    /* TRUST */
+    .trust {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 900px) {
+      .trust {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .trust-item h4 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .trust-item p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* CTA */
+    .cta {
+      background: linear-gradient(135deg, rgba(0,255,198,0.12), rgba(124,124,255,0.12));
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius);
+      padding: 48px 28px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .cta h2 {
+      margin: 0 0 10px;
+      font-size: clamp(26px, 4vw, 38px);
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .cta p {
+      margin: 0 auto 22px;
+      max-width: 560px;
+      font-size: 16px;
+      color: var(--muted);
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 32px 0 48px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    footer span {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* FLOATING WHATSAPP */
+    .wa-float {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 999;
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #25D366, #1EBE5D);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 26px;
+      box-shadow: 0 12px 30px rgba(37,211,102,0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .wa-float:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px rgba(37,211,102,0.45);
+    }
+
+    /* SMALL DETAILS */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      margin: 36px 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="container">
+    <div class="logo">MaxiQueen<span>OS</span></div>
+    <a href="#ofertas" class="btn btn-outline">Ver ofertas</a>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero container">
+    <div>
+      <h1>Convierte tu <span>idea</span> en negocio real<br>sin improvisar.</h1>
+      <p>
+        Sistema operativo para emprendedores, creadores y profesionales que quieren
+        estructura, ejecución y resultados reales — no más caos, no más parálisis.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#ofertas" class="btn btn-primary">Ver activaciones</a>
+        <a href="#como-funciona" class="btn btn-outline">Cómo funciona</a>
+      </div>
+    </div>
+
+    <div class="card hero-card">
+      <h3>¿Te suena familiar?</h3>
+      <p>Talento tienes. Ideas también. Pero:</p>
+      <ul>
+        <li>Empiezas cosas y no las terminas</li>
+        <li>Trabajas mucho pero avanzas poco</li>
+        <li>No tienes sistema, solo esfuerzo</li>
+        <li>Ingresos inestables</li>
+      </ul>
+      <p><strong>No te falta motivación. Te falta sistema.</strong></p>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section class="container">
+    <h2 class="section-title">El problema no eres tú</h2>
+    <p class="section-subtitle">
+      La mayoría no falla por falta de talento, sino por falta de estructura.
+    </p>
+
+    <div class="grid-3">
+      <div class="card problem-item">
+        <h4>Caos operativo</h4>
+        <p>Ideas sueltas, procesos inexistentes, decisiones al día.</p>
+      </div>
+      <div class="card problem-item">
+        <h4>Bloqueo constante</h4>
+        <p>Sabes qué hacer, pero no qué hacer primero.</p>
+      </div>
+      <div class="card problem-item">
+        <h4>Ingresos inestables</h4>
+        <p>Mucho trabajo, pocos resultados sostenibles.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUTION -->
+  <section id="como-funciona" class="container">
+    <h2 class="section-title">La solución: sistema, no fuerza</h2>
+    <p class="section-subtitle">
+      MaxiQueen OS convierte tu idea en estructura clara, ejecución enfocada y resultados reales.
+    </p>
+
+    <div class="grid-3">
+      <div class="card">
+        <h4>1. Diagnóstico</h4>
+        <p>Identificamos exactamente qué está roto y qué mover primero.</p>
+      </div>
+      <div class="card">
+        <h4>2. Arquitectura</h4>
+        <p>Diseñamos tu sistema de negocio mínimo viable.</p>
+      </div>
+      <div class="card">
+        <h4>3. Ejecución</h4>
+        <p>Lo implementamos contigo hasta que funcione.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- OFFERS -->
+  <section id="ofertas" class="container">
+    <h2 class="section-title">Elige tu activación</h2>
+    <p class="section-subtitle">
+      Dos caminos. Uno rápido. Uno completo. Ambos te sacan del caos.
+    </p>
+
+    <div class="offers">
+
+      <!-- QUICK DEPLOY -->
+      <div class="offer">
+        <h3>⚡ Quick Deploy</h3>
+        <div class="price">$147.000 <span>COP</span></div>
+        <p>
+          Activación express para pasar de caos a claridad en 7 días.
+        </p>
+        <ul>
+          <li>Diagnóstico estratégico 1:1 (30 min)</li>
+          <li>Mapa de sistema personalizado</li>
+          <li>Plan de acción de 7 días</li>
+          <li>Checklist operativo</li>
+          <li>Soporte por WhatsApp (3 días)</li>
+        </ul>
+        <a
+          class="btn btn-outline"
+          href="https://wa.me/573016625921?text=Hola%20quiero%20activar%20MaxiQueen%20Quick%20Deploy%20por%20%24147.000%20COP"
+          target="_blank"
+        >
+          Activar Quick Deploy
+        </a>
+      </div>
+
+      <!-- CORE ACTIVATION -->
+      <div class="offer highlight">
+        <div class="offer-badge">RECOMENDADO</div>
+        <h3>👑 OS Core Activation</h3>
+        <div class="price">$897.000 <span>COP</span></div>
+        <p>
+          Sistema operativo completo para convertir tu idea en negocio real en 30 días.
+        </p>
+        <ul>
+          <li>Diagnóstico profundo</li>
+          <li>Arquitectura completa de negocio</li>
+          <li>Sistema de ejecución personalizado</li>
+          <li>Funnel base activo</li>
+          <li>Automatización mínima viable</li>
+          <li>Soporte directo por 30 días</li>
+        </ul>
+        <a
+          class="btn btn-primary"
+          href="https://wa.me/573016625921?text=Hola%20quiero%20activar%20MaxiQueen%20OS%20Core%20por%20%24897.000%20COP"
+          target="_blank"
+        >
+          Activar OS Core
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TRUST -->
+  <section class="container">
+    <h2 class="section-title">Por qué funciona</h2>
+    <p class="section-subtitle">
+      No es motivación. Es arquitectura aplicada.
+    </p>
+
+    <div class="trust">
+      <div class="card trust-item">
+        <h4>Sistema, no teoría</h4>
+        <p>Todo es accionable. Nada se queda en ideas.</p>
+      </div>
+      <div class="card trust-item">
+        <h4>Enfoque en resultados</h4>
+        <p>Avance real en semanas, no en años.</p>
+      </div>
+      <div class="card trust-item">
+        <h4>Acompañamiento directo</h4>
+        <p>No cursos grabados. Ejecución contigo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="container">
+    <div class="cta">
+      <h2>Estás a una decisión de salir del caos</h2>
+      <p>
+        Si sigues igual, nada cambia.
+        Si activas sistema, todo cambia.
+      </p>
+      <div class="hero-actions" style="justify-content:center;">
+        <a
+          href="https://wa.me/573016625921?text=Hola%20quiero%20activar%20MaxiQueen%20Quick%20Deploy"
+          class="btn btn-outline"
+          target="_blank"
+        >
+          ⚡ Activación rápida
+        </a>
+        <a
+          href="https://wa.me/573016625921?text=Hola%20quiero%20activar%20MaxiQueen%20OS%20Core"
+          class="btn btn-primary"
+          target="_blank"
+        >
+          👑 Sistema completo
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="container">
+    © 2026 <span>MaxiQueen OS</span> — Sistema operativo para humanos ambiciosos.
+  </footer>
+
+  <!-- FLOATING WHATSAPP -->
+  <a
+    href="https://wa.me/573016625921?text=Hola%20quiero%20información%20sobre%20MaxiQueen%20OS"
+    class="wa-float"
+    target="_blank"
+    aria-label="WhatsApp"
+  >
+    💬
+  </a>
+
+</body>
+</html>

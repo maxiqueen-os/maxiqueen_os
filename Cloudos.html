@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaxiQueen Cloud™ Ecosistema Total - Animado y Dinámico</title>
+<style>
+body { margin:0; font-family:'Arial', sans-serif; background:#0d0d0d; color:white; }
+.container { display:flex; flex-direction:column; align-items:center; padding:20px; }
+.layer { border-radius:15px; padding:20px; margin:15px 0; width:95%; max-width:1200px; background: linear-gradient(145deg, #1c0b3a, #2c0f4f); box-shadow:0 8px 25px rgba(0,0,0,0.9); position:relative; transition: all 0.5s; }
+h2 { display:flex; align-items:center; gap:10px; margin-bottom:10px; color:#f1c40f; }
+.layer div { margin-top:10px; background: rgba(255,255,255,0.05); padding:15px; border-radius:10px; transition: all 0.5s; }
+input { width:100%; padding:12px; border-radius:10px; border:none; margin-top:10px; font-size:16px; }
+.arrow, .curve-arrow { position:relative; margin: 20px auto; }
+.arrow { width:4px; height:50px; background:linear-gradient(to bottom, #f1c40f, #3498db); animation: pulse 1.5s infinite alternate; }
+.arrow::after { content:''; position:absolute; bottom:-10px; left:-6px; border-left:10px solid transparent; border-right:10px solid transparent; border-top:10px solid #f1c40f; }
+.curve-arrow svg { width: 100%; height:80px; overflow: visible; }
+.curve-arrow path { stroke:#f1c40f; stroke-width:3; fill:none; stroke-dasharray: 300; stroke-dashoffset: 300; animation: dash 2s infinite linear; }
+@keyframes dash { 0% { stroke-dashoffset: 300; } 50% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 300; } }
+@keyframes pulse { 0% { background: linear-gradient(to bottom, #f1c40f, #3498db); } 50% { background: linear-gradient(to bottom, #f1c40f, #8e44ad); } 100% { background: linear-gradient(to bottom, #f1c40f, #d4af37); } }
+.state-badge { display:inline-block; padding:5px 10px; border-radius:8px; font-weight:bold; margin:2px; transition: all 0.5s; }
+.state-diagnostico { background:#f1c40f; color:black; }
+.state-estructurando { background:#3498db; color:white; }
+.state-construyendo { background:#9b59b6; color:white; }
+.state-vendiendo { background:#2ecc71; color:black; }
+.state-escalando { background:#e74c3c; color:white; }
+.logo { width:60px; height:60px; border-radius:50%; background:linear-gradient(45deg,#d4af37,#3498db); display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:20px; color:white; margin-right:10px; }
+.curve-arrow .highlight { stroke:#d4af37; stroke-width:4; stroke-dasharray: 300; stroke-dashoffset: 300; animation: dash-highlight 1.5s linear forwards; }
+@keyframes dash-highlight { 0% { stroke-dashoffset: 300; } 100% { stroke-dashoffset: 0; } }
+.document-upload { margin-top:10px; }
+.module { position:relative; padding:15px; background:rgba(255,255,255,0.05); border-radius:10px; flex:1; min-width:120px; text-align:center; cursor:pointer; transition: transform 0.3s, background 0.3s; }
+.module:hover { transform: translateY(-5px); background: rgba(241,196,15,0.3); }
+.module-connector { position:absolute; pointer-events:none; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- MAXIQUEEN OS CHAT -->
+<div id="maxiqueen-os" class="layer">
+  <h2><div class="logo">MQ</div>1️⃣ MaxiQueen OS (Chat Interactivo)</h2>
+  <div id="chatLog">🤖 Hola, soy MaxiBot. Escribe tu pregunta o intención...</div>
+  <input id="userInput" placeholder="Escribe tu intención o plan (starter/pro/os completo)..." />
+  <input type="file" id="uploadDoc" class="document-upload" />
+</div>
+<div class="curve-arrow" id="arrow1">
+  <svg><path d="M0,60 C60,0 140,0 200,60" /></svg>
+</div>
+
+<!-- INTENCIÓN / DETECCIÓN -->
+<div class="layer">
+  <h2>🔎 Detecta Intención / Necesidad</h2>
+  <div>- Starter / Pro / OS Completo</div>
+  <div>- Precio / Escalar / Ordenar</div>
+  <div>- Confirmación / Silencio</div>
+</div>
+<div class="curve-arrow" id="arrow2">
+  <svg><path d="M0,60 C60,0 140,0 200,60" /></svg>
+</div>
+
+<!-- ACTUALIZACIÓN DE ESTADO -->
+<div class="layer">
+  <h2>📝 Actualiza Estado del Usuario</h2>
+  <div>- state.plan</div>
+  <div>- state.stage</div>
+  <div>- sessionMemory.interestScore</div>
+  <div>- CTA, recursos, descuento</div>
+</div>
+<div class="curve-arrow" id="arrow3">
+  <svg><path d="M0,60 C60,0 140,0 200,60" /></svg>
+</div>
+
+<!-- QUEENPANEL -->
+<div id="queenpanel" class="layer">
+  <h2>2️⃣ QueenPanel™ (Dashboard)</h2>
+  <div id="projectState">Estado de proyecto: <span class="state-badge state-diagnostico">Diagnóstico</span></div>
+  <div id="planSelected">Plan seleccionado: Ninguno</div>
+  <div id="ctaArea"></div>
+  <div>Muestra decisiones, flujo, estado de proyecto y CTA pendiente</div>
+</div>
+<div class="curve-arrow" id="arrow4">
+  <svg><path d="M0,60 C60,0 140,0 200,60" /></svg>
+</div>
+
+<!-- MÓDULOS DEL DASHBOARD CON FLECHAS INTERNA -->
+<div class="layer" id="dashboardModules">
+  <h2>📦 Módulos del QueenPanel™</h2>
+  <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center; position:relative;">
+    <div class="module">Núcleo Humano</div>
+    <div class="module">Módulo Creativo</div>
+    <div class="module">Web & Hosting</div>
+    <div class="module">Ventas</div>
+    <div class="module">Automatización</div>
+    <div class="module">Comunidad</div>
+    <div class="module">Documentos</div>
+  </div>
+  <svg class="module-connector" style="top:0; left:0; width:100%; height:200px;">
+    <path d="M50,30 C150,0 250,0 350,30" stroke="#d4af37" stroke-width="3" fill="none" />
+    <path d="M100,50 C200,20 300,20 400,50" stroke="#d4af37" stroke-width="3" fill="none" />
+  </svg>
+</div>
+<div class="curve-arrow" id="arrow5">
+  <svg><path d="M0,60 C60,0 140,0 200,60" /></svg>
+</div>
+
+<!-- MAXIQUEEN CLOUD -->
+<div id="maxiqueen-cloud" class="layer">
+  <h2>3️⃣ MaxiQueen Cloud™ (Plataforma SaaS Humana)</h2>
+  <div style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center; position:relative;" id="cloudModuleContainer">
+    <div class="module" data-module="Core Humano">Core Humano</div>
+    <div class="module" data-module="Web Cloud">Web Cloud</div>
+    <div class="module" data-module="Content Cloud">Content Cloud</div>
+    <div class="module" data-module="Sales Cloud">Sales Cloud</div>
+    <div class="module" data-module="Automation Cloud">Automation Cloud</div>
+    <div class="module" data-module="Queen Community">Queen Community</div>
+  </div>
+  <div id="cloudUpload"><input type="file" class="document-upload" /></div>
+  <div id="finalOutcome">
+    <strong>Resultado Final:</strong> Sistema digital funcional, cliente guiado, proceso replicable, generación de ingresos, oferta + CTA integrada
+  </div>
+  <svg class="module-connector" style="position:absolute; top:0; left:0; width:100%; height:300px; pointer-events:none;"></svg>
+</div>
+
+</div>
+<script>
+let state = { plan: null, stage: 'Diagnóstico', discountShown: false };
+const stages = ['Diagnóstico','Estructurando','Construyendo','Vendiendo','Escalando'];
+const stageClasses = ['state-diagnostico','state-estructurando','state-construyendo','state-vendiendo','state-escalando'];
+
+function updateChatLog(msg, fromUser=false) {
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div>${fromUser ? '📝 Tú' : '🤖 MaxiBot'}: ${msg}</div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
+function updateQueenPanel() {
+  const projectState = document.getElementById('projectState');
+  const stageIndex = stages.indexOf(state.stage);
+  projectState.innerHTML = `Estado de proyecto: <span class="state-badge ${stageClasses[stageIndex]}">${state.stage}</span>`;
+  document.getElementById('planSelected').innerHTML = `Plan seleccionado: <strong>${state.plan || 'Ninguno'}</strong>`;
+  document.getElementById('ctaArea').innerHTML = state.discountShown ? `CTA: WhatsApp + 40% descuento` : '';
+  animateArrows(stageIndex);
+  animateModuleArrows();
+  animateCloudModuleFlow();
+}
+
+function animateArrows(stageIndex){
+  const arrows = document.querySelectorAll('.curve-arrow path');
+  arrows.forEach((path,i)=>{
+    if(i <= stageIndex){
+      path.classList.add('highlight');
+    } else {
+      path.classList.remove('highlight');
+    }
+  });
+}
+
+function animateModuleArrows(){
+  const modulePaths = document.querySelectorAll('#dashboardModules svg path');
+  modulePaths.forEach((path,i)=>{
+    path.classList.add('highlight');
+    setTimeout(()=>{ path.classList.remove('highlight'); }, 1500 + i*200);
+  });
+}
+
+function animateCloudModuleFlow(){
+  const container = document.getElementById('cloudModuleContainer');
+  const svg = container.nextElementSibling; // svg.connector
+  svg.innerHTML = '';
+  const modules = container.querySelectorAll('.module');
+  for(let i=0;i<modules.length-1;i++){
+    const rect1 = modules[i].getBoundingClientRect();
+    const rect2 = modules[i+1].getBoundingClientRect();
+    const x1 = rect1.left + rect1.width/2 - container.getBoundingClientRect().left;
+    const y1 = rect1.top + rect1.height/2 - container.getBoundingClientRect().top;
+    const x2 = rect2.left + rect2.width/2 - container.getBoundingClientRect().left;
+    const y2 = rect2.top + rect2.height/2 - container.getBoundingClientRect().top;
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',`M${x1},${y1} C${(x1+x2)/2},${y1-40} ${(x1+x2)/2},${y2-40} ${x2},${y2}`);
+    path.setAttribute('stroke','#d4af37');
+    path.setAttribute('stroke-width','3');
+    path.setAttribute('fill','none');
+    path.classList.add('highlight');
+    svg.appendChild(path);
+  }
+}
+
+function handleUserInput(val) {
+  val = val.trim().toLowerCase();
+  if(!val) return;
+  updateChatLog(val, true);
+  if(['starter','pro','os completo'].includes(val)){
+    state.plan = val;
+    state.stage = 'Estructurando';
+    state.discountShown = true;
+    updateChatLog(`Plan ${val.toUpperCase()} confirmado. Aplicando 40% descuento.`);
+  } else if(val.includes('hola') || val.includes('qué') || val.includes('como')){
+    updateChatLog('Hola! Cuéntame tu intención: ordenar tu sistema, escalar, o seleccionar un plan.');
+  } else {
+    updateChatLog('Analizando tu intención...');
+  }
+  updateQueenPanel();
+  updateCloudModules();
+}
+
+function updateCloudModules(){
+  document.getElementById('cloudModules').innerHTML = `Core Humano → decisiones y prioridades<br>Web Cloud → hosting, subdominios<br>Content Cloud → identidad, guiones, TikTok<br>Sales Cloud → landing, funnels, checkout<br>Automation Cloud → formularios, seguimiento, respuestas<br>Queen Community → soporte y comunidad`;
+  document.getElementById('finalOutcome').innerHTML = `<strong>Resultado Final:</strong> Sistema digital funcional, cliente guiado, proceso replicable, generación de ingresos, oferta + CTA integrada`;
+  animateCloudModuleFlow();
+}
+
+document.getElementById('userInput').addEventListener('keypress', e => {
+  if(e.key==='Enter'){
+    handleUserInput(e.target.value);
+    e.target.value = '';
+  }
+});
+
+window.addEventListener('resize', animateCloudModuleFlow);
+</script>
+</body>
+</html>

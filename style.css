@@ -1,0 +1,35 @@
+.queen-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.queen-logo img {
+  height: 40px;
+  width: auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* Halo */
+.queen-logo::before {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(245, 158, 11, 0.35),
+    transparent 65%
+  );
+  filter: blur(10px);
+  opacity: 0.6;
+  animation: queenHalo 4s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes queenHalo {
+  0%, 100% { opacity: 0.45; transform: scale(0.95); }
+  50% { opacity: 0.75; transform: scale(1.05); }
+}
