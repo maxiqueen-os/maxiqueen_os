@@ -5,4 +5,3 @@ magick convert .\images\favicon.png -resize 64x64 .\favicon.ico
 git add favicon.ico
 git commit -m "Add favicon.ico"
 git push
-
