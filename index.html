@@ -14,20 +14,8 @@
 
 <!-- Tailwind CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
-
-<body>
-
-<h2>Registro</h2>
-<input type="email" id="reg_email" placeholder="Email">
-<input type="password" id="reg_password" placeholder="Password">
-<button onclick="register()">Registrarse</button>
-
-<h2>Login</h2>
-<input type="email" id="login_email" placeholder="Email">
-<input type="password" id="login_password" placeholder="Password">
-<button onclick="login()">Iniciar Sesión</button>
-
 <script>
+
 async function register() {
   const response = await fetch("http://127.0.0.1:8000/register", {
     method: "POST",
@@ -43,33 +31,30 @@ async function register() {
 }
 
 async function login() {
-  const response = await fetch("http://127.0.0.1:8000/login", {
+  const response = await fetch("http://127.0.0.1:8000/users/login", {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       email: document.getElementById("login_email").value,
       password: document.getElementById("login_password").value
     })
   });
 
-  const token = await response.json();
+  const data = await response.json();
+  console.log(data);
 
-  // Guardamos el token
-  localStorage.setItem("token", token);
-
-  alert("Login exitoso");
+  if(data.access_token){
+      localStorage.setItem("token", data.access_token);
+      window.location.href = "dashboard.html";
+  } else {
+      alert("Error al iniciar sesión");
+  }
 }
 
-const token = localStorage.getItem("token");
-
-fetch("http://127.0.0.1:8000/ruta-privada", {
-  headers: {
-    "Authorization": "Bearer " + token
-  }
-});
 </script>
 
-</body>
 <style>
 /* =====================
    VARIABLES / TEMAS
@@ -77,30 +62,30 @@ fetch("http://127.0.0.1:8000/ruta-privada", {
 :root {
   --accent:#facc15;
   --bg-main:#0b1220;
-  --text-main:#d7d87b;
-  --card-bg:#0f172a;
-  --border-soft:#172b4a;
+  --text-main:#f4ff23;
+  --card-bg:#151517;
+  --border-soft:#34ff19;
   --btn-bg:#facc15;
   --btn-text:#6e3838;
-  --bg-soft:rgba(0,0,0,.45);
+  --bg-soft:rgba(4, 9, 19, 0.45);
 }
 
 [data-theme="light"] {
-  --accent:#0ff50b;
-  --bg-main:#0d1628;
-  --text-main:#70ad76;
-  --card-bg:#0f2727;
-  --border-soft:#398a46;
-  --btn-bg:#b86b13;
-  --btn-text:#1a0808;
-  --bg-soft:rgba(20, 20, 48, 0.75);
+  --accent:#22e670;
+  --bg-main:#0c2f76;
+  --text-main:#0cff07;
+  --card-bg:#000000;
+  --border-soft:#a7ff03;
+  --btn-bg:#ef8300;
+  --btn-text:#690707;
+  --bg-soft:rgb(9, 9, 67);
 }
 
 html,body{
   background:
-    radial-gradient(circle at 15% 20%, rgba(250,204,21,0.08), transparent 40%),
-    radial-gradient(circle at 85% 80%, rgba(244,63,94,0.08), transparent 40%),
-    linear-gradient(180deg, #0b1220 0%, #060a14 100%);
+    radial-gradient(circle at 30% 20%, rgba(255, 251, 16, 0.174), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(8, 43, 117, 0.08), transparent 40%),
+    linear-gradient(180deg, #282f3dc2 15%, #020a2b85 100%);
   color:var(--text-main)!important;
   font-family:'Poppins',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   overflow-x:hidden;
@@ -119,7 +104,7 @@ html,body{
   background:var(--bg-soft);
   backdrop-filter:blur(16px);
   border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 10px 40px rgba(0,0,0,.25);
+  box-shadow:0 10px 40px rgba(2,0,0,.25);
 }
 
 [data-theme="light"] .glass{
@@ -188,7 +173,7 @@ html,body{
 }
 .gallery img:hover{
   transform:scale(1.05);
-  box-shadow:0 0 40px rgba(250,204,21,.35);
+  box-shadow:0 0 40px rgba(45, 185, 255, 0.35);
 }
 
 /* =====================
@@ -198,7 +183,7 @@ html,body{
   position:fixed;
   bottom:22px;
   left:22px;
-  background:#25D366;
+  background:#0ec714;
   color:white;
   width:56px;
   height:56px;
@@ -220,7 +205,7 @@ html,body{
   top:18px;
   right:18px;
   background:var(--bg-soft);
-  border:1px solid rgba(255,255,255,.12);
+  border:1px solid rgba(64, 255, 0, 0.811);
   padding:7px 16px;
   border-radius:999px;
   font-size:.8rem;
@@ -230,45 +215,7 @@ html,body{
   transition:.25s;
 }
 .toggle-theme:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
-/* =====================
-   WHATSAPP FLOAT
-===================== */
-.whatsapp-float{
-  position:fixed;
-  bottom:22px;
-  left:22px;
-  background:#25D366;
-  color:white;
-  width:56px;
-  height:56px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow:0 10px 28px rgba(0,0,0,.35);
-  z-index:1000;
-  transition:.25s cubic-bezier(.4,0,.2,1);
-}
-.whatsapp-float:hover{transform:scale(1.12);}
 
-/* =====================
-   TOGGLE TEMA
-===================== */
-.toggle-theme{
-  position:fixed;
-  top:18px;
-  right:18px;
-  background:var(--bg-soft);
-  border:1px solid rgba(255,255,255,.12);
-  padding:7px 16px;
-  border-radius:999px;
-  font-size:.8rem;
-  cursor:pointer;
-  z-index:1000;
-  backdrop-filter:blur(10px);
-  transition:.25s;
-}
-.toggle-theme:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
 /* ===================== CHAT ====================== */
 .mq-chat{
   position:fixed;
@@ -407,6 +354,17 @@ html,body{
 
 <body>
 
+  
+<h2>Registro</h2>
+<input type="email" id="reg_email" placeholder="Email">
+<input type="password" id="reg_password" placeholder="Password">
+<button onclick="register()">Registrarse</button>
+
+<h2>Login</h2>
+<input type="email" id="login_email" placeholder="Email">
+<input type="password" id="login_password" placeholder="Password">
+<button onclick="login()">Iniciar Sesión</button>
+
 <div class="container">
 
     <h1>-👑 MAXIQUEEN 👑-
@@ -429,7 +387,7 @@ html,body{
     ✅Entrar a inspeccionar 🧠
   </a>🚦
 
-   <a href="index-cargado-github.html" class="btn MaxiqueenOs">
+   <a href="index-cargado-github.html" class="btn store">
     ✅Entrar a MaxiqueenOs ✨   --    👑
   </a>
 
@@ -437,23 +395,20 @@ html,body{
      ✅Entrar a Diagnóstico  🚦 -- 🚦
   </a>
 
-  <a href="index-venta-Elegante.HTML" class="btn Elegante">
-    ✅Entrar a Venta Elegante        🎯 -- 🚦    
+  <a href="index-venta-Elegante.HTML" class="btn store">
+    ✅Entrar a Venta Elegante        🎯 -- 🚦
+       
   </a>
-
-  <a href="panelfeb.html" class="btn Panel">
-    ✅Entrar a Panel de Control      🎯 -- 🚦
-  </a>
-
-  <a href="crm_demo.html" target="_blank">Abrir demo →</a>
-
+   <a href="/static/crm/CRM_2026.html" target="_blank">Abrir demo 1403 →</a>
 </div>
 <div class="card">
     <h2>CONTENIDO PRO Maxiqueen OS</h2>
     <p>Evolucion de tu marca y estructura. 🎯🚦.</p>
-    <a href="crm_demo.html" target="_blank">Abrir demo →</a>
-    <a href="Ventas.html" target="_blank">Ver Ventas →</a>
-    <a href="Clientes.html" target="_blank">Ver Clientes →</a>
+    <a href="/static/dashboard.html" target="_blank">
+Abrir demo mq →
+</a>
+    <a href="/static/crm/CRM_VENTAS.html" target="_blank">Ver Ventas sssss →</a>
+    <a href="/static/crm/CRM_CLIENTES.html" target="_blank">Ver Clientes mq →</a>
   </div>
 
   <div class="mq-grid-bg"></div>
@@ -487,7 +442,7 @@ html,body{
 
 <!-- ================= PRUEBA CRM LABORATORIO ================= -->
 <section class="py-8 text-center">
-  <a href="/labs/crm-demo/" target="_blank" rel="noopener" class="text-amber-400 hover:underline font-semibold">
+  <a href="/static/crm/CRM_2026.html" target="_blank" rel="noopener" class="text-amber-400 hover:underline font-semibold">
     Ver demo CRM (laboratorio)
   </a>
   <div class="mt-3 text-xs text-zinc-400">
@@ -496,9 +451,9 @@ html,body{
   <div class="card">
     <h2>CRM Maxiqueen OS</h2>
     <p>Prototipo de estructura CRM en evolución.</p>
-    <a href="crm_demo.html" target="_blank">Abrir demo →</a>
-    <a href="Ventas.html" target="_blank">Ver Ventas →</a>
-    <a href="Clientes.html" target="_blank">Ver Clientes →</a>
+    <a href="/static/crm/CRM_PAG_FEB.html" target="_blank">Abrir mq →</a>
+    <a href="/static/crm/CRM_VENTAS.html" target="_blank">Ver Ventasmq →</a>
+    <a href="/static/crm/CRM_CLIENTES.html" target="_blank">Ver Clientesmq →</a>
   </div>
 </section>
 
@@ -515,13 +470,13 @@ html,body{
 <section class="min-h-screen flex items-center justify-center text-center px-6 relative bg-[radial-gradient(circle_at_top,rgba(250,204,21,.18),transparent_60%)] overflow-hidden">
 
   <!-- FONDO SUTIL -->
-  <div class="absolute inset-0 animate-pulse-slow opacity-20 bg-[url('assets/MAXIQUEEN_LOGO.png')] bg-no-repeat bg-center bg-contain pointer-events-none"></div>
+  <div class="absolute inset-0 animate-pulse-slow opacity-20 bg-[url('/static/assets/MAXIQUEEN_LOGO.png')] bg-no-repeat bg-center bg-contain pointer-events-none"></div>
 
   <div class="relative z-10 max-w-3xl fade-in">
 
     <!-- LOGO -->
     <div class="hero-avatar inline-block mb-2">
-      <img src="assets/MAXIQUEEN_LOGO.png"
+      <img src="/static/assets/MAXIQUEEN_LOGO.png"
            alt="MaxiQueen OS Logo"
            class="w-40 md:w-48 mx-auto animate-bounce-slow"
            loading="eager"
@@ -714,7 +669,7 @@ window.addEventListener('scroll', () => {
 
       <!-- Módulo Creativo -->
       <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <img src="assets/img/modulo-creativo.png"
+              <img src="/static/assets/img/modulo-creativo.png"
              alt="Módulo Creativo"
              class="rounded-3xl w-full h-full object-cover"
              loading="lazy"
@@ -723,7 +678,7 @@ window.addEventListener('scroll', () => {
 
       <!-- Módulo Social -->
       <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <img src="assets/img/modulo-social.png"
+        <img src="/static/assets/img/modulo-social.png"
              alt="Social Media"
              class="rounded-3xl w-full h-full object-cover"
              loading="lazy"
@@ -732,7 +687,7 @@ window.addEventListener('scroll', () => {
 
       <!-- Módulo Web -->
       <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <img src="assets/img/modulo-web.png"
+        <img src="/static/assets/img/modulo-web.png"
              alt="Web & Hosting"
              class="rounded-3xl w-full h-full object-cover"
              loading="lazy"
@@ -741,8 +696,17 @@ window.addEventListener('scroll', () => {
 
       <!-- Automatización -->
       <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <img src="assets/img/modulo-automatizacion.png"
+        <img src="/static/assets/img/modulo-automatizacion.png"
              alt="Automatización"
+             class="rounded-3xl w-full h-full object-cover"
+             loading="lazy"
+             onclick="openLightbox(this.src)">
+      </div>
+
+      <!-- Hosting  -->
+      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+        <img src="/static/assets/Modulo_Hosting.png"
+             alt="Hosting"
              class="rounded-3xl w-full h-full object-cover"
              loading="lazy"
              onclick="openLightbox(this.src)">
@@ -905,22 +869,15 @@ window.addEventListener('scroll', () => {
 
   <!-- ================= CHAT FLOATING ================= -->
 <div class="mq-chat" id="chatBox">
-  <div class="mq-chat-header">
-    <span>MaxiQueen OS</span>
-    <div class="mq-chat-controls">
-      <button onclick="toggleChat()">−</button>
-      <button onclick="closeChat()">✕</button>
-    </div>
-  </div>
 
   <div class="mq-chat-body" id="chatLog"></div>
 
   <div class="mq-chat-input">
-    <input type="text" id="userInput" placeholder="Escribe aquí..." />
+    <input id="userInput" type="text" placeholder="Escribe..." />
     <button onclick="sendMessage()">Enviar</button>
   </div>
-</div>
 
+</div>
 <script>
 /* =======================
    THEME TOGGLE
@@ -980,8 +937,8 @@ continueMQ.addEventListener('click', () => {
   }
 });
 
-const chatLog = document.getElementById('chatLog');
-const input = document.getElementById('userInput');
+const input = document.getElementById("userInput");
+const chatLog = document.getElementById("chatLog");
 
 /* =========================
    🧠 ESTADO GLOBAL
@@ -1916,38 +1873,42 @@ function appendMessage(text, sender="bot"){
   msg.textContent = text;
   msg.style.whiteSpace = "pre-line";
   msg.className = sender === "user"
-    ? "text-right text-amber-400 font-semibold"
-    : "text-left text-zinc-200";
+  ? "ml-auto bg-amber-500 text-black px-3 py-2 rounded-lg max-w-[80%]"
+  : "bg-zinc-700 text-white px-3 py-2 rounded-lg max-w-[80%]";
   chatLog.appendChild(msg);
   chatLog.scrollTop = chatLog.scrollHeight;
 }
+async function sendMessage(){
 
-function sendMessage(){
   const message = input.value.trim();
   if(!message) return;
-  
+
   appendMessage(message, "user");
   input.value = "";
-  setTimeout(() => {
-    appendMessage(getResponse(message), "bot");
-  }, 200);
 
- logMessage("👤 " + message, "user");
+  try{
 
- const response = getResponse(message);
+    const response = await fetch("http://127.0.0.1:8000/chat/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: message
+      })
+    });
 
-  setTimeout(() => {
-    logMessage(response, "sistema");
-  }, 400);
+    const data = await response.json();
 
-  input.value = "";
-}
+    appendMessage(data.response, "bot");
 
-input.addEventListener("keypress", function(e){
-  if(e.key === "Enter"){
-    sendMessage();
+  }catch(error){
+
+    appendMessage("⚠️ Error conectando con la IA", "bot");
+    console.error(error);
+
   }
-});
+}
 
 input.addEventListener("keydown", e => {
   if(e.key === "Enter") sendMessage();
@@ -1955,17 +1916,14 @@ input.addEventListener("keydown", e => {
 
 </script>
 
-<!-- ================= MERCADOPAGO SAFE LOADER ================= -->
+<!-- ================= LICENCIA APACHE 2.0 ================= -->
 
-## License
-
-MaxiQueen OS is licensed under the **Apache License 2.0**.
-
-You are free to use, modify, and distribute the core system, including for commercial purposes.
-However, the **MaxiQueen OS name, branding, and premium modules are protected and not included
-under this license**.
-
-See the LICENSE file for full details.
+<section class="py-12 text-center text-zinc-400 text-sm">
+  <h3 class="font-bold mb-2">License</h3>
+  <p>
+    MaxiQueen OS is licensed under the Apache License 2.0.
+  </p>
+</section>
 
 <!-- ================= MERCADO PAGO / MAXIQUEEN OS ================= -->
 <section class="py-10 text-center">
@@ -1978,6 +1936,7 @@ See the LICENSE file for full details.
   data-preference-id="453634078-e7931b13-abe1-45f2-95db-398ab50f1db0"
   data-source="button">
 </script>
+</div>
+</section>
 </body>
 </html>
-
