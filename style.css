@@ -1,35 +1,172 @@
-.queen-logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+<style>
+
+:root{
+  --bg-main:#120f1f;
+  --bg-soft:#1a1333;
+  --text-main:#f0e6d2;
+  --text-soft:#cfc3a5;
+  --accent:#d4af37;
 }
 
-.queen-logo img {
-  height: 40px;
-  width: auto;
-  position: relative;
-  z-index: 2;
+body { 
+  margin:0; 
+  font-family:'Arial', sans-serif; 
+  background:var(--bg-main);
+  color:var(--text-main);
+  transition: background 0.5s, color 0.5s; 
 }
 
-/* Halo */
-.queen-logo::before {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(245, 158, 11, 0.35),
-    transparent 65%
-  );
-  filter: blur(10px);
-  opacity: 0.6;
-  animation: queenHalo 4s ease-in-out infinite;
-  z-index: 1;
+[data-theme="light"] .chat-input input{
+  background:var(--bg-main);
+  color:var(--text-main);
+}
+[data-theme="light"]{
+  --bg-main:#f6f7f9;
+  --bg-soft:#eef0f3;
+  --text-main:#111827;
+  --text-soft:#374151;
+  --accent:#f59e0b;
+}
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4 {
+  color:#050505;
 }
 
-@keyframes queenHalo {
-  0%, 100% { opacity: 0.45; transform: scale(0.95); }
-  50% { opacity: 0.75; transform: scale(1.05); }
+[data-theme="light"] p,
+[data-theme="light"] li,
+[data-theme="light"] span {
+  color:#1f2937;
 }
+
+.container { 
+  display:flex; flex-direction:column; align-items:center; padding:20px; 
+}
+
+.layer { 
+  border-radius:18px; 
+  padding:20px; 
+  margin:15px 0; 
+  width:95%; 
+  max-width:1200px; 
+  background: linear-gradient(145deg, #2c1a4d, #1a1333); 
+  box-shadow:0 10px 30px rgba(0,0,0,0.8); 
+  position:relative; 
+  transition: all 0.4s ease; 
+}
+h2 { 
+  display:flex; align-items:center; gap:10px; margin-bottom:10px; color:#d4af37; 
+}
+
+.layer div { 
+  margin-top:10px; background: rgba(255,255,255,0.05); padding:15px; border-radius:10px; 
+  transition: all 0.5s; 
+
+}
+
+input {
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  margin-top:10px;
+  font-size:16px;
+  background: var(--bg-soft);
+  color: var(--text-main);
+}
+
+.module { 
+  position:relative; 
+  padding:15px; 
+  background:rgba(255,255,255,0.04); 
+  border-radius:12px; 
+  flex:1; 
+  min-width:120px; 
+  text-align:center; 
+  cursor:pointer; 
+  transition: all 0.3s ease; 
+  border:1px solid rgba(255,255,255,0.05);
+}
+
+.module:hover { 
+  transform: translateY(-6px) scale(1.02); 
+  background: rgba(212,175,55,0.2); 
+}
+
+/* Flechas curvas animadas */
+.curve-arrow svg { width:100%; height:80px; overflow: visible; }
+.curve-arrow path { stroke:#d4af37; stroke-width:3; fill:none; stroke-dasharray:300; stroke-dashoffset:300; animation: dash 2s infinite linear; }
+@keyframes dash { 0% { stroke-dashoffset:300; } 50% { stroke-dashoffset:0; } 100% { stroke-dashoffset:300; } }
+
+.arrow { width:4px; height:50px; background:linear-gradient(to bottom, #d4af37,#3498db); animation: pulse 1.5s infinite alternate; }
+.arrow::after { content:''; position:absolute; bottom:-10px; left:-6px; border-left:10px solid transparent; border-right:10px solid transparent; border-top:10px solid #d4af37; }
+@keyframes pulse { 0% { background:linear-gradient(to bottom, #d4af37,#3498db); } 50% { background:linear-gradient(to bottom, #d4af37,#8e44ad); } 100% { background:linear-gradient(to bottom, #d4af37,#d4af37); } }
+/* === PASO 5 – INTERACTIVIDAD AVANZADA CLOUD === */
+
+.tooltip {
+  position:absolute;
+  background:#0b1d3a;
+  color:#f1c40f;
+  padding:8px 12px;
+  border-radius:8px;
+  font-size:14px;
+  pointer-events:none;
+  opacity:0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  box-shadow:0 10px 25px rgba(0,0,0,0.7);
+  z-index:1000;
+}
+
+.module.active {
+  background: rgba(212,175,55,0.25);
+  box-shadow:0 0 30px rgba(212,175,55,0.4);
+  border:1px solid rgba(212,175,55,0.3);
+}
+
+.cloud-link {
+  display:block;
+  margin-top:8px;
+  font-size:13px;
+  color:#3498db;
+  text-decoration:underline;
+  cursor:pointer;
+}
+
+.cloud-subflow {
+  margin-top:10px;
+  font-size:13px;
+  color:#ecf0f1;
+  opacity:0;
+  max-height:0;
+  overflow:hidden;
+  transition: all 0.4s ease;
+}
+
+.module.active .cloud-subflow {
+  opacity:1;
+  max-height:200px;
+}
+
+.btn {
+  border:none;
+  border-radius:10px;
+  padding:10px 20px;
+  background: var(--accent);
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow:0 5px 15px rgba(0,0,0,0.4);
+}
+
+.layer:hover {
+  transform: translateY(-3px);
+}
+
+</style>
