@@ -6,34 +6,6 @@
 <title>MaxiQueen OS | Sistema Digital Integral</title>
 <meta name="description" content="JavaScript es el cuerpo, Python es la mente, tú eres la conciencia. MaxiQueen OS es un sistema digital integral diseñado para convertir ideas, historias y negocios en activos digitales rentables.">
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #0a0f2c, #1a237e);
-    color: white;
-}
-
-.container {
-    padding: 20px;
-    text-align: center;
-}
-
-h1 {
-    font-size: 2.5em;
-    color: #00e5ff;
-}
-
-button {
-    background: #00e5ff;
-    border: none;
-    padding: 12px 20px;
-    color: black;
-    font-weight: bold;
-    border-radius: 10px;
-}
-</style>
-
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,6 +29,12 @@ async function register() {
   const data = await response.json();
   alert(JSON.stringify(data));
 }
+
+fetch("/create-checkout-session", { method: "POST" })
+.then(res => res.json())
+.then(data => {
+    window.location.href = data.url
+})
 
 async function login() {
   const response = await fetch("http://127.0.0.1:8000/users/login", {
@@ -1926,15 +1904,20 @@ async function sendMessage(){
       })
     });
 
-    const data = await response.json();
+     const data = await response.json();
 
-    appendMessage(data.response, "bot");
+    if(data.response){
+      appendMessage(data.response, "bot");
+    } else {
+      // fallback si backend no responde bien
+      appendMessage(getResponse(message), "bot");
+    }
 
-  }catch(error){
+  } catch(error){
+    console.error("Error backend:", error);
 
-    appendMessage("⚠️ Error conectando con la IA", "bot");
-    console.error(error);
-
+    // 🔥 fallback inteligente (TU SISTEMA LOCAL)
+    appendMessage(getResponse(message), "bot");
   }
 }
 
@@ -1966,5 +1949,117 @@ input.addEventListener("keydown", e => {
 </script>
 </div>
 </section>
+<div id="chat-launcher" onclick="toggleChat()">
+    <span>🤖</span>
+</div>
+
+<div id="chat-launcher" onclick="toggleChat()">
+    <span>👑</span>
+</div>
+
+<div id="chat-container" class="hidden">
+    <div id="chat-header">
+        <span><span class="status-dot"></span> MaxiQueen AI</span>
+        <button onclick="toggleChat()" style="background:none; border:none; color:var(--accent); cursor:pointer; font-size:20px;">×</button>
+    </div>
+    <div id="chat-messages">
+        <div class="message bot-message">
+            Bienvenido a <strong>MaxiQueen OS</strong>. ¿En qué puedo asistirte con nuestros servicios hoy?
+        </div>
+    </div>
+    <div id="chat-input-area">
+        <input type="text" id="user-input" placeholder="Escribe tu consulta..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button id="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+</div>
+<!-- Widget flotante -->
+<div id="chat-widget">
+  <!-- Botón circular con logo -->
+  <div id="chat-toggle">
+    <img src="logo.png" alt="Logo MAXIQUEEN" />
+  </div>
+
+  <!-- Caja del chat -->
+  <div id="chat-box">
+    <div class="chat-header">
+      <span>Chat MAXIQUEEN</span>
+      <button id="close-chat">✕</button>
+    </div>
+    <div class="chat-body">
+      <p>Bienvenido al chat institucional de MAXIQUEEN_OS</p>
+    </div>
+  </div>
+</div>
+
+<style>
+#chat-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Botón circular */
+#chat-toggle img {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  transition: transform 0.3s ease;
+}
+#chat-toggle img:hover {
+  transform: scale(1.1);
+}
+
+/* Caja del chat */
+#chat-box {
+  display: none;
+  width: 320px;
+  height: 420px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+  overflow: hidden;
+  animation: fadeIn 0.4s ease;
+}
+
+.chat-header {
+  background: #6a1b9a; /* color institucional */
+  color: #fff;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.chat-body {
+  padding: 12px;
+  height: calc(100% - 40px);
+  overflow-y: auto;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+</style>
+
+<script>
+const toggle = document.getElementById("chat-toggle");
+const chatBox = document.getElementById("chat-box");
+const closeBtn = document.getElementById("close-chat");
+
+toggle.addEventListener("click", () => {
+  chatBox.style.display = "block";
+  toggle.style.display = "none";
+});
+
+closeBtn.addEventListener("click", () => {
+  chatBox.style.display = "none";
+  toggle.style.display = "block";
+});
+</script>
 </body>
 </html>
