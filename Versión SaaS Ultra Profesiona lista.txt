@@ -1,0 +1,14 @@
+Landing
+ ├── Hero (Propuesta clara + CTA)
+ ├── Beneficios visuales
+ ├── Prueba social
+ ├── Formulario inteligente (multipaso)
+ │     ├── Datos básicos
+ │     ├── Perfil del proyecto
+ │     ├── Presupuesto / urgencia
+ │     └── Confirmación + integración CRM
+ └── Automatización inmediata
+        ├── Email personalizado
+        ├── Registro en CRM
+        ├── Etiquetado automático
+        └── Seguimiento en WhatsApp Business
