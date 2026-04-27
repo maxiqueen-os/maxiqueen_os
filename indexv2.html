@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MaxiQueen OS</title>
+
+  <meta name="description" content="Sistema digital integral MaxiQueen OS">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<!-- ================= NAV ================= -->
+<header class="nav">
+  <h1>👑 MaxiQueen OS</h1>
+
+  <button id="themeBtn">🧪 Tema</button>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="hero-content">
+
+    <img src="assets/logo.png" class="logo" alt="MaxiQueen OS"/>
+
+    <h2>Convierte ideas en sistemas digitales</h2>
+
+    <p>
+      MaxiQueen OS es un sistema que transforma contenido, negocios y procesos en automatización real.
+    </p>
+
+    <div class="actions">
+      <a href="#chat" class="btn primary">Entrar al sistema</a>
+      <a href="https://wa.me/573016625921" class="btn secondary">Hablar con soporte</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= MODULES ================= -->
+<section class="grid">
+  <div class="card">🎨 Contenido</div>
+  <div class="card">📈 Ventas</div>
+  <div class="card">🤖 Automatización</div>
+  <div class="card">🌐 Webs</div>
+</section>
+
+<!-- ================= CHAT ================= -->
+<section id="chat" class="chat-box">
+
+  <div id="chatLog" class="chat-log"></div>
+
+  <div class="chat-input">
+    <input id="chatInput" placeholder="Escribe aquí..." />
+    <button onclick="sendMessage()">Enviar</button>
+  </div>
+
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <p>MaxiQueen OS © 2026</p>
+</footer>
+
+<!-- ================= JS ================= -->
+<script src="theme.js"></script>
+<script src="chat.js"></script>
+
+</body>
+</html>

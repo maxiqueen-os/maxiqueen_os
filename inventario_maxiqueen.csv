@@ -1,0 +1,21 @@
+Codigo,Producto,Categoria,Genero,Talla,Costo_Unitario,Stock,Precio_Venta,Inversion_Total,Potencial_Venta
+CB001,Conjunto Chinzado Cafe,Conjunto,Dama,Unica,37000,3,47000,111000,141000
+CB002,Conjunto Chinzado Azul Petroleo,Conjunto,Dama,Unica,37000,3,47000,111000,141000
+CB003,Conjunto Chinzado Rojo,Conjunto,Dama,Unica,37000,3,47000,111000,141000
+CB004,Conjunto Chinzado Mostaza,Conjunto,Dama,Unica,37000,1,47000,37000,47000
+CB005,Conjunto Chinzado Terracota,Conjunto,Dama,Unica,37000,2,47000,74000,94000
+CB006,Conjunto Multimarca,Conjunto,Caballero,XL,35000,8,60000,280000,480000
+CB007,Conjunto Multimarca,Conjunto,Caballero,XL,35000,12,60000,420000,720000
+CB008,Conjunto Multimarca,Conjunto,Caballero,L,35000,5,60000,175000,300000
+CB009,Conjunto Lycra Rojo,Conjunto,Dama,M-XL,40000,4,50000,160000,200000
+CB010,Conjunto Lycra Azul,Conjunto,Dama,M-XL,40000,2,50000,80000,100000
+CB011,Conjunto Lycra Negro,Conjunto,Dama,M,40000,2,50000,80000,100000
+CB012,Conjunto Lycra Verde,Conjunto,Dama,M,40000,2,50000,80000,100000
+CB013,Leggins Chinzado Lila,Leggins,Dama,S-M_L-XL,30000,2,40000,60000,80000
+CB014,Leggins Chinzado Azul Cielo,Leggins,Dama,S-M_L-XL,30000,2,40000,60000,80000
+CB015,Leggins Chinzado Beige,Leggins,Dama,S-M_L-XL,30000,2,40000,60000,80000
+CB016,Leggins Chinzado Morado,Leggins,Dama,S-M_L-XL,30000,2,40000,60000,80000
+CB017,Leggins Chinzado Verde Claro,Leggins,Dama,L-XL,30000,1,40000,30000,40000
+CB018,Leggins Chinzado Logo,Leggins,Dama,M-XL,35000,4,48000,140000,192000
+CB019,Conjunto Suplex,Conjunto,Dama,Unica,35000,1,50000,35000,50000
+CB020,Camiseta Americana V,Camiseta,Mixto,M-XL,35000,1,50000,35000,50000
