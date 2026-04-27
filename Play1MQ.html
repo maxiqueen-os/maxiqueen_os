@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>MAXIQUEEN OS - Tower Defense</title>
+<style>
+    body {
+        margin: 0;
+        background: black;
+        color: white;
+        font-family: Arial;
+        text-align: center;
+    }
+
+    canvas {
+        background: #0a0a0a;
+        display: block;
+        margin: auto;
+        border: 2px solid purple;
+    }
+</style>
+</head>
+<body>
+
+<h2>MAXIQUEEN OS - Defensa del Sistema</h2>
+<canvas id="gameCanvas" width="400" height="600"></canvas>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let towers = [];
+let enemies = [];
+let bullets = [];
+
+// Crear enemigos cada cierto tiempo
+setInterval(() => {
+    enemies.push({
+        x: Math.random() * 380,
+        y: 0,
+        speed: 1 + Math.random()
+    });
+}, 1500);
+
+// Colocar torres con clic
+canvas.addEventListener("click", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    towers.push({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+    });
+});
+
+// Dibujar torres
+function drawTowers() {
+    towers.forEach(t => {
+        ctx.fillStyle = "purple";
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, 10, 0, Math.PI * 2);
+        ctx.fill();
+    });
+}
+
+// Dibujar enemigos
+function drawEnemies() {
+    enemies.forEach(e => {
+        ctx.fillStyle = "red";
+        ctx.fillRect(e.x, e.y, 10, 10);
+    });
+}
+
+// Movimiento enemigos
+function moveEnemies() {
+    enemies.forEach(e => {
+        e.y += e.speed;
+    });
+}
+
+// Disparo automático
+function shoot() {
+    towers.forEach(t => {
+        enemies.forEach(e => {
+            const dx = e.x - t.x;
+            const dy = e.y - t.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < 100) {
+                bullets.push({
+                    x: t.x,
+                    y: t.y,
+                    target: e
+                });
+            }
+        });
+    });
+}
+
+// Dibujar balas
+function drawBullets() {
+    bullets.forEach(b => {
+        ctx.fillStyle = "cyan";
+        ctx.fillRect(b.x, b.y, 4, 4);
+    });
+}
+
+// Movimiento balas
+function moveBullets() {
+    bullets.forEach(b => {
+        if (!b.target) return;
+
+        const dx = b.target.x - b.x;
+        const dy = b.target.y - b.y;
+
+        b.x += dx * 0.1;
+        b.y += dy * 0.1;
+    });
+}
+
+// Colisiones
+function checkHits() {
+    bullets.forEach((b, bi) => {
+        enemies.forEach((e, ei) => {
+            const dx = b.x - e.x;
+            const dy = b.y - e.y;
+            if (Math.sqrt(dx*dx + dy*dy) < 10) {
+                enemies.splice(ei, 1);
+                bullets.splice(bi, 1);
+            }
+        });
+    });
+}
+
+// Loop principal
+function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    moveEnemies();
+    moveBullets();
+    shoot();
+    checkHits();
+
+    drawTowers();
+    drawEnemies();
+    drawBullets();
+
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaxiQueen OS</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0A0A0A;
+  color: #EAEAEA;
+  text-align: center;
+}
+
+h1, h2 {
+  color: #8A2BE2;
+}
+
+button {
+  background: #00FF9C;
+  border: none;
+  padding: 12px 20px;
+  margin: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.hidden {
+  display: none;
+}
+
+#estado {
+  margin: 15px;
+  font-size: 18px;
+}
+
+#cardFront {
+  font-size: 28px;
+  color: #8A2BE2;
+}
+
+#cardBack {
+  font-size: 22px;
+  color: #00FF9C;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- HERO -->
+<section id="hero">
+  <h1>MAXIQUEEN OS</h1>
+  <p>Activa tu sistema mental</p>
+  <button onclick="activarSistema()">[ ACTIVAR SISTEMA ]</button>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="hidden">
+  <h2>Panel de Control</h2>
+  <div id="estado">Energía: 100 | Recursos: 50 | XP: 0</div>
+
+  <button onclick="irJuego()">🎮 Entrenamiento</button>
+  <button onclick="irTarjetas()">🧠 Tarjetas</button>
+  <button onclick="irRanking()">🏆 Ranking</button>
+  <button onclick="volver()">⬅ Volver</button>
+</section>
+
+<!-- JUEGO -->
+<section id="juego" class="hidden">
+  <h2>Nivel 1 - Estabilización</h2>
+
+  <p>El sistema consume energía</p>
+
+  <button onclick="decision('A')">Optimizar (-30 recursos)</button>
+  <button onclick="decision('B')">Ignorar</button>
+
+  <button onclick="volver()">⬅ Volver</button>
+</section>
+
+<!-- TARJETAS -->
+<section id="tarjetas" class="hidden">
+  <h2>Modo Entrenamiento</h2>
+
+  <p id="cardFront"></p>
+
+  <button onclick="mostrarRespuesta()">Mostrar</button>
+
+  <p id="cardBack" class="hidden"></p>
+
+  <div id="accionesTarjeta" class="hidden">
+    <button onclick="correcta()">✅ Bien</button>
+    <button onclick="incorrecta()">❌ Fallé</button>
+  </div>
+
+  <button onclick="volver()">⬅ Volver</button>
+</section>
+
+<!-- RANKING -->
+<section id="ranking" class="hidden">
+  <h2>Ranking Global</h2>
+  <ul>
+    <li>1. MaxiQueen – 999 pts</li>
+    <li>2. UsuarioX – 500 pts</li>
+    <li>3. Invitado – 200 pts</li>
+  </ul>
+
+  <button onclick="volver()">⬅ Volver</button>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <h2>Preguntas del Sistema</h2>
+
+  <p><b>¿Qué es MaxiQueen OS?</b><br>
+  Es un sistema que entrena tu mente mientras creas valor.</p>
+
+  <p><b>¿Tengo que pagar?</b><br>
+  Puedes iniciar gratis. El sistema avanzado es opcional.</p>
+
+  <p><b>¿Esto es un juego?</b><br>
+  Es un sistema mental disfrazado de juego.</p>
+</section>
+
+<script>
+
+// VARIABLES
+let energia = 100;
+let recursos = 50;
+let xp = 0;
+
+// TARJETAS
+let cardIndex = 0;
+
+const cards = [
+{front:"Memoria", back:"2 - 4 - 3"},
+{front:"Secuencia", back:"2 - 4 - 8 - 16"},
+{front:"Código", back:"CAB = 3-1-2"},
+{front:"Trampa", back:"10 + 10 x 0 = 10"},
+{front:"Atención", back:"888888B888"}
+];
+
+// FUNCIONES
+
+function activarSistema(){
+  ocultarTodo();
+  document.getElementById("dashboard").classList.remove("hidden");
+  actualizarEstado();
+}
+
+function ocultarTodo(){
+  document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
+}
+
+function volver(){
+  ocultarTodo();
+  document.getElementById("dashboard").classList.remove("hidden");
+}
+
+// JUEGO
+
+function irJuego(){
+  ocultarTodo();
+  document.getElementById("juego").classList.remove("hidden");
+}
+
+function decision(op){
+  if(op === "A" && recursos >= 30){
+    recursos -= 30;
+    energia += 10;
+    xp += 10;
+    alert("Sistema optimizado");
+  } else {
+    energia -= 20;
+    xp += 2;
+    alert("Sistema inestable");
+  }
+
+  actualizarEstado();
+}
+
+// TARJETAS
+
+function irTarjetas(){
+  ocultarTodo();
+  document.getElementById("tarjetas").classList.remove("hidden");
+  cargarTarjeta();
+}
+
+function cargarTarjeta(){
+  let c = cards[cardIndex];
+  document.getElementById("cardFront").innerText = c.front;
+  document.getElementById("cardBack").classList.add("hidden");
+  document.getElementById("accionesTarjeta").classList.add("hidden");
+}
+
+function mostrarRespuesta(){
+  let c = cards[cardIndex];
+  document.getElementById("cardBack").innerText = c.back;
+  document.getElementById("cardBack").classList.remove("hidden");
+  document.getElementById("accionesTarjeta").classList.remove("hidden");
+}
+
+function correcta(){
+  xp += 5;
+  siguienteTarjeta();
+}
+
+function incorrecta(){
+  alert("Repite esta tarjeta");
+}
+
+function siguienteTarjeta(){
+  cardIndex++;
+
+  if(cardIndex >= cards.length){
+    alert("Entrenamiento completado");
+    cardIndex = 0;
+    volver();
+    return;
+  }
+
+  cargarTarjeta();
+  actualizarEstado();
+}
+
+// RANKING
+
+function irRanking(){
+  ocultarTodo();
+  document.getElementById("ranking").classList.remove("hidden");
+}
+
+// ESTADO
+
+function actualizarEstado(){
+  document.getElementById("estado").innerText =
+  "Energía: " + energia + " | Recursos: " + recursos + " | XP: " + xp;
+}
+
+</script>
+
+</body>
+</html>

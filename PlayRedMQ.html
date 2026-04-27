@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>🎯 Atrapa el objetivo</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #0f172a;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+    }
+
+    #gameArea {
+      width: 300px;
+      height: 300px;
+      margin: 20px auto;
+      position: relative;
+      background: #1e293b;
+      border-radius: 10px;
+    }
+
+    .target {
+      width: 40px;
+      height: 40px;
+      background: red;
+      position: absolute;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>🎯 Atrapa el objetivo</h2>
+<p>Puntos: <span id="score">0</span></p>
+<p>Tiempo: <span id="time">10</span>s</p>
+
+<button onclick="startGame()">Iniciar</button>
+
+<div id="gameArea"></div>
+
+<script src="game.js"></script>
+
+</body>
+</html>

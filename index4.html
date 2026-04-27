@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<input id="msg" placeholder="Escribe algo">
+<button onclick="send()">Enviar</button>
+
+<div id="chat"></div>
+
+<script>
+async function send() {
+  const input = document.getElementById("msg");
+  const chat = document.getElementById("chat");
+
+  const userMsg = input.value;
+
+  // mostrar mensaje usuario
+  chat.innerHTML += "<p><b>Tú:</b> " + userMsg + "</p>";
+
+  const res = await fetch("http://localhost:3000/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message: userMsg
+    })
+  });
+
+  const data = await res.json();
+
+  // 🔥 AQUÍ estaba el problema normalmente
+  chat.innerHTML += "<p><b>IA:</b> " + data.reply + "</p>";
+
+  input.value = "";
+}
+</script>
+
+</body>
+</html>
