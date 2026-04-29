@@ -344,5 +344,19 @@ under this license.
 
 See the LICENSE file for full details.
 -->
+<button onclick="goBack()">⬅ Volver</button>
+
+<script>
+function goBack() {
+  window.location.href = "/apps.html";
+}
+</script>
+
+let score = localStorage.getItem("score") || 0;
+
+function addPoint() {
+  score++;
+  localStorage.setItem("score", score);
+}
 </body>
 </html>
