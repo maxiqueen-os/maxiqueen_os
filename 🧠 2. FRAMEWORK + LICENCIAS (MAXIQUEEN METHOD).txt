@@ -1,0 +1,13 @@
+/MAXIQUEEN_OS_OFFICIAL/
+ └── 4_FUNNEL_SYSTEM/
+     └── SYSTEM_MASTER_TEMPLATE/
+         └── 1_FRAMEWORK/
+             └── MAXIQUEEN_METHOD_v1/
+                 ├── CERTIFICATION/
+                 │   ├── LEVEL_1_OPERATOR/
+                 │   ├── LEVEL_2_BUILDER/
+                 │   └── LEVEL_3_ARCHITECT/
+                 └── LICENSING/
+                     ├── PRACTITIONER_LICENSE/
+                     ├── TRAINER_LICENSE/
+                     └── MASTER_PARTNER_LICENSE/
