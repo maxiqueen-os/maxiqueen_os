@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>MaxiQueen OS</title>
+  <style>
+    body {
+      background: black;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+    }
+
+    .app {
+      display: inline-block;
+      margin: 20px;
+      padding: 20px;
+      background: #222;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .app:hover {
+      background: #444;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🧠 MaxiQueen OS</h1>
+
+<div class="app" onclick="openApp('games/clicker/index.html')">
+  🎮 Clicker
+</div>
+
+<div class="app" onclick="openApp('games/memory/index.html')">
+  🧠 Memoria
+</div>
+
+<div class="app" onclick="openApp('apps/calculator/index.html')">
+  🧮 Calculadora
+</div>
+
+<script>
+function openApp(url) {
+  window.location.href = url;
+}
+</script>
+
+</body>
+</html>
