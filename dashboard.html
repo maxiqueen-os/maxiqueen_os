@@ -287,25 +287,32 @@ alert("Error de login");
 }
 
 /* ================= CHAT ================= */
-function sendMessage(){
-let input=document.getElementById("chatInput");
-let msg=input.value;
 
-if(msg==="") return;
+<div id="chat-container">
+    <div id="chat-window" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc;"></div>
+    <input type="text" id="user-input" placeholder="Escribe a MaxiQueen OS...">
+    <button onclick="enviarMensaje()">Enviar</button>
+</div>
 
-let chat=document.getElementById("chatBody");
+<script>
+async function enviarMensaje() {
+    const input = document.getElementById('user-input');
+    const window = document.getElementById('chat-window');
+    const mensaje = input.value;
 
-chat.innerHTML += "<div>👤 "+msg+"</div>";
+    window.innerHTML += `<p><b>Tú:</b> ${mensaje}</p>`;
+    input.value = '';
 
-/* RESPUESTA AUTOMÁTICA */
-setTimeout(()=>{
-chat.innerHTML += "<div>🤖 Estoy respondiendo como MaxiQueen OS...</div>";
-chat.scrollTop=chat.scrollHeight;
-},500);
-
-input.value="";
+    // AQUÍ conectamos con tu Backend_MQ desplegado en Vercel
+    const response = await fetch('https://tu-backend-mq.vercel.app/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ "prompt": mensaje })
+    });
+    
+    const data = await response.json();
+    window.innerHTML += `<p><b>MaxiQueen OS:</b> ${data.respuesta}</p>`;
 }
-
 </script>
 
 </body>
