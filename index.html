@@ -805,55 +805,143 @@ html,body{
   border-color: rgba(251,191,36,0.5);
   background: rgba(255,255,255,0.06);
 }
-</style><!-- ================= HERO ULTRA-PRO ================= -->
-<section class="min-h-screen flex items-center justify-center text-center px-6 relative bg-[radial-gradient(circle_at_top,rgba(250,204,21,.18),transparent_60%)] overflow-hidden">
+</style>
+<!-- ================= HERO ULTRA-PRO MAXIQUEEN OS ================= -->
+<section class="relative min-h-screen flex items-center justify-center text-center px-6 overflow-hidden bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.15),transparent_65%)]">
 
-  <!-- FONDO SUTIL -->
-  <div class="absolute inset-0 animate-pulse-slow opacity-20 bg-[url('https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088785/MAXIQUEEN_LOGO_vpskcy.png')]" bg-no-repeat bg-center bg-contain pointer-events-none"></div>
+  <!-- ================= FONDO DINÁMICO ================= -->
+  <div class="absolute inset-0 bg-grid opacity-[0.03] pointer-events-none"></div>
 
-  <div class="relative z-10 max-w-3xl fade-in">
+  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+    <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088785/MAXIQUEEN_LOGO_vpskcy.png"
+         alt="MAXIQUEEN Fondo"
+         class="w-[500px] md:w-[700px] opacity-10 animate-pulse-slow select-none"
+         loading="eager"
+         decoding="async">
+  </div>
+
+  <!-- ================= CONTENIDO PRINCIPAL ================= -->
+  <div class="relative z-10 max-w-5xl fade-in">
 
     <!-- LOGO -->
-    <div class="hero-avatar inline-block mb-2">
-      <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088785/MAXIQUEEN_LOGO_vpskcy.png"
-           alt="MaxiQueen OS Logo"
-           class="w-40 md:w-48 mx-auto animate-bounce-slow"
-           loading="eager"
-           decoding="async">
+    <div class="hero-avatar inline-block mb-6">
+      <div class="p-4 rounded-full bg-white/5 border border-white/10 shadow-2xl backdrop-blur-md">
+        <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088785/MAXIQUEEN_LOGO_vpskcy.png"
+             alt="MAXIQUEEN OS Logo"
+             class="w-36 md:w-48 mx-auto animate-float"
+             loading="eager"
+             decoding="async">
+      </div>
     </div>
 
-    <h1 class="mt-6 text-4xl md:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-400">
-      Maxiqueen OS
-      <span class="text-zinc-200 block mt-2 text-lg md:text-2xl font-semibold">
+    <!-- TITULAR -->
+    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight">
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-rose-400">
+        MAXIQUEEN OS
+      </span>
+
+      <span class="block mt-4 text-zinc-100 text-xl md:text-3xl font-semibold">
         Convierte tu caos digital en un sistema inteligente
       </span>
     </h1>
 
-    <p class="mt-6 text-zinc-300 text-lg md:text-xl leading-relaxed">
-      ⚠️ MaxiQueen OS es el sistema digital humano que transforma ideas, historias y negocios
-      en activos automatizados que generan ingresos reales.
+    <!-- DESCRIPCIÓN -->
+    <p class="mt-8 text-zinc-300 text-lg md:text-2xl leading-relaxed max-w-4xl mx-auto">
+      ⚠️ MAXIQUEEN OS es un sistema digital humano diseñado para transformar ideas,
+      historias y negocios en activos automatizados capaces de generar ingresos reales,
+      estructura operativa y expansión profesional.
     </p>
 
-    <div class="mt-10 flex gap-4 flex-wrap justify-center">
+    <!-- CTA -->
+    <div class="mt-12 flex flex-wrap justify-center gap-5">
+
       <a href="#planesmaxiqueen"
-         class="px-10 py-4 rounded-2xl bg-gradient-to-r from-amber-400 to-rose-400 hover:scale-105 hover:brightness-110 transition-transform text-black font-bold shadow-lg">
-        Activar mi Sistema
+         class="hero-btn-primary">
+        👑 Activar mi Sistema
       </a>
+
       <a href="whatsappOS.html"
          target="_blank"
          rel="noopener"
-         class="px-10 py-4 rounded-2xl border border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-black transition-all font-semibold">
-        Hablar con un humano
+         class="hero-btn-secondary">
+        🤝 Hablar con un humano
       </a>
+
     </div>
 
-    <p class="mt-10 text-sm text-zinc-400">
-      No agencia · No plantillas · No humo · Solo sistemas reales
-    </p>
+    <!-- POSICIONAMIENTO -->
+    <div class="mt-14">
+      <p class="text-sm md:text-base text-zinc-400 uppercase tracking-[0.35em]">
+        No agencia · No plantillas · No humo
+      </p>
+
+      <p class="mt-3 text-cyan-400 font-semibold text-sm md:text-base tracking-[0.25em] uppercase">
+        Solo sistemas digitales reales
+      </p>
+    </div>
+
   </div>
+
 </section>
 
 
+<!-- ================= ESTILOS HERO PREMIUM ================= -->
+<style>
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+
+.hero-btn-primary {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  border-radius: 1.25rem;
+  background: linear-gradient(to right, #fbbf24, #fb7185);
+  color: black;
+  font-weight: 800;
+  font-size: 1rem;
+  box-shadow: 0 15px 35px rgba(251,191,36,0.25);
+  transition: all 0.3s ease;
+}
+
+.hero-btn-primary:hover {
+  transform: translateY(-4px) scale(1.03);
+  filter: brightness(1.08);
+}
+
+.hero-btn-secondary {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(251,191,36,0.6);
+  color: #fbbf24;
+  font-weight: 700;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.02);
+  transition: all 0.3s ease;
+}
+
+.hero-btn-secondary:hover {
+  background: rgba(251,191,36,0.12);
+  color: white;
+  transform: translateY(-4px);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+</style>
 <!-- ================= FOOTER OFICIAL MAXIQUEEN OS ================= -->
 <footer class="py-10 px-6 mt-20 fade-in">
   <div class="max-w-6xl mx-auto">
@@ -945,105 +1033,391 @@ html,body{
 }
 </style>
 
-<!-- ================= JS 3D HOVER ================= -->
+<!-- ================= MOTOR VISUAL / INTERACCIÓN 3D MAXIQUEEN OS ================= -->
 <script>
-const floatElements = document.querySelectorAll('.float-3d');
-const bgCircles = document.querySelectorAll('.background-circle');
+(() => {
+  "use strict";
 
-document.addEventListener('mousemove', e => {
-  const x = e.clientX / window.innerWidth - 0.5;
-  const y = e.clientY / window.innerHeight - 0.5;
+  /* ================= ELEMENTOS DINÁMICOS ================= */
+  const floatElements = document.querySelectorAll(".float-3d");
+  const bgCircles = document.querySelectorAll(".background-circle");
+  const footer = document.querySelector("footer");
 
-  floatElements.forEach(el => {
-    const depth = 18;
-    el.style.transform = `rotateY(${x * depth}deg) rotateX(${-y * depth}deg) translateZ(0)`;
-  });
+  let ticking = false;
+  let lastScrollY = window.scrollY;
 
-  bgCircles.forEach((el, i) => {
-    const factor = (i + 1) * 28;
-    el.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
-  });
-});
-
-// Footer flotante con scroll (optimizado)
-const footer = document.querySelector('footer');
-let lastScrollY = 0;
-window.addEventListener('scroll', () => {
-  const scrollY = window.scrollY;
-  if (Math.abs(scrollY - lastScrollY) < 4) return;
-  lastScrollY = scrollY;
-
+  /* ================= SEGURIDAD BÁSICA ================= */
   window.addEventListener("load", () => {
-  if (!localStorage.getItem("token")) {
-    window.location.href = "index.html";
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      window.location.href = "index.html";
+      return;
+    }
+
+    document.documentElement.classList.add("mq-authenticated");
+  });
+
+  /* ================= EFECTO PARALLAX / 3D ================= */
+  const handleMouseMove = (e) => {
+    const x = (e.clientX / window.innerWidth) - 0.5;
+    const y = (e.clientY / window.innerHeight) - 0.5;
+
+    /* ELEMENTOS PRINCIPALES */
+    floatElements.forEach((el, index) => {
+      const depth = 14 + (index * 4);
+
+      el.style.transform = `
+        perspective(1200px)
+        rotateY(${x * depth}deg)
+        rotateX(${y * -depth}deg)
+        translateZ(${depth * 0.6}px)
+      `;
+    });
+
+    /* FONDO */
+    bgCircles.forEach((el, index) => {
+      const factor = (index + 1) * 22;
+
+      el.style.transform = `
+        translate(${x * factor}px, ${y * factor}px)
+        scale(${1 + Math.abs(x * y) * 0.08})
+      `;
+    });
+  };
+
+  document.addEventListener("mousemove", handleMouseMove, {
+    passive: true
+  });
+
+  /* ================= FOOTER FLOTANTE INTELIGENTE ================= */
+  const updateFooter = () => {
+    const scrollY = window.scrollY;
+    const maxScroll = Math.max(
+      document.body.scrollHeight - window.innerHeight,
+      1
+    );
+
+    const progress = scrollY / maxScroll;
+    const footerLift = progress * 30;
+
+    if (footer) {
+      footer.style.transform = `translateY(-${footerLift}px)`;
+      footer.style.boxShadow = `
+        0 ${12 + footerLift / 2}px
+        ${28 + footerLift / 1.5}px
+        rgba(0,0,0,0.45)
+      `;
+      footer.style.backdropFilter = "blur(18px)";
+    }
+
+    ticking = false;
+  };
+
+  window.addEventListener("scroll", () => {
+    const currentScroll = window.scrollY;
+
+    if (Math.abs(currentScroll - lastScrollY) < 3) return;
+
+    lastScrollY = currentScroll;
+
+    if (!ticking) {
+      window.requestAnimationFrame(updateFooter);
+      ticking = true;
+    }
+  }, {
+    passive: true
+  });
+
+  /* ================= OPTIMIZACIÓN MOBILE ================= */
+  if (window.innerWidth < 768) {
+    document.removeEventListener("mousemove", handleMouseMove);
   }
-});
 
-  const maxScroll = document.body.scrollHeight - window.innerHeight || 1;
-  const footerLift = (scrollY / maxScroll) * 26;
-  footer.style.transform = `translateY(-${footerLift}px)`;
-  footer.style.boxShadow = `0 ${10 + footerLift/2}px ${20 + footerLift/2}px rgba(0,0,0,0.45)`;
-});
-
+})();
 </script>
 
-<!-- ================= PROBLEMA / SOLUCIÓN ================= -->
-<section class="py-24 px-6 fade-in bg-black/40">
-  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
+   <!-- ================= PROBLEMA / SOLUCIÓN MAXIQUEEN OS ================= -->
+<section class="py-28 px-6 fade-in relative overflow-hidden bg-[linear-gradient(to_bottom,rgba(0,0,0,0.55),rgba(0,0,0,0.82))]">
 
-    <div>
-      <h2 class="text-3xl md:text-4xl font-bold mb-6">El problema</h2>
-      <ul class="space-y-3 text-zinc-300">
-        <li>❌ Tienes ideas pero no sistema</li>
-        <li>❌ Publicas pero no vendes</li>
-        <li>❌ Automatizas sin estructura</li>
-        <li>❌ Usas herramientas, pero no tienes operación</li>
-      </ul>
-    </div>
+  <!-- FONDO VISUAL -->
+  <div class="absolute inset-0 bg-grid opacity-[0.03] pointer-events-none"></div>
 
-    <div class="glass p-10 rounded-3xl">
-      <h3 class="text-2xl font-bold mb-4">La solución</h3>
-      <p class="text-zinc-300 mb-4">MaxiQueen OS convierte tu caos digital en:</p>
-      <ul class="space-y-3 text-zinc-300">
-        <li>✅ Contenido que conecta</li>
-        <li>✅ Plataformas que convierten</li>
-        <li>✅ Sistemas que trabajan solos</li>
-        <li>✅ Procesos que escalan</li>
-      </ul>
-    </div>
+  <div class="max-w-7xl mx-auto relative z-10">
 
-  </div>
-</section>
+    <!-- TITULAR -->
+    <div class="text-center mb-20">
+      <h2 class="text-4xl md:text-6xl font-extrabold text-white">
+        Del caos digital
+        <span class="block mt-3 text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-400">
+          a la operación inteligente
+        </span>
+      </h2>
 
-
-<!-- ================= QUÉ ES ================= -->
-<section id="sistema" class="py-24 px-6 fade-in">
-  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
-
-    <div>
-      <h2 class="text-3xl md:text-4xl font-bold mb-6">¿Qué es MaxiQueen OS?</h2>
-      <p class="text-lg text-zinc-300 mb-4">
-        MaxiQueen OS no es una marca. Es un sistema digital integral diseñado para personas reales
-        que quieren crear, vender, automatizar y crecer sin depender de soluciones fragmentadas.
+      <p class="mt-6 text-zinc-400 text-lg md:text-xl max-w-3xl mx-auto">
+        La mayoría tiene herramientas, contenido o ideas.
+        Pocos tienen una infraestructura real que convierta eso en ingresos y expansión.
       </p>
-      <p class="text-lg text-zinc-300">No vendemos páginas. Vendemos sistemas que producen resultados.</p>
     </div>
 
-    <div class="glass p-10 rounded-3xl">
-      <h3 class="text-xl font-semibold mb-4">🧩 Módulos del Sistema</h3>
-      <ul class="space-y-3 text-zinc-300">
-        <li>🎨 Contenido creativo (guiones, caricaturas, reels, TikTok)</li>
-        <li>📱 Crecimiento en redes sociales con narrativa real y viral</li>
-        <li>🌐 Webs, landings y tiendas listas para vender</li>
-        <li>🛒 Estructura comercial (productos, inventario, funnels)</li>
-        <li>⚙️ Automatización real (deploy, subdominios, GitHub, VPS)</li>
-        <li>🧠 Asistencia estratégica (legal básica, laboral, análisis)</li>
-      </ul>
+    <!-- GRID PRINCIPAL -->
+    <div class="grid md:grid-cols-2 gap-10 lg:gap-16 items-stretch">
+
+      <!-- ================= PROBLEMA ================= -->
+      <div class="glass rounded-3xl border border-red-500/10 shadow-2xl p-10 md:p-14">
+
+        <div class="mb-8">
+          <p class="text-sm uppercase tracking-[0.3em] text-red-400 font-semibold mb-3">
+            El problema
+          </p>
+
+          <h3 class="text-3xl md:text-4xl font-bold text-white">
+            Sin sistema,
+            <span class="text-zinc-400">el esfuerzo se dispersa</span>
+          </h3>
+        </div>
+
+        <ul class="space-y-5 text-zinc-300 text-lg leading-relaxed">
+
+          <li class="flex items-start gap-3">
+            <span class="text-red-400 text-xl">❌</span>
+            <span>Tienes ideas, pero no una estructura que las convierta en activos.</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="text-red-400 text-xl">❌</span>
+            <span>Publicas constantemente, pero no construyes ventas reales.</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="text-red-400 text-xl">❌</span>
+            <span>Automatizas procesos aislados, pero sin operación estratégica.</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="text-red-400 text-xl">❌</span>
+            <span>Usas múltiples herramientas, pero ninguna funciona como ecosistema.</span>
+          </li>
+
+        </ul>
+
+      </div>
+
+
+      <!-- ================= SOLUCIÓN ================= -->
+      <div class="glass rounded-3xl border border-cyan-400/10 shadow-2xl p-10 md:p-14">
+
+        <div class="mb-8">
+          <p class="text-sm uppercase tracking-[0.3em] text-cyan-400 font-semibold mb-3">
+            La solución
+          </p>
+
+          <h3 class="text-3xl md:text-4xl font-bold text-white">
+            MAXIQUEEN OS
+            <span class="block text-zinc-400 mt-2">
+              convierte tu caos en infraestructura rentable
+            </span>
+          </h3>
+        </div>
+
+        <p class="text-zinc-300 text-lg mb-8 leading-relaxed">
+          Diseñado para transformar creatividad, negocio y automatización
+          en sistemas digitales capaces de operar, vender y escalar.
+        </p>
+
+        <ul class="space-y-5 text-zinc-300 text-lg leading-relaxed">
+
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 text-xl">✅</span>
+            <span>Contenido estratégico que conecta con autoridad.</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 text-xl">✅</span>
+            <span>Plataformas optimizadas para convertir tráfico en clientes.</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 text-xl">✅</span>
+            <span>Sistemas automatizados que trabajan incluso sin presencia constante.</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 text-xl">✅</span>
+            <span>Procesos escalables que evolucionan con tu expansión.</span>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+
+
+    <!-- CIERRE -->
+    <div class="text-center mt-20">
+      <p class="text-sm md:text-base uppercase tracking-[0.35em] text-amber-400 font-semibold">
+        No más improvisación digital
+      </p>
+
+      <p class="mt-4 text-zinc-400 text-lg">
+        Construye un sistema real. Opera con inteligencia. Escala con estructura.
+      </p>
     </div>
 
   </div>
+
 </section>
 
+
+<!-- ================= ESTILO GRID REUTILIZABLE ================= -->
+<style>
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+</style>
+<!-- ================= ¿QUÉ ES MAXIQUEEN OS? ================= -->
+<section id="sistema"
+         class="py-28 px-6 fade-in relative overflow-hidden">
+
+  <!-- FONDO -->
+  <div class="absolute inset-0 bg-grid opacity-[0.03] pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto relative z-10">
+
+    <!-- TITULAR -->
+    <div class="text-center mb-20">
+      <h2 class="text-4xl md:text-6xl font-extrabold text-white leading-tight">
+        ¿Qué es
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-400">
+          MAXIQUEEN OS
+        </span>?
+      </h2>
+
+      <p class="mt-6 text-zinc-400 text-lg md:text-xl max-w-4xl mx-auto">
+        Mucho más que una marca.
+        Es una infraestructura digital diseñada para transformar creatividad,
+        negocio y operación en un ecosistema rentable y escalable.
+      </p>
+    </div>
+
+
+    <!-- GRID -->
+    <div class="grid md:grid-cols-2 gap-10 lg:gap-16 items-stretch">
+
+      <!-- DEFINICIÓN -->
+      <div class="glass rounded-3xl p-10 md:p-14 border border-white/10 shadow-2xl">
+
+        <p class="text-sm uppercase tracking-[0.3em] text-amber-400 font-semibold mb-4">
+          Definición estratégica
+        </p>
+
+        <h3 class="text-3xl md:text-4xl font-bold text-white mb-8">
+          Un sistema,
+          <span class="text-zinc-400">no una solución aislada</span>
+        </h3>
+
+        <div class="space-y-6 text-zinc-300 text-lg leading-relaxed">
+
+          <p>
+            MAXIQUEEN OS no fue creado para vender páginas sueltas,
+            diseños aislados o automatizaciones desconectadas.
+          </p>
+
+          <p>
+            Fue diseñado como un sistema digital integral para personas,
+            marcas y negocios que buscan crear, vender, automatizar y expandirse
+            sin depender de herramientas fragmentadas.
+          </p>
+
+          <p class="font-semibold text-white">
+            No vendemos páginas.
+            Construimos sistemas que producen resultados reales.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- MÓDULOS -->
+      <div class="glass rounded-3xl p-10 md:p-14 border border-cyan-400/10 shadow-2xl">
+
+        <p class="text-sm uppercase tracking-[0.3em] text-cyan-400 font-semibold mb-4">
+          Módulos operativos
+        </p>
+
+        <h3 class="text-3xl md:text-4xl font-bold text-white mb-8">
+          Ecosistema funcional
+        </h3>
+
+        <ul class="space-y-5 text-zinc-300 text-lg leading-relaxed">
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">🎨</span>
+            <span>Contenido creativo estratégico: guiones, reels, caricaturas, TikTok y narrativa visual.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">📱</span>
+            <span>Crecimiento social mediante posicionamiento real, identidad y expansión orgánica.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">🌐</span>
+            <span>Webs, landing pages y tiendas optimizadas para conversión.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">🛒</span>
+            <span>Estructura comercial: funnels, productos, inventario y operación de ventas.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">⚙️</span>
+            <span>Automatización profesional: deploy, infraestructura, VPS, subdominios y escalabilidad.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">🧠</span>
+            <span>Asistencia estratégica: análisis, estructura operativa y soporte profesional.</span>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+
+
+    <!-- CIERRE -->
+    <div class="text-center mt-20">
+      <p class="text-sm md:text-base uppercase tracking-[0.35em] text-cyan-400 font-semibold">
+        Crear · Operar · Automatizar · Escalar
+      </p>
+
+      <p class="mt-4 text-zinc-400 text-lg">
+        MAXIQUEEN OS convierte esfuerzo digital en infraestructura rentable.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ================= GRID STYLE ================= -->
+<style>
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+</style>
 
 <!-- ================= GALERÍA 1 ================= -->
 <section class="py-24 px-6 fade-in">
