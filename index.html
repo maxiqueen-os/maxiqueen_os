@@ -606,6 +606,7 @@ html,body{
   z-index: -1;
 }
 </style>
+   
 <!-- ================= CONTROL DE EXPERIENCIA / THEME ================= -->
 <button class="toggle-theme-pro"
         onclick="toggleTheme()"
@@ -613,6 +614,16 @@ html,body{
   🧪 MaxiTema
 </button>
 
+   <script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute("data-theme");
+  html.setAttribute(
+    "data-theme",
+    current === "dark" ? "light" : "dark"
+  );
+}
+</script>
 
 <!-- ================= COMERCIO / PAGO OFICIAL ================= -->
 <section class="py-20 px-6 fade-in">
@@ -630,11 +641,12 @@ html,body{
       </p>
 
       <div class="flex justify-center">
-        <script
-          src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js"
-          data-preference-id="453634078-e7931b13-abe1-45f2-95db-398ab50f1db0"
-          data-source="button">
+        <script defer
+           src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js"
+           data-preference-id="453634078-e7931b13-abe1-45f2-95db-398ab50f1db0"
+           data-source="button">
         </script>
+
       </div>
 
       <div class="mt-10">
@@ -646,7 +658,6 @@ html,body{
     </div>
   </div>
 </section>
-
 
 <!-- ================= WHATSAPP ACTIVACIÓN DIRECTA ================= -->
 <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema."
@@ -723,30 +734,6 @@ html,body{
   </div>
 </section>
 
-
-<!-- ================= MODAL LEGAL PREMIUM ================= -->
-<div id="legalModal"
-     class="fixed inset-0 hidden bg-black/70 backdrop-blur-md z-50 flex items-center justify-center px-4">
-
-  <div class="bg-zinc-900 border border-white/10 text-zinc-200 max-w-2xl w-full p-8 rounded-3xl shadow-2xl relative">
-
-    <button id="closeLegal"
-            class="absolute top-4 right-4 text-zinc-400 hover:text-red-400 text-2xl transition">
-      ✕
-    </button>
-
-    <h2 id="legalTitle"
-        class="text-2xl font-bold text-white mb-6">
-    </h2>
-
-    <div id="legalContent"
-         class="text-sm md:text-base leading-relaxed space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-    </div>
-
-  </div>
-</div>
-
-
 <!-- ================= ESTILOS PROFESIONALES ================= -->
 <style>
 .toggle-theme-pro {
@@ -806,6 +793,7 @@ html,body{
   background: rgba(255,255,255,0.06);
 }
 </style>
+   
 <!-- ================= HERO ULTRA-PRO MAXIQUEEN OS ================= -->
 <section class="relative min-h-screen flex items-center justify-center text-center px-6 overflow-hidden bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.15),transparent_65%)]">
 
