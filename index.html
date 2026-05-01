@@ -552,30 +552,6 @@ html,body{
   <div class="mq-grid-bg"></div>
 </section>
 
-
-<!-- ================= MODAL LEGAL ================= -->
-<div id="legalModal"
-     class="fixed inset-0 hidden bg-black/70 backdrop-blur-md z-50 flex items-center justify-center px-4">
-
-  <div class="bg-zinc-900 border border-white/10 text-zinc-200 max-w-2xl w-full p-8 rounded-3xl shadow-2xl relative">
-
-    <button id="closeLegal"
-            class="absolute top-4 right-4 text-zinc-400 hover:text-red-400 text-2xl transition">
-      ✕
-    </button>
-
-    <h2 id="legalTitle"
-        class="text-2xl font-bold text-white mb-6">
-    </h2>
-
-    <div id="legalContent"
-         class="text-sm md:text-base leading-relaxed space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-    </div>
-
-  </div>
-</div>
-
-
 <!-- ================= ESTILOS REUTILIZABLES ================= -->
 <style>
 .card-link {
@@ -606,193 +582,11 @@ html,body{
   z-index: -1;
 }
 </style>
-   
-<!-- ================= CONTROL DE EXPERIENCIA / THEME ================= -->
-<button class="toggle-theme-pro"
-        onclick="toggleTheme()"
-        aria-label="Cambiar tema MAXIQUEEN">
-  🧪 MaxiTema
-</button>
 
-   <script>
-function toggleTheme() {
-  const html = document.documentElement;
-  const current = html.getAttribute("data-theme");
-  html.setAttribute(
-    "data-theme",
-    current === "dark" ? "light" : "dark"
-  );
-}
-</script>
-
-<!-- ================= COMERCIO / PAGO OFICIAL ================= -->
-<section class="py-20 px-6 fade-in">
-  <div class="max-w-5xl mx-auto text-center">
-
-    <div class="glass p-12 md:p-16 rounded-3xl shadow-2xl border border-white/10">
-
-      <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-6">
-        Pago Seguro MAXIQUEEN OS
-      </h1>
-
-      <p class="text-zinc-300 text-base md:text-lg mb-10 max-w-2xl mx-auto">
-        Finaliza tu activación de forma segura mediante MercadoPago
-        y accede oficialmente al ecosistema digital de MAXIQUEEN OS.
-      </p>
-
-      <div class="flex justify-center">
-        <script defer
-           src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js"
-           data-preference-id="453634078-e7931b13-abe1-45f2-95db-398ab50f1db0"
-           data-source="button">
-        </script>
-
-      </div>
-
-      <div class="mt-10">
-        <p class="text-xs md:text-sm uppercase tracking-[0.3em] text-cyan-400 font-semibold">
-          Seguridad, automatización y expansión profesional.
-        </p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ================= WHATSAPP ACTIVACIÓN DIRECTA ================= -->
-<a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema."
-   target="_blank"
-   rel="noopener"
-   class="whatsapp-float-pro"
-   aria-label="WhatsApp MAXIQUEEN OS">
-
-  <svg xmlns="http://www.w3.org/2000/svg"
-       viewBox="0 0 448 512"
-       fill="white"
-       width="28"
-       aria-hidden="true">
-    <path d="M380.9 97.1C339-3.8 211.2-34.6 119.8 19.5 34.4 71.2-8.7 180.1 20.4 272.5L0 512l245.1-64.2c95.5 27.8 196.5-16.7 247.1-104.4 43.5-75.7 32.3-173.7-25.3-246.3z"/>
-  </svg>
-</a>
+<!-- ================= TOGGLE DARK/LIGHT ================= --> 
+<button class="toggle-theme" onclick="toggleTheme()" aria-label="Cambiar tema">🧪 MaxiTema</button>
 
 
-<!-- ================= CRM / LABORATORIO COMERCIAL ================= -->
-<section class="py-20 px-6 fade-in">
-  <div class="max-w-6xl mx-auto text-center">
-
-    <a href="AdmProCatalogo.html"
-       target="_blank"
-       rel="noopener"
-       class="inline-block text-3xl md:text-5xl font-extrabold text-amber-400 hover:scale-105 transition duration-300">
-      👑 CREAR PRODUCTOS JSON MQ 👑
-    </a>
-
-    <p class="mt-4 text-sm md:text-base text-zinc-400 uppercase tracking-[0.25em]">
-      Laboratorio comercial · Desarrollo CRM · Gestión evolutiva
-    </p>
-
-    <div class="glass mt-12 p-10 md:p-14 rounded-3xl shadow-2xl border border-white/10">
-
-      <h2 class="text-2xl md:text-4xl font-bold text-white mb-4">
-        CRM MAXIQUEEN OS
-      </h2>
-
-      <p class="text-zinc-400 text-base md:text-lg mb-10">
-        Infraestructura experimental orientada a productos,
-        automatización comercial, documentación estratégica y expansión digital.
-      </p>
-
-      <div class="grid md:grid-cols-3 gap-4 text-left">
-
-        <a href="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088758/ChatGPT_Image_29_ene_2026_09_44_55_p.m._rqyqkc.png"
-           target="_blank"
-           class="card-link">
-          📱 Historia IA MAXIQUEEN OS
-        </a>
-
-        <a href="https://fantasy-pumpkin-d21.notion.site/MAXIQUEEN-STORE-Sistema-de-Gesti-n-c6102d3d774548f1b2f4ffa9069bcbc7"
-           target="_blank"
-           class="card-link">
-          📱 Informes Estratégicos Notion
-        </a>
-
-        <a href="https://res.cloudinary.com/dtp6risqx/image/upload/f_auto,q_auto/1001127863_ajrpgm"
-           target="_blank"
-           class="card-link">
-          📱 Landing Comercial MQ
-        </a>
-
-      </div>
-
-      <div class="mt-12">
-        <p class="text-xs md:text-sm uppercase tracking-[0.3em] text-cyan-400 font-semibold">
-          Productos, datos y automatización empresarial.
-        </p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ================= ESTILOS PROFESIONALES ================= -->
-<style>
-.toggle-theme-pro {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 60;
-  padding: 0.9rem 1.4rem;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: white;
-  font-weight: 600;
-  backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
-}
-
-.toggle-theme-pro:hover {
-  transform: translateY(-2px);
-  border-color: rgba(251,191,36,0.5);
-}
-
-.whatsapp-float-pro {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 64px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #25d366, #128c7e);
-  border-radius: 50%;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
-  z-index: 60;
-  transition: all 0.3s ease;
-}
-
-.whatsapp-float-pro:hover {
-  transform: scale(1.08);
-}
-
-.card-link {
-  display: block;
-  padding: 1rem 1.2rem;
-  border-radius: 1rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: #f4f4f5;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.card-link:hover {
-  transform: translateY(-4px);
-  border-color: rgba(251,191,36,0.5);
-  background: rgba(255,255,255,0.06);
-}
-</style>
    
 <!-- ================= HERO ULTRA-PRO MAXIQUEEN OS ================= -->
 <section class="relative min-h-screen flex items-center justify-center text-center px-6 overflow-hidden bg-[radial-gradient(circle_at_top,rgba(250,204,21,0.15),transparent_65%)]">
@@ -1558,8 +1352,10 @@ function toggleTheme() {
              loading="lazy"
              onclick="openLightbox(this.src)">
       </div>
-
-
+       
+    </div>
+  </div>
+</section>
        
 <iframe src="" width="100%" height="500"></iframe>
 
@@ -1570,12 +1366,6 @@ function toggleTheme() {
 <video class="w-full max-w-xl mx-auto rounded-xl" controls>
   <source src="https://res.cloudinary.com/dtp6risqx/video/upload/v1775273392/AQPJhsnWNVp1yqKwqwpsqYVtBAWQt-ze-PkvB_akx3ic62Pf_sKY5nQxygeeqwV9KH_6iXu0ldJg2Y5I8VNy3xVtt6-N9PJo87t_2qB6NXM2F4B5pc6869G0PqnexlOh_qu3xib.mp4" type="video/mp4">
 </video>
-       
-    </div>
-  </div>
-</section>
-
-
 <!-- ================= LIGHTBOX ================= -->
 <div id="lightbox" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
   <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl" aria-label="Cerrar">✕</button>
