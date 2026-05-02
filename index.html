@@ -2549,7 +2549,7 @@ Aquí puedes escribirnos directo:
 }
 
 /* =========================
-   🎯 RESPUESTA PRINCIPAL
+   🎯 RESPUESTA PRINCIPAL (Tu cerebro lógico)
 ========================= */
 function getResponse(message){
   const text = message.toLowerCase();
@@ -2565,7 +2565,7 @@ function getResponse(message){
     }
   }
 
-  // 3️⃣ FALLBACK INTELIGENTE (NO GENÉRICO)
+  // 3️⃣ FALLBACK INTELIGENTE
   return `
 Te leo 👀  
 
@@ -2577,80 +2577,51 @@ Quiero entenderte bien.
 }
 
 /* =========================
-   🧩 UI - VERSION UNIFICADA (PROTEGIDA)
+   🧩 UI UNIFICADA (Sin duplicados)
 ========================= */
-
-// Usaremos solo una función para escribir, para no saturar el DOM
 function logMessage(mensaje, tipo = 'sistema') {
-  if (!mensaje) return; // Evita que el sistema colapse si la respuesta llega vacía
+  if (!mensaje) return;
 
   const div = document.createElement('div');
   
-  // Mantenemos tus clases de diseño (Zinc para bot, Amber para usuario)
+  // Mantenemos tus estilos originales: Amber para user, Zinc para sistema
   div.className = tipo === 'user' 
     ? "text-right text-amber-400 font-semibold my-2" 
-    : "text-left text-zinc-200 my-2 bg-zinc-800/50 p-2 rounded";
+    : "text-left text-zinc-200 my-2";
   
   div.style.whiteSpace = "pre-line";
-  div.innerHTML = mensaje; // Usamos innerHTML para respetar los emojis y saltos
+  div.innerHTML = mensaje; 
   
   chatLog.appendChild(div);
-  
-  // Scroll suave al final
-  chatLog.scrollTo({
-    top: chatLog.scrollHeight,
-    behavior: 'smooth'
-  });
+  chatLog.scrollTop = chatLog.scrollHeight;
 }
 
 function sendMessage() {
   const message = input.value.trim();
   if (!message) return;
 
-  // 1. Mostrar mensaje del usuario
+  // 1. Mostrar mensaje del usuario una sola vez
   logMessage(message, "user");
-  input.value = ""; // Limpiamos rápido para evitar doble envío
+  
+  // 2. Procesar la respuesta una sola vez
+  const response = getResponse(message);
+  
+  // 3. Limpiar input inmediatamente
+  input.value = "";
 
-  // 2. Obtener respuesta lógica (primero contexto, luego intents)
-  // Nota: getResponse debe estar definida arriba de esto
-  let response = contextualResponse(message.toLowerCase()) || getResponse(message);
-
-  // 3. Retraso artificial para que no se sienta "robótico" y evitar bloqueos de UI
+  // 4. Respuesta del sistema con delay natural
   setTimeout(() => {
     logMessage(response, "sistema");
   }, 400);
 }
 
 /* =========================
-   🕹️ CONTROLES DE INTERFAZ (ABRIR/CERRAR)
+   ⌨️ EVENTOS PROTEGIDOS
 ========================= */
-
-function toggleChat() {
-  const chatBox = document.getElementById('chatBox');
-  // Si está oculto, lo mostramos; si no, lo ocultamos
-  if (chatBox.style.display === "none" || chatBox.style.display === "") {
-    chatBox.style.display = "flex";
-  } else {
-    chatBox.style.display = "none";
-  }
-}
-
-function toggleMinimize() {
-  const chatBox = document.getElementById('chatBox');
-  chatBox.classList.toggle('minimized'); 
-  // 'minimized' debe estar definido en tu CSS para reducir el alto (height)
-}
-
-function closeChat() {
-  document.getElementById('chatBox').style.display = "none";
-}
-
-/* =========================
-   ⌨️ EVENTOS (SOLO UNO PARA EL ENTER)
-========================= */
+// Eliminamos el keypress y dejamos solo keydown para evitar doble ejecución
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    e.preventDefault(); // Evita que el Enter haga un salto de línea en el input
+    e.preventDefault(); 
     sendMessage();
   }
 });
