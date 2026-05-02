@@ -1375,12 +1375,6 @@ window.addEventListener("load", () => {
              onclick="openLightbox(this.src)">
       </div>
 
-      <!-- Modulo landing -->
-      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <video class="w-full max-w-xl mx-auto rounded-xl" controls>
-  <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777088748/animate_asxr8u.mp4">
-</video>
- </div>
 
        <!-- ================= SECCIÓN VIDEO PREMIUM ================= -->
 <div class="relative max-w-4xl mx-auto my-12 group">
@@ -1390,7 +1384,7 @@ window.addEventListener("load", () => {
   <div class="relative cursor-pointer rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl">
     <video class="w-full h-auto rounded-2xl" 
            controls 
-           poster="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088757/ChatGPT_Image_29_ene_2026_00_04_43_ddzor4.png">
+           poster="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088786/maxiqueen-avatar.png_s47zc5.png">
       <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777088338/Construyendo_lo_Imposible_gq4peo.mp4" type="video/mp4">
       Tu navegador no soporta videos.
     </video>
@@ -2684,36 +2678,57 @@ input.addEventListener("keydown", e => {
   </div>
 </section>
 
-
-<div id="gamificationPanel">
-  <h3>Tu progreso</h3>
-  <p>Nivel: <span id="level">1</span></p>
-  <p>XP: <span id="xp">0</span></p>
-  <p>Monedas: <span id="coins">0</span></p>
+    <!-- ================= MODULO LANDING REVISADO ================= -->
+<div class="relative cursor-pointer group rounded-3xl overflow-hidden mb-8">
+  <video class="w-full max-w-xl mx-auto rounded-xl shadow-2xl border border-yellow-500/20" controls>
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777088748/animate_asxr8u.mp4" type="video/mp4">
+    Tu navegador no soporta el video.
+  </video>
 </div>
-<a href="Play1MQ.html"> ...........     🎨 1MQ.Jugar</a>
-🎨
-<a href="Play2ActNeg.html"> ........... 🔥    2 Jugar</a>
-<a href="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777325346/unnamed_2_bjfx6y.png"> ...........  🔥          Metadata</a>
 
-<a href="clickMQ.html"> ...........     🎨 2MQ.Jugar</a>
-🎨
+<!-- PANEL DE ACCESOS Y JUEGOS -->
+<div class="flex flex-col gap-4 text-left max-w-xl mx-auto mb-10 font-sans">
+  
+  <!-- Bloque 1 -->
+  <div class="flex items-center justify-between border-b border-white/5 pb-2">
+    <a href="Play1MQ.html" class="hover:text-yellow-400 transition-colors">🎨 1MQ.Jugar</a>
+  </div>
 
-<a href="Play2MQ.html"> ...........  🔥    Metadata</a>
+  <div class="flex items-center justify-between border-b border-white/5 pb-2">
+    <a href="Play2ActNeg.html" class="text-rose-400 hover:brightness-125 transition-all">🔥 2 Jugar</a>
+    <a href="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777325346/unnamed_2_bjfx6y.png" target="_blank" class="text-xs text-zinc-500 hover:text-white">Metadata Assets</a>
+  </div>
 
-<a href="Play3MQ.html"> ...........     🎨 3MQ.Jugar</a>
-🎨
-<a href="Play5MQ.html"> ........... 🔥    5 Jugar</a>
-<a href="PlayRedMQ.html"> ...........  🔥      play red    Metadata</a>
+  <!-- Bloque 2 -->
+  <div class="flex items-center justify-between border-b border-white/5 pb-2">
+    <a href="clickMQ.html" class="hover:text-yellow-400 transition-colors">🎨 2MQ.Jugar</a>
+    <a href="Play2MQ.html" class="text-xs text-rose-500/70 hover:text-rose-400 italic">🔥 Metadata Play</a>
+  </div>
 
-<label class="mq-license-check">
-    <input type="checkbox" id="acceptMQ" />
-    MaxiQueen_Neural
-    <a href="MaxiQueen_Neural_OS.pdf" target="_blank" rel="noopener"> MaxiQueen OS Neural</a>
-     
-    </a>
+  <!-- Bloque 3 -->
+  <div class="flex items-center justify-between border-b border-white/5 pb-2">
+    <a href="Play3MQ.html" class="hover:text-yellow-400 transition-colors">🎨 3MQ.Jugar</a>
+    <div class="flex gap-4 items-center">
+      <a href="Play5MQ.html" class="text-rose-400 hover:scale-105 transition-transform font-bold">🔥 5 Jugar</a>
+      <a href="PlayRedMQ.html" class="text-[10px] text-zinc-500 hover:text-yellow-500 uppercase tracking-tighter">Play Red Metadata</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- CHECK DE LICENCIA (ESTRUCTURA CORREGIDA) -->
+<div class="mq-license-container p-4 bg-zinc-900/40 rounded-2xl border border-white/5 max-w-xl mx-auto">
+  <label class="flex items-center gap-3 cursor-pointer text-sm text-zinc-400 hover:text-zinc-200" for="acceptMQ">
+    <input type="checkbox" id="acceptMQ" class="accent-yellow-500 h-4 w-4" />
+    <span>
+      MaxiQueen_Neural - 
+      <a href="MaxiQueen_Neural_OS.pdf" target="_blank" rel="noopener" class="text-yellow-500 hover:underline">
+        Ver MaxiQueen OS Neural
+      </a>
+    </span>
   </label>
-
+</div>
+       
 <script src="./js/lightbox.js"></script>
 <script src="./js/theme-toggle.js"></script>
 <script src="./js/licen.checkjs.js"></script>
@@ -2723,69 +2738,108 @@ input.addEventListener("keydown", e => {
 
 <button onclick="goBack()">⬅ Volver</button>
 
-<script>
-function goBack() {
-  window.location.href = "/apps.html";
-}
-
-<div id="chat-container">
-    <div id="chat-window" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc;"></div>
-    <input type="text" id="user-input" placeholder="Escribe a MaxiQueen OS...">
-    <button onclick="enviarMensaje()">Enviar</button>
+<!-- ================= INTERFAZ DE CHAT & IA ================= -->
+<div id="chat-container" class="max-w-xl mx-auto bg-zinc-900/50 rounded-3xl border border-white/5 overflow-hidden shadow-2xl mb-8">
+    <!-- Ventana de Mensajes -->
+    <div id="chat-window" class="h-[350px] overflow-y-auto p-4 space-y-4 scroll-smooth">
+        <p class="text-xs text-zinc-500 text-center uppercase tracking-widest">Iniciando protocolo MaxiQueen_Neural...</p>
+    </div>
+    
+    <!-- Barra de Entrada -->
+    <div class="p-4 bg-black/20 border-t border-white/5 flex gap-2">
+        <input type="text" id="user-input" 
+               class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2 text-zinc-200 focus:outline-none focus:border-yellow-500/50 transition-colors"
+               placeholder="Escribe a MaxiQueen OS...">
+        <button onclick="enviarMensaje()" 
+                class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-2 rounded-xl transition-all active:scale-95">
+            Enviar
+        </button>
+    </div>
 </div>
 
+<!-- ================= SCRIPTS DE SISTEMA ================= -->
 <script>
-async function enviarMensaje() {
-    const input = document.getElementById('user-input');
-    const window = document.getElementById('chat-window');
-    const mensaje = input.value;
-
-    window.innerHTML += `<p><b>Tú:</b> ${mensaje}</p>`;
-    input.value = '';
-
-    // AQUÍ conectamos con tu Backend_MQ desplegado en Vercel
-    const response = await fetch('https://tu-backend-mq.vercel.app/chat', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ "prompt": mensaje })
-    });
-    
-    const data = await response.json();
-    window.innerHTML += `<p><b>MaxiQueen OS:</b> ${data.respuesta}</p>`;
+// Navegación
+function goBack() {
+    window.location.href = "/apps.html";
 }
 
-   async function generateImage() {
+// Motor de Chat con Conexión a FastAPI/Vercel
+async function enviarMensaje() {
+    const input = document.getElementById('user-input');
+    const chatWindow = document.getElementById('chat-window');
+    const mensaje = input.value.trim();
+
+    if (!mensaje) return;
+
+    // 1. Renderizar mensaje de usuario
+    chatWindow.innerHTML += `
+        <div class="flex flex-col items-end">
+            <div class="bg-yellow-500/10 border border-yellow-500/20 p-3 rounded-2xl rounded-tr-none max-w-[85%]">
+                <p class="text-sm text-yellow-500 font-bold mb-1">Tú</p>
+                <p class="text-zinc-200">${mensaje}</p>
+            </div>
+        </div>`;
+    
+    input.value = '';
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    try {
+        // 2. Conexión con tu Backend de FastAPI en Vercel
+        // NOTA: Asegúrate de que la URL termine en tu endpoint /chat o /api/chat
+        const response = await fetch('https://tu-backend-mq.vercel.app/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ "prompt": mensaje }) // Ajustado a la estructura de tu API local
+        });
+        
+        const data = await response.json();
+        
+        // 3. Renderizar respuesta del sistema
+        chatWindow.innerHTML += `
+            <div class="flex flex-col items-start">
+                <div class="bg-zinc-800 border border-white/5 p-3 rounded-2xl rounded-tl-none max-w-[85%]">
+                    <p class="text-sm text-rose-500 font-bold mb-1">MaxiQueen OS</p>
+                    <p class="text-zinc-300">${data.respuesta || data.message}</p>
+                </div>
+            </div>`;
+            
+    } catch (error) {
+        console.error("Error en MaxiQueen Neural:", error);
+        chatWindow.innerHTML += `<p class="text-xs text-rose-800 text-center">Error de conexión con el núcleo de IA.</p>`;
+    }
+
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+// Generador de Imágenes IA
+async function generateImage() {
     const promptInput = document.getElementById("promptInput");
     const container = document.getElementById("imageContainer");
     const spinner = document.getElementById("loadingSpinner");
     const resultDiv = document.getElementById("imageResult");
     const btn = document.getElementById("generateBtn");
 
-    const prompt = promptInput.value.trim();
+    const prompt = promptInput.value?.trim();
 
     if (!prompt) {
         alert("Por favor, describe la imagen que deseas generar.");
         return;
     }
 
-    // Estado de carga
     btn.disabled = true;
     container.classList.remove("hidden");
     spinner.classList.remove("hidden");
     resultDiv.innerHTML = "";
 
     try {
-        /* 
-           NOTA TÉCNICA: Aquí debes conectar con tu API de FastAPI.
-           Si usas un servicio externo como Pollinations.ai (gratis y rápido), 
-           puedes usar esta estructura:
-        */
-        const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=1024&height=1024&seed=${Math.floor(Math.random() * 1000000)}&nologo=true`;
+        // Generación via Pollinations (Sincronizado con tus activos en Cloudinary)
+        const seed = Math.floor(Math.random() * 1000000);
+        const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=1024&height=1024&seed=${seed}&nologo=true`;
 
-        // Precarga de la imagen para asegurar que el spinner desaparezca cuando esté lista
         const img = new Image();
         img.src = imageUrl;
-        img.className = "w-full h-auto rounded-xl shadow-2xl hover:opacity-90 transition-opacity";
+        img.className = "w-full h-auto rounded-xl shadow-2xl cursor-pointer hover:opacity-90 transition-opacity";
         img.alt = prompt;
         
         img.onload = () => {
@@ -2795,7 +2849,7 @@ async function enviarMensaje() {
         };
 
     } catch (error) {
-        console.error("Error generando imagen:", error);
+        console.error("Error generating image:", error);
         alert("Hubo un error al conectar con el motor de IA.");
         container.classList.add("hidden");
     } finally {
@@ -2803,19 +2857,29 @@ async function enviarMensaje() {
     }
 }
 
+// UI: Lightbox para visualización de Assets
 function openLightbox(url) {
     const lightbox = document.getElementById("lightbox");
     const content = document.getElementById("lightboxContent");
-    content.innerHTML = `<img src="${url}" class="w-full h-auto rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.5)]">`;
+    if (!lightbox || !content) return;
+    
+    content.innerHTML = `<img src="${url}" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl border border-white/10">`;
     lightbox.classList.remove("hidden");
     lightbox.classList.add("flex");
 }
 
 function closeLightbox() {
     const lightbox = document.getElementById("lightbox");
-    lightbox.classList.add("hidden");
-    lightbox.classList.remove("flex");
+    if (lightbox) {
+        lightbox.classList.add("hidden");
+        lightbox.classList.remove("flex");
+    }
 }
+
+// Soporte para tecla Enter
+document.getElementById('user-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') enviarMensaje();
+});
 </script>
 </body>
 </html>
