@@ -454,9 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
   </span>
   <span class="group-hover:tracking-widest transition-all">🧪 MAXITEMA</span>
-</button>
-
-   
+</button>   
    
 <!-- ================= HERO ULTRA-PRO MAXIQUEEN OS ================= -->
 <section class="relative min-h-screen flex items-center justify-center text-center px-6 overflow-hidden bg-black">
@@ -1102,7 +1100,7 @@ window.addEventListener("load", () => {
       <!-- Módulo Social -->
       <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
   <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
-    <source src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777666803/add-the-maxiqueen-os-logo-with-the-panther-cat-wea_mskxd6.jpg" type="video/mp4">
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777666803/video-1129194893602339_fl42sp.mp4" type="video/mp4">
   </video>
 </div>
 
@@ -1218,16 +1216,7 @@ window.addEventListener("load", () => {
              onclick="openLightbox(this.src)">
       </div>
 
-       <!-- Contenido maxiqueen -->
-      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <img src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777088749/animate-it_t3tzmk.mp4"
-             alt="Automatización"
-             class="rounded-3xl w-full h-full object-cover"
-             loading="lazy"
-             onclick="openLightbox(this.src)">
-      </div>
-
-       <!-- Modulo landing -->
+        <!-- Modulo landing -->
       <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
         <video class="w-full max-w-xl mx-auto rounded-xl" controls>
   <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1775244579/una-escena-cinematogrfica-hiperrealista-de-un-jove_k13xdx.mp4">
@@ -1393,49 +1382,88 @@ window.addEventListener("load", () => {
 </video>
  </div>
 
-       <!-- Construyendo lo imposible -->
-      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <video class="w-full max-w-xl mx-auto rounded-xl" controls>
-  <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777088338/Construyendo_lo_Imposible_gq4peo.mp4" type="video/mp4">
-</video>
- </div>
-
-    </div>
+       <!-- ================= SECCIÓN VIDEO PREMIUM ================= -->
+<div class="relative max-w-4xl mx-auto my-12 group">
+  <!-- Resplandor Dorado de Fondo -->
+  <div class="absolute -inset-1 bg-gradient-to-r from-yellow-600 to-amber-400 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+  
+  <div class="relative cursor-pointer rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl">
+    <video class="w-full h-auto rounded-2xl" 
+           controls 
+           poster="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088785/MAXIQUEEN_LOGO_vpskcy.png">
+      <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777088338/Construyendo_lo_Imposible_gq4peo.mp4" type="video/mp4">
+      Tu navegador no soporta videos.
+    </video>
   </div>
+</div>
+       
 </section>
 
-<img src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777325518/Grabaci%C3%B3n_de_pantalla_2026-02-10_192325_sclyrg.mp4" width="300" />
-<script src="https://upload-widget.cloudinary.com/latest/global/all.js"></script>
+<!-- ================= PANEL DE CARGA CLOUDINARY ================= -->
+<div class="max-w-xl mx-auto p-8 rounded-3xl border border-yellow-500/20 bg-zinc-900/50 backdrop-blur-md text-center">
+  <h3 class="text-yellow-500 font-bold mb-4 uppercase tracking-widest text-sm">Cloud Asset Manager</h3>
+  
+  <div class="flex flex-col items-center gap-6">
+    <!-- Preview Inteligente -->
+    <div class="relative w-full aspect-video rounded-xl border-2 border-dashed border-zinc-700 overflow-hidden flex items-center justify-center bg-black/20">
+      <img id="preview" class="max-h-full object-contain" src="https://via.placeholder.com/400x225/000000/fbbf24?text=Vista+Previa+Activo" />
+    </div>
 
-<input type="file" id="fileInput" />
-<button id="uploadBtn">Subir Imagen</button>
+    <!-- Controles Estilizados -->
+    <div class="flex flex-wrap justify-center gap-4">
+      <label for="fileInput" class="cursor-pointer px-6 py-3 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300 hover:bg-zinc-700 transition-all text-sm font-medium">
+        Seleccionar Archivo
+      </label>
+      <input type="file" id="fileInput" class="hidden" />
+
+      <button id="uploadBtn" class="px-8 py-3 rounded-full bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold hover:scale-105 transition-transform shadow-lg shadow-yellow-500/20 text-sm">
+        SUBIR A CLOUDINARY
+      </button>
+    </div>
+  </div>
+</div>
 
 <img id="preview" width="300" />
 <script>
 document.getElementById("uploadBtn").addEventListener("click", async () => {
-
-    const file = document.getElementById("fileInput").files[0];
+    const fileInput = document.getElementById("fileInput");
+    const file = fileInput.files[0];
 
     if (!file) {
-        alert("Selecciona un archivo");
+        alert("Por favor, selecciona un activo para la suite MAXIQUEEN.");
         return;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "ml_default"); // 🔥 cambia esto luego
+    // Feedback visual de carga
+    const btn = document.getElementById("uploadBtn");
+    const originalText = btn.innerText;
+    btn.innerText = "PROCESANDO...";
+    btn.disabled = true;
 
-    const res = await fetch("https://api.cloudinary.com/v1_1/maxiqueen-os/image/upload", {
-        method: "POST",
-        body: formData
-    });
+    try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "ml_default"); // Asegúrate de que este preset esté activo en Cloudinary
 
-    const data = await res.json();
+        const res = await fetch("https://api.cloudinary.com/v1_1/maxiqueen-os/image/upload", {
+            method: "POST",
+            body: formData
+        });
 
-    document.getElementById("preview").src = data.secure_url;
-
-    console.log("Imagen subida:", data.secure_url);
+        const data = await res.json();
+        
+        if (data.secure_url) {
+            document.getElementById("preview").src = data.secure_url;
+            console.log("Activo sincronizado con éxito:", data.secure_url);
+        }
+    } catch (error) {
+        console.error("Error en la carga:", error);
+    } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
 });
+
 </script>
 
 <!-- ================= LICENCIA ================= -->
