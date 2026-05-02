@@ -23,30 +23,30 @@
 :root {
   --accent:#facc15;
   --bg-main:#0b1220;
-  --text-main:#d7d87b;
-  --card-bg:#0f172a;
-  --border-soft:#172b4a;
+  --text-main:#f4ff23;
+  --card-bg:#151517;
+  --border-soft:#34ff19;
   --btn-bg:#facc15;
   --btn-text:#6e3838;
-  --bg-soft:rgba(0,0,0,.45);
+  --bg-soft:rgba(4, 9, 19, 0.45);
 }
 
 [data-theme="light"] {
-  --accent:#0ff50b;
-  --bg-main:#0d1628;
-  --text-main:#70ad76;
-  --card-bg:#0f2727;
-  --border-soft:#398a46;
-  --btn-bg:#b86b13;
-  --btn-text:#1a0808;
-  --bg-soft:rgba(20, 20, 48, 0.75);
+  --accent:#22e670;
+  --bg-main:#0c2f76;
+  --text-main:#0cff07;
+  --card-bg:#000000;
+  --border-soft:#a7ff03;
+  --btn-bg:#ef8300;
+  --btn-text:#690707;
+  --bg-soft:rgb(9, 9, 67);
 }
 
 html,body{
   background:
-    radial-gradient(circle at 15% 20%, rgba(250,204,21,0.08), transparent 40%),
-    radial-gradient(circle at 85% 80%, rgba(244,63,94,0.08), transparent 40%),
-    linear-gradient(180deg, #0b1220 0%, #060a14 100%);
+    radial-gradient(circle at 30% 20%, rgba(255, 251, 16, 0.174), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(8, 43, 117, 0.08), transparent 40%),
+    linear-gradient(180deg, #282f3dc2 15%, #020a2b85 100%);
   color:var(--text-main)!important;
   font-family:'Poppins',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   overflow-x:hidden;
@@ -56,21 +56,30 @@ html,body{
 }
 
 /* =====================
-   EFECTOS GENERALES
+   ANIMACIONES
 ===================== */
-.fade-in{opacity:0;transform:translateY(20px);animation:fadeIn .9s ease forwards;}
-@keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
-
-.glass{
-  background:var(--bg-soft);
-  backdrop-filter:blur(16px);
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 10px 40px rgba(0,0,0,.25);
+@keyframes floatInfinite{
+  0%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+  25%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  50%{transform:translate3d(0,-4px,0) rotateX(-1deg) rotateY(1deg);}
+  75%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
 }
 
-[data-theme="light"] .glass{
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(0,0,0,.25);
+@keyframes bounce-slow{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-14px);}
+}
+.animate-bounce-slow{animation:bounce-slow 3.2s ease-in-out infinite;}
+
+@keyframes pulse-slow{
+  0%,100%{opacity:.18;}
+  50%{opacity:.35;}
+}
+.animate-pulse-slow{animation:pulse-slow 6s ease-in-out infinite;}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
 }
 
 /* =====================
@@ -166,7 +175,7 @@ html,body{
   top:18px;
   right:18px;
   background:var(--bg-soft);
-  border:1px solid rgba(255,255,255,.12);
+  border:1px solid rgba(64,255,255,.12);
   padding:7px 16px;
   border-radius:999px;
   font-size:.8rem;
@@ -402,12 +411,9 @@ html,body{
         </a>
          
           <div style="text-align: center; margin: 20px 0;">
-    <a href="https://share.google/6eVkV3qHz1q1Ne1xZ" 
-       class="cert-google fade-in" 
-       target="_blank" 
-       rel="noopener noreferrer">
-       💻 Certificado Google ADS MQ_OS
-    </a>
+    <a href="ChatOS.html" target="_blank" class="card-link">
+         -- 📱 Chat OS ✨ --
+        </a>
 </div>
         <a href="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777088778/epic-fusion-of-a-crowned-wolf-emperor-and-a-roboti_fhyt07.mp4"
            target="_blank"
@@ -429,10 +435,6 @@ html,body{
 
         <a href="DOR_PAG_PSICOLO.html" target="_blank" class="card-link">
           --📱 Página Dorada ✨ --
-        </a>
-
-        <a href="ChatOS.html" target="_blank" class="card-link">
-         -- 📱 Chat OS ✨ --
         </a>
 
       </div>
@@ -1419,7 +1421,7 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
   
   <!-- ================= CHAT FLOATING ================= -->
 <div id="chat-trigger" class="mq-chat-trigger hero-avatar" onclick="toggleChat()">
-   <img src="" class="avatar-glow">
+   <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088797/MQ_OS_maxiqueen-avatar_hiywqu.png" class="avatar-glow">
 </div>
 
 <div class="mq-chat" id="chatBox">
