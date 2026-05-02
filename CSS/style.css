@@ -470,5 +470,157 @@ html,body{
   filter:brightness(1.05);
   box-shadow:0 10px 24px rgba(250,204,21,.35);
 }
+
+<!-- ================= ESTILO REUTILIZABLE ================= -->
+<style>
+.card-link {
+  display: block;
+  padding: 1rem 1.2rem;
+  border-radius: 1rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #f4f4f5;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.card-link:hover {
+  transform: translateY(-4px);
+  border-color: rgba(251,191,36,0.5);
+  background: rgba(255,255,255,0.06);
+}
+      
+<!-- ================= ESTILOS HERO PREMIUM ================= -->
+<style>
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+
+.hero-btn-primary {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  border-radius: 1.25rem;
+  background: linear-gradient(to right, #fbbf24, #fb7185);
+  color: black;
+  font-weight: 800;
+  font-size: 1rem;
+  box-shadow: 0 15px 35px rgba(251,191,36,0.25);
+  transition: all 0.3s ease;
+}
+
+.hero-btn-primary:hover {
+  transform: translateY(-4px) scale(1.03);
+  filter: brightness(1.08);
+}
+
+.hero-btn-secondary {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(251,191,36,0.6);
+  color: #fbbf24;
+  font-weight: 700;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.02);
+  transition: all 0.3s ease;
+}
+
+.hero-btn-secondary:hover {
+  background: rgba(251,191,36,0.12);
+  color: white;
+  transform: translateY(-4px);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+<!-- ================= ESTILOS FOOTER ================= -->
+<style>
+.footer-link {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #fbbf24;
+}
+
+.footer-link::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 1px;
+  left: 0;
+  bottom: -4px;
+  background: #fbbf24;
+  transition: width 0.3s ease;
+}
+
+.footer-link:hover::after {
+  width: 100%;
+}
+
+<!-- ================= ESTILOS FOOTER ================= -->
+<style>
+.footer-link {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #fbbf24;
+}
+
+.footer-link::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 1px;
+  left: 0;
+  bottom: -4px;
+  background: #fbbf24;
+  transition: width 0.3s ease;
+}
+
+.footer-link:hover::after {
+  width: 100%;
+}
+
+<style>
+  /* Asegúrate de tener este CSS básico para que se vean */
+  .mq-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 12px;
+    transition: 0.3s;
+  }
+  .mq-icon-wrapper img {
+    width: 100%;
+    height: auto;
+  }
+  .mq-social-link:hover .mq-icon-wrapper {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-5px);
+  }
+
 </style>
+
 
