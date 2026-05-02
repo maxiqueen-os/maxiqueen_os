@@ -309,6 +309,38 @@ html,body{
   filter:brightness(1.05);
   box-shadow:0 10px 24px rgba(250,204,21,.35);
 }
+
+   /* Estilo del Certificado Google MaxiQueen OS */
+.cert-google {
+  display: inline-block;
+  padding: 12px 20px;
+  margin: 15px 0;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  color: white !important;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  
+  /* Gradiente oficial de Google con tu toque MQ_OS */
+  background: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
+  background-size: 200% auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cert-google:hover {
+  background-position: right center;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(66, 133, 244, 0.4);
+}
+
+.cert-google::before {
+  content: '🏆'; /* Icono de trofeo antes del texto */
+  margin-right: 8px;
+}
+
 </style>
 
 </head>
@@ -369,10 +401,14 @@ html,body{
           --📱 Informe SENA ✨--
         </a>
          
-            <a href="https://share.google/6eVkV3qHz1q1Ne1xZ" class="cert-google">
-   💻 Certificado Google ADS MQ_OS
-</a>
-
+          <div style="text-align: center; margin: 20px 0;">
+    <a href="https://share.google/6eVkV3qHz1q1Ne1xZ" 
+       class="cert-google fade-in" 
+       target="_blank" 
+       rel="noopener noreferrer">
+       💻 Certificado Google ADS MQ_OS
+    </a>
+</div>
         <a href="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777088778/epic-fusion-of-a-crowned-wolf-emperor-and-a-roboti_fhyt07.mp4"
            target="_blank"
            class="card-link">
@@ -401,16 +437,21 @@ html,body{
 
       </div>
 
+       <div style="text-align: center; margin: 20px 0;">
+    <a href="https://share.google/6eVkV3qHz1q1Ne1xZ" 
+       class="cert-google fade-in" 
+       target="_blank" 
+       rel="noopener noreferrer">
+       💻 Certificado Google ADS MQ_OS
+    </a>
+</div>
+       
       <!-- FRASE FINAL -->
       <div class="mt-12">
         <p class="text-xs md:text-sm uppercase tracking-[0.3em] text-cyan-400 font-semibold">
           Un sistema. Múltiples activos. Evolución constante.
         </p>
          
-         <a href="https://share.google/6eVkV3qHz1q1Ne1xZ" class="cert-google">
-   💻 Certificado Google ADS MQ_OS
-</a>
-      </div>
 
     </div>
   </div>
@@ -454,19 +495,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
       
 </style>
-<!-- ================= TOGGLE MAXITEMA PRO ================= -->
-<button onclick="toggleTheme()" 
-        class="fixed top-6 right-6 z-50 flex items-center gap-2 px-4 py-2 rounded-full 
-               bg-black/40 backdrop-blur-md border border-yellow-500/30 
-               text-yellow-500 font-bold hover:shadow-[0_0_20px_rgba(250,204,21,0.4)] 
-               transition-all duration-300 group"
-        aria-label="Cambiar tema">
-  <span class="relative flex h-3 w-3">
-    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-    <span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
-  </span>
-  <span class="group-hover:tracking-widest transition-all"> M-Q-TEMA</span>
-</button>   
+<!-- ================= TOGGLE DARK/LIGHT ================= -->
+<button class="toggle-theme" onclick="toggleTheme()" aria-label="Cambiar tema">🧪 MaxiTema</button>
    
 <!-- ================= HERO ULTRA-PRO MAXIQUEEN OS ================= -->
 <section class="relative min-h-screen flex items-center justify-center text-center px-6 overflow-hidden bg-black">
@@ -1252,7 +1282,7 @@ window.addEventListener("load", () => {
   <div class="max-w-6xl mx-auto text-center">
     <h2 class="text-3xl md:text-4xl font-bold mb-4">Como funciona el sistema</h2>
     <p class="text-zinc-400 mb-12">
-      Casos reales · Módulos · Implementaciones
+      Casos reales · Estructura · Construyendo lo imposible
     </p>
 
     <div class="gallery grid grid-cols-1 md:grid-cols-3 gap-6" id="dynamicGallery">
@@ -1677,10 +1707,6 @@ function getResponse(message) {
       <li><a class="hover:text-amber-400 transition" href="AdmProCatalogo.html" target="_blank" rel="noopener">💻 Programacion de Productos MQ_OS</a></li>
       <li><a class="hover:text-amber-400 transition" href="whatsappOS.html" target="_blank" rel="noopener">💻 Servicio Humano MQ_OS</a></li>
       <li><a class="hover:text-amber-400 transition" href="Catalogosencillo_naranja.html" target="_blank" rel="noopener">💻 Catalogo Sencillo MQ_OS</a></li>
-      <li><a class="hover:text-amber-400 transition" href="https://share.google/6eVkV3qHz1q1Ne1xZ" target="_blank" rel="noopener">💻 Certificado Google ADS  MQ_OS</a></li>
-<a href="https://share.google/6eVkV3qHz1q1Ne1xZ" class="cert-google">
-   💻 Certificado Google ADS MQ_OS
-</a>
       <li><a class="hover:text-amber-400 transition" href="Primeras_paginas_azul.html" target="_blank" rel="noopener"> 🧠 Primeras Paginas MQ_OS</a></li>
       <li><a class="hover:text-amber-400 transition" href="index-v2_V1.html" target="_blank" rel="noopener">🔥 Versiones ModificadasC MQ_OS</a></li>
       <li><a class="hover:text-amber-400 transition" href="https://go.hotmart.com/P103285828N?dp=1" target="_blank" rel="noopener">🛒 Hotmart Marketplace</a></li>
@@ -1799,53 +1825,18 @@ function getResponse(message) {
       <span class="mq-social-label">TikTok</span>
     </a>
 
-  </div>
-</div>
-
-</section>
-
-       <!-- ================= SECCIÓN REDES MAXIQUEEN OS ================= -->
-<div class="py-10">
-  <h4 class="text-xl font-bold text-white mb-8 text-center tracking-widest uppercase">
-    🌐 Canales Oficiales
-  </h4>
-  
-  <div class="flex flex-wrap justify-center gap-8">
-    
-    <!-- Instagram -->
-    <a href="https://www.instagram.com/maxiqueen_store" target="_blank" class="mq-social-link group">
+    <!-- Facebook (Logo Blanco para fondo oscuro) -->
+    <a href="https://www.facebook.com/MaxCJBB?rdid=WFOjPpkRDXHXdiHd&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DVm7tXTEm%2F#">
       <div class="mq-icon-wrapper">
-        <img src="https://cdn.simpleicons.org/instagram/E4405F" alt="Instagram">
+        <img src="https://cdn.simpleicons.org/facebook/white" alt="Facebook">
       </div>
-      <span class="mq-social-label">Instagram</span>
-    </a>
-
-    <!-- WhatsApp -->
-    <a href="https://wa.me/573016625921" target="_blank" class="mq-social-link group">
-      <div class="mq-icon-wrapper">
-        <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="WhatsApp">
-      </div>
-      <span class="mq-social-label">WhatsApp</span>
-    </a>
-
-    <!-- YouTube -->
-    <a href="https://www.youtube.com/@cesarbedoya2288" target="_blank" class="mq-social-link group">
-      <div class="mq-icon-wrapper">
-        <img src="https://cdn.simpleicons.org/youtube/FF0000" alt="YouTube">
-      </div>
-      <span class="mq-social-label">YouTube</span>
-    </a>
-
-    <!-- TikTok (Logo Blanco para fondo oscuro) -->
-    <a href="https://www.tiktok.com/@cesarbedoya9" target="_blank" class="mq-social-link group">
-      <div class="mq-icon-wrapper">
-        <img src="https://cdn.simpleicons.org/tiktok/white" alt="TikTok">
-      </div>
-      <span class="mq-social-label">TikTok</span>
+      <span class="mq-social-label">Facebook</span>
     </a>
 
   </div>
 </div>
+
+     </section>
 
 <style>
   /* Asegúrate de tener este CSS básico para que se vean */
