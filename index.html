@@ -198,138 +198,116 @@ html,body{
 }
 .toggle-theme:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
 /* ===================== CHAT ====================== */
-.mq-chat{
-  position:fixed;
-  bottom:24px;
-  right:24px;
-  width:360px;
-  max-height:520px;
-  display:flex;
-  flex-direction:column;
-  border-radius:22px;
-  overflow:hidden;
-  backdrop-filter:blur(25px);
-  background:linear-gradient(
-    145deg,
-    rgba(28, 28, 42, 0.9),
-    rgba(15,15,20,0.8)
-  );
-  border:1px solid rgba(255,255,255,0.08);
-  box-shadow:
-    0 30px 90px rgba(0,0,0,.6),
-    0 0 40px rgba(250,204,21,.15);
-  z-index:9999;
-}
+.<style>
+  /* Variables de color para MaxiQueen */
+  :root {
+    --mq-gold: #fbbf24;
+    --mq-dark: #18181b;
+    --mq-light: #f4f4f5;
+  }
 
-.mq-chat-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 16px;
-  font-weight:600;
-  background:rgba(255,255,255,0.03);
-  border-bottom:1px solid rgba(255,255,255,0.05);
-}
+  .mq-chat {
+    position: fixed;
+    bottom: 85px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background: var(--mq-dark);
+    border: 1px solid #3f3f46;
+    border-radius: 20px;
+    display: none; /* Se activa al aceptar licencia o clic */
+    flex-direction: column;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    z-index: 9999;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
 
-.mq-chat-controls button{
-  background:none;
-  border:none;
-  color:#ccc;
-  font-size:14px;
-  margin-left:8px;
-  cursor:pointer;
-}
+  .mq-chat.minimized {
+    height: 50px;
+    overflow: hidden;
+  }
 
-.mq-chat-controls button:hover{
-  color:#41c0eb;
-}
+  .mq-chat-header {
+    background: #27272a;
+    padding: 15px;
+    color: var(--mq-gold);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid #3f3f46;
+  }
 
-.mq-chat-body{
-  flex:1;
-  padding:14px;
-  overflow-y:auto;
-  font-size:14px;
-}
+  .mq-chat-body {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #09090b;
+  }
 
-.mq-chat-input{
-  display:flex;
-  padding:12px;
-  border-top:1px solid rgba(255,255,255,0.05);
-}
+  /* Burbujas de Chat */
+  .msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 15px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    white-space: pre-line;
+  }
 
-.mq-chat-input input{
-  flex:1;
-  padding:8px 10px;
-  border-radius:8px;
-  border:none;
-  background:rgba(255,255,255,0.05);
-  color:#fff;
-}
+  .msg-bot {
+    align-self: flex-start;
+    background: #27272a;
+    color: var(--mq-light);
+    border-bottom-left-radius: 2px;
+  }
 
-.mq-chat-input button{
-  margin-left:8px;
-  padding:8px 14px;
-  border-radius:8px;
-  border:none;
-  background:#facc15;
-  color:#000;
-  font-weight:600;
-  cursor:pointer;
-}
-.chat-input button:hover{filter:brightness(1.1);}
+  .msg-user {
+    align-self: flex-end;
+    background: var(--mq-gold);
+    color: #000;
+    font-weight: 500;
+    border-bottom-right-radius: 2px;
+  }
 
-.social-icon{width:20px;height:20px;object-fit:contain;display:inline-block}
+  .mq-chat-input {
+    padding: 15px;
+    background: #18181b;
+    display: flex;
+    gap: 8px;
+    border-top: 1px solid #3f3f46;
+  }
 
-/* Contenedor principal */
-.mq-chat {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 300px;
-  background: white;
-  border-radius: 10px 10px 0 0;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  display: none; /* Empieza oculto */
-  flex-direction: column;
-  transition: all 0.3s ease;
-  z-index: 1000;
-}
+  .mq-chat-input input {
+    flex: 1;
+    background: #27272a;
+    border: 1px solid #3f3f46;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 10px;
+    outline: none;
+  }
 
-/* Estado Minimizado */
-.mq-chat.minimized {
-  width: 200px;
-}
-.mq-chat.minimized .mq-chat-content {
-  display: none;
-}
-
-/* Botón disparador */
-.mq-chat-trigger {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  background: #007bff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: white;
-  font-size: 24px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-
-.mq-chat-header {
-  padding: 10px;
-  background: #333;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  border-radius: 10px 10px 0 0;
-}
+  .mq-chat-trigger {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--mq-gold);
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 24px;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+    z-index: 10000;
+  }
 
 /* =====================
    LICENCIA BOX
@@ -1570,22 +1548,24 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
 
 <div class="mq-chat" id="chatBox">
   <div class="mq-chat-header" onclick="toggleMinimize()">
-    <span>MaxiQueen OS</span>
+    <span style="font-weight: bold;">👑 MaxiQueen OS</span>
     <div class="mq-chat-controls">
-      <button onclick="event.stopPropagation(); toggleMinimize()">−</button>
-      <button onclick="event.stopPropagation(); closeChat()">✕</button>
+      <button onclick="event.stopPropagation(); toggleMinimize()" style="background:none; border:none; color:gray; cursor:pointer;">−</button>
+      <button onclick="event.stopPropagation(); closeChat()" style="background:none; border:none; color:gray; cursor:pointer; margin-left:10px;">✕</button>
     </div>
   </div>
 
-  <div class="mq-chat-content" id="chatContent">
-    <div class="mq-chat-body" id="chatLog">
-      <div class="msg-bot">¡Hola! ¿En qué puedo ayudarte?</div>
-    </div>
+  <div class="mq-chat-body" id="chatLog">
+    <div class="msg msg-bot">¡Hola! 👑 Soy el sistema MaxiQueen OS. ¿En qué punto estás ahora mismo?
+    
+1️⃣ Ideas
+2️⃣ Bloqueo
+3️⃣ Crecimiento</div>
+  </div>
 
-    <div class="mq-chat-input">
-      <input type="text" id="userInput" placeholder="Escribe algo MaxiQueen OS..." onkeypress="handleKeyPress(event)" />
-      <button onclick="sendMessage()">Enviar</button>
-    </div>
+  <div class="mq-chat-input">
+    <input type="text" id="userInput" placeholder="Escribe aquí..." onkeypress="handleKeyPress(event)" />
+    <button onclick="sendMessage()" style="background:var(--mq-gold); border:none; padding:8px 15px; border-radius:10px; cursor:pointer; font-weight:bold;">Enviar</button>
   </div>
 </div>
 
