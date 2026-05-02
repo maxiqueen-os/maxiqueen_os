@@ -279,6 +279,58 @@ html,body{
 .chat-input button:hover{filter:brightness(1.1);}
 
 .social-icon{width:20px;height:20px;object-fit:contain;display:inline-block}
+
+/* Contenedor principal */
+.mq-chat {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  background: white;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  display: none; /* Empieza oculto */
+  flex-direction: column;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+/* Estado Minimizado */
+.mq-chat.minimized {
+  width: 200px;
+}
+.mq-chat.minimized .mq-chat-content {
+  display: none;
+}
+
+/* Botón disparador */
+.mq-chat-trigger {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: #007bff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  font-size: 24px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.mq-chat-header {
+  padding: 10px;
+  background: #333;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 10px 10px 0 0;
+}
+
 /* =====================
    LICENCIA BOX
 ===================== */
@@ -1512,20 +1564,28 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
 
   
   <!-- ================= CHAT FLOATING ================= -->
+<div id="chat-trigger" class="mq-chat-trigger" onclick="toggleChat()">
+  <span>💬</span>
+</div>
+
 <div class="mq-chat" id="chatBox">
-  <div class="mq-chat-header">
+  <div class="mq-chat-header" onclick="toggleMinimize()">
     <span>MaxiQueen OS</span>
     <div class="mq-chat-controls">
-      <button onclick="toggleChat()">−</button>
-      <button onclick="closeChat()">✕</button>
+      <button onclick="event.stopPropagation(); toggleMinimize()">−</button>
+      <button onclick="event.stopPropagation(); closeChat()">✕</button>
     </div>
   </div>
 
-  <div class="mq-chat-body" id="chatLog"></div>
+  <div class="mq-chat-content" id="chatContent">
+    <div class="mq-chat-body" id="chatLog">
+      <div class="msg-bot">¡Hola! ¿En qué puedo ayudarte?</div>
+    </div>
 
-  <div class="mq-chat-input">
-    <input type="text" id="userInput" placeholder="MaxiQueen OS te atendera..." />
-    <button onclick="sendMessage()">Enviar</button>
+    <div class="mq-chat-input">
+      <input type="text" id="userInput" placeholder="Escribe algo MaxiQueen OS..." onkeypress="handleKeyPress(event)" />
+      <button onclick="sendMessage()">Enviar</button>
+    </div>
   </div>
 </div>
 
@@ -2517,48 +2577,82 @@ Quiero entenderte bien.
 }
 
 /* =========================
-   🧩 UI
+   🧩 UI - VERSION UNIFICADA (PROTEGIDA)
 ========================= */
-function appendMessage(text, sender="bot"){
-  const msg = document.createElement('div');
-  msg.textContent = text;
-  msg.style.whiteSpace = "pre-line";
-  msg.className = sender === "user"
-    ? "text-right text-amber-400 font-semibold"
-    : "text-left text-zinc-200";
-  chatLog.appendChild(msg);
-  chatLog.scrollTop = chatLog.scrollHeight;
+
+// Usaremos solo una función para escribir, para no saturar el DOM
+function logMessage(mensaje, tipo = 'sistema') {
+  if (!mensaje) return; // Evita que el sistema colapse si la respuesta llega vacía
+
+  const div = document.createElement('div');
+  
+  // Mantenemos tus clases de diseño (Zinc para bot, Amber para usuario)
+  div.className = tipo === 'user' 
+    ? "text-right text-amber-400 font-semibold my-2" 
+    : "text-left text-zinc-200 my-2 bg-zinc-800/50 p-2 rounded";
+  
+  div.style.whiteSpace = "pre-line";
+  div.innerHTML = mensaje; // Usamos innerHTML para respetar los emojis y saltos
+  
+  chatLog.appendChild(div);
+  
+  // Scroll suave al final
+  chatLog.scrollTo({
+    top: chatLog.scrollHeight,
+    behavior: 'smooth'
+  });
 }
 
-function sendMessage(){
+function sendMessage() {
   const message = input.value.trim();
-  if(!message) return;
+  if (!message) return;
 
-  appendMessage(message, "user");
-  input.value = "";
-  setTimeout(() => {
-    appendMessage(getResponse(message), "bot");
-  }, 200);
+  // 1. Mostrar mensaje del usuario
+  logMessage(message, "user");
+  input.value = ""; // Limpiamos rápido para evitar doble envío
 
- logMessage("👤 " + message, "user");
+  // 2. Obtener respuesta lógica (primero contexto, luego intents)
+  // Nota: getResponse debe estar definida arriba de esto
+  let response = contextualResponse(message.toLowerCase()) || getResponse(message);
 
- const response = getResponse(message);
-
+  // 3. Retraso artificial para que no se sienta "robótico" y evitar bloqueos de UI
   setTimeout(() => {
     logMessage(response, "sistema");
   }, 400);
-
-  input.value = "";
 }
 
-input.addEventListener("keypress", function(e){
-  if(e.key === "Enter"){
+/* =========================
+   🕹️ CONTROLES DE INTERFAZ (ABRIR/CERRAR)
+========================= */
+
+function toggleChat() {
+  const chatBox = document.getElementById('chatBox');
+  // Si está oculto, lo mostramos; si no, lo ocultamos
+  if (chatBox.style.display === "none" || chatBox.style.display === "") {
+    chatBox.style.display = "flex";
+  } else {
+    chatBox.style.display = "none";
+  }
+}
+
+function toggleMinimize() {
+  const chatBox = document.getElementById('chatBox');
+  chatBox.classList.toggle('minimized'); 
+  // 'minimized' debe estar definido en tu CSS para reducir el alto (height)
+}
+
+function closeChat() {
+  document.getElementById('chatBox').style.display = "none";
+}
+
+/* =========================
+   ⌨️ EVENTOS (SOLO UNO PARA EL ENTER)
+========================= */
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault(); // Evita que el Enter haga un salto de línea en el input
     sendMessage();
   }
-});
-
-input.addEventListener("keydown", e => {
-  if(e.key === "Enter") sendMessage();
 });
 
 </script>
