@@ -2549,7 +2549,7 @@ Aquí puedes escribirnos directo:
 }
 
 /* =========================
-   🎯 RESPUESTA PRINCIPAL (Tu cerebro lógico)
+   🎯 RESPUESTA PRINCIPAL
 ========================= */
 function getResponse(message){
   const text = message.toLowerCase();
@@ -2565,7 +2565,7 @@ function getResponse(message){
     }
   }
 
-  // 3️⃣ FALLBACK INTELIGENTE
+  // 3️⃣ FALLBACK INTELIGENTE (NO GENÉRICO)
   return `
 Te leo 👀  
 
@@ -2577,53 +2577,48 @@ Quiero entenderte bien.
 }
 
 /* =========================
-   🧩 UI UNIFICADA (Sin duplicados)
+   🧩 UI
 ========================= */
-function logMessage(mensaje, tipo = 'sistema') {
-  if (!mensaje) return;
-
-  const div = document.createElement('div');
-  
-  // Mantenemos tus estilos originales: Amber para user, Zinc para sistema
-  div.className = tipo === 'user' 
-    ? "text-right text-amber-400 font-semibold my-2" 
-    : "text-left text-zinc-200 my-2";
-  
-  div.style.whiteSpace = "pre-line";
-  div.innerHTML = mensaje; 
-  
-  chatLog.appendChild(div);
+function appendMessage(text, sender="bot"){
+  const msg = document.createElement('div');
+  msg.textContent = text;
+  msg.style.whiteSpace = "pre-line";
+  msg.className = sender === "user"
+    ? "text-right text-amber-400 font-semibold"
+    : "text-left text-zinc-200";
+  chatLog.appendChild(msg);
   chatLog.scrollTop = chatLog.scrollHeight;
 }
 
-function sendMessage() {
+function sendMessage(){
   const message = input.value.trim();
-  if (!message) return;
+  if(!message) return;
 
-  // 1. Mostrar mensaje del usuario una sola vez
-  logMessage(message, "user");
-  
-  // 2. Procesar la respuesta una sola vez
-  const response = getResponse(message);
-  
-  // 3. Limpiar input inmediatamente
+  appendMessage(message, "user");
   input.value = "";
+  setTimeout(() => {
+    appendMessage(getResponse(message), "bot");
+  }, 200);
 
-  // 4. Respuesta del sistema con delay natural
+ logMessage("👤 " + message, "user");
+
+ const response = getResponse(message);
+
   setTimeout(() => {
     logMessage(response, "sistema");
   }, 400);
+
+  input.value = "";
 }
 
-/* =========================
-   ⌨️ EVENTOS PROTEGIDOS
-========================= */
-// Eliminamos el keypress y dejamos solo keydown para evitar doble ejecución
-input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault(); 
+input.addEventListener("keypress", function(e){
+  if(e.key === "Enter"){
     sendMessage();
   }
+});
+
+input.addEventListener("keydown", e => {
+  if(e.key === "Enter") sendMessage();
 });
 
 </script>
