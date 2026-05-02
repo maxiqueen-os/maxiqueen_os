@@ -425,10 +425,6 @@ html,body{
    💻 Certificado Google ADS MQ_OS
 </a>
 
-               <a href="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777734693/repository-open-graph-template_ajkllh.png">
-    Github ADS MQ_OS
-</a>
-         
         <a href="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777088778/epic-fusion-of-a-crowned-wolf-emperor-and-a-roboti_fhyt07.mp4"
            target="_blank"
            class="card-link">
@@ -2829,7 +2825,7 @@ function handleKeyPress(event) {
     <!-- Instagram -->
     <a href="https://www.instagram.com/maxiqueen_store" target="_blank" class="mq-social-link group">
       <div class="mq-icon-wrapper">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
+        <img src="https://cdn.simpleicons.org/instagram/E4405F" alt="Instagram">
       </div>
       <span class="mq-social-label">Instagram</span>
     </a>
@@ -2837,7 +2833,7 @@ function handleKeyPress(event) {
     <!-- WhatsApp -->
     <a href="https://wa.me/573016625921" target="_blank" class="mq-social-link group">
       <div class="mq-icon-wrapper">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+        <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="WhatsApp">
       </div>
       <span class="mq-social-label">WhatsApp</span>
     </a>
@@ -2845,15 +2841,15 @@ function handleKeyPress(event) {
     <!-- YouTube -->
     <a href="https://www.youtube.com/@cesarbedoya2288" target="_blank" class="mq-social-link group">
       <div class="mq-icon-wrapper">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/YouTube_social_red_circle_%282017%29.svg" alt="YouTube">
+        <img src="https://cdn.simpleicons.org/youtube/FF0000" alt="YouTube">
       </div>
       <span class="mq-social-label">YouTube</span>
     </a>
 
-    <!-- TikTok -->
+    <!-- TikTok (Logo Blanco para fondo oscuro) -->
     <a href="https://www.tiktok.com/@cesarbedoya9" target="_blank" class="mq-social-link group">
-      <div class="mq-icon-wrapper bg-black">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/TikTok_logo.svg" alt="TikTok" class="invert">
+      <div class="mq-icon-wrapper">
+        <img src="https://cdn.simpleicons.org/tiktok/white" alt="TikTok">
       </div>
       <span class="mq-social-label">TikTok</span>
     </a>
@@ -2862,73 +2858,25 @@ function handleKeyPress(event) {
 </div>
 
 <style>
-  /* Contenedor principal del enlace */
-  .mq-social-link {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-
-  /* Círculo del icono con efecto Glassmorphism */
+  /* Asegúrate de tener este CSS básico para que se vean */
   .mq-icon-wrapper {
-    width: 65px;
-    height: 65px;
+    width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px; /* Bordes redondeados modernos */
-    backdrop-filter: blur(10px);
-    margin-bottom: 10px;
-    transition: all 0.4s ease;
-    padding: 15px;
+    border-radius: 15px;
+    padding: 12px;
+    transition: 0.3s;
   }
-
   .mq-icon-wrapper img {
     width: 100%;
     height: auto;
-    filter: grayscale(100%) opacity(0.8);
-    transition: all 0.4s ease;
   }
-
-  /* Etiquetas de texto debajo */
-  .mq-social-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: #a1a1aa; /* zinc-400 */
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.4s ease;
-  }
-
-  /* --- EFECTOS HOVER (ESTILO MAXIQUEEN) --- */
-  
-  .mq-social-link:hover {
-    transform: translateY(-10px);
-  }
-
   .mq-social-link:hover .mq-icon-wrapper {
-    border-color: #eab308; /* yellow-500 */
-    background: rgba(234, 179, 8, 0.1);
-    box-shadow: 0 10px 25px rgba(234, 179, 8, 0.2);
-  }
-
-  .mq-social-link:hover img {
-    filter: grayscale(0%) opacity(1);
-    transform: scale(1.1);
-  }
-
-  .mq-social-link:hover .mq-social-label {
-    color: white;
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-  }
-
-  /* TikTok específico: invertir logo blanco */
-  .invert {
-    filter: invert(1) !important;
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-5px);
   }
 </style>
 </section>
