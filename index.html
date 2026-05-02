@@ -309,7 +309,7 @@ html,body{
 </style>
 </head>
 
-<body>
+<body class="transition-colors duration-500 ease-in-out bg-black text-white">
   
 <div class="container">
 
@@ -422,10 +422,41 @@ html,body{
   border-color: rgba(251,191,36,0.5);
   background: rgba(255,255,255,0.06);
 }
-</style>
-<!-- ================= TOGGLE DARK/LIGHT ================= --> 
-<button class="toggle-theme" onclick="toggleTheme()" aria-label="Cambiar tema">🧪 MaxiTema</button>
 
+   function toggleTheme() {
+  const html = document.documentElement;
+  const currentTheme = html.getAttribute('data-theme');
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  
+  html.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  
+  // Feedback visual en consola para tu depuración en Vercel
+  console.log(`MAXIQUEEN OS: Modo ${newTheme} activado.`);
+}
+
+// Cargar preferencia al iniciar
+document.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+});
+      
+</style>
+<!-- ================= TOGGLE MAXITEMA PRO ================= -->
+<button onclick="toggleTheme()" 
+        class="fixed top-6 right-6 z-50 flex items-center gap-2 px-4 py-2 rounded-full 
+               bg-black/40 backdrop-blur-md border border-yellow-500/30 
+               text-yellow-500 font-bold hover:shadow-[0_0_20px_rgba(250,204,21,0.4)] 
+               transition-all duration-300 group"
+        aria-label="Cambiar tema">
+  <span class="relative flex h-3 w-3">
+    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+    <span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
+  </span>
+  <span class="group-hover:tracking-widest transition-all">🧪 MAXITEMA</span>
+</button>
+
+   
    
 <!-- ================= HERO ULTRA-PRO MAXIQUEEN OS ================= -->
 <section class="relative min-h-screen flex items-center justify-center text-center px-6 overflow-hidden bg-black">
@@ -1061,51 +1092,48 @@ window.addEventListener("load", () => {
 
     <div class="gallery grid grid-cols-1 md:grid-cols-3 gap-6" id="dynamicGallery">
 
-      <!-- Módulo Creativo -->
-      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-              <img src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777666945/video-1129194306935731_ozg8l4.mp4"
-             alt="Módulo Creativo"
-             class="rounded-3xl w-full h-full object-cover"
-             loading="lazy"
-             onclick="openLightbox(this.src)">
-      </div>
+      <!-- Modulo Creativo -->
+<div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+  <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777666945/video-1129194306935731_ozg8l4.mp4" type="video/mp4">
+  </video>
+</div>
 
       <!-- Módulo Social -->
       <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <img src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777666803/video-1129194893602339_fl42sp.mp4"
-             alt="Social Media"
-             class="rounded-3xl w-full h-full object-cover"
-             loading="lazy"
-             onclick="openLightbox(this.src)">
-      </div>
+  <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777666803/add-the-maxiqueen-os-logo-with-the-panther-cat-wea_mskxd6.jpg" type="video/mp4">
+  </video>
+</div>
 
       <!-- Módulo Web -->
       <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088765/ChatGPT_Image_31_ene_2026_11_48_45_p.m._bjk6mp.png"
-             alt="Web & Hosting"
-             class="rounded-3xl w-full h-full object-cover"
-             loading="lazy"
-             onclick="openLightbox(this.src)">
-      </div>
+  <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777666944/video-1129192306935931_lmb7cl.mp4" type="video/mp4">
+  </video>
+</div>
 
       <!-- Automatización -->
       <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <img src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777667691/animate-with-subtle-elegant-motion-soft-golden-shi_3_dj7d5c.mp4"
-             alt="Automatización"
-             class="rounded-3xl w-full h-full object-cover"
-             loading="lazy"
-             onclick="openLightbox(this.src)">
-      </div>
+  <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777667691/animate-with-subtle-elegant-motion-soft-golden-shi_3_dj7d5c.mp4" type="video/mp4">
+  </video>
+</div>
 
-      <!-- Hosting  -->
+      <!-- Hosting Pro -->
       <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <img src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777666944/video-1129192306935931_lmb7cl.mp4"
-             alt="Hosting"
-             class="rounded-3xl w-full h-full object-cover"
-             loading="lazy"
-             onclick="openLightbox(this.src)">
-      </div>
+  <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777683310/animate-with-subtle-elegant-motion-exactly-like-mo_1_gybgaf.mp4" type="video/mp4">
+  </video>
+</div>
 
+       <!-- Módulo Inteligencia -->
+      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+  <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777683847/animate-with-subtle-elegant-motion-exactly-like-mo_4_z0qohj.mp4" type="video/mp4">
+  </video>
+</div>
+       
     </div>
   </div>
   
