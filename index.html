@@ -7,7 +7,9 @@
 <title>MaxiQueen OS | Sistema Digital Integral</title>
 
 <meta name="description" content="Sistema digital integral...">
-
+<meta property="og:image" content="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777734693/repository-open-graph-template_ajkllh.png">
+<meta name="twitter:card" content="summary_large_image">
+   
 <link rel="stylesheet" href="./css/style.css">
 <link rel="icon" href="/maxiqueen-os/favicon.ico" type="image/x-icon">
 
@@ -415,17 +417,17 @@ html,body{
           --🚦 MQ Dibujos Mentales ✨ --
         </a>
 
+         <a href="Inf_Sena.pdf" target="_blank" class="card-link">
+          --📱 Informe SENA ✨--
+        </a>
+         
             <a href="https://share.google/6eVkV3qHz1q1Ne1xZ" class="cert-google">
    💻 Certificado Google ADS MQ_OS
 </a>
 
-               <a href="https://share.google/6eVkV3qHz1q1Ne1xZ" class="cert-google">
-   💻 Certificado Google ADS MQ_OS
+               <a href="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777734693/repository-open-graph-template_ajkllh.png">
+    Github ADS MQ_OS
 </a>
-
-        <a href="Inf_Sena.pdf" target="_blank" class="card-link">
-          --📱 Informe SENA ✨--
-        </a>
          
         <a href="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777088778/epic-fusion-of-a-crowned-wolf-emperor-and-a-roboti_fhyt07.mp4"
            target="_blank"
@@ -575,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <!-- CTA -->
     <div class="mt-12 flex flex-wrap justify-center gap-5">
 
-      <a href="#planesmaxiqueen"
+      <a href="https://maxiqueen-os-app.vercel.app/"
          class="hero-btn-primary">
         👑 Activar mi Sistema
       </a>
@@ -1232,7 +1234,6 @@ window.addEventListener("load", () => {
   <div class="max-w-6xl mx-auto text-center">
     <h2 class="text-3xl md:text-4xl font-bold mb-4">Resultados en acción</h2>
     <p class="text-zinc-400 mb-12">
-      Casos reales · Módulos · Implementaciones
     </p>
 
     <div class="gallery grid grid-cols-1 md:grid-cols-3 gap-6" id="dynamicGallery">
@@ -1259,32 +1260,6 @@ window.addEventListener("load", () => {
     <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1775244585/video-1057055004149662_xid3yq.mp4" type="video/mp4">
   </video>
 </div>
-
-      <!-- Módulo Web -->
-      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088792/Modulos_Ima_Mas_Digital_Crea_Soci_Web_vafluj.png"
-             alt="Web & Hosting"
-             class="rounded-3xl w-full h-full object-cover"
-             loading="lazy"
-             onclick="openLightbox(this.src)">
-      </div>
-
-      <!-- Automatización -->
-      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088781/Max_Cloud_Eco_sis_femz3v.png"
-             alt="Automatizació"
-             class="rounded-3xl w-full h-full object-cover"
-             loading="lazy"
-             onclick="openLightbox(this.src)">
-      </div>
-
-        <!-- Modulo landing -->
-      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
-        <video class="w-full max-w-xl mx-auto rounded-xl" controls>
-  <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1775244579/una-escena-cinematogrfica-hiperrealista-de-un-jove_k13xdx.mp4">
-</video>
- </div>
-       
     </div>
   </div>
 </section>
@@ -1550,10 +1525,12 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
 
   
   <!-- ================= CHAT FLOATING ================= -->
+<!-- Botón activador con tu imagen de MaxiQueen OS -->
 <div id="chat-trigger" class="mq-chat-trigger" onclick="toggleChat()">
-  <span>💬</span>
+  <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088797/MQ_OS_maxiqueen-avatar_hiywqu.png" 
+       alt="MaxiQueen AI Avatar" 
+       class="avatar-glow">
 </div>
-
 <div class="mq-chat" id="chatBox">
   <div class="mq-chat-header" onclick="toggleMinimize()">
     <span style="font-weight: bold;">👑 MaxiQueen OS</span>
@@ -1593,6 +1570,48 @@ function toggleTheme(){
   if(saved) document.documentElement.setAttribute('data-theme', saved);
 })();
 
+/* =======================
+   THEME TOGGLE
+======================= */
+   .mq-chat-trigger {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+.mq-chat-trigger:hover {
+  transform: scale(1.1); /* Se agranda un poco al pasar el mouse */
+}
+
+.avatar-glow {
+  width: 60px;  /* Ajusta el tamaño según prefieras */
+  height: 60px;
+  border-radius: 50%; /* Hace la imagen circular */
+  border: 2px solid #eab308; /* Borde color ámbar/amarillo */
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.4); /* Resplandor suave */
+  object-fit: cover;
+}
+
+/* Opcional: Efecto de pulso para indicar que la IA está "viva" */
+.mq-chat-trigger::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  border: 2px solid #eab308;
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
 /* =======================
    LIGHTBOX
 ======================= */
@@ -2799,18 +2818,119 @@ function handleKeyPress(event) {
       </ul>
     </div>
 
-    <!-- REDES -->
-    <div>
-      <h4 class="text-xl font-semibold text-white mb-4">🌐 Canales Oficiales</h4>
-      <div class="flex flex-wrap justify-center gap-6">
-        <a href="https://www.instagram.com/maxiqueen_store" target="_blank" class="hover:scale-110 transition">Instagram</a>
-        <a href="https://wa.me/573016625921" target="_blank" class="hover:scale-110 transition">WhatsApp</a>
-        <a href="https://www.youtube.com/@cesarbedoya2288" target="_blank" class="hover:scale-110 transition">YouTube</a>
-        <a href="https://www.tiktok.com/@cesarbedoya9" target="_blank" class="hover:scale-110 transition">TikTok</a>
+    <!-- ================= SECCIÓN REDES MAXIQUEEN OS ================= -->
+<div class="py-10">
+  <h4 class="text-xl font-bold text-white mb-8 text-center tracking-widest uppercase">
+    🌐 Canales Oficiales
+  </h4>
+  
+  <div class="flex flex-wrap justify-center gap-8">
+    
+    <!-- Instagram -->
+    <a href="https://www.instagram.com/maxiqueen_store" target="_blank" class="mq-social-link group">
+      <div class="mq-icon-wrapper">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
       </div>
-    </div>
+      <span class="mq-social-label">Instagram</span>
+    </a>
+
+    <!-- WhatsApp -->
+    <a href="https://wa.me/573016625921" target="_blank" class="mq-social-link group">
+      <div class="mq-icon-wrapper">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+      </div>
+      <span class="mq-social-label">WhatsApp</span>
+    </a>
+
+    <!-- YouTube -->
+    <a href="https://www.youtube.com/@cesarbedoya2288" target="_blank" class="mq-social-link group">
+      <div class="mq-icon-wrapper">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/YouTube_social_red_circle_%282017%29.svg" alt="YouTube">
+      </div>
+      <span class="mq-social-label">YouTube</span>
+    </a>
+
+    <!-- TikTok -->
+    <a href="https://www.tiktok.com/@cesarbedoya9" target="_blank" class="mq-social-link group">
+      <div class="mq-icon-wrapper bg-black">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/TikTok_logo.svg" alt="TikTok" class="invert">
+      </div>
+      <span class="mq-social-label">TikTok</span>
+    </a>
 
   </div>
+</div>
+
+<style>
+  /* Contenedor principal del enlace */
+  .mq-social-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  /* Círculo del icono con efecto Glassmorphism */
+  .mq-icon-wrapper {
+    width: 65px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px; /* Bordes redondeados modernos */
+    backdrop-filter: blur(10px);
+    margin-bottom: 10px;
+    transition: all 0.4s ease;
+    padding: 15px;
+  }
+
+  .mq-icon-wrapper img {
+    width: 100%;
+    height: auto;
+    filter: grayscale(100%) opacity(0.8);
+    transition: all 0.4s ease;
+  }
+
+  /* Etiquetas de texto debajo */
+  .mq-social-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #a1a1aa; /* zinc-400 */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.4s ease;
+  }
+
+  /* --- EFECTOS HOVER (ESTILO MAXIQUEEN) --- */
+  
+  .mq-social-link:hover {
+    transform: translateY(-10px);
+  }
+
+  .mq-social-link:hover .mq-icon-wrapper {
+    border-color: #eab308; /* yellow-500 */
+    background: rgba(234, 179, 8, 0.1);
+    box-shadow: 0 10px 25px rgba(234, 179, 8, 0.2);
+  }
+
+  .mq-social-link:hover img {
+    filter: grayscale(0%) opacity(1);
+    transform: scale(1.1);
+  }
+
+  .mq-social-link:hover .mq-social-label {
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  }
+
+  /* TikTok específico: invertir logo blanco */
+  .invert {
+    filter: invert(1) !important;
+  }
+</style>
 </section>
 
 <!-- CHECK DE LICENCIA (ESTRUCTURA CORREGIDA) -->
@@ -2892,14 +3012,18 @@ async function enviarMensaje() {
         
         const data = await response.json();
         
-        // 3. Renderizar respuesta del sistema
-        chatWindow.innerHTML += `
-            <div class="flex flex-col items-start">
-                <div class="bg-zinc-800 border border-white/5 p-3 rounded-2xl rounded-tl-none max-w-[85%]">
-                    <p class="text-sm text-rose-500 font-bold mb-1">MaxiQueen OS</p>
-                    <p class="text-zinc-300">${data.respuesta || data.message}</p>
-                </div>
-            </div>`;
+        // 3. Renderizar respuesta del sistema con Avatar
+chatWindow.innerHTML += `
+    <div class="flex flex-col items-start animate-fade-in">
+        <div class="flex items-center gap-2 mb-1">
+            <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088797/MQ_OS_maxiqueen-avatar_hiywqu.png" 
+                 class="w-6 h-6 rounded-full border border-rose-500/50">
+            <p class="text-[10px] text-rose-500 font-bold uppercase">MaxiQueen OS</p>
+        </div>
+        <div class="bg-zinc-800 border border-white/5 p-3 rounded-2xl rounded-tl-none max-w-[85%]">
+            <p class="text-sm text-zinc-300">${data.respuesta || data.message}</p>
+        </div>
+    </div>`;
             
     } catch (error) {
         console.error("Error en MaxiQueen Neural:", error);
