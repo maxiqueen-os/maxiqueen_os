@@ -2601,6 +2601,46 @@ input.addEventListener("keydown", e => {
   if(e.key === "Enter") sendMessage();
 });
 
+/* =========================
+   CHAT VISUAL CONTROL
+========================= */
+let minimized = false;
+
+function toggleChat() {
+  const chat = document.getElementById("chatBox");
+
+  if (chat.style.display === "flex") {
+    chat.style.display = "none";
+  } else {
+    chat.style.display = "flex";
+  }
+}
+
+function toggleMinimize() {
+  const body = document.getElementById("chatLog");
+  const inputArea = document.querySelector(".mq-chat-input");
+
+  minimized = !minimized;
+
+  if (minimized) {
+    body.style.display = "none";
+    inputArea.style.display = "none";
+  } else {
+    body.style.display = "block";
+    inputArea.style.display = "flex";
+  }
+}
+
+function closeChat() {
+  document.getElementById("chatBox").style.display = "none";
+}
+
+function handleKeyPress(event) {
+  if (event.key === "Enter") {
+    sendMessage();
+  }
+}
+   
 </script>
 
 <!-- ================= SECCIÓN LEGAL Y LICENCIA ================= -->
