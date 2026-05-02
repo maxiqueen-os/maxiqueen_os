@@ -2606,6 +2606,9 @@ input.addEventListener("keydown", e => {
       <li><a class="hover:text-amber-400 transition" href="whatsappOS.html" target="_blank" rel="noopener">💻 Servicio Humano MQ_OS</a></li>
       <li><a class="hover:text-amber-400 transition" href="Catalogosencillo_naranja.html" target="_blank" rel="noopener">💻 Catalogo Sencillo MQ_OS</a></li>
       <li><a class="hover:text-amber-400 transition" href="https://share.google/6eVkV3qHz1q1Ne1xZ" target="_blank" rel="noopener">💻 Certificado Google ADS  MQ_OS</a></li>
+<a href="https://share.google/6eVkV3qHz1q1Ne1xZ" class="cert-google">
+   💻 Certificado Google ADS MQ_OS
+</a>
       <li><a class="hover:text-amber-400 transition" href="Primeras_paginas_azul.html" target="_blank" rel="noopener"> 🧠 Primeras Paginas MQ_OS</a></li>
       <li><a class="hover:text-amber-400 transition" href="index-v2_V1.html" target="_blank" rel="noopener">🔥 Versiones ModificadasC MQ_OS</a></li>
       <li><a class="hover:text-amber-400 transition" href="https://go.hotmart.com/P103285828N?dp=1" target="_blank" rel="noopener">🛒 Hotmart Marketplace</a></li>
@@ -2881,5 +2884,30 @@ document.getElementById('user-input').addEventListener('keypress', function (e) 
     if (e.key === 'Enter') enviarMensaje();
 });
 </script>
+
+/* Estilo específico para el certificado */
+.cert-google {
+    display: inline-block;
+    padding: 8px 15px;
+    margin: 5px 0;
+    background: linear-gradient(145deg, #4285f4, #34a853, #fbbc05, #ea4335);
+    background-size: 200% auto;
+    color: white !important;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.9em;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: 0.3s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.cert-google:hover {
+    background-position: right center; /* Efecto de movimiento en los colores */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(251, 188, 5, 0.4);
+    filter: brightness(1.1);
+}
+
 </body>
 </html>
