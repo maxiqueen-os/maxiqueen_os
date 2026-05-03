@@ -3,116 +3,146 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Maxiqueen OS | Juegos Psicológicos & Experiencias Interactivas</title>
-  <meta name="description" content="Maxiqueen OS integra juegos psicológicos, experiencias interactivas, sistemas digitales y lógicas de IA listas para monetizar y ofrecer insights profundos de cada usuario." />
+  <title>Maxiqueen OS | Sistema de Inteligencia Digital</title>
+  <meta name="description" content="Ecosistema digital de alto impacto: Psicología, IA y Monetización." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Animaciones y efectos elegantes */
-    .link-block a {
-      @apply transition-all duration-300 ease-in-out;
+    :root {
+      --accent: #F4FF25; /* El amarillo neón de tu marca */
+      --amber-glow: rgba(245, 158, 11, 0.4);
     }
-    .link-block a:hover {
-      transform: translateY(-3px) scale(1.05);
-      color: #FFD700;
-      text-decoration: underline;
+    body { font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
+    
+    .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
-    .game-card, .cta-button {
-      transition: all 0.3s ease-in-out;
+
+    .neon-border:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(244, 255, 37, 0.2);
     }
-    .game-card:hover {
-      transform: scale(1.05) rotate(-1deg);
-      box-shadow: 0 15px 35px rgba(255, 215, 0, 0.4);
+
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
     }
-    .game-card button:hover {
-      transform: scale(1.1);
-      background-color: rgba(255, 215, 0, 0.2);
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0px); }
     }
-    .cta-button:hover {
-      transform: scale(1.05) translateY(-3px);
-      box-shadow: 0 12px 30px rgba(255, 215, 0, 0.5);
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: black;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 10px 25px rgba(244, 255, 37, 0.4);
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-black via-zinc-900 to-amber-950 text-white font-[Poppins]">
+<body class="bg-[#050505] text-white selection:bg-yellow-400 selection:text-black">
 
-  <!-- HERO -->
-  <section class="min-h-screen flex items-center justify-center px-6">
-    <div class="max-w-5xl text-center">
-      <h1 class="text-4xl md:text-6xl font-extrabold mb-6">MAXIQUEEN <span class="text-amber-400">OS</span></h1>
-      <p class="text-lg md:text-2xl text-zinc-300 mb-8">
-        Explora nuestros juegos psicológicos, experiencias interactivas, sistemas digitales con IA integrada y soluciones pensadas para viralidad, aprendizaje y monetización.
+  <!-- HERO SECTION -->
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Decoración de fondo -->
+    <div class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
+      <div class="absolute top-1/4 -left-20 w-96 h-96 bg-amber-600 rounded-full blur-[120px]"></div>
+      <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-yellow-500 rounded-full blur-[120px]"></div>
+    </div>
+
+    <div class="relative z-10 max-w-5xl px-6 text-center">
+      <div class="inline-block px-4 py-1 mb-6 text-xs font-bold tracking-widest uppercase border border-amber-500/30 rounded-full text-amber-400 animate-pulse">
+        Sistema Operativo de Experiencias v1.0
+      </div>
+      <h1 class="text-5xl md:text-8xl font-extrabold mb-6 tracking-tighter leading-none">
+        MAXIQUEEN <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-200">OS</span>
+      </h1>
+      <p class="text-lg md:text-2xl text-zinc-400 mb-10 max-w-3xl mx-auto leading-relaxed">
+        Donde la <span class="text-white font-semibold">psicología</span> se encuentra con la <span class="text-white font-semibold">IA</span> para crear sistemas de monetización y viralidad extrema.
       </p>
-      <div class="flex flex-col md:flex-row gap-4 justify-center">
-        <a href="https://github.com/maxiqueenOS-ops/maxiqueen-os/blob/main/PAG_INT_infor_JUEGO.html" class="cta-button px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-600 font-semibold shadow-lg">🎮 Probar juego</a>
-        <a href="#servicios" class="cta-button px-8 py-4 rounded-2xl bg-white/10 hover:bg-white/20 font-semibold">💼 Ver servicios</a>
+      
+      <div class="flex flex-col sm:flex-row gap-5 justify-center items-center">
+        <a href="https://maxiqueenos-ops.github.io/juego-psicologico/" class="btn-primary px-10 py-5 rounded-2xl font-black text-lg shadow-xl w-full sm:w-auto">
+          LANZAR JUEGO 🎮
+        </a>
+        <a href="#servicios" class="px-10 py-5 rounded-2xl bg-white/5 hover:bg-white/10 font-bold border border-white/10 transition-all w-full sm:w-auto">
+          Ver Servicios 💼
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- QUÉ ES -->
-  <section class="py-20 px-6 bg-black/40">
-    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-      <div>
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">¿Qué es Maxiqueen OS?</h2>
-        <p class="text-zinc-300 text-lg">
-          Maxiqueen OS es tu ecosistema digital integral donde combinamos <strong>psicología, gamificación, análisis de datos y tecnología avanzada</strong> para crear experiencias interactivas únicas y servicios que aportan valor real y medible.
-        </p>
-        <ul class="mt-4 text-lg space-y-2 text-zinc-300">
-          <li>🎮 Juegos psicológicos virales diseñados para captar la atención y generar insights sobre patrones de comportamiento.</li>
-          <li>📲 Apps interactivas listas para publicar y adaptables a diferentes plataformas digitales.</li>
-          <li>💡 Integración de lógicas de IA para personalizar experiencias según el comportamiento del usuario y maximizar la retención.</li>
-          <li>💰 Sistemas de monetización y funnels estratégicos que transforman la interacción en resultados tangibles.</li>
-          <li>🚀 Experiencias optimizadas para redes sociales, especialmente TikTok, Reels e Instagram, garantizando máxima viralidad y participación.</li>
-        </ul>
-      </div>
-      <div class="bg-gradient-to-br from-amber-500/20 to-yellow-500/10 p-8 rounded-3xl shadow-xl">
-        <p class="text-lg text-zinc-200">
-          Cada sección, juego y servicio está diseñado para que <strong>la interacción sea mínima, clara y efectiva</strong>, asegurando que el usuario siempre tenga un camino directo hacia compartir, descubrir más información relevante o desbloquear el Nivel 2, sin saturarlo ni perder el enfoque en la experiencia principal.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- SERVICIOS -->
-  <section id="servicios" class="py-20 px-6">
+  <!-- SERVICIOS / ESTRUCTURA -->
+  <section id="servicios" class="py-24 px-6 relative">
     <div class="max-w-6xl mx-auto">
-      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Nuestros Servicios</h2>
       <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-white/5 p-8 rounded-3xl hover:bg-white/10 transition">
-          <h3 class="text-xl font-semibold mb-3">🎮 Juegos Psicológicos</h3>
-          <p class="text-zinc-300">Diseño detallado, narrativa interactiva, mecánicas inteligentes y código listo para viralizar, integrándose perfectamente a cualquier sistema o plataforma digital y ofreciendo al usuario experiencias profundas y atractivas.</p>
+        <!-- Servicio 1 -->
+        <div class="glass p-10 rounded-[2rem] neon-border transition-all group">
+          <div class="text-4xl mb-6 group-hover:scale-110 transition-transform inline-block">🧠</div>
+          <h3 class="text-2xl font-bold mb-4">Ingeniería Psicológica</h3>
+          <p class="text-zinc-400 leading-relaxed">Diseñamos mecánicas que capturan la atención humana basándonos en patrones de comportamiento y análisis de datos.</p>
         </div>
-        <div class="bg-white/5 p-8 rounded-3xl hover:bg-white/10 transition">
-          <h3 class="text-xl font-semibold mb-3">📲 Apps Web & Android</h3>
-          <p class="text-zinc-300">Transformamos tus juegos y experiencias en aplicaciones web y móviles, asegurando mínima fricción para el usuario, compatibilidad multiplataforma y preparación para la monetización, así como para integraciones futuras de IA y automatización.</p>
+        <!-- Servicio 2 -->
+        <div class="glass p-10 rounded-[2rem] neon-border transition-all group border-amber-500/20">
+          <div class="text-4xl mb-6 group-hover:scale-110 transition-transform inline-block">⚡</div>
+          <h3 class="text-2xl font-bold mb-4">Apps de Alto Impacto</h3>
+          <p class="text-zinc-400 leading-relaxed">Convertimos conceptos en aplicaciones Web y Android listas para el mercado global con cero fricción de usuario.</p>
         </div>
-        <div class="bg-white/5 p-8 rounded-3xl hover:bg-white/10 transition">
-          <h3 class="text-xl font-semibold mb-3">💰 Monetización & Funnels</h3>
-          <p class="text-zinc-300">Implementamos automatización de CTA, publicidad segmentada, copywriting persuasivo y embudos estratégicos, diseñados para transformar la interacción del usuario en conversiones concretas y sostenibles, con seguimiento y optimización continua.</p>
+        <!-- Servicio 3 -->
+        <div class="glass p-10 rounded-[2rem] neon-border transition-all group">
+          <div class="text-4xl mb-6 group-hover:scale-110 transition-transform inline-block">💎</div>
+          <h3 class="text-2xl font-bold mb-4">Monetización IA</h3>
+          <p class="text-zinc-400 leading-relaxed">Implementamos embudos de venta inteligentes y sistemas de referidos que transforman clics en capital real.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- JUEGOS ADICIONALES -->
-  <section class="py-20 px-6 bg-black/30">
-    <div class="max-w-6xl mx-auto text-center">
-      <h2 class="text-3xl md:text-4xl font-bold mb-6">🎯 Juegos y Experiencias Interactivas</h2>
-      <p class="text-zinc-300 text-lg mb-8">
-        Dentro de Maxiqueen OS, los juegos psicológicos funcionan como un servicio adicional que enriquece la experiencia global. Cada juego está diseñado para viralizar contenido, generar insights significativos sobre los usuarios y preparar la plataforma para futuras lógicas de inteligencia artificial que personalicen la experiencia individual.
+  <!-- CTA FINAL (EL QUE MONETIZA TU HOSTINGER) -->
+  <section class="py-24 px-6">
+    <div class="max-w-4xl mx-auto glass p-12 md:p-20 rounded-[3rem] text-center relative overflow-hidden border-2 border-amber-500/20">
+      <!-- Glow effect -->
+      <div class="absolute -top-24 -right-24 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl"></div>
+      
+      <h2 class="text-4xl md:text-5xl font-extrabold mb-6">¿Listo para activar tu estructura?</h2>
+      <p class="text-zinc-400 text-lg md:text-xl mb-12">
+        Si estás cansado de improvisar y quieres operar con un sistema real, MaxiQueen OS es tu puerta de entrada al éxito digital.
       </p>
-      <div class="grid md:grid-cols-2 gap-8">
-        <a href="https://maxiqueenos-ops.github.io/juego-psicologico/" class="game-card p-6 bg-amber-500/30 hover:bg-amber-500/50 rounded-3xl shadow-lg">
-          <h3 class="text-xl font-semibold mb-2">🎮 Juego Psicológico Principal</h3>
-          <p class="text-zinc-200">Descubre patrones ocultos de pensamiento y comportamiento, obtén resultados detallados y comparte tus insights de manera viral para medir tu influencia y comprensión de la dinámica social.</p>
-          <button class="https://github.com/maxiqueenOS-ops/PLANILLA.html">Compartir TikTok / Reels</button>
+
+      <div class="space-y-6">
+        <a href="https://hostinger.com/reach/referrals?REFERRALCODE=S6LMAXIQUWOR"
+           target="_blank"
+           rel="noopener"
+           class="btn-primary inline-block px-14 py-6 rounded-2xl text-xl font-black shadow-[0_0_30px_rgba(244,255,37,0.3)]">
+          ACTIVAR AHORA
         </a>
-        <a href="#" class="game-card p-6 bg-amber-500/30 hover:bg-amber-500/50 rounded-3xl shadow-lg">
-          <h3 class="text-xl font-semibold mb-2">🧠 Próximo Nivel / IA</h3>
-          <p class="text-zinc-200">Accede a un nivel avanzado de experiencia donde las decisiones del usuario y su interacción anterior se analizan mediante IA para ofrecer resultados personalizados, retos más profundos y contenido adaptado a su perfil, maximizando engagement y retención.</p>
-          <button class="mt-4 px-6 py-2 bg-white/10 hover:bg-white/20 rounded-xl font-semibold transition">Desbloquear Nivel 2</button>
-        </a>
+        <p class="text-zinc-500 text-sm italic">
+          Recomendado por MaxiQueen OS para construir tu infraestructura digital.
+        </p>
       </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-12 border-t border-white/5 text-center">
+    <div class="flex justify-center gap-6 mb-6">
+      <a href="https://github.com/maxiqueenOS-ops" class="text-zinc-400 hover:text-white transition">GitHub</a>
+      <a href="#" class="text-zinc-400 hover:text-white transition">TikTok</a>
+      <a href="#" class="text-zinc-400 hover:text-white transition">Soporte</a>
+    </div>
+    <p class="text-zinc-600 text-sm uppercase tracking-widest">
+      © 2026 MAXIQUEEN OS · Construyendo lo Imposible
+    </p>
+  </footer>
+
+</body>
+</html>
