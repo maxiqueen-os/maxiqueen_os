@@ -849,32 +849,40 @@ TikTok | Instagram | Facebook | YouTube | WhatsApp
     }
 
     function suggestNextActions(action, context) {
-      UIEngine.setQuickActions([]);
+  let actions = []; // Creamos un acumulador
+  const state = StateEngine.get();
 
-      const state = StateEngine.get();
+  // Lógica de diagnóstico
+  if (action === "RUN_BASIC_DIAGNOSIS") {
+    actions.push({ label: "Quiero ordenar", value: "ordenar" });
+    actions.push({ label: "Quiero escalar", value: "escalar" });
+  }
 
-      if (action === "RUN_BASIC_DIAGNOSIS") {
-        UIEngine.setQuickActions([
-          { label: "Quiero ordenar", value: "ordenar" },
-          { label: "Quiero escalar", value: "escalar" }
-        ]);
-      }
+  // Lógica de recomendaciones
+  if (action === "RECOMMEND_STARTER" || action === "RECOMMEND_PRO") {
+    actions.push({ label: "Ver precios", value: "precio" });
+    actions.push({ label: "Hablar por WhatsApp", value: "whatsapp" });
+  }
 
-      if (action === "RECOMMEND_STARTER" || action === "RECOMMEND_PRO") {
-        UIEngine.setQuickActions([
-          { label: "Ver precios", value: "precio" },
-          { label: "Hablar por WhatsApp", value: "whatsapp" }
-        ]);
-      }
+  // Lógica de estado listo
+  if (state.stage === "listo") {
+    actions.push({ label: "Ir a WhatsApp", value: "whatsapp" });
+    actions.push({ label: "Ver recursos", value: "recursos" });
+  }
 
-      if (state.stage === "listo") {
-        UIEngine.setQuickActions([
-          { label: "Ir a WhatsApp", value: "whatsapp" },
-          { label: "Ver recursos", value: "recursos" }
-        ]);
-      }
+  // TU NUEVA REGLA (Ahora integrada correctamente)
+  if (context.memory.interestScore > 2 && !state.resourcesShown) {
+    actions.push({ label: "Ver Catálogo Digital", value: "recursos" });
+    // Solo añadimos planes si no están ya en el flujo
+    if (state.stage !== "listo") {
+        actions.push({ label: "Plan Starter", value: "starter" });
+        actions.push({ label: "Plan Pro", value: "pro" });
     }
+  }
 
+  // Renderizamos todo lo acumulado una sola vez
+  UIEngine.setQuickActions(actions);
+}
     /* =========================
        🖥️ AUX UI
     ========================= */
