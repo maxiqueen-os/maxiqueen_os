@@ -468,15 +468,15 @@ if (!mounted) return null; // Evita desajustes de hidratación
         <!-- CATEGORÍA: COMERCIO & VENTAS -->
         <div class="space-y-4">
           <h3 class="text-amber-500 text-xs font-bold uppercase tracking-widest text-left ml-2">Comercio & Retail</h3>
-          <a href="MaxiQueen_Store.html" target="_blank" class="card-link-new">✅ Store Oficial MQ</a>
+          <a href="MaxiQueen_Store.html" class="card-link-new">✅ Store Oficial MQ</a>
           <a href="Ventas.html" class="card-link-new">👑 Módulo de Ventas</a>
-          <a href="prodind.html" class="card-link-new">👑 Producto Individual</a>
+          <a href="prodind.html" class="card-link-new">👑 Producto Individual Multiplataforma MQ</a>
         </div>
 
         <!-- CATEGORÍA: HERRAMIENTAS & IA -->
         <div class="space-y-4">
           <h3 class="text-cyan-500 text-xs font-bold uppercase tracking-widest text-left ml-2">Inteligencia & Control</h3>
-          <a href="MQ_Chat_builder_os_IA.html" class="card-link-new highlight">👑 MQ Chat Builder IA</a>
+          <a href="Builder_chat_MQ.html" class="card-link-new"> MQ Chat Builder IA</a>
           <a href="dashboard.html" class="card-link-new">👑 Central Dashboard</a>
           <a href="manager.html" class="card-link-new">👑 Business Manager</a>
         </div>
@@ -484,8 +484,8 @@ if (!mounted) return null; // Evita desajustes de hidratación
         <!-- CATEGORÍA: ENTRETENIMIENTO -->
         <div class="space-y-4">
           <h3 class="text-purple-500 text-xs font-bold uppercase tracking-widest text-left ml-2">Gamificación</h3>
-          <a href="PAG_INT_infor_JUEGO.html" target="_blank" class="card-link-new">📱 Ecosistema de Juegos</a>
-          <a href="sudoku-play2.0.html" target="_blank" class="card-link-new">🎮 Sudoku 2.0 (Pro)</a>
+          <a href="PAG_INT_infor_JUEGO.html" class="card-link-new">📱 Ecosistema de Juegos</a>
+          <a href="sudoku-play2.0.html" class="card-link-new">🎮 Sudoku 2.0 (Pro)</a>
           <a href="index-v7Activar_Sistema.html" class="card-link-new">👑 Juego de Activación</a>
         </div>
 
@@ -514,8 +514,9 @@ if (!mounted) return null; // Evita desajustes de hidratación
     </h3>
     <div class="flex flex-col gap-3">
       <a href="MaxiQueen_Store.html" target="_blank" class="card-link-col yellow">✅ Store Oficial MQ</a>
-      <a href="Ventas.html" class="card-link-col yellow">👑 Módulo de Ventas</a>
-      <a href="prodind.html" class="card-link-col yellow">👑 Producto Individual</a>
+      <a href="MQ_Build_IA.html" class="card-link-col yellow">👑 Módulo Build MQ</a>
+       <a href="Clientes.html" class="card-link-col yellow">👑 Módulo Clientes MQ</a>
+      <a href="CRM_PAG_FEB.html" class="card-link-col yellow">👑 MaxiQueen OS CRM </a>
     </div>
   </div>
 
@@ -526,9 +527,10 @@ if (!mounted) return null; // Evita desajustes de hidratación
       Inteligencia & Control
     </h3>
     <div class="flex flex-col gap-3">
-      <a href="MQ_Chat_builder_os_IA.html" class="card-link-col blue">👑 MQ Chat Builder IA</a>
+      <a href="Cloudos.html" class="card-link-col blue">👑 MQ Cloudos IA</a>
       <a href="dashboard.html" class="card-link-col blue">👑 Central Dashboard</a>
       <a href="manager.html" class="card-link-col blue">👑 Business Manager</a>
+      <a href="CuadroMQ.html" class="card-link-col blue">👑 CuadroMQ.html </a> 
     </div>
   </div>
 
@@ -541,7 +543,7 @@ if (!mounted) return null; // Evita desajustes de hidratación
     <div class="flex flex-col gap-3">
       <a href="PAG_INT_infor_JUEGO.html" target="_blank" class="card-link-col red">📱 Ecosistema de Juegos</a>
       <a href="sudoku-play2.0.html" target="_blank" class="card-link-col red">🎮 Sudoku 2.0 (Pro)</a>
-      <a href="index-v7Activar_Sistema.html" class="card-link-col red">👑 Juego de Activación</a>
+      <a href="anclajeplay.html" class="card-link-col red">👑 Juego de Anclaje</a>
     </div>
   </div>
 
@@ -570,42 +572,45 @@ if (!mounted) return null; // Evita desajustes de hidratación
 <!-- ================= ESTILO REUTILIZABLE ================= -->
 <style>
 .card-link {
-  display: block;
-  padding: 1rem 1.2rem;
-  border-radius: 1rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: #f4f4f5;
-  font-weight: 500;
-  transition: all 0.3s ease;
+ display: block;
+ padding: 1rem 1.2rem;
+ border-radius: 1rem;
+ background: rgba(255,255,255,0.03);
+ border: 1px solid rgba(255,255,255,0.08);
+ color: #f4f4f5;
+ font-weight: 500;
+ transition: all 0.3s ease;
 }
 
 .card-link:hover {
-  transform: translateY(-4px);
-  border-color: rgba(251,191,36,0.5);
-  background: rgba(255,255,255,0.06);
+ transform: translateY(-4px);
+ border-color: rgba(251,191,36,0.5);
+ background: rgba(255,255,255,0.06);
 }
+</style> <!-- AQUÍ CERRAMOS EL STYLE -->
 
-   function toggleTheme() {
-  const html = document.documentElement;
-  const currentTheme = html.getAttribute('data-theme');
-  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+<!-- ================= LÓGICA JAVASCRIPT ================= -->
+<script> <!-- AQUÍ ABRIMOS EL SCRIPT -->
+function toggleTheme() {
+ const html = document.documentElement;
+ const currentTheme = html.getAttribute('data-theme');
+ const newTheme = currentTheme === 'light' ? 'dark' : 'light';
   
-  html.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
+ html.setAttribute('data-theme', newTheme);
+ localStorage.setItem('theme', newTheme);
   
-  // Feedback visual en consola para tu depuración en Vercel
-  console.log(`MAXIQUEEN OS: Modo ${newTheme} activado.`);
+ // Corrección: Faltaban las llaves para que imprima la variable en consola
+ console.log(`MAXIQUEEN OS: Modo ${} activado.`);
 }
 
 // Cargar preferencia al iniciar
 document.addEventListener('DOMContentLoaded', () => {
-  const savedTheme = localStorage.getItem('theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', savedTheme);
+ const savedTheme = localStorage.getItem('theme') || 'dark';
+ document.documentElement.setAttribute('data-theme', savedTheme);
 });
-      
-</style>
-<!-- ================= TOGGLE DARK/LIGHT ================= -->
+</script>
+   
+   <!-- ================= TOGGLE DARK/LIGHT ================= -->
 <button 
   class="toggle-theme"
   onclick="toggleTheme()"
@@ -1716,7 +1721,7 @@ function logMessage(mensaje, tipo='sistema'){
   chatLog.appendChild(div);
   chatLog.scrollTop = chatLog.scrollHeight;
 }
-
+     
 /* =========================
    📦 RESPUESTAS BASE
 ========================= */
@@ -2402,26 +2407,6 @@ Entonces dime:
 `
   }
 ];
-
-/* =========================
-   📦 RESPUESTAS BASE
-========================= */
-const triggers = {
-  sistema: {
-    // ... otros triggers ...
-    comoFunciona: `
-👑 **¿Cómo funciona MaxiQueen OS?**
-
-Funciona en capas:
-1️⃣ **Conversación** → te escucho
-2️⃣ **Diagnóstico** → entiendo tu situación
-3️⃣ **Estructura** → ordenamos ideas
-4️⃣ **Sistema** → construimos algo estable
-5️⃣ **Acompañamiento** → no te dejo solo
-
-¿Por dónde prefieres empezar? 👀
-`, 
-// ... resto de los triggers ...
 
 /* =========================
    🧠 MOTOR DE CONTEXTO
