@@ -188,8 +188,7 @@ html,body{
 }
 .toggle-theme:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
 
-
-/* ===================== CHAT ====================== */
+   /* ===================== CHAT ====================== */
 .mq-chat{
   position:fixed;
   bottom:24px;
@@ -425,10 +424,6 @@ html,body{
   color: #000;
   transform: translateY(-2px);
 }
-   
-const [mounted, setMounted] = useState(false);
-useEffect(() => setMounted(true), []);
-if (!mounted) return null; // Evita desajustes de hidratación
 
 </style>
 
@@ -1547,6 +1542,7 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
 
 </section>
 
+       
   
   <!-- ================= CHAT FLOATING ================= -->
 
@@ -1587,30 +1583,6 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
 
 
 <script>
-
-/* =======================
-   THEME TOGGLE (Corregido)
-======================= */
-function toggleTheme() {
-  const root = document.documentElement;
-  // Verifica el atributo o el estado actual
-  const current = root.getAttribute('data-theme') || 'dark';
-  const next = current === 'dark' ? 'light' : 'dark';
-  
-  root.setAttribute('data-theme', next);
-  localStorage.setItem('mq-theme', next);
-  console.log("Tema cambiado a: " + next); // Para depuración
-}
-
-// Aplicar tema inmediatamente para evitar parpadeo blanco
-(function() {
-  const saved = localStorage.getItem('mq-theme');
-  if (saved) {
-    document.documentElement.setAttribute('data-theme', saved);
-  } else {
-    document.documentElement.setAttribute('data-theme', 'dark'); // Default
-  }
-})();
 
 /* =========================
    CONTROLES DE VENTANA (UI)
