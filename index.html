@@ -185,6 +185,8 @@ html,body{
   transition:.25s;
 }
 .toggle-theme:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+
+
 /* ===================== CHAT ====================== */
 .mq-chat{
   position:fixed;
@@ -422,6 +424,10 @@ html,body{
   transform: translateY(-2px);
 }
    
+const [mounted, setMounted] = useState(false);
+useEffect(() => setMounted(true), []);
+if (!mounted) return null; // Evita desajustes de hidratación
+
 </style>
 
 </head>
@@ -1535,7 +1541,6 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
   
   <!-- ================= CHAT FLOATING ================= -->
 
-<div class="mq-chat" id="chatBox">
   <div id="suggestionsContainer" class="mq-suggestions" style="display:none;">
     </div>
 
@@ -1630,6 +1635,12 @@ function toggleTheme(){
   const saved = localStorage.getItem('mq-theme');
   if(saved) document.documentElement.setAttribute('data-theme', saved);
 })();
+
+
+const [mounted, setMounted] = useState(false);
+useEffect(() => setMounted(true), []);
+if (!mounted) return null; // Evita desajustes de hidratación
+
 
 /* =======================
    LIGHTBOX
