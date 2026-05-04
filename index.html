@@ -430,6 +430,12 @@ if (!mounted) return null; // Evita desajustes de hidratación
 
 </style>
 
+<!-- Vercel Web Analytics -->
+<script type="module">
+  import { inject } from 'https://cdn.jsdelivr.net/npm/@vercel/analytics@1/dist/index.mjs';
+  inject();
+</script>
+
 </head>
 
 <body class="transition-colors duration-500 ease-in-out bg-black text-white">

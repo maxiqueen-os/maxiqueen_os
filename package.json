@@ -1,0 +1,23 @@
+{
+  "name": "maxiqueen-os",
+  "version": "1.0.0",
+  "description": "MaxiQueen OS - Sistema Digital Integral",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxiqueen-os/maxiqueen_os.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maxiqueen-os/maxiqueen_os/issues"
+  },
+  "homepage": "https://github.com/maxiqueen-os/maxiqueen_os#readme",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}
