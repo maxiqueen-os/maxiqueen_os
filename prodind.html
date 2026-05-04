@@ -5,6 +5,41 @@
   <title>MAXIQUEEN STORE | Checkout</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+
+    <style>
+  /* Clase base para los links de la bandera */
+  .card-link-col {
+    display: block;
+    padding: 0.8rem 1.2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    color: #a1a1aa;
+    font-size: 0.9rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  /* Variaciones de color en Hover */
+  .card-link-col.yellow:hover {
+    border-color: #fbbf24;
+    color: #fbbf24;
+    background: rgba(251, 189, 36, 0.05);
+    transform: scale(1.02);
+  }
+
+  .card-link-col.blue:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
+    transform: scale(1.02);
+  }
+
+  .card-link-col.red:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.05);
+    transform: scale(1.02);
+  }
     body{background:#0f0f0f;color:#fff;font-family:sans-serif;text-align:center;padding:40px}
     .card{background:#1a1a1a;padding:30px;border-radius:16px;max-width:380px;margin:auto}
     h1{color:#FFD700}
