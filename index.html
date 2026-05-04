@@ -365,6 +365,34 @@ html,body{
 .msg-user {
   color: var(--accent); /* Tus mensajes resaltan con el color activo */
 }
+
+/* Estado del chat cuando está visible */
+.mq-chat {
+  display: none; /* Inicia oculto */
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 320px;
+  height: 500px;
+  background: #0b0e14;
+  flex-direction: column;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  z-index: 9999;
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+/* Clase que se activa al minimizar */
+.minimized {
+  height: 45px !important;
+  min-height: 45px !important;
+  overflow: hidden;
+}
+
+.mq-chat-header {
+  cursor: pointer; /* Para que el usuario sepa que puede hacer clic ahí */
+}
    
 </style>
 
@@ -1505,6 +1533,48 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
 </div>
 
 <script>
+
+/* =========================
+   CONTROLES DE VENTANA (UI)
+========================= */
+const chatBox = document.getElementById('chatBox');
+
+// Abrir o cerrar desde el avatar flotante
+function toggleChat() {
+  if (chatBox.style.display === "none" || chatBox.style.display === "") {
+    chatBox.style.display = "flex";
+    chatBox.classList.remove('minimized');
+    // Si el log está vacío, podrías disparar el inicio aquí
+    if(chatLog.children.length === 0) logMessage(triggers.onboarding.inicio, 'msg msg-bot');
+  } else {
+    chatBox.style.display = "none";
+  }
+}
+
+// Cerrar chat (botón X)
+function closeChat() {
+  chatBox.style.display = "none";
+}
+
+// Minimizar chat (botón -)
+function toggleMinimize() {
+  chatBox.classList.toggle('minimized');
+  
+  const body = document.querySelector('.mq-chat-body');
+  const inputArea = document.querySelector('.mq-chat-input');
+  
+  if (chatBox.classList.contains('minimized')) {
+    body.style.display = "none";
+    inputArea.style.display = "none";
+    chatBox.style.height = "auto";
+    chatBox.style.minHeight = "auto";
+  } else {
+    body.style.display = "block";
+    inputArea.style.display = "flex";
+    chatBox.style.height = "500px"; // Ajusta a la altura que desees
+  }
+}
+
 
    /* =======================
    THEME TOGGLE
