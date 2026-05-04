@@ -2629,174 +2629,60 @@ input.addEventListener("keydown", e => {
 
 <!-- ================= ESTILOS (CSS) - CORREGIDOS ================= -->
 <style>
-.mq-chat-trigger {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  cursor: pointer;
-  z-index: 1000;
-  transition: transform 0.3s ease;
-}
-
-.mq-chat-trigger:hover {
-  transform: scale(1.1);
-}
-
-.avatar-glow {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: 2px solid #eab308;
-  box-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
-  object-fit: cover;
-}
-
-/* Efecto de pulso */
-.mq-chat-trigger::after {
-  content: '';
-  position: absolute;
-  width: 100%; height: 100%;
-  top: 0; left: 0;
-  border-radius: 50%;
-  border: 2px solid #eab308;
-  animation: pulse-ring 2s infinite;
-  pointer-events: none;
-}
-
-@keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 0.5; }
-  100% { transform: scale(1.3); opacity: 0; }
-}
-
-.mq-chat {
-  display: none; /* Se activa con JS */
-  position: fixed;
-  bottom: 90px;
-  right: 20px;
-  width: 320px;
-  max-height: 450px;
-  background: #09090b;
-  border: 1px solid #27272a;
-  border-radius: 15px;
-  flex-direction: column;
-  z-index: 1000;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-}
-
-.msg-user { text-align: right; color: #facc15; margin: 5px 0; font-weight: 600; }
-.msg-bot { text-align: left; color: #e4e4e7; margin: 5px 0; white-space: pre-line; }
-</style>
-
-     <script>
-     function toggleTheme() {
-  const html = document.documentElement;
-  const currentTheme = html.getAttribute('data-theme');
-  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-  html.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-
-  // CAMBIAR TEXTO E ICONO
-  const icon = document.querySelector('.theme-icon');
-  const text = document.querySelector('.theme-text');
-
-  if (newTheme === 'light') {
-    icon.textContent = '🌞';
-    text.textContent = 'Modo Claro';
-  } else {
-    icon.textContent = '🌙';
-    text.textContent = 'Modo Oscuro';
+  /* Gatillo flotante */
+  .mq-chat-trigger {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+    z-index: 1000;
+    display: none; /* Se activa al aceptar licencia */
+    transition: transform 0.3s ease;
+  }
+  .mq-chat-trigger:hover { transform: scale(1.1); }
+  .avatar-glow {
+    width: 60px; height: 60px; border-radius: 50%;
+    border: 2px solid #eab308; box-shadow: 0 0 15px rgba(234,179,8,0.4); object-fit: cover;
   }
 
-  console.log(`MAXIQUEEN OS: Modo ${newTheme} activado.`);
-}
+  /* Caja de Chat */
+  .mq-chat {
+    display: none; position: fixed;
+    bottom: 90px; right: 20px; width: 320px;
+    max-height: 450px; background: #09090b;
+    border: 1px solid #27272a; border-radius: 15px;
+    flex-direction: column; z-index: 1000;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  }
+  .msg-user { text-align: right; color: #facc15; margin: 8px; font-weight: 600; }
+  .msg-bot { text-align: left; color: #e4e4e7; margin: 8px; white-space: pre-line; }
+  .mq-chat-body { overflow-y: auto; padding: 10px; flex-grow: 1; }
+</style>
 
-<script defer>        
-     </script>
-     
-<!-- ================= LÓGICA (JS) - UNIFICADA ================= -->
 <script>
-const input = document.getElementById('userInput');
-const chatLog = document.getElementById('chatLog');
-
-/* Control de Visibilidad */
-function toggleChat() {
-    const chat = document.getElementById("chatBox");
-    chat.style.display = (chat.style.display === "flex") ? "none" : "flex";
-}
-
-function closeChat() {
-    document.getElementById("chatBox").style.display = "none";
-}
-
-/* Motor de Mensajes */
-function sendMessage() {
-    const message = input.value.trim();
-    if (!message) return;
-
-    appendMessage(message, "user");
-    input.value = "";
-
-    // Simulación de respuesta basada en tu objeto 'triggers'
-    setTimeout(() => {
-        const reply = getResponse(message);
-        appendMessage(reply, "bot");
-    }, 400);
-}
-
-function appendMessage(text, sender) {
-    const div = document.createElement('div');
-    div.className = sender === "user" ? "msg-user" : "msg-bot";
-    div.innerText = text;
-    chatLog.appendChild(div);
-    chatLog.scrollTop = chatLog.scrollHeight;
-}
-
-input.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") sendMessage();
-});
-
-/* Aquí irían tus funciones getResponse e intents que ya tienes */
-function getResponse(message) {
-    const text = message.toLowerCase();
-    if (text.includes("hola") || text.includes("1")) return "Excelente elección 👑. ¿Qué tienes en mente?";
-    return "Te leo con atención... cuéntame más. 👑";
-}
-</script>
-
-       <script>
-// Elementos de la Licencia
+// 1. DECLARACIÓN ÚNICA DE VARIABLES
 const acceptMQ = document.getElementById('acceptMQ');
 const continueMQ = document.getElementById('continueMQ');
 const licenseSection = document.getElementById('licenseSection');
-const chatTrigger = document.getElementById('chat-trigger');
-
-// Elementos del Chat
-const input = document.getElementById('userInput');
+const chatTrigger = document.getElementById('mq-chat'); // Ajustado a tu ID
+const chatBox = document.getElementById('chatBox');
 const chatLog = document.getElementById('chatLog');
+const userInput = document.getElementById('userInput');
 
 /* ==========================================
-   LÓGICA DE DESBLOQUEO (LICENCIA)
+   LÓGICA DE LICENCIA
    ========================================== */
-if(acceptMQ) {
-  // Habilitar/Deshabilitar botón según el checkbox
+if(acceptMQ && continueMQ) {
   acceptMQ.addEventListener('change', () => {
     continueMQ.disabled = !acceptMQ.checked;
   });
-}
 
-if(continueMQ) {
-  // Acción al hacer clic en "Entrar al sistema"
   continueMQ.addEventListener('click', () => {
-    // 1. Ocultar la caja de licencia
-    licenseSection.style.display = 'none';
+    if(licenseSection) licenseSection.style.display = 'none';
+    if(chatTrigger) chatTrigger.style.display = 'block';
     
-    // 2. Mostrar el botón flotante del chat (el trigger)
-    chatTrigger.style.display = 'flex';
-    
-    // 3. Opcional: Abrir el chat automáticamente al entrar
+    // Abrir chat automáticamente
     toggleChat();
-    
     console.log("Sistema MaxiQueen OS activado.");
   });
 }
@@ -2805,51 +2691,64 @@ if(continueMQ) {
    CONTROL DEL CHAT
    ========================================== */
 function toggleChat() {
-    const chat = document.getElementById("chatBox");
-    // Si no tiene estilo definido, forzamos el toggle
-    if (chat.style.display === "flex") {
-        chat.style.display = "none";
-    } else {
-        chat.style.display = "flex";
-    }
+  if (chatBox.style.display === "flex") {
+    chatBox.style.display = "none";
+  } else {
+    chatBox.style.display = "flex";
+    chatBox.classList.remove('minimized');
+  }
 }
 
 function closeChat() {
-    document.getElementById("chatBox").style.display = "none";
+  chatBox.style.display = "none";
 }
 
 function sendMessage() {
-    const message = input.value.trim();
-    if (!message) return;
-    appendMessage(message, "user");
-    input.value = "";
-    setTimeout(() => {
-        const reply = getResponse(message);
-        appendMessage(reply, "bot");
-    }, 400);
+  const message = userInput.value.trim();
+  if (!message) return;
+
+  appendMessage(message, "user");
+  userInput.value = "";
+
+  setTimeout(() => {
+    const reply = getResponse(message);
+    appendMessage(reply, "bot");
+  }, 400);
 }
 
 function appendMessage(text, sender) {
-    const div = document.createElement('div');
-    div.className = sender === "user" ? "msg-user" : "msg-bot";
-    div.innerText = text;
-    chatLog.appendChild(div);
-    chatLog.scrollTop = chatLog.scrollHeight;
+  const div = document.createElement('div');
+  div.className = sender === "user" ? "msg-user" : "msg-bot";
+  div.innerText = text;
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
 }
 
-// Escuchar la tecla Enter
-if(input) {
-  input.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") sendMessage();
+// Escuchar Enter
+if(userInput) {
+  userInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
   });
 }
 
+/* ==========================================
+   MOTOR DE RESPUESTAS (getResponse)
+   ========================================== */
 function getResponse(message) {
-    const text = message.toLowerCase();
-    if (text.includes("hola") || text.includes("1")) return "Excelente elección 👑. ¿Qué tienes en mente?";
-    return "Te leo con atención... cuéntame más. 👑";
+  const text = message.toLowerCase();
+  
+  // Aquí puedes pegar todos tus 'triggers' anteriores
+  if (text.includes("hola") || text.includes("1")) {
+    return "Excelente elección 👑. ¿Qué tienes en mente?";
+  }
+  if (text.includes("precio") || text.includes("planes")) {
+    return "Contamos con planes Starter, Pro y Elite. ¿Cuál te interesa?";
+  }
+  
+  return "Te leo con atención... cuéntame más. 👑";
 }
 </script>
+
 <!-- ================= SECCIÓN LEGAL Y LICENCIA ================= -->
 <section class="py-12 px-6 border-t border-zinc-900 bg-black/50">
   <div class="max-w-4xl mx-auto text-center">
