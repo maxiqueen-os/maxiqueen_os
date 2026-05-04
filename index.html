@@ -423,7 +423,7 @@ html,body{
         </a>
 
          <a href="Inf_Sena.pdf" target="_blank" class="card-link">
-          --📱 Informe SENA ✨--
+          --📱 Informe SENA MQ ✨--
         </a>
          
           <div style="text-align: center; margin: 20px 0;">
@@ -514,8 +514,16 @@ document.addEventListener('DOMContentLoaded', () => {
       
 </style>
 <!-- ================= TOGGLE DARK/LIGHT ================= -->
-<button class="toggle-theme" onclick="toggleTheme()" aria-label="Cambiar tema">🧪 MaxiTema</button>
-   
+<button 
+  class="toggle-theme"
+  onclick="toggleTheme()"
+  aria-label="Cambiar tema entre modo oscuro y claro"
+  title="Cambiar tema"
+  type="button"
+>
+  <span class="theme-icon">🧪</span>
+  <span class="theme-text">MaxiTema</span>
+</button>   
 <!-- ================= HERO ULTRA-PRO MAXIQUEEN OS ================= -->
 <section class="relative min-h-screen flex items-center justify-center text-center px-6 overflow-hidden bg-black">
 
@@ -3017,7 +3025,9 @@ chatWindow.innerHTML += `
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-// Generador de Imágenes IA
+// =========================
+// 🎨 GENERADOR DE IMÁGENES IA OPTIMIZADO | MAXIQUEEN OS
+// =========================
 async function generateImage() {
     const promptInput = document.getElementById("promptInput");
     const container = document.getElementById("imageContainer");
@@ -3025,62 +3035,151 @@ async function generateImage() {
     const resultDiv = document.getElementById("imageResult");
     const btn = document.getElementById("generateBtn");
 
-    const prompt = promptInput.value?.trim();
-
-    if (!prompt) {
-        alert("Por favor, describe la imagen que deseas generar.");
+    if (!promptInput || !container || !spinner || !resultDiv || !btn) {
+        console.error("Elementos del DOM faltantes.");
         return;
     }
 
+    const prompt = promptInput.value.trim();
+
+    if (!prompt) {
+        showAlert("Por favor, describe la imagen que deseas generar.");
+        return;
+    }
+
+    // Estado UI
     btn.disabled = true;
+    btn.innerText = "Generando...";
     container.classList.remove("hidden");
     spinner.classList.remove("hidden");
     resultDiv.innerHTML = "";
 
     try {
-        // Generación via Pollinations (Sincronizado con tus activos en Cloudinary)
-        const seed = Math.floor(Math.random() * 1000000);
+        // Seed único para evitar imágenes repetidas
+        const seed = Math.floor(Math.random() * 999999);
+
+        // URL del motor IA
         const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=1024&height=1024&seed=${seed}&nologo=true`;
 
+        // Precarga segura
         const img = new Image();
         img.src = imageUrl;
-        img.className = "w-full h-auto rounded-xl shadow-2xl cursor-pointer hover:opacity-90 transition-opacity";
         img.alt = prompt;
-        
+        img.loading = "lazy";
+        img.className = `
+            w-full 
+            h-auto 
+            rounded-2xl 
+            shadow-2xl 
+            cursor-pointer 
+            hover:scale-[1.02] 
+            hover:opacity-90 
+            transition-all 
+            duration-300
+        `;
+
         img.onload = () => {
             spinner.classList.add("hidden");
+            resultDiv.innerHTML = "";
             resultDiv.appendChild(img);
+
+            // Click para expandir
             img.onclick = () => openLightbox(imageUrl);
+
+            // Botón descarga
+            const downloadBtn = document.createElement("a");
+            downloadBtn.href = imageUrl;
+            downloadBtn.download = `maxiqueen-${seed}.png`;
+            downloadBtn.target = "_blank";
+            downloadBtn.className = `
+                mt-4 inline-block px-4 py-2 
+                bg-purple-600 hover:bg-purple-700 
+                text-white rounded-xl shadow-lg transition
+            `;
+            downloadBtn.innerText = "Descargar Imagen";
+
+            resultDiv.appendChild(downloadBtn);
+        };
+
+        img.onerror = () => {
+            throw new Error("No se pudo cargar la imagen.");
         };
 
     } catch (error) {
         console.error("Error generating image:", error);
-        alert("Hubo un error al conectar con el motor de IA.");
+        spinner.classList.add("hidden");
         container.classList.add("hidden");
+        showAlert("Hubo un error al conectar con el motor de IA.");
     } finally {
         btn.disabled = false;
+        btn.innerText = "Generar Imagen";
     }
 }
 
-// UI: Lightbox para visualización de Assets
+// =========================
+// 🌌 LIGHTBOX PROFESIONAL
+// =========================
 function openLightbox(url) {
     const lightbox = document.getElementById("lightbox");
     const content = document.getElementById("lightboxContent");
+
     if (!lightbox || !content) return;
-    
-    content.innerHTML = `<img src="${url}" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl border border-white/10">`;
+
+    content.innerHTML = `
+        <div class="relative">
+            <img 
+                src="${url}" 
+                alt="Vista previa"
+                class="max-w-full max-h-[90vh] rounded-2xl shadow-2xl border border-white/10"
+            >
+            <button 
+                onclick="closeLightbox()"
+                class="absolute top-2 right-2 bg-black/70 text-white px-3 py-1 rounded-lg hover:bg-black"
+            >
+                ✕
+            </button>
+        </div>
+    `;
+
     lightbox.classList.remove("hidden");
     lightbox.classList.add("flex");
 }
 
+// =========================
+// ❌ CERRAR LIGHTBOX
+// =========================
 function closeLightbox() {
     const lightbox = document.getElementById("lightbox");
+
     if (lightbox) {
         lightbox.classList.add("hidden");
         lightbox.classList.remove("flex");
     }
 }
 
+// =========================
+// ⌨️ ENTER PARA ENVIAR CHAT
+// =========================
+document.addEventListener("DOMContentLoaded", () => {
+    const userInput = document.getElementById("user-input");
+
+    if (userInput) {
+        userInput.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                enviarMensaje();
+            }
+        });
+    }
+});
+
+// =========================
+// 🚨 ALERTA PERSONALIZADA
+// =========================
+function showAlert(message) {
+    alert(message); // Puedes reemplazar por modal premium luego
+}
+   
 // Soporte para tecla Enter
 document.getElementById('user-input').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') enviarMensaje();
