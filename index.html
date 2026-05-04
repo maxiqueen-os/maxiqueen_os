@@ -1573,40 +1573,35 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
   </div>
 </div>
 
-  <!-- ================= CHAT FLOATING ================= -->
-<!-- Avatar que abre el chat -->
+<!-- Disparador (Avatar) -->
 <div id="mq-chat-trigger" class="mq-chat-trigger hero-avatar" onclick="openChat()">
    <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088797/MQ_OS_maxiqueen-avatar_hiywqu.png" class="avatar-glow">
 </div>
 
-<!-- Caja de Chat -->
-<div class="mq-chat" id="chatBox" style="display: none; flex-direction: column;">
+<!-- Caja de Chat Principal -->
+<div class="mq-chat" id="chatBox" style="display: none;">
+  <!-- Cabecera: Siempre interactiva -->
   <div class="mq-chat-header" onclick="toggleMinimize()">
-    <span style="font-weight: bold;">👑 MaxiQueen OS</span>
+    <span>👑 <strong>MaxiQueen OS</strong></span>
     <div class="mq-chat-controls">
-      <!-- Botón de Minimizar -->
-      <button onclick="event.stopPropagation(); toggleMinimize()" style="background:none; border:none; color:gray; cursor:pointer; font-size: 20px;">−</button>
-      <!-- Botón de Cerrar -->
-      <button onclick="event.stopPropagation(); closeChat()" style="background:none; border:none; color:gray; cursor:pointer; margin-left:10px;">✕</button>
+      <button onclick="event.stopPropagation(); toggleMinimize()">−</button>
+      <button onclick="event.stopPropagation(); closeChat()" style="margin-left:8px;">✕</button>
     </div>
   </div>
 
-  <div id="chatContent" style="display: flex; flex-direction: column; height: 400px;">
-      <div class="mq-chat-body" id="chatLog">
-        <div class="msg msg-bot">¡Hola! 👑 Soy el sistema MaxiQueen OS. ¿En qué punto estás ahora mismo?
-        <br><br>
-        1️⃣ Ideas<br>
-        2️⃣ Bloqueo<br>
-        3️⃣ Crecimiento</div>
-      </div>
+  <!-- Contenido que se minimiza -->
+  <div id="mq-chat-content">
+    <div class="mq-chat-body" id="chatLog">
+      <div class="msg msg-bot">¡Hola! 👑 Soy el sistema MaxiQueen OS...</div>
+    </div>
 
-      <div class="mq-chat-input">
-        <input type="text" id="userInput" placeholder="Maxiqueen OS te atiende..." />
-        <button onclick="sendMessage()" style="background:var(--mq-gold); border:none; padding:8px 15px; border-radius:10px; cursor:pointer; font-weight:bold;">Enviar</button>
-      </div>
+    <div class="mq-chat-input">
+      <input type="text" id="userInput" placeholder="Maxiqueen OS te atiende..." />
+      <button onclick="sendMessage()">Enviar</button>
+    </div>
   </div>
 </div>
-
+       
 <script>
 
    /* =======================
