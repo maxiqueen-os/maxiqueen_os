@@ -1579,67 +1579,77 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
 
 <script>
 
+/* =======================
+   THEME TOGGLE (Corregido)
+======================= */
+function toggleTheme() {
+  const root = document.documentElement;
+  // Verifica el atributo o el estado actual
+  const current = root.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  
+  root.setAttribute('data-theme', next);
+  localStorage.setItem('mq-theme', next);
+  console.log("Tema cambiado a: " + next); // Para depuración
+}
+
+// Aplicar tema inmediatamente para evitar parpadeo blanco
+(function() {
+  const saved = localStorage.getItem('mq-theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+  } else {
+    document.documentElement.setAttribute('data-theme', 'dark'); // Default
+  }
+})();
+
 /* =========================
    CONTROLES DE VENTANA (UI)
 ========================= */
 const chatBox = document.getElementById('chatBox');
+const chatLog = document.getElementById('chatLog');
 
-// Abrir o cerrar desde el avatar flotante
 function toggleChat() {
+  // Asegúrate de que solo exista UN id="chatBox" en tu HTML
   if (chatBox.style.display === "none" || chatBox.style.display === "") {
     chatBox.style.display = "flex";
     chatBox.classList.remove('minimized');
-    // Si el log está vacío, podrías disparar el inicio aquí
-    if(chatLog.children.length === 0) logMessage(triggers.onboarding.inicio, 'msg msg-bot');
   } else {
     chatBox.style.display = "none";
   }
 }
 
-// Cerrar chat (botón X)
-function closeChat() {
-  chatBox.style.display = "none";
-}
-
-// Minimizar chat (botón -)
 function toggleMinimize() {
   chatBox.classList.toggle('minimized');
-  
   const body = document.querySelector('.mq-chat-body');
   const inputArea = document.querySelector('.mq-chat-input');
   
   if (chatBox.classList.contains('minimized')) {
     body.style.display = "none";
     inputArea.style.display = "none";
-    chatBox.style.height = "auto";
-    chatBox.style.minHeight = "auto";
   } else {
     body.style.display = "block";
     inputArea.style.display = "flex";
-    chatBox.style.height = "500px"; // Ajusta a la altura que desees
   }
 }
 
-
-   /* =======================
-   THEME TOGGLE
-======================= */
-function toggleTheme(){
-  const root = document.documentElement;
-  const current = root.getAttribute('data-theme') || 'dark';
-  const next = current === 'dark' ? 'light' : 'dark';
-  root.setAttribute('data-theme', next);
-  localStorage.setItem('mq-theme', next);
+// Función para enviar mensajes (Asegúrate de definirla para que no de error)
+function sendMessage() {
+  const input = document.getElementById('userInput');
+  if (input.value.trim() !== "") {
+    logMessage(input.value, 'msg msg-user');
+    input.value = "";
+    // Aquí conectarías con tu lógica de respuestas triggers
+  }
 }
-(function(){
-  const saved = localStorage.getItem('mq-theme');
-  if(saved) document.documentElement.setAttribute('data-theme', saved);
-})();
 
-
-const [mounted, setMounted] = useState(false);
-useEffect(() => setMounted(true), []);
-if (!mounted) return null; // Evita desajustes de hidratación
+function logMessage(mensaje, tipo = 'msg-bot') {
+  const div = document.createElement('div');
+  div.className = "msg " + tipo;
+  div.innerHTML = mensaje;
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
 
 
 /* =======================
