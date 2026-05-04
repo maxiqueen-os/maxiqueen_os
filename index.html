@@ -393,6 +393,34 @@ html,body{
 .mq-chat-header {
   cursor: pointer; /* Para que el usuario sepa que puede hacer clic ahí */
 }
+
+/* Contenedor de sugerencias */
+.mq-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(0, 255, 0, 0.1);
+}
+
+/* Botones de sugerencia */
+.suggestion-btn {
+  background: #1a1f26;
+  color: #00ff00; /* Verde neón para resaltar */
+  border: 1px solid #00ff00;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.suggestion-btn:hover {
+  background: #00ff00;
+  color: #000;
+  transform: translateY(-2px);
+}
    
 </style>
 
@@ -1506,6 +1534,17 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
 
   
   <!-- ================= CHAT FLOATING ================= -->
+
+<div class="mq-chat" id="chatBox">
+  <div id="suggestionsContainer" class="mq-suggestions" style="display:none;">
+    </div>
+
+  <div class="mq-chat-input">
+    <input type="text" id="userInput" placeholder="Maxiqueen OS te atiende..." />
+    <button onclick="sendMessage()">Enviar</button>
+  </div>
+</div>
+
 <div id="mq-chat" class="mq-chat-trigger hero-avatar" onclick="toggleChat()">
    <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088797/MQ_OS_maxiqueen-avatar_hiywqu.png" class="avatar-glow">
 </div>
@@ -1531,6 +1570,33 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
     <button onclick="sendMessage()" style="background:var(--mq-gold); border:none; padding:8px 15px; border-radius:10px; cursor:pointer; font-weight:bold;">Enviar</button>
   </div>
 </div>
+
+// Función para mostrar sugerencias
+function showSuggestions(options) {
+  const container = document.getElementById('suggestionsContainer');
+  container.innerHTML = ''; // Limpiar anteriores
+  
+  if (options && options.length > 0) {
+    container.style.display = 'flex';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'suggestion-btn';
+      btn.textContent = opt;
+      btn.onclick = () => handleSuggestionClick(opt);
+      container.appendChild(btn);
+    });
+  } else {
+    container.style.display = 'none';
+  }
+}
+
+// Lo que pasa cuando tocas una sugerencia
+function handleSuggestionClick(text) {
+  document.getElementById('userInput').value = text;
+  sendMessage(); // Envía el texto automáticamente
+  document.getElementById('suggestionsContainer').style.display = 'none';
+}
+
 
 <script>
 
@@ -2341,6 +2407,26 @@ Entonces dime:
 `
   }
 ];
+
+/* =========================
+   📦 RESPUESTAS BASE
+========================= */
+const triggers = {
+  sistema: {
+    // ... otros triggers ...
+    comoFunciona: `
+👑 **¿Cómo funciona MaxiQueen OS?**
+
+Funciona en capas:
+1️⃣ **Conversación** → te escucho
+2️⃣ **Diagnóstico** → entiendo tu situación
+3️⃣ **Estructura** → ordenamos ideas
+4️⃣ **Sistema** → construimos algo estable
+5️⃣ **Acompañamiento** → no te dejo solo
+
+¿Por dónde prefieres empezar? 👀
+`, 
+// ... resto de los triggers ...
 
 /* =========================
    🧠 MOTOR DE CONTEXTO
