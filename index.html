@@ -1571,32 +1571,6 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
   </div>
 </div>
 
-// Función para mostrar sugerencias
-function showSuggestions(options) {
-  const container = document.getElementById('suggestionsContainer');
-  container.innerHTML = ''; // Limpiar anteriores
-  
-  if (options && options.length > 0) {
-    container.style.display = 'flex';
-    options.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.className = 'suggestion-btn';
-      btn.textContent = opt;
-      btn.onclick = () => handleSuggestionClick(opt);
-      container.appendChild(btn);
-    });
-  } else {
-    container.style.display = 'none';
-  }
-}
-
-// Lo que pasa cuando tocas una sugerencia
-function handleSuggestionClick(text) {
-  document.getElementById('userInput').value = text;
-  sendMessage(); // Envía el texto automáticamente
-  document.getElementById('suggestionsContainer').style.display = 'none';
-}
-
 
 <script>
 
