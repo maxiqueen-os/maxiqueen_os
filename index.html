@@ -1583,15 +1583,17 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
 
 
 <script>
-
 /* =========================
    CONTROLES DE VENTANA (UI)
 ========================= */
+// 1. Declaramos las variables una sola vez al principio
 const chatBox = document.getElementById('chatBox');
 const chatLog = document.getElementById('chatLog');
+const userInput = document.getElementById('userInput'); // Cambiado a userInput para coincidir con tu ID
+const acceptMQ = document.getElementById('acceptMQ');
+const continueMQ = document.getElementById('continueMQ');
 
 function toggleChat() {
-  // Asegúrate de que solo exista UN id="chatBox" en tu HTML
   if (chatBox.style.display === "none" || chatBox.style.display === "") {
     chatBox.style.display = "flex";
     chatBox.classList.remove('minimized');
@@ -1604,7 +1606,7 @@ function toggleMinimize() {
   chatBox.classList.toggle('minimized');
   const body = document.querySelector('.mq-chat-body');
   const inputArea = document.querySelector('.mq-chat-input');
-  
+
   if (chatBox.classList.contains('minimized')) {
     body.style.display = "none";
     inputArea.style.display = "none";
@@ -1614,13 +1616,11 @@ function toggleMinimize() {
   }
 }
 
-// Función para enviar mensajes (Asegúrate de definirla para que no de error)
 function sendMessage() {
   const input = document.getElementById('userInput');
   if (input.value.trim() !== "") {
-    logMessage(input.value, 'msg msg-user');
+    logMessage(input.value, 'msg-user'); // Cambiado para que use tu clase
     input.value = "";
-    // Aquí conectarías con tu lógica de respuestas triggers
   }
 }
 
@@ -1632,55 +1632,30 @@ function logMessage(mensaje, tipo = 'msg-bot') {
   chatLog.scrollTop = chatLog.scrollHeight;
 }
 
-
 /* =======================
-   LIGHTBOX
+   LICENCIA CHECK (CORREGIDO)
 ======================= */
-const lightbox = document.getElementById('lightbox');
-const lightboxContent = document.getElementById('lightboxContent');
-
-function openLightbox(src){
-  lightboxContent.innerHTML = `<img src="${src}" class="w-full rounded-2xl shadow-xl" alt="">`;
-  lightbox.classList.remove('hidden');
-  lightbox.classList.add('flex');
-}
-function closeLightbox(){
-  lightbox.classList.add('hidden');
-  lightbox.classList.remove('flex');
-}
-lightbox.addEventListener('click', e => {
-  if(e.target === lightbox) closeLightbox();
-});
-
-
-/* =======================
-   LICENCIA CHECK
-======================= */
-const acceptMQ = document.getElementById('acceptMQ');
-const continueMQ = document.getElementById('continueMQ');
 if(acceptMQ){
   acceptMQ.addEventListener('change', () => {
     continueMQ.disabled = !acceptMQ.checked;
   });
 }
-continueMQ.addEventListener('click', () => {
-  if(acceptMQ.checked){
-    // Guardar aceptación en sessionStorage
-    sessionStorage.setItem('mq-accepted-license', 'true');
-    // Aquí puedes redirigir o activar el sistema
-    alert("✅ Licencia aceptada. Entrando al sistema...");
-    // Ejemplo: mostrar chat o desbloquear contenido
-    document.getElementById('chatBox').style.display = 'flex';
-    // Puedes ocultar la sección de licencia si quieres
-    document.querySelector('.mq-license-box').style.display = 'none';
-  }
-});
 
-const chatLog = document.getElementById('chatLog');
-const input = document.getElementById('userInput');
+if(continueMQ){
+  continueMQ.addEventListener('click', () => {
+    if(acceptMQ.checked){
+      sessionStorage.setItem('mq-accepted-license', 'true');
+      alert("✅ Licencia aceptada. Entrando al sistema...");
+      
+      // Acciones para mostrar el chat
+      chatBox.style.display = 'flex'; 
+      document.querySelector('.mq-license-box').style.display = 'none';
+    }
+  });
+}
 
 /* =========================
-   🧠 ESTADO GLOBAL
+   🧠 ESTADO GLOBAL Y LÓGICA (RESTO DEL CÓDIGO)
 ========================= */
 let state = {
   flujo: null,      
@@ -1689,6 +1664,7 @@ let state = {
   tema: null,
   ultimaPregunta: null
 };
+ 
 
 function logMessage(mensaje, tipo='sistema'){
   const div = document.createElement('div');
