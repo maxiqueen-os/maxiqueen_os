@@ -2,7 +2,7 @@
 title: MaxiQueen OS v2
 emoji: 👑
 colorFrom: purple
-colorTo: black
+colorTo: gray
 sdk: docker
 app_port: 8000
 pinned: false
