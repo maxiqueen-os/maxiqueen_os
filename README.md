@@ -1,6 +1,6 @@
 ---
 title: MaxiQueen OS v2
-emoji: ??
+emoji: ðŸ‘‘
 colorFrom: purple
 colorTo: black
 sdk: docker
@@ -8,4 +8,4 @@ pinned: false
 ---
 
 # MaxiQueen OS v2
-Ecosistema digital de automatización y gestión.
+Ecosistema digital de automatizaciÃ³n y gestiÃ³n.
