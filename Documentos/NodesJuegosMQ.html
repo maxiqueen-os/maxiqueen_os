@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxiQueen OS | Cyber Hub 30</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --bg: #050505;
+            --panel: rgba(20, 20, 25, 0.9);
+            --card-bg: rgba(30, 30, 40, 0.6);
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            background-image: 
+                radial-gradient(circle at 50% 50%, #1e1e2e 0%, #050505 100%),
+                linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* --- SECCIÓN CLICKER (CORE) --- */
+        .game-container {
+            position: relative;
+            text-align: center;
+            padding: 30px;
+            border-radius: 30px;
+            background: var(--panel);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 242, 255, 0.1);
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 18px;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+            margin: 0 0 20px 0;
+        }
+
+        .stats { margin-bottom: 10px; font-weight: bold; font-size: 14px; }
+
+        .core-btn {
+            width: 100px;
+            height: 100px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(145deg, var(--secondary), var(--primary));
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 0 30px var(--secondary);
+            transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px auto;
+        }
+        .core-btn::after { content: "XP"; font-weight: bold; font-size: 20px; }
+        .core-btn:active { transform: scale(0.85); box-shadow: 0 0 50px var(--primary); }
+
+        .xp-bar {
+            width: 100%;
+            height: 10px;
+            background: #111;
+            border-radius: 20px;
+            padding: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .xp-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            border-radius: 20px;
+            box-shadow: 0 0 15px var(--primary);
+            transition: width 0.3s ease-out;
+        }
+
+        /* --- SECCIÓN HUB (30 BOTONES) --- */
+        .hub-title-container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+            padding-left: 15px;
+        }
+
+        .hub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-width: 900px;
+            padding-bottom: 50px;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card:hover {
+            background: rgba(112, 0, 255, 0.2);
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 242, 255, 0.2);
+        }
+
+        .game-card.empty {
+            opacity: 0.3;
+            border-style: dashed;
+            cursor: default;
+        }
+
+        .badge {
+            font-size: 0.6rem;
+            background: var(--secondary);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            align-self: flex-start;
+            text-transform: uppercase;
+        }
+
+        .game-card-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .game-card-id {
+            font-family: monospace;
+            color: var(--primary);
+            font-size: 0.7rem;
+        }
+
+        /* Efectos de Clicker */
+        .particle { position: absolute; background: var(--primary); pointer-events: none; border-radius: 50%; z-index: 100; }
+        .floating-text { position: absolute; pointer-events: none; font-weight: bold; color: var(--primary); animation: riseFade 0.8s ease-out forwards; z-index: 100; }
+        @keyframes riseFade { to { transform: translateY(-100px) scale(1.5); opacity: 0; } }
+
+        @media (max-width: 480px) {
+            .hub-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CORE GAME -->
+    <div class="game-container">
+        <h1>MaxiQueen Core</h1>
+        <div class="stats">SYNC: <span id="xp">0</span> / <span id="nextLevel">100</span></div>
+        <div class="xp-bar"><div class="xp-fill" id="xpBar"></div></div>
+        <button class="core-btn" id="mainBtn"></button>
+        <div style="font-size: 20px; text-shadow: 0 0 10px var(--primary);">RANK: <span id="level">1</span></div>
+    </div>
+
+    <!-- HUB DE 30 JUEGOS -->
+    <div class="hub-title-container">
+        <div style="text-transform: uppercase; letter-spacing: 2px; font-weight: bold;">Librería de Sistemas</div>
+        <div style="color: var(--primary); font-size: 0.8rem;">30 SLOTS DETECTADOS</div>
+    </div>
+
+    <div class="hub-grid" id="hubGrid">
+        <!-- Generado por JS -->
+    </div>
+
+<script>
+
+    
+    // --- LÓGICA DEL HUB ---
+    const myGames = [
+        { id: "MQ-01", name: "Cyber Clicker Core", status: "ONLINE", link: "#" },
+        { id: "MQ-02", name: "Fut_MQ_Reflex 5", status: "PATCHED", link: "https://juegos-maxi-queen-os.vercel.app/rojo-play3.html" },
+        { id: "MQ-03", name: "Play_Senc_Click", status: "STABLE", link: "https://juegos-maxi-queen-os.vercel.app/click4.html" },
+        { id: "MQ-04", name: "Derrumba Torres", status: "STABLE", link: "https://juegos-maxi-queen-os.vercel.app/play-inicial.html" },
+        { id: "MQ-05", name: "Cuadro Niveles", status: "STABLE", link: "https://juegos-maxi-queen-os.vercel.app/cuadro-play1.html" },
+        { id: "MQ-06", name: "Agent MQ Hub Imagen", status: "BETA", link: "Pan_Con_Hub_OS1.png" },
+        { id: "MQ-07", name: "Agent MQ play 28", status: "BETA", link: "play28.html" },
+        { id: "MQ-08", name: "Agent MQ 11", status: "BETA", link: "https://maxiqueen-os.vercel.app/playTorresMQ.html" },
+        { id: "MQ-09", name: "Agent MQ 11", status: "BETA", link: "https://maxiqueen-os.vercel.app/play31.html" },
+        { id: "MQ-10", name: "Agent MQ 11", status: "BETA", link: "https://maxiqueen-os.vercel.app/play30.html" },
+        { id: "MQ-11", name: "Agent MQ 11", status: "BETA", link: "https://maxiqueen-os.vercel.app/play27.html" },
+        { id: "MQ-12", name: "Agent MQ 11", status: "BETA", link: "https://juegos-maxi-queen-os.vercel.app/play12.html" },
+        { id: "MQ-13", name: "Agent MQ 11", status: "BETA", link: "https://juegos-maxi-queen-os.vercel.app/play13.html" },
+        { id: "MQ-14", name: "Agent MQ 11", status: "BETA", link: "https://juegos-maxi-queen-os.vercel.app/play14.html" },
+        { id: "MQ-15", name: "Agent MQ 11", status: "BETA", link: "https://juegos-maxi-queen-os.vercel.app/play15.html" },
+    ];
+
+    function initHub() {
+        const grid = document.getElementById('hubGrid');
+        grid.innerHTML = '';
+
+        for (let i = 1; i <= 30; i++) {
+            const padId = i.toString().padStart(2, '0');
+            const game = myGames.find(g => g.id === `MQ-${padId}`);
+
+            if (game) {
+                grid.innerHTML += `
+                    <a href="${game.link}" class="game-card">
+                        <span class="game-card-id">${game.id}</span>
+                        <span class="badge">${game.status}</span>
+                        <span class="game-card-name">${game.name}</span>
+                    </a>
+                `;
+            } else {
+                grid.innerHTML += `
+                    <div class="game-card empty">
+                        <span class="game-card-id">MQ-${padId}</span>
+                        <span class="game-card-name">Empty Slot</span>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    // --- LÓGICA DEL CLICKER (TU CÓDIGO) ---
+    let xp = 0;
+    let level = 1;
+    let xpNeeded = 100;
+
+    const mainBtn = document.getElementById('mainBtn');
+
+    function createParticle(x, y) {
+        for(let i=0; i<5; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            document.body.appendChild(p);
+            const size = Math.random() * 8 + 2;
+            p.style.width = `${size}px`;
+            p.style.height = `${size}px`;
+            p.style.left = `${x}px`;
+            p.style.top = `${y}px`;
+            const destX = (Math.random() - 0.5) * 200;
+            const destY = (Math.random() - 0.5) * 200;
+            p.animate([
+                { transform: 'translate(0, 0)', opacity: 1 },
+                { transform: `translate(${destX}px, ${destY}px)`, opacity: 0 }
+            ], { duration: 1000, easing: 'cubic-bezier(0, .9, .57, 1)' }).onfinish = () => p.remove();
+        }
+    }
+
+    function showText(x, y) {
+        const txt = document.createElement('div');
+        txt.className = 'floating-text';
+        txt.innerText = `+${level} XP`;
+        txt.style.left = `${x}px`;
+        txt.style.top = `${y}px`;
+        document.body.appendChild(txt);
+        setTimeout(() => txt.remove(), 800);
+    }
+
+    function levelUp() {
+        level++;
+        xp = 0;
+        xpNeeded = Math.floor(xpNeeded * 1.3);
+        document.body.style.backgroundColor = "var(--primary)";
+        setTimeout(() => document.body.style.backgroundColor = "var(--bg)", 100);
+        
+        // Efecto visual en el botón principal
+        mainBtn.style.transform = "scale(1.5)";
+        setTimeout(() => mainBtn.style.transform = "scale(1)", 200);
+    }
+
+    mainBtn.addEventListener('click', (e) => {
+        xp += level;
+        createParticle(e.clientX, e.clientY);
+        showText(e.clientX, e.clientY);
+        if (xp >= xpNeeded) levelUp();
+        updateUI();
+    });
+
+    function updateUI() {
+        document.getElementById("xp").innerText = Math.floor(xp);
+        document.getElementById("nextLevel").innerText = xpNeeded;
+        document.getElementById("level").innerText = level;
+        let percent = (xp / xpNeeded) * 100;
+        document.getElementById("xpBar").style.width = percent + "%";
+    }
+
+    initHub();
+    updateUI();
+</script>
+
+</body>
+</html>

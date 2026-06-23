@@ -1,0 +1,9 @@
+/MAXIQUEEN_OS_OFFICIAL/
+ └── 6_AUTOMATION/
+     └── MAXIQUEEN_AI/
+         ├── TRAINING_PROTOCOL/
+         │   └── ENTRENAMIENTO_COGNITIVO_REAL_v1.md
+         ├── THINKING_MODEL.md
+         ├── RESPONSE_ENGINE.md
+         ├── MEMORY_SYSTEM.md
+         └── REASONING_ENGINE.md

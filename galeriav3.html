@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxiQueen OS | Hub Omnicanal de Activos (Soberano)</title>
+    <style>
+        :root {
+            --bg-deep: #030712;
+            --glass-bg: rgba(15, 23, 42, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            
+            /* Paleta Neón Identidad Colombia */
+            --neon-yellow: #facc15; 
+            --neon-blue: #3b82f6;   
+            --neon-red: #ef4444;    
+            
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: radial-gradient(circle at top, #091e3a, var(--bg-deep));
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* BARRA LATERAL (Sidebar) */
+        .sidebar {
+            width: 280px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-right: 1px solid var(--glass-border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .brand-container { text-align: center; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .brand-container h2 { font-size: 1.4rem; font-weight: 800; color: var(--neon-yellow); text-shadow: 0 0 10px rgba(250, 204, 21, 0.3); letter-spacing: 1px; }
+        .brand-container p { font-size: 0.75rem; color: var(--neon-blue); text-transform: uppercase; margin-top: 4px; font-weight: 600; }
+
+        .menu-categorias { list-style: none; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; flex-grow: 1; }
+        .menu-categorias li {
+            padding: 14px 16px; cursor: pointer; border-radius: 12px;
+            background: rgba(255, 255, 255, 0.02); border: 1px solid transparent;
+            transition: all 0.3s; display: flex; align-items: center; font-size: 0.95rem;
+        }
+        .menu-categorias li:hover { background: rgba(59, 130, 246, 0.1); border-color: var(--neon-blue); transform: translateX(4px); }
+        .menu-categorias li.active { background: rgba(250, 204, 21, 0.15); border-color: var(--neon-yellow); color: var(--neon-yellow); font-weight: 600; }
+
+        /* CONTENEDOR PRINCIPAL */
+        .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 32px; }
+        header h1 { font-size: 2.2rem; font-weight: 700; }
+        header p { color: var(--text-muted); margin-top: 6px; font-size: 1rem; }
+
+        /* FILTROS SECUNDARIOS */
+        .subfilters-bar { display: flex; gap: 12px; flex-wrap: wrap; background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: 14px; border: 1px solid var(--glass-border); }
+        .subfilter-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid transparent; color: var(--text-main); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; }
+        .subfilter-btn:hover { background: rgba(255, 255, 255, 0.1); }
+        .subfilter-btn.active { background: var(--text-main); color: var(--bg-deep); font-weight: 600; }
+
+        /* REJILLA DE LA GALERÍA */
+        .gallery-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 24px; 
+        }
+        
+        .asset-card { 
+            background: var(--glass-bg); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 16px; 
+            overflow: hidden; 
+            transition: transform 0.3s ease; 
+            position: relative; 
+        }
+        .asset-card:hover { 
+            transform: translateY(-6px) scale(1.02); 
+            border-color: var(--neon-blue); 
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.25); 
+        }
+        
+        .image-wrapper { width: 100%; height: 200px; overflow: hidden; background: #000; position: relative; }
+        .image-wrapper img, .image-wrapper video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.5s; 
+        }
+        
+        /* Solo hacemos zoom a las imágenes, no a los videos para no dañar los controles */
+        .asset-card:hover .image-wrapper img { transform: scale(1.08); }
+        
+        .asset-badge { 
+            position: absolute; 
+            top: 12px; right: 12px; 
+            background: rgba(0, 0, 0, 0.75); 
+            backdrop-filter: blur(4px); 
+            border: 1px solid var(--neon-yellow); 
+            color: var(--neon-yellow); 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-size: 0.7rem; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            z-index: 5;
+        }
+        
+        .asset-info { padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+        .asset-title { font-size: 0.95rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .asset-meta { font-size: 0.75rem; color: var(--text-muted); display: flex; justify-content: space-between; }
+        
+        /* BOTÓN DE ACCIÓN */
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .action-btn { 
+            flex: 1;
+            background: rgba(59, 130, 246, 0.2); 
+            border: 1px solid var(--neon-blue); 
+            color: var(--neon-blue); 
+            padding: 8px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 0.8rem; 
+            font-weight: bold; 
+            transition: all 0.2s; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .action-btn:hover { background: var(--neon-blue); color: #fff; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="brand-container">
+            <h2>👑 MAXIQUEEN OS</h2>
+            <p>Infraestructura Soberana</p>
+        </div>
+        <ul class="menu-categorias" id="sidebar-menu">
+            <li class="active" onclick="switchCategory('todos', this)">🌐 Todos los Activos</li>
+            <li onclick="switchCategory('dibujos', this)">🎨 Dibujos y Cómics</li>
+            <li onclick="switchCategory('backend', this)">🖥️ Backend e Interfaces</li>
+            <li onclick="switchCategory('catalogo', this)">📁 Catálogo de Productos</li>
+            <li onclick="switchCategory('ropa', this)">👕 Ropa y Branding</li>
+            <!-- Se ha añadido la categoría para videos y animaciones -->
+            <li onclick="switchCategory('animaciones', this)">🎬 Animaciones y Videos</li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header>
+            <h1 id="main-title">Directorio Maestro de Activos</h1>
+            <p id="main-desc">Repositorio de solo lectura conectado directamente a tus archivos en Vercel/GitHub.</p>
+        </header>
+
+        <section class="subfilters-bar" id="subfilters-container">
+            <button class="subfilter-btn active" onclick="filterSubcategory('todos', this)">Mostrar Todo</button>
+            <button class="subfilter-btn" onclick="filterSubcategory('h5-games', this)">H5 Games</button>
+            <button class="subfilter-btn" onclick="filterSubcategory('ui-core', this)">UI Core</button>
+            <button class="subfilter-btn" onclick="filterSubcategory('originals', this)">Originales</button>
+        </section>
+
+        <div class="gallery-grid" id="master-gallery"></div>
+    </main>
+
+    <script>
+        const BACKEND_URL = 'https://backend-maxi-queen-os.vercel.app';
+        const ASSETS_PATH = `${BACKEND_URL}/assets`;
+
+        let currentCategory = 'todos';
+        let currentSubcategory = 'todos';
+
+        // Arreglo unificado de activos
+        const MIS_ACTIVOS_EN_GITHUB = [
+            // --- DIBUJOS Y CÓMICS ---
+            { filename: 'MQ_OS_Ayuda_Comic_Ladron.png', category: 'dibujos', subcategory: 'originals', label: 'Ayuda Cómic Ladrón' },
+            { filename: 'MQ_OS_Comic_Ladrona_PT2.png', category: 'dibujos', subcategory: 'originals', label: 'Cómic Ladrona PT2' },
+            { filename: 'MQ_OS_Comic_Ladrona_tios_PT3.png', category: 'dibujos', subcategory: 'originals', label: 'Cómic Ladrona Tíos PT3' },
+            { filename: 'MQ_OS_Matrimonio_Ladrones.png', category: 'dibujos', subcategory: 'originals', label: 'Matrimonio Ladrones' },
+            { filename: 'MQ_OS_Matrimonio_Ladrones pt2.png', category: 'dibujos', subcategory: 'originals', label: 'Matrimonio Ladrones PT2' },
+            { filename: 'MQ_OS_Matrimonio_Ladrones Pt3.png', category: 'dibujos', subcategory: 'originals', label: 'Matrimonio Ladrones PT3' },
+            { filename: 'MQ_OS_Casa_Humilde.png', category: 'dibujos', subcategory: 'originals', label: 'Casa Humilde' },
+            { filename: 'MQ_OS_Imagen_IA_Joven_Adult.png', category: 'dibujos', subcategory: 'originals', label: 'Imagen IA Joven Adulto' },
+            { filename: 'MQ_OS_Imagen_IA_Joven_Adult (2).png', category: 'dibujos', subcategory: 'originals', label: 'Imagen IA Joven Adulto 2' },
+            { filename: 'ChatGPT Image 31 ene 2026, 11_53_29 p.m..png', category: 'dibujos', subcategory: 'originals', label: 'ChatGPT Image Generada' },
+
+            // --- BRANDING, LOGOS Y ROPA ---
+            { filename: 'MAXIQUEEN_LOGO.png', category: 'ropa', subcategory: 'ui-core', label: 'Logo Oficial MaxiQueen' },
+            { filename: 'maxiqueen-logo.png', category: 'ropa', subcategory: 'ui-core', label: 'MaxiQueen Logo Web' },
+            { filename: 'MQ_OS_LOGO_Avatar.png', category: 'ropa', subcategory: 'ui-core', label: 'Logo Avatar' },
+            { filename: 'MQ_OS_Logo_Avatar_Dorado.png', category: 'ropa', subcategory: 'ui-core', label: 'Logo Avatar Dorado' },
+            { filename: 'MQ_OS_Logo_Avatar_Dorado (2).png', category: 'ropa', subcategory: 'ui-core', label: 'Logo Avatar Dorado 2' },
+            { filename: 'mq-avatar.png', category: 'ropa', subcategory: 'ui-core', label: 'MQ Avatar' },
+            { filename: 'mq-avatar-medium.png', category: 'ropa', subcategory: 'ui-core', label: 'MQ Avatar Medium' },
+            { filename: 'MQ_OS_maxiqueen-avatar.png', category: 'ropa', subcategory: 'ui-core', label: 'MaxiQueen Avatar OS' },
+            { filename: 'MQ_OS_Emoji.png', category: 'ropa', subcategory: 'ui-core', label: 'Emoji OS' },
+            { filename: 'MQ_OS_Emoji (2).png', category: 'ropa', subcategory: 'ui-core', label: 'Emoji OS 2' },
+            { filename: 'MQ_OS_Emojis_Tam_Med.png', category: 'ropa', subcategory: 'ui-core', label: 'Emojis Tamaño Medio' },
+            { filename: 'MQ_OS_MaxiQueen Emoji Pack.png', category: 'ropa', subcategory: 'ui-core', label: 'Emoji Pack Completo' },
+            { filename: 'corona1.png', category: 'ropa', subcategory: 'ui-core', label: 'Corona 1' },
+            { filename: 'add-the-maxiqueen-os-logo-with-the-panther-cat-wea.jpeg', category: 'ropa', subcategory: 'ui-core', label: 'Logo Panther Cat' },
+            { filename: 'add-the-maxiqueen-os-logo-with-the-panther-cat-wea (1).jpeg', category: 'ropa', subcategory: 'ui-core', label: 'Logo Panther Cat 2' },
+
+            // --- BACKEND, DASHBOARDS E INTERFACES ---
+            { filename: 'ECOSISTEMA_MAXIQUEEN_OS_CLOUD.png', category: 'backend', subcategory: 'ui-core', label: 'Ecosistema MaxiQueen Cloud' },
+            { filename: 'Eco_Sistema_Cloud.png', category: 'backend', subcategory: 'ui-core', label: 'Eco Sistema Cloud' },
+            { filename: 'Cloud_Maxiqueen.png', category: 'backend', subcategory: 'ui-core', label: 'Cloud MaxiQueen' },
+            { filename: 'Maxiqueen Cloud Ecosystem.png', category: 'backend', subcategory: 'ui-core', label: 'Cloud Ecosystem Diagram' },
+            { filename: 'mq-cloud-ecosystem.png', category: 'backend', subcategory: 'ui-core', label: 'MQ Cloud Ecosystem' },
+            { filename: 'Max_Cloud_Eco_sis.png', category: 'backend', subcategory: 'ui-core', label: 'Max Cloud Ecosis' },
+            { filename: 'Maxi_Cloud_40%.png', category: 'backend', subcategory: 'ui-core', label: 'Maxi Cloud 40%' },
+            { filename: 'MQ_OS_Cloud_Ecosystem.png', category: 'backend', subcategory: 'ui-core', label: 'OS Cloud Ecosystem' },
+            { filename: 'MQ_OS_Arquitectura_CORE_Incompl.png', category: 'backend', subcategory: 'ui-core', label: 'Arquitectura CORE' },
+            { filename: 'mq-core-architecture.png', category: 'backend', subcategory: 'ui-core', label: 'MQ Core Architecture' },
+            { filename: 'MQ_OS_Cloud_ChatDashbooard.png', category: 'backend', subcategory: 'ui-core', label: 'Cloud Chat Dashboard' },
+            { filename: 'mq-cloud-chat-dashboard.png', category: 'backend', subcategory: 'ui-core', label: 'MQ Cloud Chat Dashboard' },
+            { filename: 'Queen_Das_SaaS_Cloud.png', category: 'backend', subcategory: 'ui-core', label: 'Queen Dash SaaS Cloud' },
+            { filename: 'MQ_OS_HubSpotBasicoPanel de control.png', category: 'backend', subcategory: 'ui-core', label: 'Panel Control HubSpot' },
+            { filename: 'Panel_control_HubSpot.png', category: 'backend', subcategory: 'ui-core', label: 'Panel Control HubSpot Base' },
+            { filename: 'mq-hubspot-panel.png', category: 'backend', subcategory: 'ui-core', label: 'MQ HubSpot Panel' },
+            { filename: 'Pan_Con_Hub_OS1.png', category: 'backend', subcategory: 'ui-core', label: 'Panel Con Hub OS1' },
+            { filename: 'Pan_Con_Hub_OS2.png', category: 'backend', subcategory: 'ui-core', label: 'Panel Con Hub OS2' },
+            { filename: 'MAXIQUEEN 04022026 AUDITORIA.png', category: 'backend', subcategory: 'ui-core', label: 'Auditoría 04022026' },
+            { filename: 'MAXIQUEEN v1 04022026 AUDITORIA.png', category: 'backend', subcategory: 'ui-core', label: 'Auditoría v1 04022026' },
+            { filename: 'Maxiqueen_04_02.png', category: 'backend', subcategory: 'ui-core', label: 'MaxiQueen 04/02' },
+            { filename: 'MQ_OS_Methos Product line V1.png', category: 'backend', subcategory: 'ui-core', label: 'Methos Product Line V1' },
+            
+            // --- MÓDULOS DEL SISTEMA ---
+            { filename: 'MQ_OS_Modulos_Crea_Soc_Med_Web.png', category: 'backend', subcategory: 'ui-core', label: 'Módulos Crea Soc Med Web' },
+            { filename: 'MQ_OS_Modulo_Automatizacion.png', category: 'backend', subcategory: 'ui-core', label: 'Módulo Automatización' },
+            { filename: 'modulo-automatizacion.png', category: 'backend', subcategory: 'ui-core', label: 'Módulo Automatización Base' },
+            { filename: 'mq-module-automation.png', category: 'backend', subcategory: 'ui-core', label: 'MQ Module Automation' },
+            { filename: 'MQ_OS_Modulo_Automa_Hosting.png', category: 'backend', subcategory: 'ui-core', label: 'Módulo Automa Hosting' },
+            { filename: 'modulo-automatizacion y hosting.png', category: 'backend', subcategory: 'ui-core', label: 'Automatización y Hosting' },
+            { filename: 'modulo-automatizacion_ hosting.png', category: 'backend', subcategory: 'ui-core', label: 'Automatización _ Hosting' },
+            { filename: 'mq-module-automation-hosting.png', category: 'backend', subcategory: 'ui-core', label: 'MQ Module Automation Hosting' },
+            { filename: 'MQ_OS_Modulo_Creativo.png', category: 'backend', subcategory: 'ui-core', label: 'Módulo Creativo' },
+            { filename: 'modulo-creativo.png', category: 'backend', subcategory: 'ui-core', label: 'Módulo Creativo Base' },
+            { filename: 'mq-module-creative.png', category: 'backend', subcategory: 'ui-core', label: 'MQ Module Creative' },
+            { filename: 'MQ_OS_Modulo_Creativo_Social.png', category: 'backend', subcategory: 'ui-core', label: 'Módulo Creativo Social' },
+            { filename: 'modulo-social.png', category: 'backend', subcategory: 'ui-core', label: 'Módulo Social' },
+            { filename: 'mq-module-social.png', category: 'backend', subcategory: 'ui-core', label: 'MQ Module Social' },
+            { filename: 'MQ_OS_Modulo_Web.png', category: 'backend', subcategory: 'ui-core', label: 'Módulo Web' },
+            { filename: 'modulo-web.png', category: 'backend', subcategory: 'ui-core', label: 'Módulo Web Base' },
+            { filename: 'mq-module-web.png', category: 'backend', subcategory: 'ui-core', label: 'MQ Module Web' },
+            { filename: 'Modulo de Hosting.png', category: 'backend', subcategory: 'ui-core', label: 'Módulo de Hosting' },
+            { filename: 'modulo-hosting.png', category: 'backend', subcategory: 'ui-core', label: 'Módulo Hosting Base' },
+            { filename: 'mq-module-hosting.png', category: 'backend', subcategory: 'ui-core', label: 'MQ Module Hosting' },
+
+            // --- ANIMACIONES Y VIDEOS (.MP4) ---
+            { filename: 'ComicFamilia.mp4', category: 'animaciones', subcategory: 'originals', label: 'Video Cómic Familia' },
+            { filename: 'logo_avatar.mp4', category: 'animaciones', subcategory: 'originals', label: 'Logo Avatar Animado' },
+            { filename: 'logo_avatar2.mp4', category: 'animaciones', subcategory: 'originals', label: 'Logo Avatar Animado 2' },
+            { filename: 'anime_logo.mp4', category: 'animaciones', subcategory: 'originals', label: 'Anime Logo Animado' },
+            { filename: 'animate.mp4', category: 'animaciones', subcategory: 'originals', label: 'Animación Base' },
+            { filename: 'animate-with-subtle-elegant-motion-exactly-like-mo.mp4', category: 'animaciones', subcategory: 'originals', label: 'Motion Elegante 1' },
+            { filename: 'animate-with-subtle-elegant-motion-exactly-like-mo (1).mp4', category: 'animaciones', subcategory: 'originals', label: 'Motion Elegante 2' },
+            { filename: 'animate-with-subtle-elegant-motion-exactly-like-mo (2).mp4', category: 'animaciones', subcategory: 'originals', label: 'Motion Elegante 3' },
+            { filename: 'animate-with-subtle-elegant-motion-exactly-like-mo (3).mp4', category: 'animaciones', subcategory: 'originals', label: 'Motion Elegante 4' },
+            { filename: 'animate-with-subtle-elegant-motion-exactly-like-mo (4).mp4', category: 'animaciones', subcategory: 'originals', label: 'Motion Elegante 5' },
+            { filename: 'animate-with-subtle-elegant-motion-for-website-her.mp4', category: 'animaciones', subcategory: 'originals', label: 'Animación Website Hero' },
+            { filename: 'animate-with-subtle-elegant-motion-soft-golden-shi (1).mp4', category: 'animaciones', subcategory: 'originals', label: 'Animación Golden Shine' },
+            
+            // Ráfaga de Videos Cinemáticos (Dark Dig Space)
+            { filename: 'cinematic-video-dark-dig-space-with_1.mp4', category: 'animaciones', subcategory: 'originals', label: 'Cinematic Dark Space 1' },
+            { filename: 'cinematic-video-dark-dig-space-with_2.mp4', category: 'animaciones', subcategory: 'originals', label: 'Cinematic Dark Space 2' },
+            { filename: 'cinematic-video-dark-dig-space-with_3.mp4', category: 'animaciones', subcategory: 'originals', label: 'Cinematic Dark Space 3' },
+            { filename: 'cinematic-video-dark-dig-space-with_4.mp4', category: 'animaciones', subcategory: 'originals', label: 'Cinematic Dark Space 4' },
+            { filename: 'cinematic-video-dark-dig-space-with_5.mp4', category: 'animaciones', subcategory: 'originals', label: 'Cinematic Dark Space 5' }
+            // Agrega los demás de esta lista si lo necesitas aquí, he cortado en el 5 por brevedad, pero puedes pegar del 6 al 31 fácilmente.
+        ];
+
+        document.addEventListener("DOMContentLoaded", renderMasterGallery);
+
+        function switchCategory(cat, element) {
+            document.querySelectorAll('#sidebar-menu li').forEach(li => li.classList.remove('active'));
+            element.classList.add('active');
+            currentCategory = cat;
+            currentSubcategory = 'todos'; 
+            document.querySelectorAll('#subfilters-container .subfilter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('#subfilters-container .subfilter-btn').classList.add('active');
+            document.getElementById('main-title').innerText = `Rama: ${cat.toUpperCase()}`;
+            renderMasterGallery();
+        }
+
+        function filterSubcategory(subcat, element) {
+            document.querySelectorAll('#subfilters-container .subfilter-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            currentSubcategory = subcat;
+            renderMasterGallery();
+        }
+
+        function renderMasterGallery() {
+            const grid = document.getElementById('master-gallery');
+            grid.innerHTML = "";
+
+            let finalSelection = currentCategory === 'todos' 
+                ? MIS_ACTIVOS_EN_GITHUB 
+                : MIS_ACTIVOS_EN_GITHUB.filter(asset => asset.category === currentCategory);
+
+            if (currentSubcategory !== 'todos') {
+                finalSelection = finalSelection.filter(a => a.subcategory === currentSubcategory);
+            }
+
+            if (finalSelection.length === 0) {
+                grid.innerHTML = "<p style='color: var(--text-muted); grid-column: 1/-1; text-align: center; font-size: 1.2rem; margin-top: 2rem;'>No tienes activos registrados en esta rama.</p>";
+                return;
+            }
+
+            finalSelection.forEach(asset => {
+                const urlReal = `${ASSETS_PATH}/${asset.filename}`;
+                
+                // DETECTAR TIPO DE ARCHIVO AUTOMÁTICAMENTE
+                const format = asset.filename.split('.').pop().toLowerCase();
+                const isVideo = ['mp4', 'webm', 'ogg', 'mov'].includes(format);
+                
+                // Generar contenido multimedia según el tipo
+                const mediaContent = isVideo 
+                    ? `<video controls preload="metadata" src="${urlReal}"></video>`
+                    : `<a href="${urlReal}" target="_blank">
+                           <img src="${urlReal}" alt="${asset.label}" onerror="this.src='https://placehold.co/600x400/1a1a1a/ffffff?text=Error+de+Carga'">
+                       </a>`;
+
+                const card = document.createElement('div');
+                card.className = 'asset-card';
+                card.innerHTML = `
+                    <div class="image-wrapper">
+                        <span class="asset-badge">${asset.subcategory}</span>
+                        ${mediaContent}
+                    </div>
+                    <div class="asset-info">
+                        <div class="asset-title">${asset.label}</div>
+                        <div class="asset-meta">
+                            <span style="color: var(--neon-blue); font-family: monospace; font-weight: bold;">.${format}</span>
+                            <span>${isVideo ? '🎬 Video' : '🖼️ Imagen'}</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-btn" onclick="window.open('${urlReal}', '_blank')">
+                                🔗 Abrir
+                            </button>
+                            <button class="action-btn" onclick="navigator.clipboard.writeText('${urlReal}'); this.innerHTML='¡Copiado!'; setTimeout(()=>this.innerHTML='📋 Copiar', 2000);">
+                                📋 Copiar
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

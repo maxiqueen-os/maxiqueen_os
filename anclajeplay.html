@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Modo Anclaje</title>
+	<style>
+		:root{
+			--bg:#0a0a0a;
+			--fg:#ffffff;
+			--calm:#4fc3f7;
+			--alarm:#ff4d4d;
+			--noise: 0; /* 0..1 */
+		}
+		body{
+			margin:0;
+			font-family: Arial, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+			text-align:center;
+			background:var(--bg);
+			color:var(--fg);
+			overflow:hidden;
+		}
+		#wrap{ padding:24px 16px; }
+		button{
+			padding:14px 16px;
+			font-size:18px;
+			border-radius:12px;
+			border:0;
+			cursor:pointer;
+		}
+		#startBtn{ background:var(--calm); color:#001018; }
+		#hint{ opacity:.85; margin-top:10px; font-size:14px; }
+
+		/* Respiración */
+		#circle{
+			width:110px;
+			height:110px;
+			border-radius:50%;
+			background:var(--calm);
+			margin:40px auto 18px;
+			transform: scale(1);
+			transition: transform 2s ease, opacity .2s ease;
+			display:none;
+		}
+		#phaseLabel{ display:none; opacity:.9; }
+
+		/* Dots */
+		.dot{
+			width:44px;
+			height:44px;
+			background:var(--alarm);
+			border-radius:50%;
+			position:absolute;
+			box-shadow:0 0 18px rgba(255,77,77,.45);
+			cursor:pointer;
+			user-select:none;
+		}
+
+		/* Ruido visual (simple) */
+		#noise{
+			pointer-events:none;
+			position:fixed;
+			inset:0;
+			background:
+				repeating-linear-gradient(
+					0deg,
+					rgba(255,255,255,.06),
+					rgba(255,255,255,.06) 1px,
+					rgba(0,0,0,0) 2px,
+					rgba(0,0,0,0) 4px
+				);
+			opacity: calc(var(--noise) * 0.35);
+			mix-blend-mode: overlay;
+		}
+	</style>
+</head>
+<body>
+	<div id="noise"></div>
+	<div id="wrap">
+		<h1>Modo Anclaje</h1>
+		<button id="startBtn">Estoy mal, empezar</button>
+		<div id="hint">Respira con el círculo. Luego toca 5 puntos para volver.</div>
+
+		<div id="circle"></div>
+		<div id="phaseLabel"></div>
+	</div>
+
+	<script>
+		// Estado simple (1 escena): Inicio -> Respiración -> Puntos -> Fin
+		const state = {
+			phase: "idle", // idle | breathe | dots | done
+			anxiety: 100,
+			intervalId: null,
+			timeoutId: null,
+			cycle: 0,
+			dotsLeft: 0,
+			lastDotClickTs: 0,
+		};
+
+		const ui = {
+			startBtn: document.getElementById("startBtn"),
+			hint: document.getElementById("hint"),
+			circle: document.getElementById("circle"),
+			phaseLabel: document.getElementById("phaseLabel"),
+		};
+
+		function setNoise(value01){
+			const v = Math.max(0, Math.min(1, value01));
+			document.documentElement.style.setProperty("--noise", String(v));
+		}
+
+		function setPhaseLabel(text){
+			ui.phaseLabel.textContent = text;
+			ui.phaseLabel.style.display = text ? "block" : "none";
+		}
+
+		function cleanupTimers(){
+			if(state.intervalId){ clearInterval(state.intervalId); state.intervalId = null; }
+			if(state.timeoutId){ clearTimeout(state.timeoutId); state.timeoutId = null; }
+		}
+
+		function resetScene(){
+			cleanupTimers();
+			document.querySelectorAll(".dot").forEach(d => d.remove());
+			state.phase = "idle";
+			state.anxiety = 100;
+			state.cycle = 0;
+			state.dotsLeft = 0;
+			state.lastDotClickTs = 0;
+
+			ui.startBtn.style.display = "inline-block";
+			ui.hint.style.display = "block";
+			ui.circle.style.display = "none";
+			setPhaseLabel("");
+			setNoise(1);
+		}
+
+		function start(){
+			resetScene();
+			ui.startBtn.style.display = "none";
+			ui.hint.style.display = "none";
+			startBreathing();
+		}
+
+		function startBreathing(){
+			state.phase = "breathe";
+			ui.circle.style.display = "block";
+			setPhaseLabel("Inhala… Exhala…");
+			setNoise(state.anxiety/100);
+
+			let grow = true;
+			state.intervalId = setInterval(() => {
+				ui.circle.style.transform = grow ? "scale(1.9)" : "scale(1)";
+				grow = !grow;
+
+				// Cada “ciclo” (2s) baja un poco la ansiedad
+				state.cycle += 1;
+				state.anxiety = Math.max(60, state.anxiety - 5);
+				setNoise(state.anxiety/100);
+
+				// Tras ~10s (5 ciclos) pasamos a dots
+				if(state.cycle >= 5){
+					cleanupTimers();
+					startDots();
+				}
+			}, 2000);
+		}
+
+		function startDots(){
+			state.phase = "dots";
+			ui.circle.style.display = "none";
+			setPhaseLabel("Toca los puntos (sin apurarte)");
+
+			spawnDots(5);
+		}
+
+		function spawnDots(n){
+			state.dotsLeft = n;
+			for(let i = 0; i < n; i++){
+				const dot = document.createElement("div");
+				dot.className = "dot";
+
+				// Limitar a zona visible segura
+				const top = Math.random() * 70 + 15; // 15..85vh
+				const left = Math.random() * 70 + 15; // 15..85vw
+				dot.style.top = top + "vh";
+				dot.style.left = left + "vw";
+
+				dot.onclick = () => {
+					// Si haces clicks demasiado rápidos, sube un poco el ruido (compulsión)
+					const now = Date.now();
+					const dt = state.lastDotClickTs ? (now - state.lastDotClickTs) : 9999;
+					state.lastDotClickTs = now;
+					if(dt < 250){
+						state.anxiety = Math.min(100, state.anxiety + 3);
+					}
+
+					dot.remove();
+					state.dotsLeft -= 1;
+					state.anxiety = Math.max(0, state.anxiety - 15);
+					setNoise(state.anxiety/100);
+
+					if(state.dotsLeft <= 0){
+						finish();
+					}
+				};
+
+				document.body.appendChild(dot);
+			}
+		}
+
+		function finish(){
+			state.phase = "done";
+			setPhaseLabel("");
+			setNoise(0);
+			setTimeout(() => {
+				alert("Sigues aquí. Bien hecho.");
+				resetScene();
+			}, 150);
+		}
+
+		ui.startBtn.addEventListener("click", start);
+		resetScene();
+	</script>
+</body>
+</html>

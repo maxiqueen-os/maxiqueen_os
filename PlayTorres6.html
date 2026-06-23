@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAXIQUEEN OS • SNAKE PROTOCOL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-green: #00ff66;
+            --neon-purple: #bc13fe;
+            --neon-gold: #ffdb58;
+            --dark-bg: #050a0f;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; }
+
+        body {
+            background: var(--dark-bg);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            align-items: center;
+        }
+
+        /* CABECERA Y HUD */
+        #header {
+            width: 100%;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.8);
+            border-bottom: 2px solid var(--neon-green);
+            flex-shrink: 0; /* No se encoge */
+        }
+
+        .stat { text-align: center; }
+        .stat-label { font-size: 0.6rem; color: var(--neon-green); display: block; }
+        .stat-value { font-size: 1.1rem; font-weight: 900; }
+
+        /* SELECTOR DE AVATARS */
+        #avatar-selector {
+            display: flex;
+            gap: 10px;
+            padding: 8px 15px;
+            width: 100%;
+            overflow-x: auto;
+            background: var(--glass);
+            flex-shrink: 0; /* No se encoge */
+        }
+
+        .avatar-card {
+            min-width: 105px;
+            padding: 6px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .avatar-card.active {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 102, 0.1);
+            transform: scale(1.02);
+        }
+
+        /* ÁREA DE JUEGO DINÁMICA */
+        #game-container {
+            position: relative;
+            flex-grow: 1; /* Absorbe el espacio disponible de forma justa */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, rgba(12,24,33,1) 0%, rgba(5,10,15,1) 100%);
+            overflow: hidden; 
+        }
+
+        canvas {
+            border: 2px solid #1a1a1a;
+            background: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.05);
+        }
+
+        /* CONTROLES MÓVILES GARANTIZADOS */
+        #controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 12px;
+            width: 100%;
+            max-width: 260px;
+            flex-shrink: 0; /* Totalmente blindado contra ocultamiento */
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+
+        .btn-ctrl {
+            height: 50px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid #444;
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .btn-ctrl:active { 
+            background: var(--neon-green); 
+            color: black; 
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        /* OVERLAY GENERAL */
+        #overlay {
+            position: absolute;
+            background: rgba(5, 10, 15, 0.95);
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        #overlay h2 {
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--neon-purple);
+        }
+
+        .btn-start {
+            margin-top: 20px;
+            padding: 15px 40px;
+            background: var(--neon-green);
+            border: none;
+            font-family: 'Orbitron';
+            font-weight: 900;
+            cursor: pointer;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px var(--neon-green);
+            transition: 0.2s;
+        }
+        .btn-start:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <div class="stat"><span class="stat-label">AVATAR</span><span id="current-name" class="stat-value">NEON</span></div>
+    <div class="stat"><span class="stat-label">PUNTOS</span><span id="score-val" class="stat-value">0</span></div>
+    <div class="stat"><span class="stat-label">LEVEL</span><span id="lv-val" class="stat-value">1</span></div>
+</div>
+
+<div id="avatar-selector">
+    <div class="avatar-card active" onclick="selectAvatar('NEON', '#00ff66', 110)" id="av-neon">
+        <div>🟢</div><strong>NEON</strong><p>Estándar</p>
+    </div>
+    <div class="avatar-card" onclick="selectAvatar('PHANTOM', '#bc13fe', 85)" id="av-phantom">
+        <div>🟣</div><strong>PHANTOM</strong><p>Más Veloz</p>
+    </div>
+    <div class="avatar-card" onclick="selectAvatar('ROYAL', '#ffdb58', 140)" id="av-royal">
+        <div>🟡</div><strong>ROYAL</strong><p>Puntos x2</p>
+    </div>
+</div>
+
+<div id="game-container">
+    <canvas id="snakeCanvas"></canvas>
+    <div id="overlay">
+        <h2 id="overlay-title" style="color: var(--neon-green); text-align: center;">MAXIQUEEN OS<br><span style="font-size:0.8rem; color:#fff;">SNAKE PROTOCOL v2.1</span></h2>
+        <button class="btn-start" onclick="initAudioAndStart()">INICIAR PROTOCOLO</button>
+    </div>
+</div>
+
+<div id="controls">
+    <div></div>
+    <button class="btn-ctrl" onpointerdown="setDir('UP')">▲</button>
+    <div></div>
+    
+    <button class="btn-ctrl" onpointerdown="setDir('LEFT')">◀</button>
+    <button class="btn-ctrl" onpointerdown="setDir('DOWN')">▼</button>
+    <button class="btn-ctrl" onpointerdown="setDir('RIGHT')">▶</button>
+</div>
+
+<script>
+    const canvas = document.getElementById('snakeCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const GRID = 20;
+    let width, height, tileCountX, tileCountY;
+    
+    let snake = [];
+    let food = {x: 0, y: 0};
+    let dir = 'RIGHT';
+    let nextDir = 'RIGHT';
+    let score = 0;
+    let level = 1;
+    let gameInterval;
+    let currentAvatar = { name: 'NEON', color: '#00ff66', speed: 110 };
+    let particles = [];
+    let gameStarted = false;
+
+    // AUDIO SINTETIZADO NATIVO
+    let audioCtx = null;
+    
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    function playSound(type) {
+        if (!audioCtx) return;
+        try {
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'eat') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'levelUp') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'gameover') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(40, audioCtx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            }
+        } catch(e) { console.log("Audio falló: ", e); }
+    }
+
+    // LOCUCIÓN DE VOZ DEL SISTEMA
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            let utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.rate = 1.1;
+            utterance.pitch = 0.85; 
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    // AJUSTE AUTO-RESPONSIVO CORREGIDO
+    function resize() {
+        const container = document.getElementById('game-container');
+        let maxWidth = container.clientWidth;
+        let maxHeight = container.clientHeight;
+
+        // Se calcula el tamaño perfecto restando márgenes de seguridad para que nunca empuje otros elementos
+        width = Math.floor((maxWidth * 0.92) / GRID) * GRID;
+        height = Math.floor((maxHeight * 0.92) / GRID) * GRID;
+
+        if(width < 220) width = 220;
+        if(height < 220) height = 220;
+
+        canvas.width = width;
+        canvas.height = height;
+        tileCountX = width / GRID;
+        tileCountY = height / GRID;
+    }
+
+    window.addEventListener('resize', () => {
+        resize();
+        if(gameStarted) draw();
+    });
+
+    function selectAvatar(name, color, speed) {
+        currentAvatar = { name, color, speed };
+        document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('active'));
+        document.getElementById('av-' + name.toLowerCase()).classList.add('active');
+        document.getElementById('current-name').innerText = name;
+        document.getElementById('current-name').style.color = color;
+        speak("Cargando " + name);
+        startGame();
+    }
+
+    function initAudioAndStart() {
+        initAudio();
+        speak("Protocolo activado");
+        startGame();
+    }
+
+    function startGame() {
+        gameStarted = true;
+        resize();
+        
+        snake = [
+            {x: Math.floor(tileCountX/2), y: Math.floor(tileCountY/2)},
+            {x: Math.floor(tileCountX/2)-1, y: Math.floor(tileCountY/2)},
+            {x: Math.floor(tileCountX/2)-2, y: Math.floor(tileCountY/2)}
+        ];
+        
+        dir = 'RIGHT';
+        nextDir = 'RIGHT';
+        score = 0;
+        level = 1;
+        particles = [];
+        
+        document.getElementById('score-val').innerText = score;
+        document.getElementById('lv-val').innerText = level;
+        document.getElementById('overlay').style.display = 'none';
+        
+        spawnFood();
+        if(gameInterval) clearInterval(gameInterval);
+        gameInterval = setInterval(update, currentAvatar.speed);
+    }
+
+    function spawnFood() {
+        food = {
+            x: Math.floor(Math.random() * tileCountX),
+            y: Math.floor(Math.random() * tileCountY)
+        };
+        if(snake.some(s => s.x === food.x && s.y === food.y)) spawnFood();
+    }
+
+    function setDir(newDir) {
+        const opposites = { 'UP': 'DOWN', 'DOWN': 'UP', 'LEFT': 'RIGHT', 'RIGHT': 'LEFT' };
+        if (newDir !== opposites[dir]) nextDir = newDir;
+    }
+
+    // EVENTOS DE TECLADO COMPLETOS (FLECHAS + WASD)
+    window.addEventListener('keydown', e => {
+        if(['ArrowUp', 'w', 'W'].includes(e.key)) setDir('UP');
+        if(['ArrowDown', 's', 'S'].includes(e.key)) setDir('DOWN');
+        if(['ArrowLeft', 'a', 'A'].includes(e.key)) setDir('LEFT');
+        if(['ArrowRight', 'd', 'D'].includes(e.key)) setDir('RIGHT');
+    });
+
+    // SISTEMA DESLIZANTE PARA PANTALLAS TÁCTILES
+    let touchStartX = 0;
+    let touchStartY = 0;
+    
+    window.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, {passive: true});
+
+    window.addEventListener('touchend', e => {
+        let diffX = e.changedTouches[0].screenX - touchStartX;
+        let diffY = e.changedTouches[0].screenY - touchStartY;
+        
+        if (Math.max(Math.abs(diffX), Math.abs(diffY)) < 25) return;
+
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            setDir(diffX > 0 ? 'RIGHT' : 'LEFT');
+        } else {
+            setDir(diffY > 0 ? 'DOWN' : 'UP');
+        }
+    }, {passive: true});
+
+    // EXPLOSIONES COSMÉTICAS
+    function createParticles(x, y, color) {
+        for(let i=0; i<8; i++) {
+            particles.push({
+                x: x * GRID + GRID/2,
+                y: y * GRID + GRID/2,
+                vx: (Math.random() - 0.5) * 5,
+                vy: (Math.random() - 0.5) * 5,
+                alpha: 1,
+                color: color
+            });
+        }
+    }
+
+    function updateParticles() {
+        for(let i = particles.length - 1; i >= 0; i--) {
+            let p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.alpha -= 0.06;
+            if(p.alpha <= 0) particles.splice(i, 1);
+        }
+    }
+
+    function update() {
+        dir = nextDir;
+        const head = { ...snake[0] };
+
+        if(dir === 'UP') head.y--;
+        if(dir === 'DOWN') head.y++;
+        if(dir === 'LEFT') head.x--;
+        if(dir === 'RIGHT') head.x++;
+
+        if(head.x < 0 || head.x >= tileCountX || head.y < 0 || head.y >= tileCountY) return gameOver();
+        if(snake.some(s => s.x === head.x && s.y === head.y)) return gameOver();
+
+        snake.unshift(head);
+
+        if(head.x === food.x && head.y === food.y) {
+            let points = currentAvatar.name === 'ROYAL' ? 20 : 10;
+            score += points;
+            document.getElementById('score-val').innerText = score;
+            
+            createParticles(food.x, food.y, '#ff0055');
+            playSound('eat');
+
+            if(score > 0 && score % 60 === 0) {
+                level++;
+                document.getElementById('lv-val').innerText = level;
+                playSound('levelUp');
+                speak("Nivel " + level);
+                increaseDifficulty();
+            }
+            spawnFood();
+        } else {
+            snake.pop();
+        }
+
+        updateParticles();
+        draw();
+    }
+
+    function increaseDifficulty() {
+        clearInterval(gameInterval);
+        const newSpeed = Math.max(35, currentAvatar.speed - (level * 5));
+        gameInterval = setInterval(update, newSpeed);
+    }
+
+    function draw() {
+        ctx.fillStyle = '#050a0f';
+        ctx.fillRect(0, 0, width, height);
+
+        // Retícula cibernética
+        ctx.strokeStyle = 'rgba(0, 255, 102, 0.03)';
+        for(let i=0; i<width; i+=GRID) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, height); ctx.stroke();
+        }
+        for(let i=0; i<height; i+=GRID) {
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(width, i); ctx.stroke();
+        }
+
+        // Partículas
+        particles.forEach(p => {
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.fillRect(p.x, p.y, 4, 4);
+            ctx.restore();
+        });
+
+        // Comida
+        ctx.fillStyle = '#ff0055';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#ff0055';
+        ctx.fillRect(food.x * GRID + 2, food.y * GRID + 2, GRID - 4, GRID - 4);
+
+        // Serpiente (Avatar Rendering)
+        snake.forEach((s, i) => {
+            if (i === 0) {
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = currentAvatar.color;
+                ctx.shadowBlur = 12;
+            } else {
+                ctx.fillStyle = currentAvatar.color;
+                ctx.shadowBlur = 0;
+            }
+            
+            ctx.globalAlpha = currentAvatar.name === 'PHANTOM' ? 0.5 : 1.0;
+            ctx.fillRect(s.x * GRID + 1, s.y * GRID + 1, GRID - 2, GRID - 2);
+        });
+        
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1.0;
+    }
+
+    function gameOver() {
+        clearInterval(gameInterval);
+        playSound('gameover');
+        speak("Sistema colapsado");
+        
+        document.getElementById('overlay-title').innerHTML = `SISTEMA CAÍDO<br><span style="font-size:1rem; color:#fff;">SCORE: ${score}</span>`;
+        document.getElementById('overlay-title').style.color = "var(--neon-purple)";
+        document.getElementById('overlay').style.display = 'flex';
+        
+        if (navigator.vibrate) navigator.vibrate([150, 50, 150]);
+    }
+
+    window.onload = resize;
+</script>
+</body>
+</html>
+
+```

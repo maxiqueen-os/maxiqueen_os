@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+<title>👑 MAXIQUEEN STORE 2026</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+<style>
+
+/* =====================================================
+   MAXIQUEEN STORE 2026
+   LUXURY SPORTS • ELEGANT EVENTS
+   FUTURE COMMERCE SYSTEM
+===================================================== */
+
+:root{
+
+--bg:#050505;
+--card:#0f1117;
+--glass:rgba(255,255,255,.05);
+
+--gold:#f5d18c;
+--gold2:#c99b42;
+
+--white:#ffffff;
+--muted:#b7b7b7;
+
+--cyan:#00f0ff;
+--purple:#7b61ff;
+
+--radius:28px;
+--shadow:
+0 10px 40px rgba(0,0,0,.6);
+
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+
+font-family:'Inter',sans-serif;
+background:var(--bg);
+color:var(--white);
+overflow-x:hidden;
+
+}
+
+/* =====================================================
+BACKGROUND FX
+===================================================== */
+
+.bg-grid{
+
+position:fixed;
+inset:0;
+
+background-image:
+linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+
+background-size:40px 40px;
+
+z-index:-3;
+
+}
+
+.bg-gradient{
+
+position:fixed;
+inset:0;
+
+background:
+radial-gradient(circle at top left, rgba(0,240,255,.12), transparent 30%),
+radial-gradient(circle at bottom right, rgba(123,97,255,.15), transparent 30%),
+radial-gradient(circle at center, rgba(245,209,140,.08), transparent 40%);
+
+z-index:-2;
+
+animation:floatGlow 12s infinite alternate;
+
+}
+
+@keyframes floatGlow{
+
+0%{
+transform:scale(1);
+filter:blur(0px);
+}
+
+100%{
+transform:scale(1.1);
+filter:blur(10px);
+}
+
+}
+
+/* =====================================================
+LOADER
+===================================================== */
+
+.loader{
+
+position:fixed;
+inset:0;
+
+background:#000;
+
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+
+z-index:9999;
+
+transition:1s;
+
+}
+
+.loader h1{
+
+font-size:clamp(2rem,6vw,5rem);
+
+background:linear-gradient(90deg,var(--gold),white,var(--cyan));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+font-weight:900;
+letter-spacing:2px;
+
+animation:pulse 2s infinite;
+
+}
+
+.loader p{
+
+margin-top:20px;
+color:#999;
+letter-spacing:4px;
+
+}
+
+@keyframes pulse{
+
+0%{opacity:.5;}
+50%{opacity:1;}
+100%{opacity:.5;}
+
+}
+
+/* =====================================================
+NAVBAR
+===================================================== */
+
+.nav{
+
+position:fixed;
+top:0;
+left:0;
+width:100%;
+
+padding:18px 30px;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+z-index:999;
+
+background:rgba(0,0,0,.35);
+backdrop-filter:blur(20px);
+
+border-bottom:1px solid rgba(255,255,255,.05);
+
+}
+
+.logo{
+
+font-size:1.2rem;
+font-weight:900;
+letter-spacing:2px;
+
+background:linear-gradient(90deg,var(--gold),white);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+}
+
+.nav-links{
+
+display:flex;
+gap:20px;
+
+}
+
+.nav-links a{
+
+color:white;
+text-decoration:none;
+font-size:.9rem;
+opacity:.7;
+transition:.3s;
+
+}
+
+.nav-links a:hover{
+
+opacity:1;
+color:var(--gold);
+
+}
+
+/* =====================================================
+HERO
+===================================================== */
+
+.hero{
+
+min-height:100vh;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+padding:120px 25px 80px;
+
+position:relative;
+
+}
+
+.hero-box{
+
+max-width:1200px;
+width:100%;
+
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:50px;
+align-items:center;
+
+}
+
+.hero-text h1{
+
+font-size:clamp(3rem,8vw,7rem);
+line-height:.9;
+font-weight:900;
+
+margin-bottom:25px;
+
+}
+
+.hero-text h1 span{
+
+background:linear-gradient(90deg,var(--gold),white,var(--cyan));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+}
+
+.hero-text p{
+
+font-size:1.1rem;
+line-height:1.8;
+color:var(--muted);
+
+max-width:600px;
+
+margin-bottom:35px;
+
+}
+
+.hero-buttons{
+
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+
+}
+
+.btn{
+
+padding:16px 30px;
+border-radius:100px;
+
+text-decoration:none;
+
+font-weight:700;
+transition:.4s;
+
+display:inline-flex;
+align-items:center;
+justify-content:center;
+
+cursor:pointer;
+
+}
+
+.btn-gold{
+
+background:linear-gradient(135deg,var(--gold),var(--gold2));
+color:black;
+
+box-shadow:
+0 10px 30px rgba(245,209,140,.25);
+
+}
+
+.btn-glass{
+
+border:1px solid rgba(255,255,255,.1);
+
+background:rgba(255,255,255,.05);
+
+color:white;
+
+backdrop-filter:blur(20px);
+
+}
+
+.btn:hover{
+
+transform:translateY(-6px) scale(1.03);
+
+}
+
+/* =====================================================
+SHOWCASE
+===================================================== */
+
+.showcase{
+
+position:relative;
+
+height:600px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+}
+
+.glass-orb{
+
+position:absolute;
+
+width:420px;
+height:420px;
+
+border-radius:50%;
+
+background:
+radial-gradient(circle at top left,
+rgba(255,255,255,.25),
+rgba(255,255,255,.03));
+
+backdrop-filter:blur(40px);
+
+border:1px solid rgba(255,255,255,.08);
+
+box-shadow:
+0 0 60px rgba(0,240,255,.1),
+0 0 120px rgba(123,97,255,.12);
+
+animation:floatOrb 8s infinite ease-in-out;
+
+}
+
+@keyframes floatOrb{
+
+0%{
+transform:translateY(0px) rotate(0deg);
+}
+
+50%{
+transform:translateY(-20px) rotate(4deg);
+}
+
+100%{
+transform:translateY(0px) rotate(0deg);
+}
+
+}
+
+.hero-card{
+
+position:absolute;
+
+padding:20px;
+
+border-radius:24px;
+
+background:rgba(255,255,255,.05);
+
+backdrop-filter:blur(30px);
+
+border:1px solid rgba(255,255,255,.08);
+
+box-shadow:var(--shadow);
+
+}
+
+.card-top{
+
+top:40px;
+left:0;
+
+}
+
+.card-bottom{
+
+bottom:40px;
+right:0;
+
+}
+
+.hero-card h3{
+
+font-size:1rem;
+margin-bottom:10px;
+
+color:var(--gold);
+
+}
+
+.hero-card p{
+
+font-size:.9rem;
+color:#ccc;
+
+}
+
+/* =====================================================
+SECTIONS
+===================================================== */
+
+.section{
+
+padding:120px 25px;
+
+max-width:1400px;
+margin:auto;
+
+}
+
+.section-title{
+
+text-align:center;
+margin-bottom:80px;
+
+}
+
+.section-title h2{
+
+font-size:clamp(2rem,5vw,4rem);
+
+margin-bottom:20px;
+
+}
+
+.section-title p{
+
+color:#aaa;
+max-width:700px;
+margin:auto;
+
+line-height:1.8;
+
+}
+
+/* =====================================================
+PRODUCT GRID
+===================================================== */
+
+.grid{
+
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:30px;
+
+}
+
+.product{
+
+position:relative;
+
+padding:28px;
+
+border-radius:var(--radius);
+
+background:rgba(255,255,255,.04);
+
+border:1px solid rgba(255,255,255,.06);
+
+backdrop-filter:blur(20px);
+
+overflow:hidden;
+
+transition:.5s;
+
+box-shadow:var(--shadow);
+
+}
+
+.product::before{
+
+content:"";
+
+position:absolute;
+inset:0;
+
+background:
+linear-gradient(135deg,
+transparent,
+rgba(255,255,255,.05),
+transparent);
+
+opacity:0;
+
+transition:.5s;
+
+}
+
+.product:hover::before{
+
+opacity:1;
+
+}
+
+.product:hover{
+
+transform:
+translateY(-12px)
+rotateX(4deg);
+
+border-color:rgba(245,209,140,.3);
+
+box-shadow:
+0 20px 50px rgba(0,0,0,.8),
+0 0 30px rgba(245,209,140,.15);
+
+}
+
+.badge{
+
+display:inline-block;
+
+padding:8px 14px;
+
+background:rgba(245,209,140,.12);
+
+border:1px solid rgba(245,209,140,.2);
+
+border-radius:100px;
+
+font-size:.7rem;
+font-weight:700;
+
+color:var(--gold);
+
+margin-bottom:20px;
+
+}
+
+.product h3{
+
+font-size:1.3rem;
+margin-bottom:14px;
+
+}
+
+.product p{
+
+color:#b8b8b8;
+line-height:1.7;
+
+margin-bottom:20px;
+
+}
+
+.price{
+
+font-size:1.5rem;
+font-weight:900;
+
+margin-bottom:25px;
+
+background:linear-gradient(90deg,var(--gold),white);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+}
+
+.buy{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+gap:15px;
+
+}
+
+.buy a{
+
+flex:1;
+
+padding:14px;
+
+border-radius:18px;
+
+text-align:center;
+text-decoration:none;
+
+font-weight:700;
+
+transition:.4s;
+
+}
+
+.whatsapp-btn{
+
+background:linear-gradient(135deg,#25D366,#1da851);
+color:white;
+
+}
+
+.preview-btn{
+
+background:rgba(255,255,255,.05);
+color:white;
+
+border:1px solid rgba(255,255,255,.08);
+
+}
+
+.buy a:hover{
+
+transform:translateY(-4px);
+
+}
+
+/* =====================================================
+LEVELS
+===================================================== */
+
+.levels{
+
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:30px;
+
+}
+
+.level{
+
+padding:40px;
+border-radius:30px;
+
+position:relative;
+overflow:hidden;
+
+background:rgba(255,255,255,.04);
+
+border:1px solid rgba(255,255,255,.08);
+
+backdrop-filter:blur(20px);
+
+}
+
+.level::after{
+
+content:"";
+
+position:absolute;
+
+width:300px;
+height:300px;
+
+background:radial-gradient(circle,
+rgba(255,255,255,.08),
+transparent);
+
+top:-100px;
+right:-100px;
+
+}
+
+.level h3{
+
+font-size:1.8rem;
+margin-bottom:20px;
+
+}
+
+.level p{
+
+line-height:1.8;
+color:#ccc;
+
+}
+
+.level.sport{
+
+border-color:rgba(0,240,255,.2);
+
+}
+
+.level.elegant{
+
+border-color:rgba(245,209,140,.2);
+
+}
+
+.level.elite{
+
+border-color:rgba(123,97,255,.2);
+
+}
+
+/* =====================================================
+VOICE PANEL
+===================================================== */
+
+.voice-panel{
+
+margin-top:50px;
+
+padding:30px;
+
+border-radius:30px;
+
+background:rgba(255,255,255,.04);
+
+border:1px solid rgba(255,255,255,.06);
+
+text-align:center;
+
+}
+
+.voice-panel button{
+
+margin-top:20px;
+
+padding:15px 30px;
+
+border:none;
+border-radius:100px;
+
+background:linear-gradient(135deg,var(--cyan),var(--purple));
+
+color:white;
+
+font-weight:700;
+cursor:pointer;
+
+}
+
+/* =====================================================
+FOOTER
+===================================================== */
+
+footer{
+
+padding:80px 25px;
+
+text-align:center;
+
+border-top:1px solid rgba(255,255,255,.05);
+
+background:rgba(0,0,0,.3);
+
+}
+
+footer h2{
+
+font-size:2rem;
+margin-bottom:20px;
+
+}
+
+footer p{
+
+color:#999;
+
+max-width:700px;
+margin:auto;
+
+line-height:1.8;
+
+}
+
+.footer-social{
+
+margin-top:30px;
+
+display:flex;
+justify-content:center;
+gap:20px;
+
+flex-wrap:wrap;
+
+}
+
+.footer-social a{
+
+padding:14px 24px;
+
+border-radius:100px;
+
+text-decoration:none;
+
+background:rgba(255,255,255,.05);
+
+border:1px solid rgba(255,255,255,.08);
+
+color:white;
+
+transition:.4s;
+
+}
+
+.footer-social a:hover{
+
+transform:translateY(-5px);
+
+}
+
+/* =====================================================
+FLOATING WHATSAPP
+===================================================== */
+
+.float-whatsapp{
+
+position:fixed;
+
+bottom:25px;
+right:25px;
+
+width:65px;
+height:65px;
+
+border-radius:50%;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+font-size:1.6rem;
+
+background:
+linear-gradient(135deg,#25D366,#1da851);
+
+color:white;
+
+text-decoration:none;
+
+z-index:999;
+
+box-shadow:
+0 10px 40px rgba(37,211,102,.35);
+
+animation:whatsappPulse 2s infinite;
+
+}
+
+@keyframes whatsappPulse{
+
+0%{
+transform:scale(1);
+}
+
+50%{
+transform:scale(1.08);
+}
+
+100%{
+transform:scale(1);
+}
+
+}
+
+/* =====================================================
+RESPONSIVE
+===================================================== */
+
+@media(max-width:980px){
+
+.hero-box{
+
+grid-template-columns:1fr;
+
+}
+
+.showcase{
+
+height:400px;
+
+}
+
+.glass-orb{
+
+width:280px;
+height:280px;
+
+}
+
+}
+
+@media(max-width:700px){
+
+.nav-links{
+
+display:none;
+
+}
+
+.hero{
+
+padding-top:140px;
+
+}
+
+.hero-card{
+
+display:none;
+
+}
+
+.section{
+
+padding:90px 20px;
+
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================
+BACKGROUND
+===================================================== -->
+
+<div class="bg-grid"></div>
+<div class="bg-gradient"></div>
+
+<!-- =====================================================
+LOADER
+===================================================== -->
+
+<div class="loader" id="loader">
+
+<h1>MAXIQUEEN</h1>
+<p>INITIALIZING LUXURY SYSTEM...</p>
+
+</div>
+
+<!-- =====================================================
+NAV
+===================================================== -->
+
+<nav class="nav">
+
+<div class="logo">
+👑 MAXIQUEEN
+</div>
+
+<div class="nav-links">
+
+<a href="#sports">SPORT</a>
+<a href="#events">EVENTS</a>
+<a href="#elite">ELITE</a>
+<a href="#contact">CONTACT</a>
+
+</div>
+
+</nav>
+
+<!-- =====================================================
+HERO
+===================================================== -->
+
+<section class="hero">
+
+<div class="hero-box">
+
+<div class="hero-text">
+
+<h1>
+Luxury <span>Sports</span><br>
+Future Fashion
+</h1>
+
+<p>
+MAXIQUEEN STORE 2026 fusiona moda deportiva,
+eventos elegantes y tecnología futurista en
+una experiencia premium cinematográfica diseñada
+para la nueva generación.
+</p>
+
+<div class="hero-buttons">
+
+<a
+class="btn btn-gold"
+href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20STORE"
+target="_blank"
+>
+Comprar Ahora
+</a>
+
+<a class="btn btn-glass" href="#sports">
+Explorar Colección
+</a>
+
+</div>
+
+</div>
+
+<div class="showcase">
+
+<div class="glass-orb"></div>
+
+<div class="hero-card card-top">
+
+<h3>SPORT ELITE</h3>
+<p>Moda deportiva avanzada 2026.</p>
+
+</div>
+
+<div class="hero-card card-bottom">
+
+<h3>EVENT MODE</h3>
+<p>Elegancia futurista premium.</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- =====================================================
+SPORT
+===================================================== -->
+
+<section class="section" id="sports">
+
+<div class="section-title">
+
+<h2>⚡ SPORT LUXURY</h2>
+
+<p>
+Colección premium deportiva diseñada
+para comodidad, presencia visual y
+estética elite futurista.
+</p>
+
+</div>
+
+<div class="grid">
+
+<div class="product">
+
+<div class="badge">
+SPORT MODE
+</div>
+
+<h3>Conjunto Deportivo Chinzado</h3>
+
+<p>
+Tela premium de alta elasticidad,
+diseño elegante y acabado futurista.
+</p>
+
+<div class="price">
+$47.000 COP
+</div>
+
+<div class="buy">
+
+<a
+class="whatsapp-btn"
+href="https://wa.me/573016625921?text=Quiero%20el%20Conjunto%20Deportivo%20Chinzado"
+target="_blank"
+>
+Comprar
+</a>
+
+<a class="preview-btn">
+Ver
+</a>
+
+</div>
+
+</div>
+
+<div class="product">
+
+<div class="badge">
+WOMAN ELITE
+</div>
+
+<h3>Leggins Premium Logo</h3>
+
+<p>
+Ajuste inteligente, diseño elegante
+y estilo deportivo premium.
+</p>
+
+<div class="price">
+$48.000 COP
+</div>
+
+<div class="buy">
+
+<a
+class="whatsapp-btn"
+href="https://wa.me/573016625921?text=Quiero%20los%20Leggins%20Premium"
+target="_blank"
+>
+Comprar
+</a>
+
+<a class="preview-btn">
+Ver
+</a>
+
+</div>
+
+</div>
+
+<div class="product">
+
+<div class="badge">
+MEN PRO
+</div>
+
+<h3>Conjunto Multimarca Elite</h3>
+
+<p>
+Estética urbana deportiva con presencia
+moderna y materiales resistentes.
+</p>
+
+<div class="price">
+$60.000 COP
+</div>
+
+<div class="buy">
+
+<a
+class="whatsapp-btn"
+href="https://wa.me/573016625921?text=Quiero%20el%20Conjunto%20Elite"
+target="_blank"
+>
+Comprar
+</a>
+
+<a class="preview-btn">
+Ver
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- =====================================================
+EVENTS
+===================================================== -->
+
+<section class="section" id="events">
+
+<div class="section-title">
+
+<h2>🥂 ELEGANT EVENTS</h2>
+
+<p>
+Diseños minimalistas y sofisticados
+para eventos premium y experiencias exclusivas.
+</p>
+
+</div>
+
+<div class="levels">
+
+<div class="level sport">
+
+<h3>SPORT LEVEL</h3>
+
+<p>
+Energía, velocidad y presencia visual
+para atletas urbanos y estilos activos.
+</p>
+
+</div>
+
+<div class="level elegant">
+
+<h3>ELEGANT LEVEL</h3>
+
+<p>
+Moda elegante minimalista para eventos,
+negocios y experiencias premium.
+</p>
+
+</div>
+
+<div class="level elite">
+
+<h3>ELITE FUTURE</h3>
+
+<p>
+El futuro del lujo digital mezclado
+con moda tecnológica cinematográfica.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- =====================================================
+TECH
+===================================================== -->
+
+<section class="section" id="elite">
+
+<div class="section-title">
+
+<h2>🧠 TECH ACCESSORIES</h2>
+
+<p>
+Tecnología y accesorios futuristas
+para elevar tu experiencia diaria.
+</p>
+
+</div>
+
+<div class="grid">
+
+<div class="product">
+
+<div class="badge">
+TECH
+</div>
+
+<h3>Auriculares TWS F9</h3>
+
+<p>
+Audio HD inalámbrico y batería inteligente.
+</p>
+
+<div class="price">
+$60.000 COP
+</div>
+
+<div class="buy">
+
+<a
+class="whatsapp-btn"
+href="https://wa.me/573016625921?text=Quiero%20los%20Auriculares%20TWS%20F9"
+target="_blank"
+>
+Comprar
+</a>
+
+<a class="preview-btn">
+Ver
+</a>
+
+</div>
+
+</div>
+
+<div class="product">
+
+<div class="badge">
+SMART LIFE
+</div>
+
+<h3>Mini Ventilador USB</h3>
+
+<p>
+Compacto, moderno y portátil
+para cualquier ambiente.
+</p>
+
+<div class="price">
+$43.990 COP
+</div>
+
+<div class="buy">
+
+<a
+class="whatsapp-btn"
+href="https://wa.me/573016625921?text=Quiero%20el%20Mini%20Ventilador"
+target="_blank"
+>
+Comprar
+</a>
+
+<a class="preview-btn">
+Ver
+</a>
+
+</div>
+
+</div>
+
+<div class="product">
+
+<div class="badge">
+RETRO DIGITAL
+</div>
+
+<h3>Reloj Vintage Neon</h3>
+
+<p>
+Diseño clásico futurista con
+estética urbana premium.
+</p>
+
+<div class="price">
+$13.990 COP
+</div>
+
+<div class="buy">
+
+<a
+class="whatsapp-btn"
+href="https://wa.me/573016625921?text=Quiero%20el%20Reloj%20Vintage"
+target="_blank"
+>
+Comprar
+</a>
+
+<a class="preview-btn">
+Ver
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="voice-panel">
+
+<h2>🎙️ MAXIQUEEN AI</h2>
+
+<p>
+Activa la experiencia de voz futurista.
+</p>
+
+<button id="speakBtn">
+ACTIVAR IA
+</button>
+
+</div>
+
+</section>
+
+<!-- =====================================================
+FOOTER
+===================================================== -->
+
+<footer id="contact">
+
+<h2>
+👑 MAXIQUEEN STORE
+</h2>
+
+<p>
+Luxury Sports • Elegant Events •
+Future Commerce System 2026
+</p>
+
+<div class="footer-social">
+
+<a href="https://wa.me/573016625921" target="_blank">
+WhatsApp
+</a>
+
+<a href="#">
+Instagram
+</a>
+
+<a href="#">
+TikTok
+</a>
+
+</div>
+
+</footer>
+
+<!-- =====================================================
+FLOAT BUTTON
+===================================================== -->
+
+<a
+class="float-whatsapp"
+href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN"
+target="_blank"
+>
+💬
+</a>
+
+<!-- =====================================================
+JAVASCRIPT
+===================================================== -->
+
+<script>
+
+/* =====================================================
+MAXIQUEEN STORE ENGINE
+===================================================== */
+
+class MaxiQueenStore {
+
+constructor(){
+
+this.loader();
+this.voiceSystem();
+this.revealAnimations();
+this.mouseGlow();
+
+}
+
+/* =====================================================
+LOADER
+===================================================== */
+
+loader(){
+
+window.addEventListener("load",()=>{
+
+setTimeout(()=>{
+
+document.getElementById("loader").style.opacity="0";
+document.getElementById("loader").style.pointerEvents="none";
+
+},2200);
+
+});
+
+}
+
+/* =====================================================
+VOICE AI
+===================================================== */
+
+voiceSystem(){
+
+const btn = document.getElementById("speakBtn");
+
+btn.addEventListener("click",()=>{
+
+if(!window.speechSynthesis){
+
+alert("Tu navegador no soporta voz.");
+return;
+
+}
+
+const speech = new SpeechSynthesisUtterance(
+"Bienvenido a Maxiqueen Store 2026. Luxury Sports and Elegant Events."
+);
+
+speech.lang = "es-ES";
+speech.rate = .92;
+speech.pitch = .9;
+
+speechSynthesis.speak(speech);
+
+});
+
+}
+
+/* =====================================================
+SCROLL ANIMATIONS
+===================================================== */
+
+revealAnimations(){
+
+const observer = new IntersectionObserver((entries)=>{
+
+entries.forEach(entry=>{
+
+if(entry.isIntersecting){
+
+entry.target.animate([
+
+{
+opacity:0,
+transform:"translateY(60px)"
+},
+
+{
+opacity:1,
+transform:"translateY(0px)"
+}
+
+],{
+
+duration:1000,
+fill:"forwards",
+easing:"ease"
+
+});
+
+}
+
+});
+
+},{threshold:.15});
+
+document.querySelectorAll(
+".product,.level,.section-title,.hero-card"
+).forEach(el=>observer.observe(el));
+
+}
+
+/* =====================================================
+MOUSE GLOW
+===================================================== */
+
+mouseGlow(){
+
+document.addEventListener("mousemove",(e)=>{
+
+document.body.style.background =
+`
+radial-gradient(circle at ${e.clientX}px ${e.clientY}px,
+rgba(255,255,255,.03),
+transparent 20%),
+#050505
+`;
+
+});
+
+}
+
+}
+
+/* =====================================================
+INITIALIZE
+===================================================== */
+
+new MaxiQueenStore();
+
+</script>
+
+</body>
+</html>

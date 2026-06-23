@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaxiQueen OS | Cyber Clicker</title>
+
+<style>
+    :root {
+        --primary: #00f2ff;
+        --secondary: #7000ff;
+        --bg: #050505;
+        --panel: rgba(20, 20, 25, 0.8);
+    }
+
+    body {
+        margin: 0;
+        background: var(--bg);
+        background-image: 
+            radial-gradient(circle at 50% 50%, #1e1e2e 0%, #050505 100%),
+            linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
+        background-size: 100% 100%, 30px 30px, 30px 30px;
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .game-container {
+        position: relative;
+        text-align: center;
+        padding: 40px;
+        border-radius: 30px;
+        background: var(--panel);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(0, 242, 255, 0.2);
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 242, 255, 0.1);
+        width: 350px;
+        z-index: 10;
+    }
+
+    h1 {
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        font-size: 20px;
+        color: var(--primary);
+        text-shadow: 0 0 10px var(--primary);
+        margin-bottom: 30px;
+    }
+
+    .stats {
+        margin-bottom: 10px;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    /* Botón Central Futurista */
+    .core-btn {
+        width: 120px;
+        height: 120px;
+        border: none;
+        border-radius: 50%;
+        background: linear-gradient(145deg, var(--secondary), var(--primary));
+        cursor: pointer;
+        position: relative;
+        box-shadow: 0 0 30px var(--secondary);
+        transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px auto;
+    }
+
+    .core-btn::after {
+        content: "XP";
+        font-weight: bold;
+        font-size: 24px;
+    }
+
+    .core-btn:active {
+        transform: scale(0.85);
+        box-shadow: 0 0 50px var(--primary);
+    }
+
+    /* Barra de Progreso */
+    .xp-container {
+        margin: 25px 0;
+    }
+
+    .xp-bar {
+        width: 100%;
+        height: 12px;
+        background: #111;
+        border-radius: 20px;
+        padding: 3px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .xp-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--secondary), var(--primary));
+        border-radius: 20px;
+        box-shadow: 0 0 15px var(--primary);
+        transition: width 0.3s ease-out;
+    }
+
+    .level-tag {
+        font-size: 28px;
+        color: #fff;
+        text-shadow: 0 0 15px var(--primary);
+        margin-top: 10px;
+    }
+
+    /* Partículas y Flotantes */
+    .particle {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: var(--primary);
+        pointer-events: none;
+        border-radius: 50%;
+    }
+
+    .floating-text {
+        position: absolute;
+        pointer-events: none;
+        font-weight: bold;
+        color: var(--primary);
+        animation: riseFade 0.8s ease-out forwards;
+        text-shadow: 0 0 5px #000;
+    }
+
+    @keyframes riseFade {
+        to { transform: translateY(-100px) scale(1.5); opacity: 0; }
+    }
+</style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>MaxiQueen OS Core</h1>
+    
+    <div class="stats">
+        DATA SYNC: <span id="xp">0</span> / <span id="nextLevel">100</span>
+    </div>
+
+    <div class="xp-container">
+        <div class="xp-bar">
+            <div class="xp-fill" id="xpBar"></div>
+        </div>
+    </div>
+
+    <button class="core-btn" id="mainBtn"></button>
+
+    <div class="level-tag">
+        RANK: <span id="level">1</span>
+    </div>
+</div>
+
+<script>
+let xp = 0;
+let level = 1;
+let xpNeeded = 100;
+
+const mainBtn = document.getElementById('mainBtn');
+
+function createParticle(x, y) {
+    for(let i=0; i<5; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        document.body.appendChild(p);
+        
+        const size = Math.random() * 8 + 2;
+        p.style.width = `${size}px`;
+        p.style.height = `${size}px`;
+        p.style.left = `${x}px`;
+        p.style.top = `${y}px`;
+
+        const destX = (Math.random() - 0.5) * 200;
+        const destY = (Math.random() - 0.5) * 200;
+
+        p.animate([
+            { transform: 'translate(0, 0)', opacity: 1 },
+            { transform: `translate(${destX}px, ${destY}px)`, opacity: 0 }
+        ], {
+            duration: 1000,
+            easing: 'cubic-bezier(0, .9, .57, 1)'
+        }).onfinish = () => p.remove();
+    }
+}
+
+function showText(x, y) {
+    const txt = document.createElement('div');
+    txt.className = 'floating-text';
+    txt.innerText = `+${level} XP`;
+    txt.style.left = `${x}px`;
+    txt.style.top = `${y}px`;
+    document.body.appendChild(txt);
+    setTimeout(() => txt.remove(), 800);
+}
+
+function levelUp() {
+    level++;
+    xp = 0;
+    xpNeeded = Math.floor(xpNeeded * 1.3); // Sube la dificultad
+    
+    // Efecto de flash en pantalla
+    document.body.style.backgroundColor = "var(--primary)";
+    setTimeout(() => document.body.style.backgroundColor = "var(--bg)", 100);
+    
+    // Sonido de victoria (opcional)
+    const audioCtx = new AudioContext();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.3);
+}
+
+mainBtn.addEventListener('click', (e) => {
+    xp += level; // Ganas más XP según tu nivel
+    
+    createParticle(e.clientX, e.clientY);
+    showText(e.clientX, e.clientY);
+
+    if (xp >= xpNeeded) {
+        levelUp();
+    }
+
+    updateUI();
+});
+
+function updateUI() {
+    document.getElementById("xp").innerText = xp;
+    document.getElementById("nextLevel").innerText = xpNeeded;
+    document.getElementById("level").innerText = level;
+
+    let percent = (xp / xpNeeded) * 100;
+    document.getElementById("xpBar").style.width = percent + "%";
+}
+
+updateUI();
+</script>
+</body>
+</html>

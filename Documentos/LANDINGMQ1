@@ -1,0 +1,14 @@
+1 landing → ecosistema completo
+
+/
+├── index.html        → Home (conversión)
+├── system.html       → Qué es MaxiQueen OS
+├── process.html      → Método / Reconstrucción personal
+├── community.html    → Comunidad
+├── license.html      → Licencia
+├── about.html        → Origen / Autoridad
+├── contact.html      → Contacto
+├── legal/
+│   ├── privacy.html
+│   ├── cookies.html
+│   └── terms.html

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxiQueen OS | Security Core</title>
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --neon-green: #39ff14;
+            --neon-dim: rgba(57, 255, 20, 0.2);
+            --glass-bg: rgba(10, 10, 10, 0.6);
+            --danger: #ff003c;
+            --text: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg-dark);
+            background-image: 
+                linear-gradient(rgba(57, 255, 20, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(57, 255, 20, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Avatar y Branding de MaxiQueen OS */
+        .branding-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 2px solid var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: var(--neon-green);
+            transition: all 0.1s ease;
+        }
+
+        .avatar.speaking {
+            box-shadow: 0 0 30px var(--neon-green);
+            transform: scale(1.1);
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .branding-text h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+
+        .branding-text p {
+            margin: 0;
+            font-size: 0.7rem;
+            color: #888;
+            letter-spacing: 1px;
+        }
+
+        /* HUD Glassmorphism */
+        .hud {
+            display: flex;
+            gap: 30px;
+            background: var(--glass-bg);
+            padding: 15px 40px;
+            border-radius: 15px;
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), inset 0 0 20px var(--neon-dim);
+            z-index: 5;
+        }
+
+        .stat-box { text-align: center; }
+        .stat-label { font-size: 0.7rem; color: #a1a1aa; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        .stat-value { font-size: 1.5rem; font-weight: 900; color: var(--neon-green); text-shadow: 0 0 10px var(--neon-dim); }
+
+        canvas {
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000000 100%);
+            border: 1px solid rgba(57, 255, 20, 0.5);
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.15);
+            cursor: crosshair;
+            z-index: 1;
+        }
+
+        .controls {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #a1a1aa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .controls b { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-dim); }
+
+        /* Pantalla de inicio para habilitar audio */
+        #startScreen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-start {
+            background: transparent;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-green);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 0 15px var(--neon-dim), inset 0 0 15px var(--neon-dim);
+            transition: all 0.3s;
+        }
+
+        .btn-start:hover {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 30px var(--neon-green);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Pantalla de inicio para saltar el bloqueo de autoplay de los navegadores -->
+<div id="startScreen">
+    <h1 style="color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); margin-bottom: 30px; font-family: monospace;">MAXIQUEEN OS // KERNEL</h1>
+    <button class="btn-start" onclick="initSystem()">Inicializar Sistema</button>
+</div>
+
+<div class="branding-container">
+    <div class="avatar" id="mqAvatar">MQ</div>
+    <div class="branding-text">
+        <h1>MaxiQueen AI</h1>
+        <p>Security Node V2</p>
+    </div>
+</div>
+
+<div class="hud">
+    <div class="stat-box">
+        <div class="stat-label">Créditos Node</div>
+        <div id="credits" class="stat-value">500</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-label">Integridad</div>
+        <div id="health" class="stat-value" style="color: var(--neon-green)">100%</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-label">Nivel de Amenaza</div>
+        <div id="level" class="stat-value">1</div>
+    </div>
+</div>
+
+<canvas id="gameCanvas" width="500" height="700"></canvas>
+
+<div class="controls">
+    Click para desplegar <b>Firewall Turret</b> (Coste: 150 MQ)
+</div>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const avatar = document.getElementById("mqAvatar");
+
+// Sistema de Voz Nativo (Self-hosted / Browser API)
+const synth = window.speechSynthesis;
+let mqVoice = null;
+
+function loadVoices() {
+    const voices = synth.getVoices();
+    // Intenta buscar una voz en español, preferiblemente femenina o neutra
+    mqVoice = voices.find(v => v.lang.includes('es') && (v.name.includes('Google') || v.name.includes('Female'))) || voices.find(v => v.lang.includes('es')) || voices[0];
+}
+speechSynthesis.onvoiceschanged = loadVoices;
+
+function speak(text) {
+    if (synth.speaking) synth.cancel(); // Evita colas largas de audio
+    const utterThis = new SpeechSynthesisUtterance(text);
+    if (mqVoice) utterThis.voice = mqVoice;
+    utterThis.pitch = 1.2; // Tono ligeramente sintético
+    utterThis.rate = 1.1;  // Un poco más rápido
+    
+    utterThis.onstart = () => avatar.classList.add('speaking');
+    utterThis.onend = () => avatar.classList.remove('speaking');
+    
+    synth.speak(utterThis);
+}
+
+// Configuración de Estado
+let state = {
+    credits: 500,
+    health: 100,
+    level: 1,
+    gameOver: false,
+    frames: 0,
+    isRunning: false
+};
+
+const towers = [];
+const enemies = [];
+const bullets = [];
+const particles = []; // Nuevo sistema de partículas
+
+class Particle {
+    constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.velocity = { x: (Math.random() - 0.5) * 5, y: (Math.random() - 0.5) * 5 };
+        this.life = 1;
+        this.decay = Math.random() * 0.05 + 0.02;
+    }
+    draw() {
+        ctx.save();
+        ctx.globalAlpha = this.life;
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = this.color;
+        ctx.fillRect(this.x, this.y, 3, 3);
+        ctx.restore();
+    }
+    update() {
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+        this.life -= this.decay;
+    }
+}
+
+class Tower {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.range = 160;
+        this.cooldown = 0;
+        this.fireRate = 25; 
+        this.angle = 0;
+    }
+    draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        
+        // Área de rango tenue
+        ctx.beginPath();
+        ctx.arc(0, 0, this.range, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(57, 255, 20, 0.05)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(57, 255, 20, 0.2)";
+        ctx.stroke();
+
+        // Base de la torre
+        ctx.rotate(this.angle);
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = "#39ff14";
+        ctx.fillStyle = "#050505";
+        ctx.strokeStyle = "#39ff14";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        
+        // Cañón
+        ctx.fillStyle = "#39ff14";
+        ctx.fillRect(0, -4, 20, 8);
+        
+        // Núcleo
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(0, 0, 5, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.restore();
+    }
+    update() {
+        if (this.cooldown > 0) this.cooldown--;
+        
+        let target = null;
+        let minDist = this.range;
+        
+        enemies.forEach(e => {
+            const dist = Math.hypot(e.x - this.x, e.y - this.y);
+            if (dist < minDist) {
+                minDist = dist;
+                target = e;
+            }
+        });
+
+        if (target) {
+            this.angle = Math.atan2(target.y - this.y, target.x - this.x);
+            if (this.cooldown === 0) {
+                bullets.push(new Bullet(this.x + Math.cos(this.angle)*20, this.y + Math.sin(this.angle)*20, target));
+                this.cooldown = this.fireRate;
+            }
+        }
+    }
+}
+
+class Enemy {
+    constructor() {
+        this.x = Math.random() * (canvas.width - 60) + 30;
+        this.y = -20;
+        this.speed = 1.2 + (state.level * 0.25);
+        this.hp = 3 + Math.floor(state.level * 0.8);
+        this.maxHp = this.hp;
+    }
+    draw() {
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "#ff003c";
+        ctx.fillStyle = "#000";
+        ctx.strokeStyle = "#ff003c";
+        ctx.lineWidth = 2;
+        
+        // Forma de rombo enemigo
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y - 12);
+        ctx.lineTo(this.x + 12, this.y);
+        ctx.lineTo(this.x, this.y + 12);
+        ctx.lineTo(this.x - 12, this.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.shadowBlur = 0;
+        
+        // Barra de vida
+        ctx.fillStyle = "#222";
+        ctx.fillRect(this.x - 15, this.y - 22, 30, 4);
+        ctx.fillStyle = "#ff003c";
+        ctx.fillRect(this.x - 15, this.y - 22, (this.hp / this.maxHp) * 30, 4);
+    }
+    update() {
+        this.y += this.speed;
+    }
+}
+
+class Bullet {
+    constructor(x, y, target) {
+        this.x = x;
+        this.y = y;
+        this.target = target;
+        this.speed = 10;
+        this.color = "#39ff14";
+    }
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+    update() {
+        const dx = this.target.x - this.x;
+        const dy = this.target.y - this.y;
+        const dist = Math.hypot(dx, dy);
+        this.x += (dx / dist) * this.speed;
+        this.y += (dy / dist) * this.speed;
+    }
+}
+
+// Interacción
+canvas.addEventListener("click", (e) => {
+    if (!state.isRunning) return;
+    
+    if (state.credits >= 150) {
+        const rect = canvas.getBoundingClientRect();
+        towers.push(new Tower(e.clientX - rect.left, e.clientY - rect.top));
+        state.credits -= 150;
+        updateUI();
+        speak("Cortafuegos establecido.");
+    } else {
+        speak("Créditos insuficientes.");
+    }
+});
+
+function updateUI() {
+    document.getElementById("credits").innerText = state.credits;
+    const healthEl = document.getElementById("health");
+    healthEl.innerText = state.health + "%";
+    
+    if(state.health <= 50 && state.health > 20) healthEl.style.color = "orange";
+    else if(state.health <= 20) healthEl.style.color = "var(--danger)";
+    else healthEl.style.color = "var(--neon-green)";
+
+    document.getElementById("level").innerText = state.level;
+}
+
+function initSystem() {
+    document.getElementById('startScreen').style.display = 'none';
+    loadVoices();
+    speak("Sistemas en línea. Maxi Queen O S escuchando. Defiende el núcleo.");
+    state.isRunning = true;
+    gameLoop();
+}
+
+function gameLoop() {
+    if (state.gameOver) return;
+
+    // Fondo con rastro para efecto de movimiento (motion blur falso)
+    ctx.fillStyle = "rgba(5, 5, 5, 0.4)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Spawn de enemigos
+    if (state.frames % Math.max(30, 120 - state.level * 8) === 0) {
+        enemies.push(new Enemy());
+    }
+
+    // Subir de nivel cada 1000 frames
+    if (state.frames > 0 && state.frames % 1000 === 0) {
+        state.level++;
+        updateUI();
+        speak(`Atención. Nivel de amenaza incrementado a fase ${state.level}.`);
+    }
+
+    // Torres
+    towers.forEach(t => { t.update(); t.draw(); });
+
+    // Balas
+    bullets.forEach((b, bi) => {
+        b.update();
+        b.draw();
+        
+        if (Math.hypot(b.x - b.target.x, b.y - b.target.y) < 15) {
+            b.target.hp -= 1.5;
+            
+            // Generar partículas en el impacto
+            for(let i=0; i<5; i++) particles.push(new Particle(b.x, b.y, "#39ff14"));
+            
+            bullets.splice(bi, 1);
+            
+            if (b.target.hp <= 0) {
+                const ei = enemies.indexOf(b.target);
+                if (ei > -1) {
+                    // Explosión de enemigo
+                    for(let i=0; i<15; i++) particles.push(new Particle(b.target.x, b.target.y, "#ff003c"));
+                    enemies.splice(ei, 1);
+                    state.credits += 30;
+                    updateUI();
+                }
+            }
+        }
+    });
+
+    // Partículas
+    for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].life <= 0) particles.splice(i, 1);
+    }
+
+    // Enemigos
+    enemies.forEach((e, ei) => {
+        e.update();
+        e.draw();
+        if (e.y > canvas.height) {
+            enemies.splice(ei, 1);
+            state.health -= 15;
+            updateUI();
+            
+            if (state.health === 40) speak("Peligro. Integridad del sistema comprometida.");
+            
+            if (state.health <= 0) {
+                state.gameOver = true;
+                speak("Fallo crítico. Núcleo destruido.");
+                setTimeout(() => {
+                    alert("SISTEMA COMPROMETIDO - Recargando nodo local...");
+                    location.reload();
+                }, 2000);
+            }
+        }
+    });
+
+    state.frames++;
+    requestAnimationFrame(gameLoop);
+}
+</script>
+
+</body>
+</html>

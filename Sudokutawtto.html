@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<!-- saved from url=(0040)https://juegos-maxi-queen-os.vercel.app/ -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1 nuevo mensaje</title>
+    <style>
+        :root {
+            --bg: #0b0f1a;
+            --surface: #161b2a;
+            --primary: #7c3aed;
+            --secondary: #374151;
+            --accent: #10b981;
+            --error: #ef4444;
+            --text: #ffffff;
+            --border: #2d3748;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 10px 0;
+            background: linear-gradient(90deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: var(--surface);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        /* El Tablero */
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            border: 3px solid var(--text);
+            background: var(--text);
+            gap: 1px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            aspect-ratio: 1;
+        }
+
+        .cell {
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.1s;
+            user-select: none;
+            position: relative;
+        }
+
+        /* Bordes de bloques 3x3 */
+        .cell:nth-child(3n) { border-right: 2px solid var(--text); }
+        .cell:nth-child(9n) { border-right: none; }
+        .cell:nth-child(n+19):nth-child(-n+27),
+        .cell:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid var(--text); }
+
+        .cell.fixed { background: #1f2937; font-weight: 800; color: #9ca3af; }
+        .cell.selected { background: var(--primary) !important; color: white; }
+        .cell.related { background: #1e293b; }
+        .cell.error { color: var(--error); animation: shake 0.2s; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        /* Teclado */
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .num-btn {
+            padding: 12px;
+            background: var(--secondary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .num-btn:active { transform: scale(0.9); background: var(--primary); }
+
+        .difficulty-btns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-top: 15px;
+        }
+
+        .btn-sm {
+            padding: 8px;
+            font-size: 0.8rem;
+            background: #1f2937;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        .btn-sm.active { background: var(--primary); color: white; }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-main {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        #status-msg {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            height: 20px;
+        }
+    </style>
+<script charset="utf-8" src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-2d0d2b7c.js.descarga"></script><script charset="utf-8" src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-2d224aff.js.descarga"></script><script charset="utf-8" src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-2d0aef27.js.descarga"></script><script charset="utf-8" src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-3ea2c7ce.js.descarga"></script><script charset="utf-8" src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-2d0da3af.js.descarga"></script><script charset="utf-8" src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-4fe9d5dd.js.descarga"></script><script charset="utf-8" src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-7941cc06.js.descarga"></script><script charset="utf-8" src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-6289ff8e.js.descarga"></script><script charset="utf-8" src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-2d0c8092.js.descarga"></script><style type="text/css">#p5ute2d56gso1778258098574 {outline:none !important;
+visibility:visible !important;
+resize:none !important;
+box-shadow:none !important;
+overflow:visible !important;
+background:none !important;
+opacity:1 !important;
+filter:alpha(opacity=100) !important;
+-ms-filter:progid:DXImageTransform.Microsoft.Alpha(Opacity 1}) !important;
+-mz-opacity:1 !important;
+-khtml-opacity:1 !important;
+top:0px !important;
+right:auto !important;
+bottom:auto !important;
+left:0px !important;
+position:fixed !important;
+border:0 !important;
+min-height:0px  !important;
+min-width:0px  !important;
+max-height:none  !important;
+max-width:none  !important;
+padding:0px !important;
+margin:0px !important;
+-moz-transition-property:none !important;
+-webkit-transition-property:none !important;
+-o-transition-property:none !important;
+transition-property:none !important;
+transform:none !important;
+-webkit-transform:none !important;
+-ms-transform:none !important;
+width:auto !important;
+height:auto  !important;
+display:none !important;
+z-index:2000000000 !important;
+background-color:transparent !important;
+cursor:none !important;
+float:none !important;
+border-radius:unset !important;
+pointer-events:auto !important;
+clip:auto !important;
+color-scheme:light !important;}</style><style type="text/css">.tawk-button-hover[data-v-2fc2d95d]:focus,.tawk-button-hover[data-v-2fc2d95d]:hover{background-color:hsla(0,0%,100%,.2)!important;border-radius:5px!important}</style><style type="text/css">@keyframes tawkMaxOpen{0%{opacity:0;transform:translate(0, -30px);;}to{opacity:1;transform:translate(0, 0px);}}@-moz-keyframes tawkMaxOpen{0%{opacity:0;transform:translate(0, -30px);;}to{opacity:1;transform:translate(0, 0px);}}@-webkit-keyframes tawkMaxOpen{0%{opacity:0;transform:translate(0, -30px);;}to{opacity:1;transform:translate(0, 0px);}}#zvnphjseu9081778258098644.open{animation : tawkMaxOpen .25s ease!important;}@keyframes tawkMaxClose{from{opacity: 1;transform:translate(0, 0px);;}to{opacity: 0;transform:translate(0, -30px);;}}@-moz-keyframes tawkMaxClose{from{opacity: 1;transform:translate(0, 0px);;}to{opacity: 0;transform:translate(0, -30px);;}}@-webkit-keyframes tawkMaxClose{from{opacity: 1;transform:translate(0, 0px);;}to{opacity: 0;transform:translate(0, -30px);;}}#zvnphjseu9081778258098644.closed{animation: tawkMaxClose .25s ease!important}</style><script charset="utf-8" src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-2d0e5f34.js.descarga"></script><script src="./Sudoku MaxiQueen PRO 👑_files/emojione.min.js.descarga" type="text/javascript" async="" defer=""></script><script src="./Sudoku MaxiQueen PRO 👑_files/emojione.min.js.descarga" type="text/javascript" async="" defer=""></script><script src="./Sudoku MaxiQueen PRO 👑_files/emojione.min.js.descarga" type="text/javascript" async="" defer=""></script><script src="./Sudoku MaxiQueen PRO 👑_files/emojione.min.js.descarga" type="text/javascript" async="" defer=""></script><script src="./Sudoku MaxiQueen PRO 👑_files/emojione.min.js.descarga" type="text/javascript" async="" defer=""></script><script src="./Sudoku MaxiQueen PRO 👑_files/emojione.min.js.descarga" type="text/javascript" async="" defer=""></script><script src="./Sudoku MaxiQueen PRO 👑_files/emojione.min.js.descarga" type="text/javascript" async="" defer=""></script><script charset="utf-8" src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-18f22878.js.descarga"></script><style type="text/css">.tawk-message-item,.tawk-message-item-body{display:-ms-flexbox;display:flex;-ms-flex-align:center;align-items:center;position:relative}.tawk-message-item-body{-ms-flex-pack:justify;justify-content:space-between;width:100%}.tawk-message-content{display:-ms-flexbox;display:flex;-ms-flex-align:center;align-items:center;-ms-flex:1;flex:1;overflow:hidden;margin-right:10px}.tawk-message-item-body p{-ms-flex:1;flex:1;margin-right:5px;overflow:hidden}.tawk-message-chevron{color:#999;margin-left:0}.tawk-badge-inline,.tawk-emoji-container{display:inline-block}.tawk-badge-inline{vertical-align:middle;margin-left:5px}.tawk-badge-column{-ms-flex-negative:0;flex-shrink:0}.tawk-badge-icon-container{display:-ms-flexbox;display:flex;-ms-flex-align:center;align-items:center;white-space:nowrap}.tawk-home-list-chat-content-badge{margin-right:0!important}</style><script charset="utf-8" src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-2d0af2da.js.descarga"></script></head>
+<body>
+
+<div class="app-container">
+    <h1>SUDOKU MAXIQUEEN PRO 👑</h1>
+
+    <div class="stats-bar">
+        <span id="timer">⏱️ 00:00</span>
+        <span id="difficulty-label">Nivel: -</span>
+        <span id="lives">❤️ 3</span>
+    </div>
+
+    <div id="grid" class="sudoku-grid"><div class="cell" data-index="0"></div><div class="cell" data-index="1"></div><div class="cell" data-index="2"></div><div class="cell" data-index="3"></div><div class="cell" data-index="4"></div><div class="cell" data-index="5"></div><div class="cell" data-index="6"></div><div class="cell" data-index="7"></div><div class="cell" data-index="8"></div><div class="cell" data-index="9"></div><div class="cell" data-index="10"></div><div class="cell" data-index="11"></div><div class="cell" data-index="12"></div><div class="cell" data-index="13"></div><div class="cell" data-index="14"></div><div class="cell" data-index="15"></div><div class="cell" data-index="16"></div><div class="cell" data-index="17"></div><div class="cell" data-index="18"></div><div class="cell" data-index="19"></div><div class="cell" data-index="20"></div><div class="cell" data-index="21"></div><div class="cell" data-index="22"></div><div class="cell" data-index="23"></div><div class="cell" data-index="24"></div><div class="cell" data-index="25"></div><div class="cell" data-index="26"></div><div class="cell" data-index="27"></div><div class="cell" data-index="28"></div><div class="cell" data-index="29"></div><div class="cell" data-index="30"></div><div class="cell" data-index="31"></div><div class="cell" data-index="32"></div><div class="cell" data-index="33"></div><div class="cell" data-index="34"></div><div class="cell" data-index="35"></div><div class="cell" data-index="36"></div><div class="cell" data-index="37"></div><div class="cell" data-index="38"></div><div class="cell" data-index="39"></div><div class="cell" data-index="40"></div><div class="cell" data-index="41"></div><div class="cell" data-index="42"></div><div class="cell" data-index="43"></div><div class="cell" data-index="44"></div><div class="cell" data-index="45"></div><div class="cell" data-index="46"></div><div class="cell" data-index="47"></div><div class="cell" data-index="48"></div><div class="cell" data-index="49"></div><div class="cell" data-index="50"></div><div class="cell" data-index="51"></div><div class="cell" data-index="52"></div><div class="cell" data-index="53"></div><div class="cell" data-index="54"></div><div class="cell" data-index="55"></div><div class="cell" data-index="56"></div><div class="cell" data-index="57"></div><div class="cell" data-index="58"></div><div class="cell" data-index="59"></div><div class="cell" data-index="60"></div><div class="cell" data-index="61"></div><div class="cell" data-index="62"></div><div class="cell" data-index="63"></div><div class="cell" data-index="64"></div><div class="cell" data-index="65"></div><div class="cell" data-index="66"></div><div class="cell" data-index="67"></div><div class="cell" data-index="68"></div><div class="cell" data-index="69"></div><div class="cell" data-index="70"></div><div class="cell" data-index="71"></div><div class="cell" data-index="72"></div><div class="cell" data-index="73"></div><div class="cell" data-index="74"></div><div class="cell" data-index="75"></div><div class="cell" data-index="76"></div><div class="cell" data-index="77"></div><div class="cell" data-index="78"></div><div class="cell" data-index="79"></div><div class="cell" data-index="80"></div></div>
+
+    <div class="numpad">
+        <button class="num-btn" onclick="inputValue(1)">1</button>
+        <button class="num-btn" onclick="inputValue(2)">2</button>
+        <button class="num-btn" onclick="inputValue(3)">3</button>
+        <button class="num-btn" onclick="inputValue(4)">4</button>
+        <button class="num-btn" onclick="inputValue(5)">5</button>
+        <button class="num-btn" onclick="inputValue(6)">6</button>
+        <button class="num-btn" onclick="inputValue(7)">7</button>
+        <button class="num-btn" onclick="inputValue(8)">8</button>
+        <button class="num-btn" onclick="inputValue(9)">9</button>
+        <button class="num-btn" style="background:#4b5563" onclick="inputValue(0)">⌫</button>
+    </div>
+
+    <div class="difficulty-btns">
+        <button class="btn-sm" onclick="newGame(&#39;easy&#39;)">Fácil</button>
+        <button class="btn-sm" onclick="newGame(&#39;medium&#39;)">Medio</button>
+        <button class="btn-sm" onclick="newGame(&#39;hard&#39;)">Difícil</button>
+        <button class="btn-sm" onclick="newGame(&#39;expert&#39;)">Experto</button>
+        <button class="btn-sm" onclick="newGame(&#39;extreme&#39;)">Extremo</button>
+        <button class="btn-sm" onclick="solveGame()">Resolver</button>
+    </div>
+
+    <div id="status-msg">Selecciona un nivel para empezar</div>
+</div>
+
+<script src="./Sudoku MaxiQueen PRO 👑_files/twk-main.js.descarga" charset="UTF-8" crossorigin="*"></script><script src="./Sudoku MaxiQueen PRO 👑_files/twk-vendor.js.descarga" charset="UTF-8" crossorigin="*"></script><script src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-vendors.js.descarga" charset="UTF-8" crossorigin="*"></script><script src="./Sudoku MaxiQueen PRO 👑_files/twk-chunk-common.js.descarga" charset="UTF-8" crossorigin="*"></script><script src="./Sudoku MaxiQueen PRO 👑_files/twk-runtime.js.descarga" charset="UTF-8" crossorigin="*"></script><script src="./Sudoku MaxiQueen PRO 👑_files/twk-app.js.descarga" charset="UTF-8" crossorigin="*"></script><script async="" src="./Sudoku MaxiQueen PRO 👑_files/1jku6q3n5" charset="UTF-8" crossorigin="*"></script><script>
+    let solution = [];
+    let currentBoard = [];
+    let selectedCell = null;
+    let lives = 3;
+    let seconds = 0;
+    let timerInt;
+
+    const gridEl = document.getElementById('grid');
+
+    // Inicializar rejilla vacía
+    function initGrid() {
+        gridEl.innerHTML = '';
+        for (let i = 0; i < 81; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.dataset.index = i;
+            cell.addEventListener('click', () => selectCell(i));
+            gridEl.appendChild(cell);
+        }
+    }
+
+    function selectCell(index) {
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach(c => c.classList.remove('selected', 'related'));
+        
+        selectedCell = index;
+        const row = Math.floor(index / 9);
+        const col = index % 9;
+
+        cells.forEach((c, i) => {
+            const r = Math.floor(i / 9);
+            const _c = i % 9;
+            if (r === row || _c === col) c.classList.add('related');
+        });
+
+        cells[index].classList.add('selected');
+    }
+
+    function generateSudoku() {
+        let b = Array(81).fill(0);
+        
+        function isValid(board, r, c, n) {
+            for (let i = 0; i < 9; i++) {
+                if (board[r * 9 + i] === n || board[i * 9 + c] === n) return false;
+            }
+            let startR = Math.floor(r / 3) * 3;
+            let startC = Math.floor(c / 3) * 3;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (board[(startR + i) * 9 + (startC + j)] === n) return false;
+                }
+            }
+            return true;
+        }
+
+        function solve(board) {
+            for (let i = 0; i < 81; i++) {
+                if (board[i] === 0) {
+                    let nums = [1,2,3,4,5,6,7,8,9].sort(() => Math.random() - 0.5);
+                    for (let n of nums) {
+                        if (isValid(board, Math.floor(i/9), i%9, n)) {
+                            board[i] = n;
+                            if (solve(board)) return true;
+                            board[i] = 0;
+                        }
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }
+        solve(b);
+        return b;
+    }
+
+    function newGame(level) {
+        clearInterval(timerInt);
+        seconds = 0;
+        lives = 3;
+        document.getElementById('lives').textContent = "❤️ " + lives;
+        document.getElementById('difficulty-label').textContent = "Nivel: " + level.toUpperCase();
+        
+        solution = generateSudoku();
+        const counts = { easy: 35, medium: 45, hard: 52, expert: 58, extreme: 64 };
+        let puzzle = [...solution];
+        let toRemove = counts[level];
+        
+        while (toRemove > 0) {
+            let idx = Math.floor(Math.random() * 81);
+            if (puzzle[idx] !== 0) {
+                puzzle[idx] = 0;
+                toRemove--;
+            }
+        }
+
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach((cell, i) => {
+            cell.classList.remove('fixed', 'error', 'selected', 'related');
+            cell.textContent = puzzle[i] !== 0 ? puzzle[i] : '';
+            if (puzzle[i] !== 0) cell.classList.add('fixed');
+        });
+
+        timerInt = setInterval(() => {
+            seconds++;
+            let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            let s = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('timer').textContent = `⏱️ ${m}:${s}`;
+        }, 1000);
+        
+        document.getElementById('status-msg').textContent = "¡Buena suerte!";
+    }
+
+    function inputValue(num) {
+        if (selectedCell === null) return;
+        const cell = document.querySelectorAll('.cell')[selectedCell];
+        if (cell.classList.contains('fixed') || lives <= 0) return;
+
+        if (num === 0) { // Borrar
+            cell.textContent = '';
+            cell.classList.remove('error');
+            return;
+        }
+
+        cell.textContent = num;
+        if (num !== solution[selectedCell]) {
+            cell.classList.add('error');
+            lives--;
+            document.getElementById('lives').textContent = "❤️ " + lives;
+            if (lives <= 0) gameOver(false);
+        } else {
+            cell.classList.remove('error');
+            checkWin();
+        }
+    }
+
+    function checkWin() {
+        const cells = document.querySelectorAll('.cell');
+        let complete = true;
+        cells.forEach((c, i) => {
+            if (parseInt(c.textContent) !== solution[i]) complete = false;
+        });
+        if (complete) gameOver(true);
+    }
+
+    function gameOver(win) {
+        clearInterval(timerInt);
+        document.getElementById('status-msg').textContent = win ? "🏆 ¡ERES UN PRO!" : "💀 JUEGO TERMINADO";
+        if (!win) solveGame();
+    }
+
+    function solveGame() {
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach((c, i) => {
+            c.textContent = solution[i];
+            if (!c.classList.contains('fixed')) c.style.color = "var(--accent)";
+        });
+    }
+
+    // Soporte para teclado físico
+    window.addEventListener('keydown', (e) => {
+        if (e.key >= 1 && e.key <= 9) inputValue(parseInt(e.key));
+        if (e.key === 'Backspace' || e.key === 'Delete') inputValue(0);
+    });
+
+    initGrid();
+</script>
+
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69c9d649ef8e611c37b6fb48/1jku6q3n5';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+
+<div class="os-navigation-hub">
+    <h3 class="hub-title">MÓDULOS DE JUEGO DISPONIBLES</h3>
+    
+    <div class="hub-grid">
+        <a href="https://juegos-maxi-queen-os.vercel.app/play8.html" class="hub-card">
+            <span class="card-id">SQ-03</span>
+            <div class="card-info">
+                <span class="card-name">Sudoku_Niv_Tiempo</span>
+                <span class="card-status">Legacy Edition</span>
+            </div>
+            <div class="card-arrow">→</div>
+        </a>
+
+        <a href="https://juegos-maxi-queen-os.vercel.app/play9.html" class="hub-card">
+            <span class="card-id">SQ-05</span>
+            <div class="card-info">
+                <span class="card-name">Sudoku Pro Suer</span>
+                <span class="card-status">Alpha Version</span>
+            </div>
+            <div class="card-arrow">→</div>
+        </a>
+
+        <a href="https://juegos-maxi-queen-os.vercel.app/click4.html" class="hub-card">
+            <span class="card-id">SQ-06</span>
+            <div class="card-info">
+                <span class="card-name">Play_Senc_Click</span>
+                <span class="card-status">Beta Release</span>
+            </div>
+            <div class="card-arrow">→</div>
+        </a>
+
+        <a href="https://juegos-maxi-queen-os.vercel.app/rojo-play3.html" class="hub-card active-link">
+            <span class="card-id">SQ-07</span>
+            <div class="card-info">
+                <span class="card-name">Fut_MQ_Reflex 5</span>
+                <span class="card-status">Advanced Patch</span>
+            </div>
+            <div class="card-arrow">→</div>
+        </a>
+
+         <a href="https://juegos-maxi-queen-os.vercel.app/index-play5.html" class="hub-card">
+            <span class="card-id">SQ-06</span>
+            <div class="card-info">
+                <span class="card-name">Play derriba 4</span>
+                <span class="card-status">Beta Release</span>
+            </div>
+            <div class="card-arrow">→</div>
+        </a>
+
+        <a href="https://juegos-maxi-queen-os.vercel.app/play10.html" class="hub-card">
+            <span class="card-id">SQ-06</span>
+            <div class="card-info">
+                <span class="card-name">Play Click 10 </span>
+                <span class="card-status">Beta Release</span>
+            </div>
+            <div class="card-arrow">→</div>
+        </a>
+
+        <a href="https://juegos-maxi-queen-os.vercel.app/play12.html" class="hub-card">
+            <span class="card-id">SQ-06</span>
+            <div class="card-info">
+                <span class="card-name"> Play Sudoku 12 MQ</span>
+                <span class="card-status">Beta Release</span>
+            </div>
+            <div class="card-arrow">→</div>
+        </a>
+
+        <a href="https://juegos-maxi-queen-os.vercel.app/play11.html" class="hub-card">
+            <span class="card-id">SQ-06</span>
+            <div class="card-info">
+                <span class="card-name"> Play_Sudoku_Agent_MQ 11</span>
+                <span class="card-status">Beta Release</span>
+            </div>
+            <div class="card-arrow">→</div>
+        </a>
+
+        <a href="https://juegos-maxi-queen-os.vercel.app/play-inicial.html" class="hub-card">
+            <span class="card-id">SQ-06</span>
+            <div class="card-info">
+                <span class="card-name"> derrumba torres inicial </span>
+                <span class="card-status">Beta Release</span>
+            </div>
+            <div class="card-arrow">→</div>
+        </a>
+
+        <a href="https://juegos-maxi-queen-os.vercel.app/cuadro-play1.html" class="hub-card">
+            <span class="card-id">SQ-06</span>
+            <div class="card-info">
+                <span class="card-name">Play_cuadro_con_niveles </span>
+                <span class="card-status">Beta Release</span>
+            </div>
+            <div class="card-arrow">→</div>
+        </a>
+    </div>
+</div>
+
+<style>
+    /* Estilos integrados para MaxiQueen OS Hub */
+    .os-navigation-hub {
+        width: 100%;
+        max-width: 480px;
+        margin: 30px auto;
+        padding: 0 20px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .hub-title {
+        color: var(--mq-accent, #00f2ff);
+        font-size: 0.75rem;
+        letter-spacing: 3px;
+        margin-bottom: 15px;
+        opacity: 0.8;
+        border-bottom: 1px solid rgba(0, 242, 255, 0.2);
+        padding-bottom: 5px;
+    }
+
+    .hub-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .hub-card {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 12px 15px;
+        text-decoration: none;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .hub-card:hover {
+        background: rgba(112, 0, 255, 0.1);
+        border-color: #7000ff;
+        transform: translateX(5px);
+    }
+
+    .card-id {
+        font-size: 0.65rem;
+        background: rgba(0, 242, 255, 0.1);
+        color: #00f2ff;
+        padding: 4px 8px;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-right: 15px;
+        min-width: 50px;
+        text-align: center;
+    }
+
+    .card-info {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .card-name {
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .card-status {
+        font-size: 0.7rem;
+        color: #8892b0;
+    }
+
+    .card-arrow {
+        color: #7000ff;
+        font-weight: bold;
+        opacity: 0.5;
+    }
+
+    .active-link {
+        border-left: 3px solid #00f2ff;
+    }
+
+    /* Ajuste para móviles */
+    @media (max-width: 480px) {
+        .hub-card { padding: 10px; }
+    }
+</style>
+  
+  <!-- ================= CHAT FLOATING ================= -->
+<div id="mq-chat" class="mq-chat-trigger hero-avatar" onclick="toggleChat()">
+   <img src="./Sudoku MaxiQueen PRO 👑_files/MQ_OS_maxiqueen-avatar_hiywqu.png" class="avatar-glow">
+</div>
+<div class="mq-chat" id="chatBox">
+  <div class="mq-chat-header" onclick="toggleMinimize()">
+    <span style="font-weight: bold;">👑 MaxiQueen OS</span>
+    <div class="mq-chat-controls">
+      <button onclick="event.stopPropagation(); toggleMinimize()" style="background:none; border:none; color:gray; cursor:pointer;">−</button>
+      <button onclick="event.stopPropagation(); closeChat()" style="background:none; border:none; color:gray; cursor:pointer; margin-left:10px;">✕</button>
+    </div>
+  </div>
+
+  <div class="mq-chat-body" id="chatLog">
+    <div class="msg msg-bot">¡Hola! 👑 Soy el sistema MaxiQueen OS. ¿En qué punto estás ahora mismo?
+    
+1️⃣ Ideas
+2️⃣ Bloqueo
+3️⃣ Crecimiento</div>
+  </div>
+
+  <div class="mq-chat-input">
+    <input type="text" id="userInput" placeholder="Maxiqueen OS te atiende...">
+    <button onclick="sendMessage()" style="background:var(--mq-gold); border:none; padding:8px 15px; border-radius:10px; cursor:pointer; font-weight:bold;">Enviar</button>
+  </div>
+</div>
+
+<script>
+
+   /* =======================
+   THEME TOGGLE
+======================= */
+function toggleTheme(){
+  const root = document.documentElement;
+  const current = root.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  localStorage.setItem('mq-theme', next);
+}
+(function(){
+  const saved = localStorage.getItem('mq-theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+})();
+
+/* =======================
+   LIGHTBOX
+======================= */
+const lightbox = document.getElementById('lightbox');
+const lightboxContent = document.getElementById('lightboxContent');
+
+function openLightbox(src){
+  lightboxContent.innerHTML = `<img src="${src}" class="w-full rounded-2xl shadow-xl" alt="">`;
+  lightbox.classList.remove('hidden');
+  lightbox.classList.add('flex');
+}
+function closeLightbox(){
+  lightbox.classList.add('hidden');
+  lightbox.classList.remove('flex');
+}
+lightbox.addEventListener('click', e => {
+  if(e.target === lightbox) closeLightbox();
+});
+
+
+/* =======================
+   LICENCIA CHECK
+======================= */
+const acceptMQ = document.getElementById('acceptMQ');
+const continueMQ = document.getElementById('continueMQ');
+if(acceptMQ){
+  acceptMQ.addEventListener('change', () => {
+    continueMQ.disabled = !acceptMQ.checked;
+  });
+}
+continueMQ.addEventListener('click', () => {
+  if(acceptMQ.checked){
+    // Guardar aceptación en sessionStorage
+    sessionStorage.setItem('mq-accepted-license', 'true');
+    // Aquí puedes redirigir o activar el sistema
+    alert("✅ Licencia aceptada. Entrando al sistema...");
+    // Ejemplo: mostrar chat o desbloquear contenido
+    document.getElementById('chatBox').style.display = 'flex';
+    // Puedes ocultar la sección de licencia si quieres
+    document.querySelector('.mq-license-box').style.display = 'none';
+  }
+});
+
+const chatLog = document.getElementById('chatLog');
+const input = document.getElementById('userInput');
+
+/* =========================
+   🧠 ESTADO GLOBAL
+========================= */
+let state = {
+  flujo: null,      
+  etapa: null,      
+  nivelDetectado: null,
+  tema: null,
+  ultimaPregunta: null
+};
+
+function logMessage(mensaje, tipo='sistema'){
+  const div = document.createElement('div');
+  div.className = tipo;
+  div.innerHTML = mensaje;
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+/* =========================
+   📦 RESPUESTAS BASE
+========================= */
+const triggers = {
+  sistema: {
+    quienSoy: `
+👑 ¿Quién soy?
+
+Soy MaxiQueen OS.
+No soy un bot tradicional.
+No soy un asistente automático frío.
+
+Soy un sistema conversacional diseñado para:
+✔ Ordenar ideas
+✔ Aclarar decisiones
+✔ Construir estructura
+✔ Acompañar procesos reales
+
+No reemplazo humanos.
+No doy respuestas vacías.
+No improviso.
+
+Funciono como:
+🧠 Guía
+🧭 Sistema de pensamiento
+🤝 Puente entre intención y estructura
+
+Si quieres, dime:
+👉 ¿Estás aquí más por claridad, por proyecto o por acompañamiento humano? 👀
+`,
+    queEs: `
+👑 ¿Qué es MaxiQueen OS?
+
+MaxiQueen OS es un sistema digital integral de:
+✔ Contenido
+✔ Estructura
+✔ Conversación
+✔ Automatización
+✔ Acompañamiento humano
+
+No es una herramienta.
+No es solo una web.
+No es solo un bot.
+
+Es un sistema que:
+✔ Piensa contigo
+✔ Te ordena por dentro
+✔ Te da dirección
+✔ Te ayuda a convertir intención en acción
+
+Si quieres, dime:
+👉 ¿Lo estás viendo más como ayuda personal, proyecto de negocio o crecimiento? 👀
+`,
+    comoFunciona: `
+👑 ¿Cómo funciona MaxiQueen OS?
+
+Funciona en capas:
+
+1️⃣ Conversación → te escucho
+2️⃣ Diagnóstico → entiendo tu situación
+3️⃣ Estructura → ordenamos ideas, proyecto o proceso
+4️⃣ Sistema → construimos algo estable
+5️⃣ Acompañamiento → no te dejo solo
+
+No es:
+❌ Automatización sin criterio
+❌ Contenido vacío
+❌ Respuestas rápidas sin profundidad
+
+Es:
+✔ Proceso
+✔ Sistema
+✔ Pensamiento estructurado
+
+Si quieres, dime:
+👉 ¿Te gustaría entenderlo más desde lo personal o desde lo técnico? 👀
+`,
+    diagnostico: `
+👑 ¿Qué es el diagnóstico en MaxiQueen OS?
+
+No es un test.
+No es un formulario.
+No es una etiqueta.
+
+Es una lectura real de:
+✔ Tu nivel actual
+✔ Tu estado mental
+✔ Tu etapa de proyecto
+✔ Tu tipo de bloqueo
+✔ Tu tipo de crecimiento
+
+Sirve para:
+✔ No venderte lo que no necesitas
+✔ No forzarte procesos incorrectos
+✔ No hacerte perder tiempo
+✔ Construir desde donde estás, no desde donde “deberías estar”
+
+Si quieres, dime:
+👉 ¿Quieres que te haga un diagnóstico ahora mismo? 👀
+`,
+    claridad: `
+👑 ¿Qué significa “claridad” aquí?
+
+No es motivación.
+No es “pensar positivo”.
+No es solo tener ideas.
+
+Claridad es:
+✔ Saber qué hacer primero
+✔ Saber qué no hacer
+✔ Saber por qué haces algo
+✔ Tener dirección sin ansiedad
+✔ Sentirte estable aunque el camino no esté completo
+
+En MaxiQueen OS, claridad = estructura mental funcional.
+
+Si quieres, dime:
+👉 ¿Sientes más ruido mental, bloqueo o exceso de ideas ahora mismo? 👀
+`,
+    servicio: `
+👑 ¿Cómo es el servicio en MaxiQueen OS?
+
+No es atención automática.
+No es soporte técnico frío.
+No es solo responder mensajes.
+
+Es:
+✔ Acompañamiento humano real
+✔ Conversación con criterio
+✔ Guía estratégica
+✔ Seguimiento de procesos
+✔ Apoyo cuando hay bloqueo
+
+No tratamos problemas.
+Tratamos procesos.
+
+Si quieres, dime:
+👉 ¿Buscas más guía, acompañamiento o estructura ahora mismo? 👀
+`,
+    asesoria: `
+👑 ¿Cómo es la asesoría?
+
+No es consultoría tradicional.
+No es coaching motivacional vacío.
+No es mentoría genérica.
+
+Es:
+✔ Diagnóstico real
+✔ Claridad estratégica
+✔ Diseño de sistema
+✔ Acompañamiento práctico
+✔ Pensamiento estructurado
+
+No te decimos qué hacer.
+Construimos contigo qué tiene sentido hacer.
+
+Si quieres, dime:
+👉 ¿Estás más en ideas, bloqueo o crecimiento ahora mismo? 👀
+`,
+    soporte: `
+👑 ¿Cómo es el soporte?
+
+No es tickets.
+No es respuestas automáticas.
+No es “revise la FAQ”.
+
+Es:
+✔ Contacto humano directo
+✔ Conversación real
+✔ Resolución con criterio
+✔ Acompañamiento cuando te atoras
+
+Soporte aquí no es técnico.
+Es estructural y humano.
+
+Si quieres, dime:
+👉 ¿Prefieres WhatsApp o Instagram para hablar ahora? 👀
+`,
+    comunidad: `
+👑 ¿Qué es la Comunidad MaxiQueen?
+
+No es un grupo de ruido.
+No es motivación vacía.
+No es consumo de contenido.
+
+Es un espacio para:
+✔ Pensar
+✔ Ordenar
+✔ Construir
+✔ Tomar decisiones
+✔ Avanzar con estructura
+
+Aquí no vienes a mirar.
+Vienes a trabajar en ti y en tu proceso.
+
+Si quieres, dime:
+👉 ¿Te interesa más comunidad o acompañamiento 1:1? 👀
+`,
+    sesiones: `
+👑 ¿Qué son las sesiones reales?
+
+Son encuentros humanos, no automáticos.
+
+Sirven para:
+✔ Desbloquear
+✔ Tomar decisiones
+✔ Reordenar procesos
+✔ Aclarar dirección
+✔ Corregir rumbo
+
+No son charlas motivacionales.
+Son sesiones estratégicas.
+
+Si quieres, dime:
+👉 ¿Te serviría más una sesión de claridad o de estructura ahora mismo? 👀
+`,
+    equipo: `
+👑 ¿Cuántas personas hay en MaxiQueen OS?
+
+MaxiQueen OS no es una empresa tradicional.
+Es un sistema en expansión.
+
+Tiene:
+✔ Núcleo humano estratégico
+✔ Acompañamiento directo
+✔ Infraestructura digital
+✔ Comunidad en crecimiento
+
+No medimos valor en cantidad de personas.
+Medimos valor en calidad de proceso.
+
+Si quieres, dime:
+👉 ¿Te interesa más quiénes somos o cómo podemos ayudarte? 👀
+`
+  },
+
+  emociones: {
+    pereza: `
+Gracias por decirlo directo 👑  
+
+La pereza muchas veces no es flojera.
+Es:
+✔ Cansancio mental
+✔ Saturación
+✔ Falta de dirección
+✔ Exceso sin estructura
+
+No se soluciona empujando.
+Se soluciona ordenando.
+
+Si quieres, dime:
+👉 ¿Te sientes más cansado, saturado o confundido ahora mismo? 👀
+`,
+    cansancio: `
+Tiene todo el sentido 👑  
+
+El cansancio no siempre es físico.
+Muchas veces es mental:
+✔ Demasiadas decisiones
+✔ Demasiadas ideas
+✔ Poco orden
+✔ Mucha presión interna
+
+No necesitas más motivación.
+Necesitas estructura liviana.
+
+Si quieres, dime:
+👉 ¿Te sientes más bloqueado, saturado o sin dirección ahora mismo? 👀
+`,
+    frustracion: `
+Gracias por decirlo 👑  
+
+La frustración casi nunca es falta de capacidad.
+Es falta de estructura en medio de intención.
+
+No se arregla empujando más.
+Se arregla ordenando mejor.
+
+Si quieres, dime:
+👉 ¿Te frustra más no avanzar o no saber qué avanzar? 👀
+`
+  },
+
+  ventas: {
+    planes: `
+👑 PLANES MAXIQUEEN OS — claros, humanos y sin letra pequeña
+
+No vendemos herramientas.
+No vendemos plataformas.
+No vendemos humo.
+
+Construimos sistemas que piensan contigo,
+te ordenan por dentro,
+y convierten intención en estructura real.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🌱 👑 STARTER — $49/mes
+Ideal si hoy tienes ideas, pero no sistema.
+
+✔ Orden mental y estratégico
+✔ Diagnóstico real
+✔ Base operativa clara
+✔ Ruta de acción sin ruido
+✔ Acompañamiento inicial humano
+
+Perfecto para:
+Personas bloqueadas,
+emprendedores en inicio,
+creadores con ideas dispersas.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 👑 PRO — $99/mes
+Para crecer, vender y automatizar con estructura.
+
+✔ Todo lo de Starter
+✔ Sistema activo de ventas
+✔ Automatizaciones clave
+✔ Optimización de procesos
+✔ Acompañamiento continuo
+
+Perfecto para:
+Negocios en marcha,
+creadores que ya venden sin sistema,
+personas listas para estructurar crecimiento.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🏰 👑 ELITE — $199/mes
+Infraestructura completa + acompañamiento prioritario.
+
+✔ Todo lo de Pro
+✔ Arquitectura completa del sistema
+✔ Automatización avanzada
+✔ Control total del ecosistema
+✔ Acceso directo a soporte humano
+
+Perfecto para:
+Marcas, creadores y proyectos
+que quieren crecer con estabilidad real.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+Si quieres, dime:
+👉 ¿Estás más en ideas, negocio activo o crecimiento serio ahora mismo? 👀👑
+`,
+    valor: `
+👑 ¿POR QUÉ MAXIQUEEN OS?
+
+No vendemos bots.
+No vendemos funnels.
+No vendemos automatización por automatizar.
+
+Vendemos:
+✔ Claridad
+✔ Orden
+✔ Dirección
+✔ Decisión
+✔ Sistema
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+Esto es lo que normalmente cambia en las personas:
+
+✔ Menos ruido mental
+✔ Menos decisiones improvisadas
+✔ Más foco
+✔ Más estructura
+✔ Más avance real
+✔ Menos ansiedad por “no saber qué hacer”
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+El valor no es tener una web.
+No es tener un bot.
+No es tener automatización.
+
+El valor es:
+Saber exactamente qué hacer con tu proyecto
+cuando nadie más te lo puede ordenar.
+
+Si quieres, dime:
+👉 ¿Hoy te falta más claridad, estructura o acompañamiento? 👑
+`
+  },
+
+  onboarding: {
+    inicio: `
+Hola 👑  
+Estoy aquí contigo, con calma.
+
+No soy un bot de respuestas rápidas.
+Soy parte del sistema MaxiQueen OS.
+
+¿En qué punto estás ahora mismo?
+
+1️⃣ Ideas  
+2️⃣ Bloqueo  
+3️⃣ Crecimiento  
+👉 o pereza / cansancio
+`
+  },
+
+  guia: {
+    flujo1: `
+👑 FLUJO 1 — ORDENAR IDEAS
+
+Este flujo es para ti si:
+✔ Tienes ideas, pero no sistema
+✔ Sientes ruido mental
+✔ No sabes por dónde empezar
+✔ Te cuesta tomar decisiones
+
+Aquí trabajamos:
+✔ Claridad personal
+✔ Dirección estratégica
+✔ Enfoque real
+✔ Prioridades concretas
+
+El objetivo no es hacer más.
+Es hacer mejor.
+
+Dime:
+👉 ¿Hoy sientes más confusión, bloqueo o exceso de ideas? 👀
+`,
+    flujo2: `
+👑 FLUJO 2 — CREAR ALGO VENDIBLE
+
+Este flujo es para ti si:
+✔ Ya tienes una idea clara
+✔ Quieres convertirla en oferta
+✔ Quieres vender sin improvisar
+✔ Quieres estructura comercial real
+
+Aquí trabajamos:
+✔ Propuesta de valor
+✔ Oferta clara
+✔ Mensaje correcto
+✔ Sistema de conversión
+
+El objetivo no es vender rápido.
+Es vender bien.
+
+Dime:
+👉 ¿Hoy tienes una idea clara o algo ya en marcha? 👀
+`,
+    flujo3: `
+📲 CONTACTO HUMANO — SIN BOTS
+
+Aquí no te responde un sistema.
+Te responde una persona real.
+
+Canales disponibles:
+✔ WhatsApp — atención directa
+✔ Instagram — contacto rápido
+✔ Comunidad — acompañamiento continuo
+
+Dime:
+👉 ¿Prefieres WhatsApp o Instagram ahora mismo? 👀
+`
+  },
+
+  comunidad: {
+    comunidad: `
+👥 COMUNIDAD MAXIQUEEN
+
+Este no es un grupo de ruido.
+No es motivación vacía.
+No es consumo de contenido.
+
+Es:
+✔ Acompañamiento humano
+✔ Sesiones reales
+✔ Seguimiento estratégico
+✔ Criterio compartido
+
+No entras para mirar.
+Entras para ordenar,
+decidir
+y avanzar.
+
+Dime:
+👉 ¿Prefieres empezar en comunidad o 1:1? 👀
+`
+  },
+
+  soporte: {
+    contacto: `
+📲 SOPORTE HUMANO
+
+Puedes hablar directamente con alguien real por:
+
+✔ WhatsApp:
+https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema.
+
+✔ Instagram
+✔ Comunidad interna
+
+Dime:
+👉 ¿Qué canal prefieres ahora mismo? 👀
+`
+  },
+
+  diagnostico: {
+    starter: `
+👑 Por lo que me cuentas, estás en etapa de **orden y claridad**.
+
+No necesitas más herramientas.
+Necesitas estructura básica bien hecha.
+
+Por eso, el punto ideal para ti ahora es:
+
+🌱 **STARTER**
+
+Te saca del ruido,
+te da base,
+y te deja listo para crecer sin caos.
+
+Si quieres, dime:
+👉 ¿Quieres que te explique cómo empezamos paso a paso? 👀
+`,
+    pro: `
+👑 Por lo que me cuentas, ya estás en **movimiento real**.
+
+No necesitas más ideas.
+Necesitas sistema, procesos y estructura de venta.
+
+Por eso, el punto ideal para ti ahora es:
+
+🚀 **PRO**
+
+Convierte tu esfuerzo en sistema,
+y tu sistema en crecimiento estable.
+
+Si quieres, dime:
+👉 ¿Quieres que te muestre cómo sería tu estructura inicial? 👀
+`,
+    elite: `
+👑 Por lo que me cuentas, estás en **etapa de expansión seria**.
+
+No necesitas hacks.
+Necesitas arquitectura sólida.
+
+Por eso, el punto ideal para ti ahora es:
+
+🏰 **ELITE**
+
+Sistema completo,
+control total,
+acompañamiento prioritario.
+
+Si quieres, dime:
+👉 ¿Quieres que veamos cómo se diseña tu ecosistema completo? 👀
+`
+  }
+};
+
+/* =========================
+   🎯 INTENTS BASE
+========================= */
+const intents = [
+  // Sistema / Identidad
+  {
+    keywords: ["quien eres","quién eres","que eres","qué eres"],
+    response: () => triggers.sistema.quienSoy
+  },
+  {
+    keywords: ["que es","qué es","qué es esto","que es esto","que es maxiqueen","qué es maxiqueen"],
+    response: () => triggers.sistema.queEs
+  },
+  {
+    keywords: ["como funciona","cómo funciona","funciona","como es el sistema"],
+    response: () => triggers.sistema.comoFunciona
+  },
+  {
+    keywords: ["diagnostico","diagnóstico"],
+    response: () => triggers.sistema.diagnostico
+  },
+  {
+    keywords: ["claridad","qué es claridad","que es claridad"],
+    response: () => triggers.sistema.claridad
+  },
+  {
+    keywords: ["servicio","cómo es el servicio","como es el servicio"],
+    response: () => triggers.sistema.servicio
+  },
+  {
+    keywords: ["asesoria","asesoría","cómo es la asesoria","como es la asesoria"],
+    response: () => triggers.sistema.asesoria
+  },
+  {
+    keywords: ["soporte","cómo es el soporte","como es el soporte"],
+    response: () => triggers.sistema.soporte
+  },
+  {
+    keywords: ["comunidad interna","que es la comunidad","qué es la comunidad"],
+    response: () => triggers.sistema.comunidad
+  },
+  {
+    keywords: ["sesiones","sesiones reales"],
+    response: () => triggers.sistema.sesiones
+  },
+  {
+    keywords: ["cuantas personas","cuántas personas","equipo","cuantos son"],
+    response: () => triggers.sistema.equipo
+  },
+
+  // Emociones
+  {
+    keywords: ["pereza","flojo","desganado"],
+    response: () => triggers.emociones.pereza
+  },
+  {
+    keywords: ["cansado","agotado","fatigado"],
+    response: () => triggers.emociones.cansancio
+  },
+  {
+    keywords: ["frustrado","frustración","estresado","estres"],
+    response: () => triggers.emociones.frustracion
+  },
+
+  // Ventas
+  {
+    keywords: ["precio","planes","pago"],
+    response: () => triggers.ventas.planes
+  },
+  {
+    keywords: ["costos","cuánto vale","cuanto cuesta","precio real"],
+    response: () => triggers.ventas.planes
+  },
+  {
+    keywords: ["valor","vale la pena","beneficio","beneficios","por qué","porque"],
+    response: () => triggers.ventas.valor
+  },
+
+  // Inicio
+  {
+    keywords: ["empezar","inicio","onboarding","arrancar","comenzar"],
+    response: () => triggers.onboarding.inicio
+  },
+  {
+    keywords: ["hola","buenas","hey","saludos"],
+    response: () => triggers.onboarding.inicio
+  },
+
+  // Flujos
+  {
+    keywords: ["1","ordenar","ordenar ideas","ideas"],
+    response: () => {
+      state.flujo = "flujo1";
+      state.etapa = "diagnostico";
+      return triggers.guia.flujo1;
+    }
+  },
+  {
+    keywords: ["2","crear","vendible","producto","oferta"],
+    response: () => {
+      state.flujo = "flujo2";
+      state.etapa = "diagnostico";
+      return triggers.guia.flujo2;
+    }
+  },
+  {
+    keywords: ["3","humano","persona","asesor","hablar","hablar con alguien"],
+    response: () => {
+      state.flujo = "flujo3";
+      state.etapa = "contacto";
+      return triggers.guia.flujo3;
+    }
+  },
+
+  // Confirmaciones
+  {
+    keywords: ["si","sí","ok","dale","vamos","perfecto","listo","de una"],
+    response: () => `
+Perfecto 👑  
+Entonces dime:
+
+1️⃣ Ordenar ideas  
+2️⃣ Crear algo vendible  
+3️⃣ Hablar con alguien humano  
+`
+  }
+];
+
+/* =========================
+   🧠 MOTOR DE CONTEXTO
+========================= */
+function contextualResponse(text) {
+
+  // FLUJO 1 — ORDENAR IDEAS
+  if (state.flujo === "flujo1" && state.etapa === "diagnostico") {
+    if (text.includes("confusion") || text.includes("confusión")) {
+      state.nivelDetectado = "starter";
+      state.etapa = "recomendacion";
+      return `
+Gracias por decirlo directo 👑  
+
+La confusión no es falta de capacidad.
+Es exceso de ruido sin estructura.
+
+Eso significa que ahora mismo necesitas:
+✔ Claridad
+✔ Prioridades
+✔ Dirección concreta
+
+No más ideas.
+No más teoría.
+
+Sistema.
+
+${triggers.diagnostico.starter}
+`;
+    }
+    if (text.includes("bloqueo")) {
+      state.nivelDetectado = "starter";
+      state.etapa = "recomendacion";
+      return `
+Gracias por decirlo 👑  
+
+El bloqueo casi nunca es pereza.
+Es saturación sin estructura.
+
+Eso significa que ahora necesitas:
+✔ Orden mental
+✔ Enfoque claro
+✔ Dirección accionable
+
+No presión.
+No más información.
+
+Sistema.
+
+${triggers.diagnostico.starter}
+`;
+    }
+    if (text.includes("exceso")) {
+      state.nivelDetectado = "starter";
+      state.etapa = "recomendacion";
+      return `
+Tiene todo el sentido 👑  
+
+El exceso de ideas no es problema creativo.
+Es problema de jerarquía.
+
+Eso significa que ahora necesitas:
+✔ Prioridades claras
+✔ Dirección estratégica
+✔ Enfoque real
+
+No más ideas.
+No más estímulos.
+
+Sistema.
+
+${triggers.diagnostico.starter}
+`;
+    }
+  }
+
+  // FLUJO 2 — CREAR ALGO VENDIBLE
+  if (state.flujo === "flujo2" && state.etapa === "diagnostico") {
+    if (text.includes("ya") || text.includes("tengo") || text.includes("en marcha")) {
+      state.nivelDetectado = "pro";
+      state.etapa = "recomendacion";
+      return `
+Buenísimo 👑  
+
+Si ya tienes algo en marcha,
+tu cuello de botella no es creatividad.
+
+Es:
+✔ Sistema
+✔ Mensaje
+✔ Conversión
+✔ Estructura
+
+Eso significa que ahora necesitas orden comercial,
+no más ideas.
+
+${triggers.diagnostico.pro}
+`;
+    }
+    if (text.includes("no") || text.includes("todavía") || text.includes("aún")) {
+      state.nivelDetectado = "starter";
+      state.etapa = "recomendacion";
+      return `
+Perfecto 👑  
+
+Si aún no tienes nada concreto,
+lo inteligente no es vender rápido.
+
+Es:
+✔ Ordenar primero
+✔ Definir bien
+✔ Construir con criterio
+
+Eso te ahorra tiempo, frustración y desgaste.
+
+${triggers.diagnostico.starter}
+`;
+    }
+  }
+
+  // DESPUÉS DE RECOMENDACIÓN — MANTENER CONTEXTO
+  if (state.etapa === "recomendacion") {
+    if (text.includes("como") || text.includes("cómo") || text.includes("funciona") || text.includes("empezamos")) {
+      return `
+Buenísima pregunta 👑  
+
+Lo importante ahora no es el plan,
+es cómo empezamos contigo realmente.
+
+El proceso suele ser:
+
+1️⃣ Diagnóstico humano profundo  
+2️⃣ Orden mental y estratégico  
+3️⃣ Diseño de estructura mínima viable  
+4️⃣ Acompañamiento paso a paso  
+5️⃣ Evolución según tu ritmo  
+
+No te tiramos info encima.
+Construimos contigo.
+
+Si quieres, dime:
+👉 ¿Prefieres avanzar paso a paso o ver primero el panorama completo? 👀
+`;
+    }
+    if (text.includes("si") || text.includes("sí") || text.includes("dale") || text.includes("ok")) {
+      return `
+Perfecto 👑  
+
+Entonces empezamos así:
+
+Primero te hago unas preguntas cortas
+para entender bien tu punto actual,
+y desde ahí construimos contigo.
+
+Dime:
+👉 ¿Hoy estás más enfocado en ti como persona o en tu proyecto como negocio? 👀
+`;
+    }
+  }
+
+  // FLUJO 3 — CONTACTO HUMANO
+  if (state.flujo === "flujo3") {
+    if (text.includes("whatsapp")) {
+      return `
+Perfecto 👑  
+
+Aquí tienes acceso directo a una persona real:
+
+📲 WhatsApp:
+👉 https://wa.me/573016625921  
+
+(Escríbenos y seguimos contigo sin bots.)
+
+¿Quieres que mientras tanto sigamos conversando aquí? 👀
+`;
+    }
+    if (text.includes("instagram")) {
+      return `
+Perfecto 👑  
+
+Aquí puedes escribirnos directo:
+
+📲 Instagram:
+👉 https://instagram.com/maxiqueenos  
+
+¿Quieres que mientras tanto sigamos conversando aquí? 👀
+`;
+    }
+  }
+
+  return null;
+}
+
+/* =========================
+   🎯 RESPUESTA PRINCIPAL
+========================= */
+function getResponse(message){
+  const text = message.toLowerCase();
+
+  // 1️⃣ CONTEXTO PRIMERO
+  const contextual = contextualResponse(text);
+  if (contextual) return contextual;
+
+  // 2️⃣ INTENTS NORMALES
+  for(const intent of intents){
+    if(intent.keywords.some(k => text.includes(k))){
+      return intent.response();
+    }
+  }
+
+  // 3️⃣ FALLBACK INTELIGENTE (NO GENÉRICO)
+  return `
+Te leo 👀  
+
+No quiero responderte como bot.
+Quiero entenderte bien.
+
+¿Me cuentas un poco mejor qué tienes en mente ahora mismo? 👑
+`;
+}
+
+/* =========================
+   🧩 UI
+========================= */
+function appendMessage(text, sender="bot"){
+  const msg = document.createElement('div');
+  msg.textContent = text;
+  msg.style.whiteSpace = "pre-line";
+  msg.className = sender === "user"
+    ? "text-right text-amber-400 font-semibold"
+    : "text-left text-zinc-200";
+  chatLog.appendChild(msg);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+function sendMessage(){
+  const message = input.value.trim();
+  if(!message) return;
+
+  appendMessage(message, "user");
+  input.value = "";
+  setTimeout(() => {
+    appendMessage(getResponse(message), "bot");
+  }, 200);
+
+ logMessage("👤 " + message, "user");
+
+ const response = getResponse(message);
+
+  setTimeout(() => {
+    logMessage(response, "sistema");
+  }, 400);
+
+  input.value = "";
+}
+
+input.addEventListener("keypress", function(e){
+  if(e.key === "Enter"){
+    sendMessage();
+  }
+});
+
+input.addEventListener("keydown", e => {
+  if(e.key === "Enter") sendMessage();
+});
+
+</script>
+
+<!-- ================= ESTILOS (CSS) - CORREGIDOS ================= -->
+<style>
+.mq-chat-trigger {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+.mq-chat-trigger:hover {
+  transform: scale(1.1);
+}
+
+.avatar-glow {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid #eab308;
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
+  object-fit: cover;
+}
+
+/* Efecto de pulso */
+.mq-chat-trigger::after {
+  content: '';
+  position: absolute;
+  width: 100%; height: 100%;
+  top: 0; left: 0;
+  border-radius: 50%;
+  border: 2px solid #eab308;
+  animation: pulse-ring 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+.mq-chat {
+  display: none; /* Se activa con JS */
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 320px;
+  max-height: 450px;
+  background: #09090b;
+  border: 1px solid #27272a;
+  border-radius: 15px;
+  flex-direction: column;
+  z-index: 1000;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.msg-user { text-align: right; color: #facc15; margin: 5px 0; font-weight: 600; }
+.msg-bot { text-align: left; color: #e4e4e7; margin: 5px 0; white-space: pre-line; }
+</style>
+
+<!-- ================= LÓGICA (JS) - UNIFICADA ================= -->
+<script>
+const input = document.getElementById('userInput');
+const chatLog = document.getElementById('chatLog');
+
+/* Control de Visibilidad */
+function toggleChat() {
+    const chat = document.getElementById("chatBox");
+    chat.style.display = (chat.style.display === "flex") ? "none" : "flex";
+}
+
+function closeChat() {
+    document.getElementById("chatBox").style.display = "none";
+}
+
+/* Motor de Mensajes */
+function sendMessage() {
+    const message = input.value.trim();
+    if (!message) return;
+
+    appendMessage(message, "user");
+    input.value = "";
+
+    // Simulación de respuesta basada en tu objeto 'triggers'
+    setTimeout(() => {
+        const reply = getResponse(message);
+        appendMessage(reply, "bot");
+    }, 400);
+}
+
+function appendMessage(text, sender) {
+    const div = document.createElement('div');
+    div.className = sender === "user" ? "msg-user" : "msg-bot";
+    div.innerText = text;
+    chatLog.appendChild(div);
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+});
+
+/* Aquí irían tus funciones getResponse e intents que ya tienes */
+function getResponse(message) {
+    const text = message.toLowerCase();
+    if (text.includes("hola") || text.includes("1")) return "Excelente elección 👑. ¿Qué tienes en mente?";
+    return "Te leo con atención... cuéntame más. 👑";
+}
+</script>
+
+       <script>
+// Elementos de la Licencia
+const acceptMQ = document.getElementById('acceptMQ');
+const continueMQ = document.getElementById('continueMQ');
+const licenseSection = document.getElementById('licenseSection');
+const chatTrigger = document.getElementById('chat-trigger');
+
+// Elementos del Chat
+const input = document.getElementById('userInput');
+const chatLog = document.getElementById('chatLog');
+
+/* ==========================================
+   LÓGICA DE DESBLOQUEO (LICENCIA)
+   ========================================== */
+if(acceptMQ) {
+  // Habilitar/Deshabilitar botón según el checkbox
+  acceptMQ.addEventListener('change', () => {
+    continueMQ.disabled = !acceptMQ.checked;
+  });
+}
+
+if(continueMQ) {
+  // Acción al hacer clic en "Entrar al sistema"
+  continueMQ.addEventListener('click', () => {
+    // 1. Ocultar la caja de licencia
+    licenseSection.style.display = 'none';
+    
+    // 2. Mostrar el botón flotante del chat (el trigger)
+    chatTrigger.style.display = 'flex';
+    
+    // 3. Opcional: Abrir el chat automáticamente al entrar
+    toggleChat();
+    
+    console.log("Sistema MaxiQueen OS activado.");
+  });
+}
+
+/* ==========================================
+   CONTROL DEL CHAT
+   ========================================== */
+function toggleChat() {
+    const chat = document.getElementById("chatBox");
+    // Si no tiene estilo definido, forzamos el toggle
+    if (chat.style.display === "flex") {
+        chat.style.display = "none";
+    } else {
+        chat.style.display = "flex";
+    }
+}
+
+function closeChat() {
+    document.getElementById("chatBox").style.display = "none";
+}
+
+function sendMessage() {
+    const message = input.value.trim();
+    if (!message) return;
+    appendMessage(message, "user");
+    input.value = "";
+    setTimeout(() => {
+        const reply = getResponse(message);
+        appendMessage(reply, "bot");
+    }, 400);
+}
+
+function appendMessage(text, sender) {
+    const div = document.createElement('div');
+    div.className = sender === "user" ? "msg-user" : "msg-bot";
+    div.innerText = text;
+    chatLog.appendChild(div);
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+// Escuchar la tecla Enter
+if(input) {
+  input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+  });
+}
+
+function getResponse(message) {
+    const text = message.toLowerCase();
+    if (text.includes("hola") || text.includes("1")) return "Excelente elección 👑. ¿Qué tienes en mente?";
+    return "Te leo con atención... cuéntame más. 👑";
+}
+</script>
+
+<script>
+// Lógica Refinada para la Licencia
+const checkbox = document.getElementById('acceptMQ');
+const btn = document.getElementById('continueMQ');
+
+checkbox.addEventListener('change', (e) => {
+    if (e.target.checked) {
+        btn.disabled = false;
+        btn.classList.remove('bg-zinc-800', 'text-zinc-500', 'cursor-not-allowed');
+        btn.classList.add('bg-amber-500', 'text-zinc-950', 'hover:bg-amber-400');
+    } else {
+        btn.disabled = true;
+        btn.classList.add('bg-zinc-800', 'text-zinc-500', 'cursor-not-allowed');
+        btn.classList.remove('bg-amber-500', 'text-zinc-950', 'hover:bg-amber-400');
+    }
+});
+
+btn.addEventListener('click', () => {
+    // Aquí puedes disparar una animación de "Carga de Sistema" antes de redirigir
+    console.log("Acceso concedido a MaxiQueen OS Core");
+    window.location.href = "/apps.html";
+});
+</script>
+
+
+
+<script async="" data-explicit-opt-in="true" data-cookie-opt-in="true" data-deployment-id="dpl_GtikaKsKyW5rCFnZqF3G4VNCGi4g" src="./Sudoku MaxiQueen PRO 👑_files/feedback.js.descarga"></script><vercel-live-feedback style="position: absolute; top: 0px; left: 0px; z-index: 2147483647;"><template shadowrootmode="closed"><div class="xjpnuDEdtspheNmW752g"></div><div class="rkEQJK5UMVeU3W3N5bFj"><svg height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16">  <path fill-rule="evenodd" clip-rule="evenodd" d="M12.4697 13.5303L13 14.0607L14.0607 13L13.5303 12.4697L9.06065 7.99999L13.5303 3.53032L14.0607 2.99999L13 1.93933L12.4697 2.46966L7.99999 6.93933L3.53032 2.46966L2.99999 1.93933L1.93933 2.99999L2.46966 3.53032L6.93933 7.99999L2.46966 12.4697L1.93933 13L2.99999 14.0607L3.53032 13.5303L7.99999 9.06065L12.4697 13.5303Z" fill="currentColor"></path></svg></div><div style="--toolbar-x: 1; --toolbar-y: 0.5;"><div><iframe src="https://vercel.live/_next-live/feedback/feedback.html?dpl=dpl_BpVmcQn3Q8oFyitaJySadyhoYgbb" width="0" height="0" title="empty" style="border-width: medium; border-style: none; border-color: currentcolor; border-image: initial;"></iframe></div></div><style>:host{--toolbar-x:1;--toolbar-y:0.5;--toolbar-size:36;--toolbar-offset:8;--size:var(--toolbar-size);--size-px:calc(var(--size)*1px);animation:none 0s ease 0s 1 normal none running;backface-visibility:visible;background:transparent none repeat 0 0/auto auto padding-box border-box scroll;border:none;border-collapse:separate;-o-border-image:none;border-image:none;border-radius:0;border-spacing:0;bottom:auto;box-shadow:none;box-sizing:content-box;caption-side:top;clear:none;clip:auto;color:#000;-moz-columns:auto;-moz-column-count:auto;-moz-column-fill:balance;column-fill:balance;grid-column-gap:normal;-moz-column-gap:normal;column-gap:normal;-moz-column-rule:medium none currentColor;column-rule:medium none currentColor;-moz-column-span:1;column-span:1;-moz-column-width:auto;columns:auto;content:normal;counter-increment:none;counter-reset:none;cursor:auto;direction:ltr;display:inline;empty-cells:show;float:none;font-family:serif;font-feature-settings:normal;font-size:medium;height:auto;hyphens:none;left:auto;letter-spacing:normal;list-style:disc none outside;margin:0;max-height:none;max-width:none;min-height:0;min-width:0;opacity:1;orphans:2;outline:medium none invert;overflow:visible;overflow-x:visible;overflow-y:visible;padding:0;page-break-after:auto;page-break-before:auto;page-break-inside:auto;all:initial;cursor:default!important;font-family:var(--font-sans);font-size:12px;font-stretch:normal;font-style:normal;font-variant:normal;font-weight:400;line-height:normal;perspective:none;perspective-origin:50% 50%;position:static;right:auto;-moz-tab-size:8;-o-tab-size:8;tab-size:8;table-layout:auto;text-align:left;-moz-text-align-last:auto;text-align-last:auto;text-decoration:none;text-indent:0;text-rendering:optimizeLegibility;text-shadow:none;text-transform:none;top:auto;transform:none;transform-origin:50% 50% 0;transform-style:flat;transition:none 0s ease 0s;unicode-bidi:normal;vertical-align:baseline;visibility:visible;white-space:normal;widows:2;width:auto;word-spacing:normal;z-index:auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:transparent;color:var(--geist-foreground);scroll-padding-top:var(--header-height);--color:initial;--text-color:initial;--themed-bg:initial;--themed-hover-bg:initial;--themed-fg:initial;--themed-border-color:initial;--border-color:initial;--themed-border:initial;--variant-radius:initial;--spiner-color:initial}@media (any-pointer:coarse){:host{--toolbar-size:40;--toolbar-offset:-6}}</style><style>.gz0uaErRoX5lIFdf0CDC{display:none}</style><style>.KgfssQl8RzJGwFogbANP{background:transparent;border-radius:50%;left:clamp(var(--offset-px),calc((var(--window-width, 100vw) - 2*var(--offset-px))*var(--toolbar-x) + var(--offset-px)),calc(var(--window-width, 100vw) - var(--size-px) - var(--offset-px)));position:fixed;top:clamp(0px,calc(var(--window-height, 100vh)*var(--toolbar-y)),calc(var(--window-height, 100vh) - var(--size-px)))}.KgfssQl8RzJGwFogbANP.yfWZbEryIesB70nm7FU6{top:clamp(0px,calc(var(--toolbar-y-offset)),calc(var(--window-height, 100vh) - var(--size-px)))}.KgfssQl8RzJGwFogbANP.yfWZbEryIesB70nm7FU6.BZdOiMLDIRFEZ6hjqRjk{top:calc(var(--window-height, 100vh)/3)}.KgfssQl8RzJGwFogbANP.pxAaGgiAgIEStvV2Rkyg{top:clamp(0px,calc(var(--window-height, 100vh) + var(--toolbar-y-offset) - var(--size-px)),calc(var(--window-height, 100vh) - var(--size-px)))}.KgfssQl8RzJGwFogbANP.pxAaGgiAgIEStvV2Rkyg.BZdOiMLDIRFEZ6hjqRjk{top:calc(var(--window-height, 100vh)*2/3 - var(--size-px))}.KgfssQl8RzJGwFogbANP{--offset-px:calc(var(--toolbar-offset)*1px);--edge:24;box-sizing:border-box;height:var(--size-px);width:var(--size-px);-webkit-tap-highlight-color:transparent;overflow:visible}.KgfssQl8RzJGwFogbANP:not(.NM77lpxvcT086LtiErg4) .g_U3r8dd_7sgVHnNnVpT .sF5uu1wZYWXEZpfeWyAr{transform:scaleX(-1)}@media (pointer:coarse){.KgfssQl8RzJGwFogbANP:before{background:transparent;border-radius:50%;content:"";inset:-32px;position:absolute;z-index:-1}}.KgfssQl8RzJGwFogbANP button{-webkit-appearance:unset;-moz-appearance:unset;appearance:unset;background:unset;border:unset;font:unset;margin:unset;padding:unset;text-align:unset}.oZlNLbvDgy4XTIKt1MgM{backdrop-filter:blur(50px);background:rgba(0,0,0,.8);border-radius:50%;box-shadow:0 8px 30px rgba(0,0,0,.25);inset:0;position:absolute;transform-origin:50% 50% 0;transition:transform .1s}.KgfssQl8RzJGwFogbANP.OWSMzp3vEvrzsnBqsLnA .oZlNLbvDgy4XTIKt1MgM{transform:scale(.96)}.cOOwjAdSMSRiTHprPccD{height:var(--size-px);left:0;pointer-events:none;position:absolute;top:0;width:var(--size-px)}.cOOwjAdSMSRiTHprPccD:after,.cOOwjAdSMSRiTHprPccD:before{border-radius:50%;box-sizing:content-box;content:"";position:absolute}.cOOwjAdSMSRiTHprPccD:before{border:1px solid #000;inset:0}.cOOwjAdSMSRiTHprPccD:after{border:1px solid hsla(0,0%,100%,.2);inset:1px}.g_U3r8dd_7sgVHnNnVpT{border-radius:50%;color:#fff;cursor:pointer;display:grid;height:100%;place-content:center;width:100%;-webkit-tap-highlight-color:transparent;position:relative}.g_U3r8dd_7sgVHnNnVpT .sF5uu1wZYWXEZpfeWyAr{--size:calc(var(--size-px)*0.75);box-sizing:border-box;height:var(--size);width:var(--size)}.g_U3r8dd_7sgVHnNnVpT .UrncQQ9DDT5yb13q4rQ5{--spinner-size:16px;--spinner-color:currentColor;display:none}.g_U3r8dd_7sgVHnNnVpT.q9PeoANaAozZAwvP0V9y{pointer-events:none}.g_U3r8dd_7sgVHnNnVpT.q9PeoANaAozZAwvP0V9y .sF5uu1wZYWXEZpfeWyAr{display:none}.g_U3r8dd_7sgVHnNnVpT.q9PeoANaAozZAwvP0V9y .UrncQQ9DDT5yb13q4rQ5{display:block}.rkEQJK5UMVeU3W3N5bFj{backdrop-filter:blur(50px);background:rgba(0,0,0,.6);border-radius:50%;bottom:-64px;display:none;left:50%;position:fixed;transform:translateX(-50%);--size:calc(var(--toolbar-size)*1.2px);--scaled-size:calc(var(--size)/1.5);align-items:center;border:1px solid hsla(0,0%,100%,.5);box-shadow:0 0 #000,0 0 #000,0 0 10px rgba(0,0,0,.1);box-sizing:border-box;height:var(--scaled-size);justify-content:center;opacity:0;outline:1px solid rgba(0,0,0,.1);pointer-events:none;transition:opacity .3s,bottom .3s,width .3s,height .3s;transition-timing-function:cubic-bezier(.4,0,.2,1);width:var(--scaled-size)}.rkEQJK5UMVeU3W3N5bFj svg{color:#fff;fill:none;height:16px;width:16px}.rkEQJK5UMVeU3W3N5bFj.Grbi4gFoxSEpAAm4xTjY{bottom:60px;opacity:1;--scaled-size:var(--size);display:flex}.xjpnuDEdtspheNmW752g{display:none}.xjpnuDEdtspheNmW752g:has(+.rkEQJK5UMVeU3W3N5bFj.Grbi4gFoxSEpAAm4xTjY){display:block}.xjpnuDEdtspheNmW752g{background:linear-gradient(180deg,transparent,rgba(0,0,0,.3));bottom:0;height:calc(80px + 2px*var(--toolbar-size));left:0;-webkit-mask:radial-gradient(ellipse at 50% 82%,#000 27%,transparent 70%);mask:radial-gradient(ellipse at 50% 82%,#000 27%,transparent 70%);opacity:0;pointer-events:none;position:fixed;transition:opacity .3s;width:100vw}.xjpnuDEdtspheNmW752g:has(+.rkEQJK5UMVeU3W3N5bFj.Grbi4gFoxSEpAAm4xTjY){opacity:1}.u1OMQH38rk8Henggmu7G{inset:0;position:fixed}</style><style>.THmkAWNxELbVyYRfSfVY{--menu-width:280px;--menu-height:269px;--edge-padding:8px;--offset-px:calc(1px*var(--toolbar-offset));height:var(--menu-height);left:clamp(calc(var(--size-px) + var(--edge-padding) + var(--offset-px)),calc(100vw*var(--toolbar-x)),calc(100vw - var(--menu-width) - var(--edge-padding) - var(--size-px) - var(--offset-px)));margin:0;overflow:hidden;padding:0;top:clamp(var(--edge-padding),calc(100%*var(--toolbar-y) - var(--menu-height) + var(--size-px)),calc(100vh - var(--menu-height) - var(--edge-padding)));width:var(--menu-width)}.THmkAWNxELbVyYRfSfVY iframe{border-radius:inherit;display:block;height:100%;-webkit-user-select:none;-moz-user-select:none;user-select:none;width:100%}.THmkAWNxELbVyYRfSfVY{background:#fff;border:1px solid rgba(0,0,0,.15);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.12);box-sizing:border-box;color:#eaeaea}@media (prefers-color-scheme:dark){.THmkAWNxELbVyYRfSfVY{background:#000;border-color:hsla(0,0%,100%,.15)}}@media (max-width:768px){.THmkAWNxELbVyYRfSfVY{--menu-height:275px;--timing:0.35s;--ease:linear(0 0%,0.0036 9.62%,0.0185 16.66%,0.0489 23.03%,0.0962 28.86%,0.1705 34.93%,0.269 40.66%,0.3867 45.89%,0.5833 52.95%,0.683 57.05%,0.7829 62.14%,0.8621 67.46%,0.8991 70.68%,0.9299 74.03%,0.9545 77.52%,0.9735 81.21%,0.9865 85%,0.9949 89.15%,1 100%);border:0;border-radius:12px 12px 0 0;bottom:0;box-shadow:0 -1px 1px 0 rgba(0,0,0,.02),0 -16px 24px -4px rgba(0,0,0,.04),0 -32px 48px -8px rgba(0,0,0,.06);display:none;height:-moz-fit-content;height:fit-content;height:0;left:0;overflow:visible;position:fixed;right:0;top:unset;width:100vw}.THmkAWNxELbVyYRfSfVY:before{border-radius:inherit;border-top:1px solid hsla(0,0%,100%,.2);content:"";inset:0;mix-blend-mode:difference;pointer-events:none;position:absolute}@media (prefers-color-scheme:dark){.THmkAWNxELbVyYRfSfVY:before{mix-blend-mode:exclusion}}.THmkAWNxELbVyYRfSfVY.AbUClSnedxlTmTQlxamK{transition:display,overlay,translate,height;transition-behavior:allow-discrete;transition-duration:var(--timing);transition-timing-function:var(--ease)}.THmkAWNxELbVyYRfSfVY.AbUClSnedxlTmTQlxamK::backdrop{opacity:0;overscroll-behavior:none;transition-behavior:allow-discrete;transition-duration:var(--timing);transition-property:display,overlay,opacity;transition-timing-function:var(--ease)}.THmkAWNxELbVyYRfSfVY.AbUClSnedxlTmTQlxamK:popover-open{display:block;height:var(--menu-height);@starting-style{height:0}}.THmkAWNxELbVyYRfSfVY.AbUClSnedxlTmTQlxamK:popover-open::backdrop{opacity:1;@starting-style{opacity:0}}}.T1BzL_6SLE7vtZq07pQv{display:block!important}</style><style>._472I4HBgsrXA25rrRN7g,.TOFYxsTuhd4WvePFJ5mA{height:var(--spinner-size,20px);width:var(--spinner-size,20px)}._472I4HBgsrXA25rrRN7g{left:50%;position:relative;top:50%}.cDmbUw8NpHadAxKa_6Ny{animation:t8HXzzptxYCDS_a2f7Pc 1.2s linear infinite;background:var(--spinner-color,var(--ds-gray-700));border-radius:var(--geist-radius);height:8%;left:-10%;position:absolute;top:-3.9%;width:24%}.cDmbUw8NpHadAxKa_6Ny:first-child{animation-delay:-1.2s;transform:rotate(.0001deg) translate(146%)}.cDmbUw8NpHadAxKa_6Ny:nth-child(2){animation-delay:-1.1s;transform:rotate(30deg) translate(146%)}.cDmbUw8NpHadAxKa_6Ny:nth-child(3){animation-delay:-1s;transform:rotate(60deg) translate(146%)}.cDmbUw8NpHadAxKa_6Ny:nth-child(4){animation-delay:-.9s;transform:rotate(90deg) translate(146%)}.cDmbUw8NpHadAxKa_6Ny:nth-child(5){animation-delay:-.8s;transform:rotate(120deg) translate(146%)}.cDmbUw8NpHadAxKa_6Ny:nth-child(6){animation-delay:-.7s;transform:rotate(150deg) translate(146%)}.cDmbUw8NpHadAxKa_6Ny:nth-child(7){animation-delay:-.6s;transform:rotate(180deg) translate(146%)}.cDmbUw8NpHadAxKa_6Ny:nth-child(8){animation-delay:-.5s;transform:rotate(210deg) translate(146%)}.cDmbUw8NpHadAxKa_6Ny:nth-child(9){animation-delay:-.4s;transform:rotate(240deg) translate(146%)}.cDmbUw8NpHadAxKa_6Ny:nth-child(10){animation-delay:-.3s;transform:rotate(270deg) translate(146%)}.cDmbUw8NpHadAxKa_6Ny:nth-child(11){animation-delay:-.2s;transform:rotate(300deg) translate(146%)}.cDmbUw8NpHadAxKa_6Ny:nth-child(12){animation-delay:-.1s;transform:rotate(330deg) translate(146%)}@keyframes t8HXzzptxYCDS_a2f7Pc{0%{opacity:1}to{opacity:.15}}</style><style>.DDuZjhKo70em4662HZAz{align-items:center;backdrop-filter:blur(10px);color:#000;display:flex;height:100%;justify-content:center;left:0;position:fixed;top:0;width:100%}@keyframes OE0O3ooYFU4cSkbE5ZcT{0%{opacity:0;pointer-events:none;transform:translate3d(0,-40px,0)}to{opacity:1;pointer-events:all;transform:translateZ(0)}}.SqHhCGt2Af7j0aVx6Fc6{animation:OE0O3ooYFU4cSkbE5ZcT .35s cubic-bezier(.4,0,.2,1);background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;box-shadow:0 1px 2px 0 rgba(0,0,0,.04);height:492px;max-width:calc(100vw - 32px);min-width:min(calc(100vw - 32px),482px);overflow:hidden}.SqHhCGt2Af7j0aVx6Fc6 iframe{height:100%;-webkit-user-select:none;-moz-user-select:none;user-select:none;width:100%}</style><div class="KgfssQl8RzJGwFogbANP" style="--toolbar-x: 1; --toolbar-y: 0.5; --window-width: 1520.800048828125px; --window-height: 729.5999755859375px;"><div class="oZlNLbvDgy4XTIKt1MgM"><div class="cOOwjAdSMSRiTHprPccD"></div></div><button class="g_U3r8dd_7sgVHnNnVpT" aria-label="Vercel Toolbar"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="sF5uu1wZYWXEZpfeWyAr">  <g clip-path="url(#clip0_7590_8914)"><circle cx="23" cy="20" r="3.65625" fill="white" stroke="white" stroke-width="1.6875" stroke-linecap="round" stroke-linejoin="round"></circle><path fill-rule="evenodd" clip-rule="evenodd" d="M23 17.5801L25.4844 21.9277H20.5156L23 17.5801Z" fill="#1A1A1A"></path></g>  <path fill-rule="evenodd" clip-rule="evenodd" d="M9.75 10H9V11.5H9.75H22.25H23V10H22.25H9.75ZM9.75 20H9V21.5H9.75H17.189C17.0656 21.0206 17 20.5179 17 20H9.75ZM18.126 16.5H9.75H9V15H9.75H19.6822C19.0774 15.4022 18.5497 15.9111 18.126 16.5Z" fill="#EDEDED"></path>  <defs><clippath id="clip0_7590_8914"><rect width="9" height="9" fill="white" transform="translate(18.5 15.5)"></rect></clippath></defs></svg><div class="UrncQQ9DDT5yb13q4rQ5 TOFYxsTuhd4WvePFJ5mA"><div class="_472I4HBgsrXA25rrRN7g"><div class="cDmbUw8NpHadAxKa_6Ny"></div><div class="cDmbUw8NpHadAxKa_6Ny"></div><div class="cDmbUw8NpHadAxKa_6Ny"></div><div class="cDmbUw8NpHadAxKa_6Ny"></div><div class="cDmbUw8NpHadAxKa_6Ny"></div><div class="cDmbUw8NpHadAxKa_6Ny"></div><div class="cDmbUw8NpHadAxKa_6Ny"></div><div class="cDmbUw8NpHadAxKa_6Ny"></div><div class="cDmbUw8NpHadAxKa_6Ny"></div><div class="cDmbUw8NpHadAxKa_6Ny"></div><div class="cDmbUw8NpHadAxKa_6Ny"></div><div class="cDmbUw8NpHadAxKa_6Ny"></div></div></div></button></div></template></vercel-live-feedback><div id="p5ute2d56gso1778258098574" style="display: block !important;"><iframe src="./Sudoku MaxiQueen PRO 👑_files/saved_resource.html" frameborder="0" scrolling="no" width="204px" height="44px" style="outline:none !important; visibility:visible !important; resize:none !important; box-shadow:none !important; overflow:visible !important; background:none !important; opacity:1 !important; filter:alpha(opacity=100) !important; -ms-filter:progid:DXImageTransform.Microsoft.Alpha(Opacity 1}) !important; -mz-opacity:1 !important; -khtml-opacity:1 !important; top:0px !important; right:auto !important; bottom:auto !important; left:10px !important; position:fixed !important; border:0 !important; min-height:44px !important; min-width:204px !important; max-height:44px !important; max-width:204px !important; padding:0 !important; margin:0 !important; -moz-transition-property:none !important; -webkit-transition-property:none !important; -o-transition-property:none !important; transition-property:none !important; transform:none !important; -webkit-transform:none !important; -ms-transform:none !important; width:204px !important; height:44px !important; display:block !important; z-index:1000003 !important; background-color:transparent !important; cursor:none !important; float:none !important; border-radius:unset !important; pointer-events:auto !important; clip:auto !important; color-scheme:light !important;" id="ui4rda8l6fg1778258098605" class="" referrerpolicy="no-referrer-when-downgrade"></iframe><iframe frameborder="0" scrolling="no" width="350px" height="450px" style="outline: none !important; visibility: visible !important; resize: none !important; box-shadow: none !important; overflow: visible !important; background: none transparent !important; opacity: 1 !important; inset: auto auto 0px 10px !important; position: fixed !important; border: 0px !important; min-height: 450px !important; min-width: 350px !important; max-height: 450px !important; max-width: 350px !important; padding: 0px !important; margin: 0px !important; transition-property: none !important; transform: none !important; width: 350px !important; height: 450px !important; display: none !important; z-index: 1000003 !important; cursor: none !important; float: none !important; border-radius: 18px 18px 0px 0px !important; pointer-events: auto !important; clip: auto !important; color-scheme: light !important;" id="zvnphjseu9081778258098644" class="closed" referrerpolicy="no-referrer-when-downgrade" src="./Sudoku MaxiQueen PRO 👑_files/saved_resource(1).html"></iframe><!----><iframe src="./Sudoku MaxiQueen PRO 👑_files/saved_resource(2).html" frameborder="0" scrolling="no" width="360px" height="251px" style="outline:none !important; visibility:visible !important; resize:none !important; box-shadow:none !important; overflow:visible !important; background:none !important; opacity:1 !important; filter:alpha(opacity=100) !important; -ms-filter:progid:DXImageTransform.Microsoft.Alpha(Opacity 1}) !important; -mz-opacity:1 !important; -khtml-opacity:1 !important; top:50px; right:auto !important; bottom:auto !important; left:10px !important; position:fixed !important; border:0 !important; min-height:251px !important; min-width:360px !important; max-height:251px !important; max-width:360px !important; padding:0 !important; margin:0 !important; -moz-transition-property:none !important; -webkit-transition-property:none !important; -o-transition-property:none !important; transition-property:none !important; transform:none !important; -webkit-transform:none !important; -ms-transform:none !important; width:360px !important; height:251px !important; display:block !important; z-index:auto !important; background-color:transparent !important; cursor:none !important; float:none !important; border-radius:unset !important; pointer-events:auto !important; clip:auto !important; color-scheme:light !important;" id="rid1jm2vqh5k1778258098628" class="" referrerpolicy="no-referrer-when-downgrade"></iframe><iframe src="./Sudoku MaxiQueen PRO 👑_files/saved_resource(3).html" frameborder="0" scrolling="no" width="1024px" height="1040px" style="outline:none !important; visibility:visible !important; resize:none !important; box-shadow:none !important; overflow:visible !important; background:none !important; opacity:1 !important; filter:alpha(opacity=100) !important; -ms-filter:progid:DXImageTransform.Microsoft.Alpha(Opacity 1}) !important; -mz-opacity:1 !important; -khtml-opacity:1 !important; top:-18px !important; right:auto !important; bottom:auto !important; left:0px !important; position:fixed !important; border:0 !important; min-height:1040px !important; min-width:1024px !important; max-height:1040px !important; max-width:1024px !important; padding:0 !important; margin:0px 0 0 0 !important; -moz-transition-property:none !important; -webkit-transition-property:none !important; -o-transition-property:none !important; transition-property:none !important; transform:rotate(0deg) translateZ(0); -webkit-transform:rotate(0deg) translateZ(0); -ms-transform:rotate(0deg) translateZ(0); width:1024px !important; height:1040px !important; display:none !important; z-index:1000004 !important; background-color:transparent !important; cursor:none !important; float:none !important; border-radius:unset !important; pointer-events:auto !important; clip:auto !important; color-scheme:light !important; -moz-transform:rotate(0deg) translateZ(0); -o-transform:rotate(0deg) translateZ(0); transform-origin:0; -moz-transform-origin:0; -webkit-transform-origin:0; -o-transform-origin:0; -ms-transform-origin:0;" id="aa23gv2kahlo1778258098592" class="" referrerpolicy="no-referrer-when-downgrade"></iframe></div></body></html>

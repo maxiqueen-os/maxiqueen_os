@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAXIQUEEN OS • MULTIVERSE WAR X (V2)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue: #00e5ff; --yellow: #ffea00; --red: #ff1744; --green: #00e676;
+            --dark: #020610; --glass: rgba(0, 229, 255, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
+
+        body {
+            background: var(--dark); color: white; overflow: hidden;
+            height: 100vh; display: flex; flex-direction: column;
+            background-image: radial-gradient(circle at 50% 50%, #0a1a35 0%, #020610 100%);
+        }
+
+        #hud-top {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            padding: 15px; background: rgba(0,0,0,0.8);
+            border-bottom: 2px solid var(--blue); box-shadow: 0 5px 20px rgba(0,229,255,0.2);
+            z-index: 100;
+        }
+
+        .stat { text-align: center; border-right: 1px solid rgba(0,229,255,0.2); }
+        .stat:last-child { border: none; }
+        .stat label { font-size: 0.7rem; color: var(--blue); letter-spacing: 2px; font-weight: 700; text-transform: uppercase; }
+        .stat div { font-size: 1.4rem; font-weight: 900; font-family: 'Orbitron'; color: #fff; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+        .stat .val-alt { color: var(--yellow); }
+
+        #stage {
+            flex-grow: 1; position: relative; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05); margin: 10px;
+            border-radius: 20px; background: #000;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        #floor {
+            position: absolute; width: 200%; height: 100%; top: 0; left: -50%;
+            background-image: 
+                linear-gradient(var(--glass) 2px, transparent 2px),
+                linear-gradient(90deg, var(--glass) 2px, transparent 2px);
+            background-size: 60px 60px;
+            transform: perspective(400px) rotateX(65deg) translateY(0);
+            animation: moveFloor 2s linear infinite;
+        }
+
+        @keyframes moveFloor {
+            0% { transform: perspective(400px) rotateX(65deg) translateY(0); }
+            100% { transform: perspective(400px) rotateX(65deg) translateY(60px); }
+        }
+
+        #hero {
+            position: absolute; bottom: 20%; left: 15%; font-size: 70px;
+            z-index: 50; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 0 15px var(--blue));
+        }
+
+        #shield-aura {
+            position: absolute; inset: -20px; border-radius: 50%;
+            border: 3px solid var(--blue); background: rgba(0, 229, 255, 0.2);
+            box-shadow: 0 0 20px var(--blue); opacity: 0; transition: 0.3s;
+            animation: pulseShield 1s infinite alternate; pointer-events: none;
+        }
+
+        @keyframes pulseShield { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+        .enemy {
+            position: absolute; bottom: 20%; right: -100px; font-size: 65px;
+            z-index: 40; transition: all 0.5s ease;
+            filter: drop-shadow(0 0 15px var(--red));
+            animation: float 2s infinite ease-in-out alternate;
+        }
+
+        @keyframes float { from { transform: translateY(0); } to { transform: translateY(-15px); } }
+
+        .turret {
+            position: absolute; bottom: 15%; left: 30%; font-size: 40px; z-index: 45;
+            filter: drop-shadow(0 0 10px var(--green)); animation: spin 2s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .dmg-text {
+            position: absolute; font-weight: 900; font-family: 'Orbitron';
+            animation: dmgUp 0.8s forwards; z-index: 200; pointer-events: none;
+            text-shadow: 0 0 5px #000;
+        }
+        @keyframes dmgUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(2); opacity: 0; }
+        }
+
+        #fx-layer { position: absolute; inset: 0; pointer-events: none; z-index: 60; }
+        .laser-beam {
+            position: absolute; height: 12px; background: linear-gradient(90deg, transparent, #fff, var(--blue));
+            box-shadow: 0 0 20px var(--blue); border-radius: 10px; z-index: 100;
+        }
+        .laser-enemy { background: linear-gradient(90deg, var(--red), #fff, transparent); box-shadow: 0 0 20px var(--red); }
+
+        #console {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+            padding: 10px; background: #050a15; border-top: 2px solid var(--blue);
+        }
+
+        .btn {
+            padding: 12px; border: none; border-radius: 8px; font-family: 'Orbitron';
+            font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            transition: 0.1s; cursor: pointer; color: white; font-size: 0.8rem;
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(100%); }
+        .btn-blue { background: linear-gradient(45deg, #007799, var(--blue)); border-bottom: 3px solid #004455; }
+        .btn-red { background: linear-gradient(45deg, #990022, var(--red)); border-bottom: 3px solid #550011; }
+        .btn-gold { background: linear-gradient(45deg, #aa8800, var(--yellow)); border-bottom: 3px solid #554400; color: #000; }
+        .btn-dark { background: #1a1a1a; border-bottom: 3px solid #000; color: var(--blue); }
+        .btn-green { background: linear-gradient(45deg, #008844, var(--green)); border-bottom: 3px solid #004422; color: #000; }
+        .btn:active:not(:disabled) { transform: translateY(3px); border-bottom-width: 0px; }
+
+        #log-bar {
+            background: #000; color: var(--green); padding: 8px 20px;
+            font-size: 0.85rem; border-top: 1px solid rgba(0,229,255,0.2);
+            font-family: 'Courier New', monospace; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div id="hud-top">
+    <div class="stat"><label>Sector</label><div id="lvl">01</div></div>
+    <div class="stat"><label>Integridad</label><div id="hp" style="color: var(--green);">100%</div></div>
+    <div class="stat"><label>Energía MQ</label><div id="en" class="val-alt">100</div></div>
+    <div class="stat"><label>Créditos</label><div id="pts">0</div></div>
+</div>
+
+<div id="log-bar">> MAXIQUEEN OS: SISTEMA TÁCTICO INICIADO...</div>
+
+<div id="stage">
+    <div id="floor"></div>
+    <div id="fx-layer"></div>
+    <div id="hero"><div id="shield-aura"></div>🤖</div>
+</div>
+
+<div id="console">
+    <button class="btn btn-blue" id="btn-move" onclick="Engine.move()">Explorar ➡</button>
+    <button class="btn btn-red" id="btn-atk" onclick="Engine.attack()" disabled>Cañón 💥</button>
+    <button class="btn btn-gold" id="btn-spec" onclick="Engine.special()" disabled>Ultra Nova ⚡</button>
+    <button class="btn btn-green" id="btn-build" onclick="Engine.buildTurret()">Construir ⚙️ (100C)</button>
+    <button class="btn btn-blue" id="btn-shield" onclick="Engine.activateShield()">Escudo 🛡️ (30E)</button>
+    <button class="btn btn-dark" onclick="Engine.repair()">Reparar 🛠️ (50C)</button>
+</div>
+
+<script>
+    // --- MÓDULO DE AUDIO SINTÉTICO (Sin archivos externos) ---
+    const AudioSys = {
+        ctx: null,
+        init() { if(!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+        playTone(freq, type, duration, vol=0.1) {
+            if(!this.ctx) return;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(freq/2, this.ctx.currentTime + duration);
+            gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(); osc.stop(this.ctx.currentTime + duration);
+        },
+        shoot() { this.playTone(800, 'square', 0.15, 0.05); },
+        enemyShoot() { this.playTone(300, 'sawtooth', 0.2, 0.05); },
+        hit() { this.playTone(150, 'square', 0.3, 0.1); },
+        powerUp() { this.playTone(1200, 'sine', 0.5, 0.05); }
+    };
+
+    // --- MÓDULO DE VOZ (Texto a Voz del Sistema) ---
+    const VoiceSys = {
+        speak(text, isHero = true) {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel(); // Detiene voces anteriores
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'es-ES';
+            ut.rate = isHero ? 1.2 : 0.8; // Héroe habla rápido, enemigo lento
+            ut.pitch = isHero ? 1.5 : 0.1; // Héroe agudo/robótico, enemigo grave
+            window.speechSynthesis.speak(ut);
+        }
+    };
+
+    // --- MOTOR DEL JUEGO MAXIQUEEN OS ---
+    const Engine = {
+        hp: 100, en: 100, pts: 0, lvl: 1,
+        inCombat: false, shieldActive: false, hasTurret: false, turretInterval: null,
+        enemyPool: ['👾', '🛸', '🛰️', '👹', '🐲'],
+        currentEnemy: null,
+
+        init() {
+            this.updateUI();
+            this.log("MAXIQUEEN OS V.2 EN LÍNEA. ESPERANDO DIRECTRICES.");
+            setInterval(() => {
+                if(this.en < 100) { this.en += (this.inCombat ? 1 : 5); this.updateUI(); }
+            }, 1000);
+        },
+
+        log(msg) { 
+            document.getElementById('log-bar').innerText = `> ${msg}`; 
+        },
+
+        updateUI() {
+            const hpEl = document.getElementById('hp');
+            hpEl.innerText = `${this.hp}%`;
+            hpEl.style.color = this.hp > 50 ? 'var(--green)' : (this.hp > 20 ? 'var(--yellow)' : 'var(--red)');
+            document.getElementById('en').innerText = this.en;
+            document.getElementById('pts').innerText = this.pts;
+            document.getElementById('lvl').innerText = this.lvl < 10 ? `0${this.lvl}` : this.lvl;
+
+            document.getElementById('btn-atk').disabled = !this.inCombat;
+            document.getElementById('btn-spec').disabled = !this.inCombat || this.en < 50;
+            document.getElementById('btn-move').disabled = this.inCombat;
+        },
+
+        move() {
+            AudioSys.init(); // Inicia contexto de audio en el primer clic
+            if(this.inCombat) return;
+            this.log("AVANZANDO. ESCANEANDO SECTOR...");
+            VoiceSys.speak("Escaneando sector.");
+            
+            const hero = document.getElementById('hero');
+            hero.style.transform = "translateX(50px) skewX(-15deg)";
+
+            setTimeout(() => {
+                hero.style.transform = "translateX(0) skewX(0)";
+                this.spawnEnemy();
+            }, 800);
+        },
+
+        spawnEnemy() {
+            this.inCombat = true;
+            const isBoss = this.lvl % 5 === 0;
+            const enemyIcon = isBoss ? '💀' : this.enemyPool[Math.floor(Math.random()*this.enemyPool.length)];
+            const div = document.createElement('div');
+            div.className = 'enemy'; div.id = 'active-enemy'; div.innerHTML = enemyIcon;
+            if(isBoss) div.style.fontSize = "120px";
+
+            document.getElementById('stage').appendChild(div);
+            setTimeout(() => div.style.right = '15%', 100);
+
+            this.currentEnemy = { hp: 100 + (this.lvl * 25), max: 100 + (this.lvl * 25) };
+
+            this.log("¡AMENAZA DETECTADA!");
+            VoiceSys.speak(isBoss ? "Atención. Jefe detectado." : "Enemigo a la vista.");
+            this.updateUI();
+            setTimeout(() => this.enemyAI(), 1500);
+        },
+
+        enemyAI() {
+            if(!this.inCombat) return;
+            const atkSpeed = Math.max(800, 2000 - (this.lvl * 100)); // Más rápido en niveles altos
+            
+            setTimeout(() => {
+                if(!this.inCombat) return;
+                AudioSys.enemyShoot();
+                this.createLaser(false, true); // Láser enemigo
+                
+                setTimeout(() => {
+                    if(!this.inCombat) return;
+                    let dmg = 10 + Math.floor(this.lvl * 2);
+                    if(this.shieldActive) { dmg = Math.floor(dmg / 2); this.log("ESCUDO ABSORBIÓ DAÑO."); }
+                    
+                    this.hp -= dmg;
+                    this.popDmg(document.getElementById('hero'), dmg, 'var(--red)');
+                    AudioSys.hit();
+                    this.shake(document.getElementById('stage'));
+                    
+                    if(this.hp <= 0) { this.hp = 0; this.updateUI(); this.gameOver(); }
+                    else { this.updateUI(); this.enemyAI(); }
+                }, 200);
+            }, atkSpeed);
+        },
+
+        attack() {
+            if(!this.inCombat || this.en < 5) return;
+            this.en -= 5;
+            AudioSys.shoot();
+            this.createLaser();
+            
+            // Reacción visual del héroe
+            const hero = document.getElementById('hero');
+            hero.style.transform = "translateX(20px)";
+            setTimeout(() => hero.style.transform = "none", 100);
+
+            setTimeout(() => {
+                if(!this.inCombat) return;
+                const dmg = 20 + Math.floor(Math.random()*15);
+                this.damageEnemy(dmg);
+            }, 150);
+            this.updateUI();
+        },
+
+        special() {
+            if(!this.inCombat || this.en < 50) return;
+            this.en -= 50;
+            this.log("PROTOCOLO ULTRA NOVA EJECUTADO");
+            VoiceSys.speak("Ejecutando Ultra Nova");
+            AudioSys.powerUp();
+            
+            for(let i=0; i<8; i++) {
+                setTimeout(() => { AudioSys.shoot(); this.createLaser(true); }, i * 100);
+            }
+            setTimeout(() => this.damageEnemy(150 + (this.lvl * 10)), 800);
+            this.updateUI();
+        },
+
+        // --- MÓDULOS DE MAXIQUEEN OS (Construcción y Defensa) ---
+        buildTurret() {
+            if(this.pts >= 100 && !this.hasTurret) {
+                this.pts -= 100; this.hasTurret = true;
+                this.log("CONSTRUYENDO TORRETA DEFENSIVA");
+                VoiceSys.speak("Torreta Maxi Queen en línea.");
+                
+                const turret = document.createElement('div');
+                turret.className = 'turret'; turret.id = 'active-turret'; turret.innerHTML = '⚙️';
+                document.getElementById('stage').appendChild(turret);
+                
+                this.turretInterval = setInterval(() => {
+                    if(this.inCombat) {
+                        AudioSys.shoot();
+                        this.createLaser(false, false, true);
+                        this.damageEnemy(10 + this.lvl);
+                    }
+                }, 1500);
+                this.updateUI();
+            } else if (this.hasTurret) {
+                this.log("LA TORRETA YA ESTÁ DESPLEGADA");
+            } else {
+                this.log("CRÉDITOS INSUFICIENTES PARA TORRETA");
+            }
+        },
+
+        activateShield() {
+            if(this.en >= 30 && !this.shieldActive) {
+                this.en -= 30; this.shieldActive = true;
+                this.log("ESCUDO TÁCTICO ACTIVADO");
+                VoiceSys.speak("Escudos activados.");
+                AudioSys.powerUp();
+                document.getElementById('shield-aura').style.opacity = '1';
+                this.updateUI();
+                
+                setTimeout(() => {
+                    this.shieldActive = false;
+                    document.getElementById('shield-aura').style.opacity = '0';
+                    this.log("ESCUDO DESACTIVADO");
+                }, 5000);
+            }
+        },
+
+        repair() {
+            if(this.pts >= 50 && this.hp < 100) {
+                this.pts -= 50;
+                this.hp = Math.min(100, this.hp + 25);
+                this.log("REPARANDO CHASIS...");
+                VoiceSys.speak("Sistemas reparados.");
+                this.updateUI();
+            }
+        },
+
+        damageEnemy(amount) {
+            if(!this.inCombat) return;
+            const el = document.getElementById('active-enemy');
+            this.currentEnemy.hp -= amount;
+            this.popDmg(el, amount, 'var(--yellow)');
+            AudioSys.hit();
+            
+            el.style.transform = "scale(1.2) translateX(20px)";
+            setTimeout(() => el.style.transform = "scale(1) translateY(-10px)", 100);
+
+            if(this.currentEnemy.hp <= 0) this.victory();
+        },
+
+        victory() {
+            this.inCombat = false;
+            const el = document.getElementById('active-enemy');
+            el.style.transform = "scale(0) rotate(360deg)";
+            el.style.opacity = "0";
+            
+            const reward = 50 + (this.lvl * 10);
+            this.pts += reward;
+            this.lvl++;
+            
+            this.log(`AMENAZA NEUTRALIZADA. +${reward}C`);
+            VoiceSys.speak("Sector asegurado.", true);
+            
+            setTimeout(() => el.remove(), 500);
+            this.updateUI();
+        },
+
+        createLaser(isSpecial = false, isEnemy = false, isTurret = false) {
+            const laser = document.createElement('div');
+            laser.className = `laser-beam ${isEnemy ? 'laser-enemy' : ''}`;
+            
+            let originY = document.getElementById('hero').offsetTop + 40;
+            let originX = '25%';
+            
+            if(isEnemy) {
+                originY = document.getElementById('active-enemy').offsetTop + 50;
+                originX = '70%';
+                laser.style.right = '25%';
+            } else if (isTurret) {
+                originY = document.getElementById('active-turret').offsetTop + 20;
+                originX = '35%';
+            } else {
+                laser.style.left = originX;
+                if(isSpecial) originY += (Math.random()*60 - 30);
+            }
+
+            laser.style.top = originY + 'px';
+            laser.style.width = '0';
+            document.getElementById('fx-layer').appendChild(laser);
+
+            setTimeout(() => {
+                laser.style.width = '50%';
+                if(isEnemy) laser.style.transform = 'translateX(-200px)';
+                else laser.style.transform = 'translateX(200px)';
+                
+                setTimeout(() => laser.remove(), 150);
+            }, 10);
+        },
+
+        popDmg(target, val, color) {
+            if(!target) return;
+            const p = document.createElement('div');
+            p.className = 'dmg-text';
+            p.innerText = `-${val}`;
+            p.style.color = color;
+            p.style.left = (target.offsetLeft + 20) + 'px';
+            p.style.top = target.offsetTop + 'px';
+            document.getElementById('stage').appendChild(p);
+            setTimeout(() => p.remove(), 800);
+        },
+
+        shake(el) {
+            el.style.animation = "none";
+            setTimeout(() => el.style.animation = "shake 0.3s ease-in-out", 10);
+        },
+
+        gameOver() {
+            this.inCombat = false;
+            VoiceSys.speak("Fallo crítico del sistema. Entidades de Maxi Queen comprometidas.", false);
+            this.log("SISTEMA DESTRUIDO");
+            setTimeout(() => {
+                alert(`SISTEMA COLAPSADO EN SECTOR ${this.lvl}\nCréditos Totales: ${this.pts}`);
+                location.reload();
+            }, 2000);
+        }
+    };
+
+    const style = document.createElement('style');
+    style.innerHTML = `@keyframes shake { 0%{transform:translate(0,0)} 25%{transform:translate(8px,-8px)} 50%{transform:translate(-8px,8px)} 75%{transform:translate(8px,8px)} 100%{transform:translate(0,0)} }`;
+    document.head.appendChild(style);
+
+    window.onload = () => Engine.init();
+</script>
+</body>
+</html>

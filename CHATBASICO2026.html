@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>MaxiQueen OS Chat</title>
+<style>
+body {
+  font-family: Arial;
+  background: #0b1220;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.chat {
+  width: 400px;
+  height: 500px;
+  background: #111;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.input {
+  display: flex;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+}
+
+button {
+  padding: 10px;
+  background: gold;
+  border: none;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat">
+  <div id="messages" class="messages"></div>
+
+  <div class="input">
+    <input id="input" placeholder="Escribe..." />
+    <button onclick="send()">Enviar</button>
+  </div>
+</div>
+
+<script>
+const messages = document.getElementById("messages");
+const input = document.getElementById("input");
+
+function addMessage(text, user=false){
+  const div = document.createElement("div");
+  div.textContent = text;
+  div.style.margin = "5px";
+  div.style.padding = "8px";
+  div.style.borderRadius = "8px";
+  div.style.background = user ? "gold" : "#333";
+  div.style.color = user ? "black" : "white";
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+async function send(){
+  const text = input.value.trim();
+  if(!text) return;
+
+  addMessage(text, true);
+  input.value = "";
+
+  try{
+    const res = await fetch("http://127.0.0.1:8000/chat", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({message: text})
+    });
+
+    const data = await res.json();
+    addMessage(data.response);
+
+  }catch(e){
+    addMessage("Error conectando con backend");
+  }
+}
+
+input.addEventListener("keydown", e => {
+  if(e.key === "Enter") send();
+});
+</script>
+
+</body>
+</html>

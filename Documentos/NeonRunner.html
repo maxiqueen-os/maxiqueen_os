@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQ-07 | Neon Runner Core</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --danger: #ff0055;
+            --success: #39ff14;
+            --warning: #ffb300;
+            --bg: #050508;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            touch-action: none;
+            user-select: none;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            height: 100vh;
+            max-height: 800px;
+            background: #000;
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
+            overflow: hidden;
+        }
+
+        /* Efecto CRT Scanline */
+        #game-container::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .ui-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .ui-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ui-box {
+            font-size: 16px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.6);
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid;
+            backdrop-filter: blur(4px);
+        }
+
+        .score-box {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+            border-color: var(--primary);
+        }
+
+        .high-score-box {
+            color: var(--success);
+            text-shadow: 0 0 10px var(--success);
+            border-color: var(--success);
+        }
+
+        .shield-box {
+            color: var(--warning);
+            text-shadow: 0 0 10px var(--warning);
+            border-color: var(--warning);
+            text-align: right;
+        }
+
+        .shield-icon {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: var(--warning);
+            border-radius: 50%;
+            margin-left: 4px;
+            box-shadow: 0 0 8px var(--warning);
+            transition: opacity 0.3s;
+        }
+
+        .shield-icon.lost {
+            opacity: 0.2;
+            box-shadow: none;
+            background: #555;
+        }
+
+        .menu-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(5, 5, 8, 0.85);
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+            transition: opacity 0.3s;
+        }
+
+        .title-glitch {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            font-weight: 900;
+            text-shadow: 2px 0 var(--danger), -2px 0 var(--secondary);
+            letter-spacing: 2px;
+        }
+
+        .btn-start {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 15px 40px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2), inset 0 0 15px rgba(0, 242, 255, 0.2);
+            transition: 0.2s;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-top: 30px;
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 2px;
+        }
+
+        .btn-start:hover {
+            background: var(--primary);
+            color: black;
+            box-shadow: 0 0 30px var(--primary);
+        }
+
+        .instructions {
+            margin-top: 25px;
+            font-size: 12px;
+            color: #aaa;
+            line-height: 1.6;
+            max-width: 80%;
+            text-align: left;
+        }
+
+        .game-over-text {
+            color: var(--danger);
+            font-size: 32px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px var(--danger);
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div class="ui-overlay">
+            <div class="ui-column">
+                <div class="ui-box score-box">DATA: <span id="score">0</span></div>
+                <div class="ui-box high-score-box">MAX: <span id="high-score">0</span></div>
+            </div>
+            <div class="ui-column">
+                <div class="ui-box shield-box">
+                    ESCUDO<br>
+                    <div id="shield-container">
+                        <span class="shield-icon"></span>
+                        <span class="shield-icon"></span>
+                        <span class="shield-icon"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="start-menu" class="menu-overlay">
+            <h1 class="title-glitch">NEON RUNNER</h1>
+            <p style="color: #00f2ff; letter-spacing: 5px; font-size: 12px;">SYSTEM.CORE.MQ07</p>
+            <button class="btn-start" onclick="initGame()">[ INICIAR ENLACE ]</button>
+            <div class="instructions">
+                &gt; Toca los lados de la pantalla o usa ← →<br>
+                &gt; Tienes 3 ESCUDOS de protección<br>
+                &gt; Esquiva los cortafuegos rojos<br>
+                &gt; Recolecta núcleos verdes para Bonus
+            </div>
+        </div>
+
+        <div id="game-over-menu" class="menu-overlay hidden">
+            <div class="game-over-text">ENLACE ROTO</div>
+            <p style="color: white; font-size: 18px;">DATOS EXTRAÍDOS: <span id="final-score" style="color: var(--primary); font-weight: bold;">0</span></p>
+            <button class="btn-start" onclick="initGame()">[ RECONECTAR ]</button>
+        </div>
+    </div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreElement = document.getElementById('score');
+    const highScoreElement = document.getElementById('high-score');
+    const startMenu = document.getElementById('start-menu');
+    const gameOverMenu = document.getElementById('game-over-menu');
+    const finalScoreElement = document.getElementById('final-score');
+    const shieldContainer = document.getElementById('shield-container');
+
+    // Estado del juego
+    let gameActive = false;
+    let score = 0;
+    let highScore = localStorage.getItem('mq07_highscore') || 0;
+    highScoreElement.innerText = highScore;
+    
+    let speed = 5;
+    let gridOffset = 0;
+    let screenShake = 0;
+    let frameId;
+    let lastObstacleY = 0; // Para asegurar separación justa
+
+    // Entidades
+    let player;
+    let obstacles = [];
+    let collectibles = [];
+    let particles = [];
+
+    // Sistema de Audio Procedural
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        if (type === 'move') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        } else if (type === 'collect') {
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(1200, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+        } else if (type === 'damage') { // Nuevo sonido al perder escudo
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+        } else if (type === 'crash') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.4);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+        }
+    }
+
+    function resize() {
+        const container = document.getElementById('game-container');
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        if(player) player.y = canvas.height - 100;
+    }
+    window.addEventListener('resize', resize);
+
+    function updateShieldUI() {
+        const icons = shieldContainer.children;
+        for(let i = 0; i < 3; i++) {
+            if(i < player.shields) {
+                icons[i].classList.remove('lost');
+            } else {
+                icons[i].classList.add('lost');
+            }
+        }
+    }
+
+    class Player {
+        constructor() {
+            this.width = 30;
+            this.height = 40;
+            this.x = canvas.width / 2 - this.width / 2;
+            this.y = canvas.height - 100;
+            this.color = '#00f2ff';
+            this.targetX = this.x;
+            this.trail = [];
+            this.shields = 3; // Ahora tiene 3 vidas
+            this.invulnerableTimer = 0;
+        }
+
+        draw() {
+            // Efecto de parpadeo si es invulnerable
+            if (this.invulnerableTimer > 0) {
+                if (Math.floor(Date.now() / 100) % 2 === 0) return; // Salta el frame
+            }
+
+            ctx.beginPath();
+            for(let i=0; i<this.trail.length; i++) {
+                const point = this.trail[i];
+                ctx.fillStyle = `rgba(0, 242, 255, ${i / this.trail.length * 0.5})`;
+                ctx.fillRect(point.x + 5, point.y + 10, this.width - 10, this.height - 10);
+            }
+
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = (this.invulnerableTimer > 0) ? '#ffb300' : this.color; // Color escudo si lo golpean
+            ctx.fillStyle = '#fff';
+            
+            ctx.beginPath();
+            ctx.moveTo(this.x + this.width / 2, this.y); 
+            ctx.lineTo(this.x + this.width, this.y + this.height); 
+            ctx.lineTo(this.x + this.width / 2, this.y + this.height - 10); 
+            ctx.lineTo(this.x, this.y + this.height); 
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.fillStyle = (this.invulnerableTimer > 0) ? '#ffb300' : this.color;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+
+        update() {
+            if (this.invulnerableTimer > 0) this.invulnerableTimer--;
+
+            this.trail.push({x: this.x, y: this.y});
+            if(this.trail.length > 10) this.trail.shift();
+
+            this.x += (this.targetX - this.x) * 0.15;
+            
+            if (this.x < 10) this.x = 10;
+            if (this.x > canvas.width - this.width - 10) this.x = canvas.width - this.width - 10;
+        }
+    }
+
+    class Obstacle {
+        constructor(side) {
+            this.isLeft = side === 'left';
+            // Nunca ocupa toda la pantalla. Deja al menos 80px de margen siempre.
+            let maxAllowedWidth = canvas.width - 80;
+            this.width = Math.random() * (maxAllowedWidth * 0.6) + 60;
+            this.height = 25;
+            this.x = this.isLeft ? 0 : canvas.width - this.width;
+            this.y = -50;
+            this.color = '#ff0055';
+        }
+
+        draw() {
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = this.color;
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+            
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(this.x + 5, this.y + 5, this.width - 10, this.height - 10);
+            ctx.shadowBlur = 0;
+        }
+
+        update() {
+            this.y += speed;
+        }
+    }
+
+    class Collectible {
+        constructor() {
+            this.size = 20;
+            this.x = Math.random() * (canvas.width - this.size - 40) + 20;
+            this.y = -50;
+            this.color = '#39ff14';
+            this.angle = 0;
+        }
+        draw() {
+            ctx.save();
+            ctx.translate(this.x + this.size/2, this.y + this.size/2);
+            ctx.rotate(this.angle);
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = this.color;
+            ctx.strokeStyle = this.color;
+            ctx.lineWidth = 3;
+            ctx.strokeRect(-this.size/2, -this.size/2, this.size, this.size);
+            ctx.restore();
+            this.angle += 0.1;
+        }
+        update() { this.y += speed * 0.8; }
+    }
+
+    class Particle {
+        constructor(x, y, color) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.size = Math.random() * 4 + 2;
+            this.speedX = Math.random() * 8 - 4;
+            this.speedY = Math.random() * 8 - 4;
+            this.life = 1;
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            this.life -= 0.03;
+        }
+        draw() {
+            ctx.globalAlpha = this.life;
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x, this.y, this.size, this.size);
+            ctx.globalAlpha = 1;
+        }
+    }
+
+    function createExplosion(x, y, color, amount) {
+        for(let i = 0; i < amount; i++) {
+            particles.push(new Particle(x, y, color));
+        }
+    }
+
+    function initGame() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        resize();
+        gameActive = true;
+        score = 0;
+        speed = 5.5; // Velocidad inicial un poco más alta
+        screenShake = 0;
+        lastObstacleY = canvas.height; // Reset spawner
+        
+        player = new Player();
+        updateShieldUI();
+
+        obstacles = [];
+        collectibles = [];
+        particles = [];
+        
+        scoreElement.innerText = "0";
+        startMenu.classList.add('hidden');
+        gameOverMenu.classList.add('hidden');
+        
+        if (frameId) cancelAnimationFrame(frameId);
+        gameLoop();
+    }
+
+    function spawnEntities() {
+        // SISTEMA DE GENERACIÓN JUSTA
+        // Asegura que siempre haya al menos 160px de distancia vertical entre obstáculos
+        let distanceSinceLast = (obstacles.length > 0) ? obstacles[obstacles.length-1].y : canvas.height;
+        
+        if (distanceSinceLast > 160) {
+            if (Math.random() < 0.03 + (speed * 0.002)) {
+                let side = Math.random() < 0.5 ? 'left' : 'right';
+                obstacles.push(new Obstacle(side));
+            }
+        }
+
+        if (Math.random() < 0.01) {
+            collectibles.push(new Collectible());
+        }
+    }
+
+    function checkCollision(r1, r2) {
+        const hitboxPadding = 6; 
+        return (r1.x + hitboxPadding < r2.x + (r2.width || r2.size) &&
+                r1.x + r1.width - hitboxPadding > r2.x &&
+                r1.y + hitboxPadding < r2.y + (r2.height || r2.size) &&
+                r1.y + r1.height - hitboxPadding > r2.y);
+    }
+
+    function drawGrid() {
+        gridOffset = (gridOffset + speed * 0.5) % 50;
+        ctx.strokeStyle = 'rgba(0, 242, 255, 0.05)';
+        ctx.lineWidth = 1;
+
+        const center = canvas.width / 2;
+        for(let i = 0; i < canvas.width; i += 40) {
+            ctx.beginPath();
+            ctx.moveTo(center, 0);
+            ctx.lineTo(i, canvas.height);
+            ctx.stroke();
+        }
+
+        for(let i = 0; i < canvas.height; i += 50) {
+            let y = i + gridOffset;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+        }
+    }
+
+    function handleDamage(obstacleIndex) {
+        if (player.invulnerableTimer > 0) return; // No recibe daño si es invulnerable
+
+        player.shields--;
+        updateShieldUI();
+        
+        // Destruir el obstáculo que golpeaste
+        let obs = obstacles[obstacleIndex];
+        createExplosion(obs.x + obs.width/2, obs.y + obs.height/2, '#ff0055', 30);
+        obstacles.splice(obstacleIndex, 1);
+
+        if (player.shields <= 0) {
+            endGame();
+        } else {
+            playSound('damage');
+            screenShake = 15; // Temblor medio
+            player.invulnerableTimer = 60; // 60 frames = ~1 segundo de invulnerabilidad
+        }
+    }
+
+    function endGame() {
+        gameActive = false;
+        playSound('crash');
+        createExplosion(player.x + player.width/2, player.y + player.height/2, '#00f2ff', 60);
+        screenShake = 25;
+
+        if (score > highScore) {
+            highScore = Math.floor(score);
+            localStorage.setItem('mq07_highscore', highScore);
+            highScoreElement.innerText = highScore;
+        }
+
+        finalScoreElement.innerText = Math.floor(score);
+        
+        setTimeout(() => {
+            gameOverMenu.classList.remove('hidden');
+        }, 1200);
+    }
+
+    function gameLoop() {
+        if (!gameActive && particles.length === 0) return;
+
+        ctx.save();
+        if (screenShake > 0) {
+            const dx = (Math.random() - 0.5) * screenShake;
+            const dy = (Math.random() - 0.5) * screenShake;
+            ctx.translate(dx, dy);
+            screenShake *= 0.9;
+            if(screenShake < 0.5) screenShake = 0;
+        }
+
+        ctx.fillStyle = 'rgba(5, 5, 8, 0.4)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        drawGrid();
+
+        if (gameActive) {
+            player.update();
+            player.draw();
+            spawnEntities();
+            score += 0.05; 
+            scoreElement.innerText = Math.floor(score);
+        }
+
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+            obstacles[i].update();
+            obstacles[i].draw();
+
+            if (gameActive && checkCollision(player, obstacles[i])) {
+                handleDamage(i);
+            } else if (obstacles[i] && obstacles[i].y > canvas.height) {
+                obstacles.splice(i, 1);
+                score += 10;
+                speed += 0.05; 
+            }
+        }
+
+        for (let i = collectibles.length - 1; i >= 0; i--) {
+            collectibles[i].update();
+            collectibles[i].draw();
+
+            if (gameActive && checkCollision(player, collectibles[i])) {
+                playSound('collect');
+                createExplosion(collectibles[i].x, collectibles[i].y, '#39ff14', 15);
+                score += 50;
+                collectibles.splice(i, 1);
+                continue;
+            }
+
+            if (collectibles[i] && collectibles[i].y > canvas.height) {
+                collectibles.splice(i, 1);
+            }
+        }
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+            particles[i].update();
+            particles[i].draw();
+            if (particles[i].life <= 0) particles.splice(i, 1);
+        }
+
+        ctx.restore();
+        
+        frameId = requestAnimationFrame(gameLoop);
+    }
+
+    function movePlayer(direction) {
+        if(!gameActive) return;
+        playSound('move');
+        if (direction === 'left') player.targetX -= 100;
+        if (direction === 'right') player.targetX += 100;
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') movePlayer('left');
+        if (e.key === 'ArrowRight') movePlayer('right');
+    });
+
+    canvas.addEventListener('touchstart', (e) => {
+        const touchX = e.touches[0].clientX;
+        const rect = canvas.getBoundingClientRect();
+        const canvasCenter = rect.left + (rect.width / 2);
+        
+        if (touchX < canvasCenter) movePlayer('left');
+        else movePlayer('right');
+    });
+
+    resize();
+</script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaxiQueen OS | Sistema Digital Integral</title>
+<meta name="description" content="JavaScript es el cuerpo, Python es la mente, tú eres la conciencia. MaxiQueen OS convierte ideas, historias y negocios en activos digitales rentables.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+  --accent:#facc15; --bg-main:#0b1220; --text-main:#e5e5e5;
+  --card-bg:#141414; --border-soft:#262626;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0; background:#0a0a0a; color:var(--text-main);
+  font-family:'Poppins',system-ui,sans-serif;
+}
+a{color:inherit;text-decoration:none}
+.glass{
+  background:rgba(20,20,20,.7); backdrop-filter:blur(14px);
+  border:1px solid var(--border-soft); border-radius:1.5rem;
+}
+.btn-gold{
+  background:var(--accent); color:#0a0a0a; font-weight:700;
+  padding:.9rem 1.6rem; border-radius:999px; display:inline-block;
+  transition:.2s;
+}
+.btn-gold:hover{filter:brightness(1.05); transform:translateY(-1px)}
+.btn-line{
+  border:1px solid var(--accent); color:var(--accent);
+  padding:.9rem 1.6rem; border-radius:999px; display:inline-block;
+}
+.whatsapp-float{
+  position:fixed; bottom:22px; left:22px; background:#25D366; color:#fff;
+  width:56px; height:56px; border-radius:50%; display:flex; align-items:center;
+  justify-content:center; z-index:9999; box-shadow:0 10px 28px rgba(0,0,0,.35);
+}
+.hero-bg{
+  background:
+    radial-gradient(circle at 15% 20%, rgba(250,204,21,0.08), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(244,63,94,0.08), transparent 40%),
+    linear-gradient(180deg, #0b1220 0%, #060a14 100%);
+}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.floaty{animation:floatY 3.5s ease-in-out infinite}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero-bg min-h-screen flex items-center justify-center text-center px-6">
+  <div style="max-width:820px">
+    <p style="color:var(--accent);letter-spacing:.2em;font-size:.8rem;font-weight:700">ARQUITECTURA DIGITAL INCORRUPTIBLE</p>
+    <h1 style="font-size:clamp(2.2rem,5vw,3.8rem);font-weight:800;margin:.6rem 0;color:#facc15">MAXIQUEEN OS</h1>
+    <h2 style="font-size:clamp(1.2rem,3vw,1.6rem);font-weight:600;color:#e5e5e5">Convierte tu caos digital en un sistema inteligente</h2>
+    <p style="color:#9ca3af;margin:1.2rem auto;max-width:600px;font-size:1.05rem">
+      MaxiQueen OS es el sistema digital humano que transforma ideas, historias y negocios en activos automatizados que generan ingresos reales. JavaScript es el cuerpo, Python es la mente, tú eres la conciencia.
+    </p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:1.8rem">
+      <a href="#chat" class="btn-gold">Probar ChatOS 🤖</a>
+      <a href="#planes" class="btn-line">Ver planes</a>
+    </div>
+    <p style="color:#6b7280;font-size:.85rem;margin-top:1rem">No agencia · No plantillas · No humo · Solo sistemas reales</p>
+  </div>
+</section>
+
+<!-- CHAT DEMO -->
+<section id="chat" style="padding:72px 20px;background:#0f0f0f">
+  <div style="max-width:900px;margin:0 auto;text-align:center">
+    <h2 style="font-size:2rem;font-weight:800;color:#facc15;margin-bottom:.5rem">Asistente MQ</h2>
+    <p style="color:#9ca3af;margin-bottom:1.5rem">Prueba el chat con voz, PDF, Word y Excel – Soporte 24/7 activo</p>
+    <div class="glass" style="padding:16px;height:560px">
+      <iframe src="https://maxiqueen-os-framework.vercel.app" 
+        style="width:100%;height:100%;border:0;border-radius:12px;background:#0a0a0a"
+        title="MaxiQueen OS Chat"></iframe>
+    </div>
+    <p style="color:#6b7280;font-size:.8rem;margin-top:.8rem">Si el iframe no carga, abre directo: <a href="https://maxiqueen-os-framework.vercel.app" target="_blank" style="color:#facc15">maxiqueen-os-framework.vercel.app</a></p>
+  </div>
+</section>
+
+<!-- MÓDULOS / ECOSISTEMA -->
+<section style="padding:72px 20px">
+  <div style="max-width:1000px;margin:0 auto;text-align:center">
+    <h2 style="font-size:2rem;font-weight:800;margin-bottom:2rem">Ecosistema MaxiQueen OS</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;text-align:left">
+      <a href="https://maxiqueen-os.vercel.app" class="glass" style="padding:18px;display:block"><b style="color:#facc15">OS v1</b><br><span style="color:#9ca3af;font-size:.9rem">Núcleo abierto</span></a>
+      <a href="https://maxiqueen-os-v2.vercel.app" class="glass" style="padding:18px;display:block"><b style="color:#facc15">OS v2</b><br><span style="color:#9ca3af;font-size:.9rem">Chat con voz</span></a>
+      <a href="https://system-maxi-queen-os.vercel.app" class="glass" style="padding:18px;display:block"><b style="color:#facc15">System</b><br><span style="color:#9ca3af;font-size:.9rem">Panel admin</span></a>
+      <a href="https://maxiqueen-os-app.vercel.app" class="glass" style="padding:18px;display:block"><b style="color:#facc15">App</b><br><span style="color:#9ca3af;font-size:.9rem">PWA móvil</span></a>
+      <a href="https://backend-maxi-queen-os.vercel.app" class="glass" style="padding:18px;display:block"><b style="color:#facc15">Backend</b><br><span style="color:#9ca3af;font-size:.9rem">API</span></a>
+      <a href="https://maxiqueen-ver.vercel.app" class="glass" style="padding:18px;display:block"><b style="color:#facc15">Ver</b><br><span style="color:#9ca3af;font-size:.9rem">Visor</span></a>
+      <a href="https://juegos-maxi-queen-os.vercel.app" class="glass" style="padding:18px;display:block"><b style="color:#facc15">Juegos</b><br><span style="color:#9ca3af;font-size:.9rem">Add-on</span></a>
+      <a href="https://maxiqueen-os-framework.vercel.app" class="glass" style="padding:18px;display:block;border-color:#facc15"><b style="color:#facc15">Framework PRO</b><br><span style="color:#9ca3af;font-size:.9rem">Chat + voz + archivos</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMA / SOLUCIÓN -->
+<section style="padding:64px 20px;background:#111">
+  <div style="max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px">
+    <div>
+      <h3 style="font-size:1.5rem;font-weight:700;margin-bottom:1rem">El problema</h3>
+      <ul style="color:#9ca3af;line-height:2">
+        <li>❌ Tienes ideas pero no sistema</li>
+        <li>❌ Publicas pero no vendes</li>
+        <li>❌ Automatizas sin estructura</li>
+        <li>❌ Usas herramientas, pero no tienes operación</li>
+      </ul>
+    </div>
+    <div class="glass" style="padding:28px">
+      <h3 style="font-size:1.3rem;font-weight:700;margin-bottom:.8rem">La solución</h3>
+      <ul style="color:#d1d5db;line-height:2">
+        <li>✅ Contenido que conecta</li>
+        <li>✅ Plataformas que convierten</li>
+        <li>✅ Sistemas que trabajan solos</li>
+        <li>✅ Procesos que escalan</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section style="padding:64px 20px">
+  <div style="max-width:900px;margin:0 auto;text-align:center">
+    <h2 style="font-size:1.8rem;font-weight:800;margin-bottom:2rem">Resultados reales</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;text-align:left">
+      <div class="glass" style="padding:20px">"Pasé de tener ideas sueltas a un sistema que vende todos los días."<br><b>— Emprendedor digital</b></div>
+      <div class="glass" style="padding:20px">"No es marketing. Es estructura. Ahora sé qué publicar y cómo vender."<br><b>— Creadora de contenido</b></div>
+      <div class="glass" style="padding:20px">"MaxiQueen OS no me dio una web. Me dio un sistema completo."<br><b>— Negocio local</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANES -->
+<section id="planes" style="padding:72px 20px;background:#111">
+  <div style="max-width:1000px;margin:0 auto;text-align:center">
+    <h2 style="font-size:2rem;font-weight:800;margin-bottom:2.5rem">Activa tu Sistema</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:20px">
+      
+      <!-- Starter -->
+      <div class="glass" style="padding:28px">
+        <h3 style="font-size:1.3rem;font-weight:700">👑 Starter</h3>
+        <p style="color:#9ca3af;margin:.8rem 0">Landing + 5 guiones + hosting básico + onboarding</p>
+        <p style="color:#facc15;font-weight:800;font-size:1.2rem">USD $49 / mes</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:1rem">
+          <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Quiero%20activar%20el%20plan%20Starter" target="_blank" class="btn-gold" style="font-size:.9rem">Activar por WhatsApp</a>
+          <a href="https://pay.hotmart.com/P103285828N" target="_blank" style="color:#9ca3af;font-size:.85rem">Pagar con Hotmart →</a>
+        </div>
+      </div>
+
+      <!-- Pro -->
+      <div class="glass" style="padding:28px;border-color:#facc15;transform:scale(1.03)">
+        <h3 style="font-size:1.3rem;font-weight:700">💰 Pro</h3>
+        <p style="color:#9ca3af;margin:.8rem 0">Web completa + 15 guiones + automatización + voz + PDF/Excel</p>
+        <p style="color:#facc15;font-weight:800;font-size:1.2rem">USD $99 / mes</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:1rem">
+          <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Quiero%20activar%20el%20plan%20Pro" target="_blank" class="btn-gold" style="font-size:.9rem">Activar por WhatsApp</a>
+          <a href="https://pay.hotmart.com/P103285828N" target="_blank" style="color:#9ca3af;font-size:.85rem">Pagar con Hotmart →</a>
+          <a href="https://go.hotmart.com/P103285828N?dp=1" target="_blank" style="color:#6b7280;font-size:.8rem">Ver oferta 40% →</a>
+        </div>
+      </div>
+
+      <!-- Elite -->
+      <div class="glass" style="padding:28px">
+        <h3 style="font-size:1.3rem;font-weight:700">🔵 Elite</h3>
+        <p style="color:#9ca3af;margin:.8rem 0">Sistema completo + automatización avanzada + soporte prioritario</p>
+        <p style="color:#facc15;font-weight:800;font-size:1.2rem">USD $199 / mes</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:1rem">
+          <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Quiero%20activar%20el%20plan%20Elite" target="_blank" class="btn-gold" style="font-size:.9rem">Activar por WhatsApp</a>
+          <a href="https://pay.hotmart.com/P103285828N" target="_blank" style="color:#9ca3af;font-size:.85rem">Pagar con Hotmart →</a>
+        </div>
+      </div>
+    <p style="color:#6b7280;font-size:.85rem;margin-top:1.5rem">Soporte humano · Sin contratos · Cancela cuando quieras</p>
+
+    <!-- Pago Colombia -->
+    <div class="glass" style="max-width:520px;margin:2rem auto;padding:24px;text-align:center">
+      <h4 style="font-weight:700;margin-bottom:.4rem">Pago seguro MAXIQUEEN OS – Colombia</h4>
+      <p style="color:#9ca3af;font-size:.9rem;margin-bottom:1rem">Tarjeta, PSE, Bancolombia, Efecty – vía Mercado Pago</p>
+      <!-- Botón Mercado Pago -->
+      <script src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js" data-preference-id="453634078-e7931b13-abe1-45f2-95db-398ab50f1db0" data-source="button"></script>
+      <p style="color:#6b7280;font-size:.75rem;margin-top:.5rem">Link de pago: $49.000 COP</p>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSISTEMA / REDES -->
+<section style="padding:56px 20px;text-align:center">
+  <h3 style="font-weight:800;margin-bottom:1.2rem">🌐 ECOSISTEMA DIGITAL</h3>
+  <div style="display:flex;flex-wrap:wrap;gap:18px;justify-content:center;color:#9ca3af;font-size:.95rem">
+    <a href="https://wa.me/573016625921" target="_blank">WhatsApp</a>
+    <a href="https://www.tiktok.com/@cesarbedoya9" target="_blank">TikTok</a>
+    <a href="https://www.instagram.com/maxiqueen_store" target="_blank">Instagram</a>
+    <a href="https://www.facebook.com/share/1DVm7tXTEm/" target="_blank">Facebook</a>
+    <a href="https://www.youtube.com/@cesarbedoya2288" target="_blank">YouTube</a>
+    <a href="https://www.linkedin.com/" target="_blank">LinkedIn</a>
+    <a href="https://app.hotmart.com/membership/cesar-f9370874/community/management/15254181" target="_blank">Comunidad Hotmart</a>
+    <a href="https://app-vlc.hotmart.com/affiliate-recruiting/view/6489M103285849" target="_blank">Afiliados</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="padding:40px 20px;text-align:center;color:#6b7280;border-top:1px solid #1f1f1f">
+  <p>Sistema desarrollado por <b style="color:#d1d5db">César Julio Bedoya Barragán</b></p>
+  <p><a href="https://orcid.org/0009-0004-4946-1374" target="_blank" style="color:#facc15">ORCID: 0009-0004-4946-1374</a></p>
+  <p style="margin-top:.8rem;font-size:.85rem">
+    <a href="/privacidad.html">Privacidad</a> · 
+    <a href="/cookies.html">Cookies</a> · 
+    <a href="/terminos.html">Términos</a> · 
+    <a href="/licencia-maxiqueenos.pdf" target="_blank">Licencia Apache 2.0</a>
+  </p>
+  <p style="margin-top:1rem;font-size:.8rem">MaxiQueen OS © 2026 — Inteligencia Local — Cúcuta, Colombia</p>
+</footer>
+
+<!-- WhatsApp float -->
+<a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" width="24"><path d="M380.9 97.1C339-3.8 211.2-34.6 119.8 19.5 34.4 71.2-8.7 180.1 20.4 272.5L0 512l245.1-64.2c95.5 27.8 196.5-16.7 247.1-104.4 43.5-75.7 32.3-173.7-25.3-246.3z"/></svg>
+</a>
+
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAXIQUEEN OS • MULTIVERSE WAR X</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mq-blue: #00e5ff; --mq-red: #ff1744; --mq-gold: #ffea00; --mq-green: #00e676;
+            --glass: rgba(5, 10, 20, 0.6); --glass-border: rgba(0, 229, 255, 0.2);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; user-select: none; }
+        body { 
+            background: #010205; color: white; overflow: hidden; 
+            width: 100vw; height: 100vh; display: flex; flex-direction: column;
+        }
+
+        /* UI Panel Superior (Estética Clean/Vision) */
+        #hud {
+            position: absolute; top: 15px; left: 15px; right: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border); border-radius: 12px;
+            padding: 15px 20px; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .stat-group { display: flex; gap: 20px; }
+        .stat { display: flex; flex-direction: column; }
+        .stat label { font-size: 0.75rem; color: var(--mq-blue); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+        .stat span { font-family: 'Orbitron'; font-size: 1.2rem; font-weight: 900; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .val-hp { color: var(--mq-green); } .val-en { color: var(--mq-blue); } .val-cr { color: var(--mq-gold); }
+
+        /* Lienzo Principal */
+        canvas { display: block; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+
+        /* Panel de Control Inferior */
+        #controls {
+            position: absolute; bottom: 15px; left: 15px; right: 15px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            z-index: 100;
+        }
+        .btn {
+            background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border); border-radius: 10px;
+            color: white; padding: 15px 5px; font-size: 0.9rem; font-weight: 700;
+            text-transform: uppercase; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .btn span { font-family: 'Orbitron'; font-size: 0.7rem; opacity: 0.7; margin-top: 3px; }
+        .btn:active:not(:disabled) { transform: scale(0.95); background: rgba(0, 229, 255, 0.2); }
+        .btn:disabled { opacity: 0.4; filter: grayscale(100%); cursor: not-allowed; }
+        .btn-red { border-color: rgba(255, 23, 68, 0.4); color: var(--mq-red); }
+        .btn-gold { border-color: rgba(255, 234, 0, 0.4); color: var(--mq-gold); }
+
+        /* Pantalla de Inicio */
+        #start-screen {
+            position: absolute; inset: 0; background: rgba(1, 2, 5, 0.9); backdrop-filter: blur(5px);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 200;
+        }
+        #start-screen h1 { font-family: 'Orbitron'; font-size: 2.5rem; color: var(--mq-blue); text-shadow: 0 0 20px var(--mq-blue); margin-bottom: 30px; text-align: center;}
+        #btn-start {
+            padding: 15px 40px; font-size: 1.2rem; font-family: 'Orbitron'; font-weight: 900;
+            background: transparent; color: var(--mq-blue); border: 2px solid var(--mq-blue);
+            border-radius: 8px; cursor: pointer; box-shadow: 0 0 15px rgba(0,229,255,0.3) inset;
+            transition: 0.3s;
+        }
+        #btn-start:hover { background: var(--mq-blue); color: #000; }
+    </style>
+</head>
+<body>
+
+<div id="start-screen">
+    <h1>MAXIQUEEN OS<br><span style="font-size:1rem; color:white;">MULTIVERSE WAR X</span></h1>
+    <button id="btn-start">INICIAR SISTEMA</button>
+</div>
+
+<div id="hud">
+    <div class="stat">
+        <label>Sector</label>
+        <span id="ui-lvl">1</span>
+    </div>
+    <div class="stat-group">
+        <div class="stat"><label>Núcleo</label><span id="ui-hp" class="val-hp">100%</span></div>
+        <div class="stat"><label>Energía</label><span id="ui-en" class="val-en">100</span></div>
+        <div class="stat"><label>Créditos</label><span id="ui-cr" class="val-cr">0</span></div>
+    </div>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<div id="controls">
+    <button class="btn" id="btn-atk" onclick="Game.fireManual()">CAÑÓN <span>5 EN</span></button>
+    <button class="btn btn-red" id="btn-spec" onclick="Game.fireNova()">NOVA <span>50 EN</span></button>
+    <button class="btn btn-gold" id="btn-turret" onclick="Game.buildTurret()">TORRETA <span>150 CR</span></button>
+    <button class="btn" id="btn-shield" onclick="Game.activateShield()">ESCUDO <span>30 EN</span></button>
+</div>
+
+<script>
+/** * MOTOR MULTIVERSE WAR X - RENDERIZADO CANVAS + PARTICULAS 
+ */
+const Audio = {
+    ctx: null,
+    init() { if(!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+    play(freq, type, dur, vol) {
+        if(!this.ctx) return;
+        const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+        osc.type = type; osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(Math.max(1, freq/2), this.ctx.currentTime + dur);
+        gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + dur);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + dur);
+    },
+    shoot() { this.play(800, 'square', 0.1, 0.05); },
+    nova() { this.play(200, 'sawtooth', 0.8, 0.1); setTimeout(()=>this.play(100, 'square', 1, 0.1), 100); },
+    enemyHit() { this.play(400, 'triangle', 0.1, 0.05); },
+    playerHit() { this.play(150, 'sawtooth', 0.3, 0.2); },
+    bossSpawn() { this.play(100, 'sine', 2, 0.3); }
+};
+
+const Voice = {
+    speak(text, pitch=1.5, rate=1.2) {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const ut = new SpeechSynthesisUtterance(text);
+        ut.lang = 'es-ES'; ut.pitch = pitch; ut.rate = rate;
+        window.speechSynthesis.speak(ut);
+    }
+};
+
+// Configuración del Lienzo
+const cvs = document.getElementById('gameCanvas');
+const ctx = cvs.getContext('2d', { alpha: false }); // Optimización de render
+let width, height;
+
+function resize() {
+    width = window.innerWidth; height = window.innerHeight;
+    cvs.width = width; cvs.height = height;
+}
+window.addEventListener('resize', resize); resize();
+
+// Entidades del Juego
+let particles = [];
+let projectiles = [];
+let enemies = [];
+let turrets = [];
+let floatingTexts = [];
+
+class Particle {
+    constructor(x, y, color, speed, size) {
+        this.x = x; this.y = y; this.color = color;
+        this.vx = (Math.random() - 0.5) * speed;
+        this.vy = (Math.random() - 0.5) * speed;
+        this.life = 1.0; this.decay = Math.random() * 0.03 + 0.02;
+        this.size = size || Math.random() * 3 + 1;
+    }
+    update() { this.x += this.vx; this.y += this.vy; this.life -= this.decay; }
+    draw() {
+        ctx.globalAlpha = Math.max(0, this.life);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.size, this.size);
+        ctx.globalAlpha = 1;
+    }
+}
+
+class Projectile {
+    constructor(x, y, vx, isEnemy, dmg, color) {
+        this.x = x; this.y = y; this.vx = vx;
+        this.isEnemy = isEnemy; this.dmg = dmg;
+        this.width = 20; this.height = 4; this.color = color;
+        this.active = true;
+    }
+    update() {
+        this.x += this.vx;
+        if(this.x > width + 100 || this.x < -100) this.active = false;
+        
+        // Estela
+        if(Math.random() > 0.5) particles.push(new Particle(this.x, this.y, this.color, 2, 2));
+    }
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = 10; ctx.shadowColor = this.color;
+        ctx.fillRect(this.x, this.y - this.height/2, this.width, this.height);
+        ctx.shadowBlur = 0;
+    }
+}
+
+class Enemy {
+    constructor(lvl, isBoss) {
+        this.isBoss = isBoss;
+        this.hp = isBoss ? lvl * 150 : 20 + (lvl * 15);
+        this.maxHp = this.hp;
+        this.size = isBoss ? 50 : 20;
+        this.x = width + 50; 
+        this.y = height/2 + (Math.random() * 200 - 100) - (height * 0.1);
+        this.vx = isBoss ? -0.5 : -(1 + Math.random() * lvl * 0.1);
+        this.color = isBoss ? '#ff1744' : '#ff9100';
+        this.lastShot = 0;
+        this.fireRate = isBoss ? 1500 : 3000 - (lvl * 50);
+        this.active = true;
+    }
+    update(time) {
+        this.x += this.vx;
+        // Movimiento senoidal
+        this.y += Math.sin(time/200 + this.x/100) * (this.isBoss ? 0.5 : 2);
+
+        // Disparo
+        if(time - this.lastShot > this.fireRate && this.x < width - 50) {
+            Audio.play(300, 'sawtooth', 0.1, 0.05);
+            projectiles.push(new Projectile(this.x, this.y, -8, true, this.isBoss ? 20 : 10, '#ff1744'));
+            this.lastShot = time;
+        }
+
+        if(this.x < 50) { // Llegó al núcleo
+            Game.takeDamage(this.hp);
+            this.active = false;
+            createExplosion(this.x, this.y, this.color, 30);
+        }
+    }
+    draw() {
+        ctx.fillStyle = '#050a15'; ctx.strokeStyle = this.color; ctx.lineWidth = 2;
+        ctx.shadowBlur = 15; ctx.shadowColor = this.color;
+        ctx.beginPath();
+        if(this.isBoss) { // Hexágono
+            for(let i=0; i<6; i++) {
+                ctx.lineTo(this.x + this.size * Math.cos(i*Math.PI/3), this.y + this.size * Math.sin(i*Math.PI/3));
+            }
+        } else { // Rombo
+            ctx.moveTo(this.x, this.y - this.size); ctx.lineTo(this.x + this.size, this.y);
+            ctx.lineTo(this.x, this.y + this.size); ctx.lineTo(this.x - this.size, this.y);
+        }
+        ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+
+        // Barra HP
+        ctx.fillStyle = 'rgba(255,0,0,0.5)';
+        ctx.fillRect(this.x - this.size, this.y - this.size - 15, this.size*2, 4);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x - this.size, this.y - this.size - 15, (this.size*2) * (this.hp/this.maxHp), 4);
+    }
+}
+
+function createExplosion(x, y, color, count) {
+    for(let i=0; i<count; i++) particles.push(new Particle(x, y, color, 8, Math.random()*4+2));
+}
+
+const Game = {
+    hp: 100, en: 100, cr: 0, lvl: 1, enemiesDefeated: 0,
+    running: false, shieldTime: 0, lastSpawn: 0, time: 0,
+    
+    // Posición del "Núcleo" (Héroe)
+    coreX: 80, get coreY() { return height/2 - (height * 0.1); },
+
+    init() {
+        document.getElementById('start-screen').style.display = 'none';
+        Audio.init();
+        Voice.speak("Maxi Queen O.S. en línea. Sistemas de defensa activados.");
+        this.running = true;
+        this.loop();
+    },
+
+    updateUI() {
+        document.getElementById('ui-lvl').innerText = this.lvl;
+        const hpEl = document.getElementById('ui-hp');
+        hpEl.innerText = `${Math.max(0, Math.floor(this.hp))}%`;
+        hpEl.style.color = this.hp > 50 ? 'var(--mq-green)' : 'var(--mq-red)';
+        document.getElementById('ui-en').innerText = Math.floor(this.en);
+        document.getElementById('ui-cr').innerText = this.cr;
+
+        document.getElementById('btn-atk').disabled = this.en < 5;
+        document.getElementById('btn-spec').disabled = this.en < 50;
+        document.getElementById('btn-turret').disabled = this.cr < 150;
+        document.getElementById('btn-shield').disabled = this.en < 30;
+    },
+
+    spawnWave() {
+        if(this.time - this.lastSpawn > Math.max(1000, 3000 - (this.lvl*150))) {
+            const isBoss = (this.enemiesDefeated > 0 && this.enemiesDefeated % 10 === 0);
+            if(isBoss) {
+                Voice.speak("Peligro. Jefe de sector detectado.", 0.5, 0.9);
+                Audio.bossSpawn();
+                this.enemiesDefeated++; // Evita spawn múltiple
+            }
+            enemies.push(new Enemy(this.lvl, isBoss));
+            this.lastSpawn = this.time;
+        }
+    },
+
+    fireManual() {
+        if(this.en >= 5) {
+            this.en -= 5; Audio.shoot();
+            projectiles.push(new Projectile(this.coreX + 40, this.coreY, 15, false, 25, '#00e5ff'));
+            this.updateUI();
+        }
+    },
+
+    fireNova() {
+        if(this.en >= 50) {
+            this.en -= 50; Audio.nova(); Voice.speak("Ultra Nova.");
+            for(let i=-2; i<=2; i++) {
+                projectiles.push(new Projectile(this.coreX + 40, this.coreY + (i*20), 12, false, 50, '#ffea00'));
+            }
+            this.updateUI();
+        }
+    },
+
+    buildTurret() {
+        if(this.cr >= 150) {
+            this.cr -= 150;
+            turrets.push({ x: this.coreX + (Math.random()*50), y: this.coreY + (Math.random()*150 - 75), lastShot: 0 });
+            Voice.speak("Torreta desplegada.");
+            this.updateUI();
+        }
+    },
+
+    activateShield() {
+        if(this.en >= 30) {
+            this.en -= 30; this.shieldTime = this.time + 5000;
+            Voice.speak("Escudo táctico en línea.");
+            Audio.play(600, 'sine', 1, 0.1);
+            this.updateUI();
+        }
+    },
+
+    takeDamage(amt) {
+        if(this.time < this.shieldTime) {
+            createExplosion(this.coreX, this.coreY, '#00e5ff', 15);
+            return; // Bloqueado
+        }
+        this.hp -= amt; Audio.playerHit();
+        document.body.style.transform = "translate(10px, -10px)";
+        setTimeout(()=> document.body.style.transform = "none", 50);
+        
+        if(this.hp <= 0) {
+            this.running = false;
+            Voice.speak("Fallo crítico. Sistema destruido.", 0.2, 0.8);
+            setTimeout(() => { alert(`FIN DEL JUEGO.\nSector: ${this.lvl}\nCréditos Totales: ${this.cr}`); location.reload(); }, 2000);
+        }
+        this.updateUI();
+    },
+
+    loop(timestamp) {
+        if(!this.running) return;
+        requestAnimationFrame((ts) => this.loop(ts));
+        
+        const dt = timestamp - this.time;
+        this.time = timestamp;
+        
+        // Regeneración
+        this.en = Math.min(100, this.en + 0.05);
+        if(Math.floor(this.time) % 30 === 0) this.updateUI();
+
+        // Render Fondo (Grid en movimiento)
+        ctx.fillStyle = '#010205'; ctx.fillRect(0, 0, width, height);
+        ctx.strokeStyle = 'rgba(0, 229, 255, 0.05)'; ctx.lineWidth = 1;
+        const offset = (this.time * 0.05) % 40;
+        for(let x=offset; x<width; x+=40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke(); }
+        for(let y=0; y<height; y+=40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke(); }
+
+        this.spawnWave();
+
+        // Actualizar Torreta
+        turrets.forEach(t => {
+            if(this.time - t.lastShot > 1500) {
+                projectiles.push(new Projectile(t.x + 20, t.y, 10, false, 15, '#00e676'));
+                t.lastShot = this.time;
+            }
+            // Dibujar Torreta
+            ctx.fillStyle = '#050a15'; ctx.strokeStyle = '#00e676'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.arc(t.x, t.y, 15, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#00e676'; ctx.fillRect(t.x, t.y-3, 20, 6);
+        });
+
+        // Entidades y Colisiones
+        for (let i = projectiles.length - 1; i >= 0; i--) {
+            let p = projectiles[i]; p.update(); p.draw();
+            if(!p.active) { projectiles.splice(i, 1); continue; }
+
+            if(p.isEnemy) {
+                if(Math.abs(p.x - this.coreX) < 30 && Math.abs(p.y - this.coreY) < 40) {
+                    this.takeDamage(p.dmg); p.active = false;
+                }
+            } else {
+                for (let j = enemies.length - 1; j >= 0; j--) {
+                    let e = enemies[j];
+                    if(Math.abs(p.x - e.x) < e.size && Math.abs(p.y - e.y) < e.size) {
+                        e.hp -= p.dmg; Audio.enemyHit(); p.active = false;
+                        floatingTexts.push({x: e.x, y: e.y, text: `-${p.dmg}`, life: 1});
+                        createExplosion(p.x, p.y, '#ffea00', 5);
+                        
+                        if(e.hp <= 0) {
+                            createExplosion(e.x, e.y, e.color, e.isBoss ? 50 : 15);
+                            this.cr += e.isBoss ? 150 : 25;
+                            this.enemiesDefeated++;
+                            if(this.enemiesDefeated % 10 === 0) { this.lvl++; Voice.speak(`Sector ${this.lvl} alcanzado.`); }
+                            e.active = false;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        enemies = enemies.filter(e => { e.update(this.time); e.draw(); return e.active; });
+        particles = particles.filter(p => { p.update(); p.draw(); return p.life > 0; });
+        
+        // Textos flotantes
+        floatingTexts = floatingTexts.filter(ft => {
+            ft.y -= 1; ft.life -= 0.02;
+            ctx.globalAlpha = Math.max(0, ft.life);
+            ctx.fillStyle = '#ffea00'; ctx.font = 'bold 20px Orbitron';
+            ctx.fillText(ft.text, ft.x, ft.y);
+            ctx.globalAlpha = 1;
+            return ft.life > 0;
+        });
+
+        // Dibujar Núcleo Héroe
+        ctx.save();
+        ctx.translate(this.coreX, this.coreY);
+        if(this.time < this.shieldTime) { // Escudo
+            ctx.beginPath(); ctx.arc(0, 0, 60 + Math.sin(this.time/100)*5, 0, Math.PI*2);
+            ctx.fillStyle = 'rgba(0, 229, 255, 0.1)'; ctx.fill();
+            ctx.strokeStyle = '#00e5ff'; ctx.lineWidth = 2; ctx.stroke();
+        }
+        // Base núcleo
+        ctx.fillStyle = '#02050a'; ctx.strokeStyle = '#00e5ff'; ctx.lineWidth = 3;
+        ctx.shadowBlur = 20; ctx.shadowColor = '#00e5ff';
+        ctx.beginPath(); ctx.moveTo(30, 0); ctx.lineTo(-10, 30); ctx.lineTo(-20, 0); ctx.lineTo(-10, -30); ctx.closePath();
+        ctx.fill(); ctx.stroke();
+        // Ojo
+        ctx.fillStyle = '#fff'; ctx.fillRect(10, -5, 10, 10);
+        ctx.restore();
+    }
+};
+
+document.getElementById('btn-start').onclick = () => Game.init();
+</script>
+</body>
+</html>

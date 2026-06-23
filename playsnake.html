@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEURAL NEXUS | MAXIQUEEN OS</title>
+    <style>
+        :root {
+            --mq-green: #00ff41;
+            --mq-dark: #050505;
+            --mq-gold: #ffd700;
+            --mq-panel: rgba(0, 40, 10, 0.6);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--mq-dark);
+            color: var(--mq-green);
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            background-image: 
+                linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .glass-panel {
+            background: var(--mq-panel);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 8px;
+            padding: 15px 25px;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .hud-header {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .hud-title { font-weight: bold; font-size: 1.2rem; text-shadow: 0 0 10px var(--mq-green); }
+        .hud-stats { display: flex; gap: 30px; }
+        .stat-value { color: #fff; font-weight: bold; }
+
+        .ai-subtitle {
+            align-self: center;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--mq-gold);
+            text-shadow: 0 0 10px var(--mq-gold);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        canvas {
+            box-shadow: 0 0 50px rgba(0, 255, 65, 0.15);
+            border: 2px solid rgba(0, 255, 65, 0.5);
+            border-radius: 4px;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+        }
+
+        #start-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            backdrop-filter: blur(5px);
+        }
+
+        button {
+            background: transparent;
+            color: var(--mq-green);
+            border: 2px solid var(--mq-green);
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-family: inherit;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2) inset, 0 0 15px rgba(0, 255, 65, 0.2);
+        }
+
+        button:hover {
+            background: var(--mq-green);
+            color: #000;
+            box-shadow: 0 0 30px var(--mq-green);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="start-screen">
+        <h1 style="text-shadow: 0 0 20px var(--mq-green); font-size: 3rem;">NEURAL NEXUS</h1>
+        <p style="color: var(--mq-gold); margin-bottom: 40px;">SISTEMA OPERATIVO MAXIQUEEN</p>
+        <button id="btn-start">INICIAR CONEXIÓN</button>
+    </div>
+
+    <div id="ui-layer">
+        <div class="hud-header glass-panel">
+            <div class="hud-title">MAXIQUEEN OS // COMANDANTE</div>
+            <div class="hud-stats">
+                <div>NIVEL: <span id="ui-level" class="stat-value">1</span></div>
+                <div>NODOS: <span id="ui-score" class="stat-value">0</span></div>
+                <div>ENERGÍA: <span id="ui-xp" class="stat-value">0%</span></div>
+            </div>
+        </div>
+        <div id="ai-text" class="glass-panel ai-subtitle"></div>
+    </div>
+
+    <canvas id="nexusCanvas" width="800" height="600"></canvas>
+
+    <script>
+        // --- 1. SISTEMA DE VOZ: MAXIQUEEN AI ---
+        class MaxiQueenAI {
+            constructor() {
+                this.synth = window.speechSynthesis;
+                this.voice = null;
+                this.uiElement = document.getElementById('ai-text');
+                this.initVoice();
+            }
+
+            initVoice() {
+                const setVoice = () => {
+                    const voices = this.synth.getVoices();
+                    // Buscar una voz en español, preferiblemente femenina/tecnológica
+                    this.voice = voices.find(v => v.lang.includes('es') && (v.name.includes('Google') || v.name.includes('Microsoft'))) || voices[0];
+                };
+                if (speechSynthesis.onvoiceschanged !== undefined) {
+                    speechSynthesis.onvoiceschanged = setVoice;
+                }
+                setVoice();
+            }
+
+            speak(text, type = 'info') {
+                if (this.synth.speaking) this.synth.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.voice = this.voice;
+                utterance.pitch = 0.9; // Tono ligeramente más robótico
+                utterance.rate = 1.1;  // Velocidad ágil
+                
+                this.uiElement.textContent = `> MAXIQUEEN AI: "${text}"`;
+                this.uiElement.style.opacity = 1;
+                this.uiElement.style.color = type === 'alert' ? '#ff003c' : 'var(--mq-gold)';
+                this.uiElement.style.textShadow = `0 0 10px ${type === 'alert' ? '#ff003c' : 'var(--mq-gold)'}`;
+
+                utterance.onend = () => {
+                    setTimeout(() => this.uiElement.style.opacity = 0, 2000);
+                };
+
+                this.synth.speak(utterance);
+            }
+        }
+
+        // --- 2. MOTOR GRÁFICO Y DE PARTÍCULAS ---
+        const canvas = document.getElementById("nexusCanvas");
+        const ctx = canvas.getContext("2d");
+        const box = 20;
+
+        class ParticleSystem {
+            constructor() { this.particles = []; }
+            
+            spawn(x, y, color, count = 15) {
+                for(let i=0; i<count; i++) {
+                    this.particles.push({
+                        x: x, y: y,
+                        vx: (Math.random() - 0.5) * 10,
+                        vy: (Math.random() - 0.5) * 10,
+                        life: 1, color: color
+                    });
+                }
+            }
+
+            updateAndDraw(ctx) {
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    let p = this.particles[i];
+                    p.x += p.vx; p.y += p.vy;
+                    p.life -= 0.05;
+                    if (p.life <= 0) {
+                        this.particles.splice(i, 1);
+                        continue;
+                    }
+                    ctx.globalAlpha = p.life;
+                    ctx.fillStyle = p.color;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = p.color;
+                    ctx.fillRect(p.x, p.y, 4, 4);
+                }
+                ctx.globalAlpha = 1;
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        // --- 3. LÓGICA CORE DEL JUEGO (NEURAL NEXUS) ---
+        const AI = new MaxiQueenAI();
+        const particles = new ParticleSystem();
+
+        let stream = [{x: 20 * box, y: 15 * box}];
+        let targetNode = {x: 0, y: 0};
+        let direction = "RIGHT";
+        let nextDirection = "RIGHT";
+        let gameLoop;
+        
+        let stats = { level: 1, score: 0, xp: 0, xpNeeded: 5 };
+        
+        // Niveles de configuración (Escalabilidad del 1 al 20)
+        const levelConfig = {
+            1: { speed: 120, intro: "Bienvenido comandante. Captura los nodos locales para establecer conexión." },
+            2: { speed: 100, intro: "Expansión regional iniciada. La red es más rápida. Optimiza tus movimientos." },
+            3: { speed: 80, intro: "Automatización activada. Cuidado con los bordes del sistema." },
+            // ... escalabilidad estructurada para 20 niveles
+        };
+
+        function spawnNode() {
+            targetNode = {
+                x: Math.floor(Math.random() * (canvas.width/box)) * box,
+                y: Math.floor(Math.random() * (canvas.height/box)) * box
+            };
+        }
+
+        function drawGrid() {
+            ctx.strokeStyle = "rgba(0, 255, 65, 0.1)";
+            ctx.lineWidth = 0.5;
+            for(let i=0; i<canvas.width; i+=box) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for(let j=0; j<canvas.height; j+=box) {
+                ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
+            }
+        }
+
+        function updateHUD() {
+            document.getElementById('ui-level').innerText = stats.level;
+            document.getElementById('ui-score').innerText = stats.score;
+            document.getElementById('ui-xp').innerText = `${Math.floor((stats.xp / stats.xpNeeded) * 100)}%`;
+        }
+
+        function levelUp() {
+            stats.level++;
+            stats.xp = 0;
+            stats.xpNeeded = Math.floor(stats.xpNeeded * 1.5);
+            
+            clearInterval(gameLoop);
+            let config = levelConfig[stats.level] || { speed: 60, intro: "Alerta. Defensas corporativas aumentando." };
+            
+            AI.speak(`Nivel ${stats.level} alcanzado. ${config.intro}`);
+            
+            particles.spawn(canvas.width/2, canvas.height/2, '#ffd700', 100);
+            
+            gameLoop = setInterval(update, config.speed);
+        }
+
+        function update() {
+            // Limpiar frame
+            ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            drawGrid();
+            particles.updateAndDraw(ctx);
+
+            direction = nextDirection;
+            let headX = stream[0].x;
+            let headY = stream[0].y;
+
+            if(direction == "LEFT") headX -= box;
+            if(direction == "UP") headY -= box;
+            if(direction == "RIGHT") headX += box;
+            if(direction == "DOWN") headY += box;
+
+            let newHead = {x: headX, y: headY};
+
+            // Colisiones (Game Over)
+            if(headX < 0 || headX >= canvas.width || headY < 0 || headY >= canvas.height || collision(newHead, stream)) {
+                clearInterval(gameLoop);
+                AI.speak("Conexión comprometida. Fallo en el sistema. Reiniciando protocolos.", "alert");
+                setTimeout(() => location.reload(), 3000);
+                return;
+            }
+
+            stream.unshift(newHead);
+
+            // Captura de Nodo (Comer)
+            if(headX === targetNode.x && headY === targetNode.y) {
+                stats.score++;
+                stats.xp++;
+                particles.spawn(targetNode.x + box/2, targetNode.y + box/2, '#00ff41', 20);
+                spawnNode();
+                
+                if(stats.xp >= stats.xpNeeded) levelUp();
+                updateHUD();
+            } else {
+                stream.pop();
+            }
+
+            // Dibujar Target Node (Holográfico)
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = "#ffd700";
+            ctx.fillStyle = "#ffd700";
+            ctx.fillRect(targetNode.x + 4, targetNode.y + 4, box - 8, box - 8);
+
+            // Dibujar Stream (El Jugador)
+            for(let i = 0; i < stream.length; i++) {
+                ctx.shadowBlur = i === 0 ? 20 : 5;
+                ctx.shadowColor = i === 0 ? "#fff" : "#00ff41";
+                ctx.fillStyle = i === 0 ? "#fff" : "rgba(0, 255, 65, 0.8)";
+                ctx.fillRect(stream[i].x + 1, stream[i].y + 1, box - 2, box - 2);
+            }
+            ctx.shadowBlur = 0; // Reset
+        }
+
+        function collision(head, array) {
+            for(let i = 0; i < array.length; i++) {
+                if(head.x === array[i].x && head.y === array[i].y) return true;
+            }
+            return false;
+        }
+
+        document.addEventListener("keydown", (e) => {
+            if(e.keyCode == 37 && direction != "RIGHT") nextDirection = "LEFT";
+            if(e.keyCode == 38 && direction != "DOWN") nextDirection = "UP";
+            if(e.keyCode == 39 && direction != "LEFT") nextDirection = "RIGHT";
+            if(e.keyCode == 40 && direction != "UP") nextDirection = "DOWN";
+        });
+
+        document.getElementById('btn-start').addEventListener('click', () => {
+            document.getElementById('start-screen').style.display = 'none';
+            spawnNode();
+            updateHUD();
+            
+            // Retraso ligero para la voz para asegurar que el motor de síntesis cargó
+            setTimeout(() => {
+                AI.speak(levelConfig[1].intro);
+            }, 500);
+
+            gameLoop = setInterval(update, levelConfig[1].speed);
+        });
+
+    </script>
+</body>
+</html>

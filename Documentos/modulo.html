@@ -1,0 +1,3655 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MaxiQueen OS | Sistema Digital Integral</title>
+
+<meta name="description" content="Sistema digital integral...">
+<meta property="og:image" content="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777734693/repository-open-graph-template_ajkllh.png">
+<meta name="twitter:card" content="summary_large_image">
+   
+<link rel="stylesheet" href="/static/css/tu_estilo.css">
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+
+<style>
+/* =====================
+   VARIABLES / TEMAS
+===================== */
+:root {
+  --accent:#facc15;
+  --bg-main:#0b1220;
+  --text-main:#f4ff23;
+  --card-bg:#151517;
+  --border-soft:#34ff19;
+  --btn-bg:#facc15;
+  --btn-text:#6e3838;
+  --bg-soft:rgba(4, 9, 19, 0.45);
+}
+
+[data-theme="light"] {
+  --accent:#22e670;
+  --bg-main:#0c2f76;
+  --text-main:#0cff07;
+  --card-bg:#000000;
+  --border-soft:#a7ff03;
+  --btn-bg:#ef8300;
+  --btn-text:#690707;
+  --bg-soft:rgb(9, 9, 67);
+}
+
+html,body{
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 251, 16, 0.174), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(8, 43, 117, 0.08), transparent 40%),
+    linear-gradient(180deg, #282f3dc2 15%, #020a2b85 100%);
+  color:var(--text-main)!important;
+  font-family:'Poppins',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  overflow-x:hidden;
+  transition:background .35s,color .35s;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* =====================
+   ANIMACIONES
+===================== */
+@keyframes floatInfinite{
+  0%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+  25%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  50%{transform:translate3d(0,-4px,0) rotateX(-1deg) rotateY(1deg);}
+  75%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+}
+
+@keyframes bounce-slow{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-14px);}
+}
+.animate-bounce-slow{animation:bounce-slow 3.2s ease-in-out infinite;}
+
+@keyframes pulse-slow{
+  0%,100%{opacity:.18;}
+  50%{opacity:.35;}
+}
+.animate-pulse-slow{animation:pulse-slow 6s ease-in-out infinite;}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
+}
+
+/* =====================
+   ANIMACIONES
+===================== */
+@keyframes floatInfinite{
+  0%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+  25%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  50%{transform:translate3d(0,-4px,0) rotateX(-1deg) rotateY(1deg);}
+  75%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+}
+
+@keyframes bounce-slow{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-14px);}
+}
+.animate-bounce-slow{animation:bounce-slow 3.2s ease-in-out infinite;}
+
+@keyframes pulse-slow{
+  0%,100%{opacity:.18;}
+  50%{opacity:.35;}
+}
+.animate-pulse-slow{animation:pulse-slow 6s ease-in-out infinite;}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
+}
+
+/* =====================
+   HERO / LOGO
+===================== */
+.hero-avatar{
+  position:relative;
+  animation:floatInfinite 7s ease-in-out infinite;
+}
+.hero-avatar::after{
+  content:'';
+  position:absolute;
+  inset:-14px;
+  border-radius:9999px;
+  background:conic-gradient(from 0deg,#f43f5e,#f59e0b,#facc15,#22c55e,#38bdf8,#a855f7,#f43f5e);
+  filter:blur(20px);
+  opacity:.75;
+  z-index:-1;
+}
+
+/* =====================
+   GALERÍA
+===================== */
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:1.5rem;
+}
+.gallery img{
+  width:100%;
+  border-radius:1.5rem;
+  object-fit:cover;
+  transition:.35s cubic-bezier(.4,0,.2,1);
+}
+.gallery img:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 40px rgba(250,204,21,.35);
+}
+
+/* =====================
+   WHATSAPP FLOAT
+===================== */
+.whatsapp-float{
+  position:fixed;
+  bottom:22px;
+  left:22px;
+  background:#25D366;
+  color:white;
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 10px 28px rgba(0,0,0,.35);
+  z-index:1000;
+  transition:.25s cubic-bezier(.4,0,.2,1);
+}
+.whatsapp-float:hover{transform:scale(1.12);}
+
+/* =====================
+   TOGGLE TEMA
+===================== */
+.toggle-theme{
+  position:fixed;
+  top:18px;
+  right:18px;
+  background:var(--bg-soft);
+  border:1px solid rgba(64,255,255,.12);
+  padding:7px 16px;
+  border-radius:999px;
+  font-size:.8rem;
+  cursor:pointer;
+  z-index:1000;
+  backdrop-filter:blur(10px);
+  transition:.25s;
+}
+.toggle-theme:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+/* ===================== CHAT ====================== */
+.mq-chat{
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  width:360px;
+  max-height:520px;
+  display:flex;
+  flex-direction:column;
+  border-radius:22px;
+  overflow:hidden;
+  backdrop-filter:blur(25px);
+  background:linear-gradient(
+    145deg,
+    rgba(28, 28, 42, 0.9),
+    rgba(15,15,20,0.8)
+  );
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.6),
+    0 0 40px rgba(250,204,21,.15);
+  z-index:9999;
+}
+
+.mq-chat-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 16px;
+  font-weight:600;
+  background:rgba(255,255,255,0.03);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.mq-chat-controls button{
+  background:none;
+  border:none;
+  color:#ccc;
+  font-size:14px;
+  margin-left:8px;
+  cursor:pointer;
+}
+
+.mq-chat-controls button:hover{
+  color:#41c0eb;
+}
+
+.mq-chat-body{
+  flex:1;
+  padding:14px;
+  overflow-y:auto;
+  font-size:14px;
+}
+
+.mq-chat-input{
+  display:flex;
+  padding:12px;
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+
+.mq-chat-input input{
+  flex:1;
+  padding:8px 10px;
+  border-radius:8px;
+  border:none;
+  background:rgba(255,255,255,0.05);
+  color:#fff;
+}
+
+.mq-chat-input button{
+  margin-left:8px;
+  padding:8px 14px;
+  border-radius:8px;
+  border:none;
+  background:#facc15;
+  color:#000;
+  font-weight:600;
+  cursor:pointer;
+}
+.chat-input button:hover{filter:brightness(1.1);}
+
+.social-icon{width:20px;height:20px;object-fit:contain;display:inline-block}
+/* =====================
+   LICENCIA BOX
+===================== */
+.mq-license-box{
+  max-width:820px;
+  margin:5rem auto 6rem;
+  padding:2.5rem 2.2rem;
+  border-radius:1.75rem;
+  background:var(--bg-soft);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.08);
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.mq-license-box h3{
+  font-size:1.6rem;
+  font-weight:800;
+  margin-bottom:1rem;
+}
+.mq-license-box p{margin-bottom:1rem;color:#d1d5db}
+.mq-license-box ul{
+  text-align:left;
+  max-width:420px;
+  margin:1.25rem auto 1.5rem;
+  color:#e5e7eb;
+}
+.mq-license-box li{margin-bottom:.4rem;}
+.mq-license-check{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  margin-bottom:1rem;
+}
+.mq-license-box button{
+  padding:.7rem 1.6rem;
+  border-radius:999px;
+  background:var(--accent);
+  color:#120834;
+  font-weight:700;
+  transition:.2s;
+}
+.mq-license-box button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+.mq-license-box button:not(:disabled):hover{
+  transform:translateY(-1px);
+  filter:brightness(1.05);
+  box-shadow:0 10px 24px rgba(250,204,21,.35);
+}
+
+   /* Estilo del Certificado Google MaxiQueen OS */
+.cert-google {
+  display: inline-block;
+  padding: 12px 20px;
+  margin: 15px 0;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  color: white !important;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  
+  /* Gradiente oficial de Google con tu toque MQ_OS */
+  background: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
+  background-size: 200% auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cert-google:hover {
+  background-position: right center;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(66, 133, 244, 0.4);
+}
+
+.cert-google::before {
+  content: '🏆'; /* Icono de trofeo antes del texto */
+  margin-right: 8px;
+}
+
+   /* Estilo dinámico para el Chat */
+.mq-chat {
+  /* ... otros estilos ... */
+  border: 2px solid var(--accent); /* El borde cambiará de amarillo a verde */
+  box-shadow: 0 0 20px var(--bg-soft);
+}
+
+.mq-chat-header {
+  background: var(--accent);
+  color: var(--btn-text); /* El texto del header se adapta para ser legible */
+}
+
+.msg-user {
+  color: var(--accent); /* Tus mensajes resaltan con el color activo */
+}
+   
+   /* =========================
+   MAXIQUEEN ACCESS MODULE
+========================= */
+
+.mq-access-module{
+    padding:5rem 2rem;
+    text-align:center;
+    background:#050505;
+}
+
+.mq-title{
+    color:white;
+    margin-bottom:2rem;
+    font-size:2.2rem;
+}
+
+.mq-container-btn{
+    margin-bottom:4rem;
+}
+
+/* BOTON PRINCIPAL */
+
+.mq-boton-maestro{
+    position:relative;
+    display:inline-block;
+    background:linear-gradient(45deg,#d4af37,#f9e29d);
+    color:#000;
+    padding:20px 40px;
+    font-size:1.1rem;
+    font-weight:bold;
+    text-transform:uppercase;
+    text-decoration:none;
+    border-radius:50px;
+    letter-spacing:2px;
+    transition:.3s;
+    box-shadow:0 10px 20px rgba(212,175,55,.3);
+}
+
+.mq-boton-maestro:hover{
+    transform:translateY(-5px);
+    box-shadow:0 15px 30px rgba(212,175,55,.6);
+}
+
+.mq-boton-maestro::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:50px;
+    border:2px solid #d4af37;
+    animation:mqPulse 2s infinite;
+}
+
+@keyframes mqPulse{
+    0%{
+        transform:scale(1);
+        opacity:.8;
+    }
+
+    100%{
+        transform:scale(1.4);
+        opacity:0;
+    }
+}
+
+.mq-texto-ayuda{
+    display:block;
+    color:#888;
+    margin-top:1rem;
+}
+
+/* GRID */
+
+.mq-access-grid{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:1rem;
+}
+
+/* BOTONES */
+
+.mq-btn-access{
+    display:inline-flex;
+    align-items:center;
+    padding:15px 25px;
+    text-decoration:none;
+    font-weight:bold;
+    border-radius:12px;
+    transition:.4s;
+    border:2px solid transparent;
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+/* GOOGLE */
+
+.mq-btn-google{
+    color:#4285F4;
+    border-color:rgba(66,133,244,.3);
+    background:rgba(66,133,244,.05);
+}
+
+.mq-btn-google:hover{
+    background:#4285F4;
+    color:white;
+    box-shadow:0 0 25px #4285F4;
+}
+
+/* MODULES */
+
+.mq-btn-modules{
+    color:#39ff14;
+    border-color:rgba(57,255,20,.3);
+    background:rgba(57,255,20,.05);
+}
+
+.mq-btn-modules:hover{
+    background:#39ff14;
+    color:black;
+    box-shadow:0 0 25px #39ff14;
+}
+
+/* GAMES */
+
+.mq-btn-games{
+    color:#00d4ff;
+    border-color:rgba(0,212,255,.3);
+    background:rgba(0,212,255,.05);
+}
+
+.mq-btn-games:hover{
+    background:#00d4ff;
+    color:white;
+    box-shadow:0 0 25px #00d4ff;
+}
+
+/* PROFILE */
+
+.mq-btn-profile{
+    color:#ffd700;
+    border-color:rgba(255,215,0,.3);
+    background:rgba(255,215,0,.05);
+}
+
+.mq-btn-profile:hover{
+    background:#ffd700;
+    color:black;
+    box-shadow:0 0 25px #ffd700;
+}
+
+.mq-icon{
+    margin-right:10px;
+}
+</style>
+
+</head>
+
+<body class="transition-colors duration-500 ease-in-out bg-black text-white">
+  
+<div class="container">
+
+ <style>
+.mq-access-module {
+    padding: 40px;
+    background: radial-gradient(circle at center, rgba(234, 179, 8, 0.05) 0%, transparent 70%);
+    border-radius: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mq-boton-maestro {
+    background: linear-gradient(90deg, #F4FF25, #D4E01B);
+    color: black !important;
+    padding: 20px 40px;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-radius: 100px;
+    display: inline-block;
+    box-shadow: 0 0 30px rgba(244, 255, 37, 0.2);
+    transition: all 0.4s ease;
+    text-decoration: none;
+    border: none;
+}
+
+.mq-boton-maestro:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 0 50px rgba(244, 255, 37, 0.4);
+    letter-spacing: 4px;
+}
+
+.mq-access-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 50px;
+}
+
+.mq-btn-access {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 25px;
+    border-radius: 24px;
+    color: white !important;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+}
+
+.mq-btn-access:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: #F4FF25;
+    transform: translateY(-8px);
+}
+
+.mq-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(244, 255, 37, 0.1);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    border: 1px solid rgba(244, 255, 37, 0.2);
+    transition: 0.3s;
+}
+
+.mq-btn-access:hover .mq-icon {
+    background: #F4FF25;
+    color: black;
+    transform: rotate(10deg);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    box-shadow: 0 0 10px #22c55e;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+</style>
+
+<section class="py-16 px-6 fade-in bg-zinc-950">
+  <div class="max-w-6xl mx-auto text-center">
+
+    <div class="mb-16">
+        <a href="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777325346/ChatGPT_Image_22_abr_2026_17_39_46_tpaady.png"
+           target="_blank"
+           class="inline-block text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-500 hover:scale-105 transition duration-500">
+          👑MODULOS MAXIQUEEN OS 👑
+        </a>
+        <div class="flex items-center justify-center mt-6">
+            <span class="status-dot"></span>
+            <p class="text-[10px] md:text-xs text-zinc-400 uppercase tracking-[0.6em]">
+                System Online • Infrastructure v7.0
+            </p>
+        </div>
+    </div>
+
+    <div class="mq-access-module">
+        <div class="mb-10">
+            <a href="solo_chat_editable.html" class="mq-boton-maestro">
+                Explorar Modulos MaxiQueen
+            </a>
+            <p class="mt-4 text-zinc-500 text-xs italic">
+                Acceso directo a videos, arte y animaciones de alta fidelidad
+            </p>
+        </div>
+
+        <div class="mq-access-grid">
+            <a href="playsnake.html" class="mq-btn-access">
+                <span class="mq-icon">MQ</span>
+                <span class="text-sm font-bold tracking-tight">Juego Culebrita Maxiqueen</span>
+            </a>
+
+            <a href="https://juegos-maxi-queen-os.vercel.app" class="mq-btn-access">
+                <span class="mq-icon">💻</span>
+                <span class="text-sm font-bold tracking-tight"> Juegos </span>
+            </a>
+
+            <a href="play24.html" class="mq-btn-access">
+                <span class="mq-icon">🎮</span>
+                <span class="text-sm font-bold tracking-tight">Engine de Juegos</span>
+            </a>
+
+            <a href="playclick2.html" class="mq-btn-access">
+                <span class="mq-icon">👑</span>
+                <span class="text-sm font-bold tracking-tight">Plan click</span>
+            </a>
+        </div>
+    </div>
+
+    
+<style>
+  
+/* --- ESTILO BASE PARA LINKS COLOMBIA --- */
+.card-link-col {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #a1a1aa; /* zinc-400 */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+/* --- VARIACIÓN AMARILLO (RIQUEZA) --- */
+.card-link-col.yellow:hover {
+    background: rgba(250, 204, 21, 0.05);
+    border-color: rgba(250, 204, 21, 0.3);
+    color: #facc15;
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(250, 204, 21, 0.1);
+}
+
+/* --- VARIACIÓN AZUL (INTELIGENCIA) --- */
+.card-link-col.blue:hover {
+    background: rgba(59, 130, 246, 0.05);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #60a5fa;
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+}
+
+/* --- VARIACIÓN ROJO (PASIÓN) --- */
+.card-link-col.red:hover {
+    background: rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #f87171;
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1);
+}
+
+/* --- CERTIFICADO GOOGLE PREMIUM --- */
+.cert-google {
+    display: inline-block;
+    padding: 10px 24px;
+    background: linear-gradient(90deg, rgba(66, 133, 244, 0.1), rgba(219, 68, 55, 0.1));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.cert-google:hover {
+    border-color: #fff;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+</Style>
+
+   
+<!-- =========================
+   MAXIQUEEN ACCESS MODULE
+========================= -->
+
+<section class="mq-access-module">
+
+    <h1 class="mq-title">👑 MAXIQUEEN OS 👑</h1>
+
+    <div class="mq-container-btn">
+
+        <a href="JuegotorresMQ.html" class="mq-boton-maestro">
+            Juego de torre para PC
+        </a>
+
+        <span class="mq-texto-ayuda">
+            Acceso directo a Juego, arte y INTERACIONES DIGITALES
+        </span>
+
+    </div>
+
+   
+</section>
+
+
+     <!-- GRID CATEGORIZADO: IDENTIDAD COLOMBIA -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  
+  <!-- CATEGORÍA: AMARILLO (Riqueza y Comercio) -->
+  <div class="space-y-4 p-4 rounded-2xl border border-yellow-500/10 bg-yellow-500/5 shadow-[0_0_15px_-5px_rgba(245,158,11,0.1)]">
+    <h3 class="text-yellow-400 text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
+      <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+      Comercio & Retail
+    </h3>
+    <div class="flex flex-col gap-3">
+      <a href="JuegosIntegradosMQ.html" target="_blank" class="card-link-col yellow">✅ Integrados MQ</a>
+      <a href="dashboard.html" class="card-link-col yellow">👑 Módulo dashboard</a>
+      <a href="dashboard2.html" class="card-link-col yellow">👑 Producto Individual 2</a>
+    </div>
+  </div>
+
+  <!-- CATEGORÍA: AZUL (Mares e Inteligencia) -->
+  <div class="space-y-4 p-4 rounded-2xl border border-blue-500/10 bg-blue-500/5 shadow-[0_0_15px_-5px_rgba(59,130,246,0.1)]">
+    <h3 class="text-blue-400 text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
+      <span class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+      Inteligencia & Control
+    </h3>
+    <div class="flex flex-col gap-3">
+      <a href="ChatBuilderMQ.html" class="card-link-col blue">👑 MQ Chat Builder IA</a>
+      <a href="dashboard.html" class="card-link-col blue">👑 Central Dashboard</a>
+      <a href="CreayEditaMQ.html" class="card-link-col blue">👑 Crea y Edita Manager</a>
+    </div>
+  </div>
+
+  <!-- CATEGORÍA: ROJO (Pasión y Gamificación) -->
+  <div class="space-y-4 p-4 rounded-2xl border border-red-500/10 bg-red-500/5 shadow-[0_0_15px_-5px_rgba(239,68,68,0.1)]">
+    <h3 class="text-red-500 text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
+      <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+      Gamificación
+    </h3>
+    <div class="flex flex-col gap-3">
+      <a href="JuegosIntegradosMQ.html" target="_blank" class="card-link-col red">📱 Pruebas juegos</a>
+      <a href="ActivasistemaMQ2.html" target="_blank" class="card-link-col red">🎮 Sudoku 2.0 (Pro)</a>
+      <a href="Builder_chat_MQ.html" class="card-link-col red">👑 Juego de Activación</a>
+    </div>
+  </div>
+
+</div>
+
+    <!-- FOOTER DEL ECOSISTEMA -->
+    <div class="mt-12 opacity-60">
+      <p class="text-xs uppercase tracking-[0.3em] text-amber-400 font-semibold">
+        Un sistema • Múltiples activos • Evolución constante
+      </p>
+    </div>
+
+ 
+  <div class="mt-20 flex flex-wrap justify-center gap-6 border-t border-white/5 pt-12">
+    <a href="NodesJuegosMQ.html" class="hero-btn-gold">
+        🚀 Ir al Editor de Sistemas
+    </a>
+    <a href="pruebcrm.html" target="_blank" class="cert-link hover:bg-white/5">
+        🛡️ Certificado Google Ads
+    </a>
+  </div>
+
+   
+</section>
+
+  </div>
+</section>
+<style>
+  .card-link-new {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    color: #d1d5db;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+  }
+
+  .card-link-new:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(8px);
+    color: white;
+  }
+
+  /* Variaciones por Categoría */
+  .category-comercio .card-link-new:hover { border-left: 4px solid #f59e0b; box-shadow: -10px 0 20px rgba(245, 158, 11, 0.1); }
+  .category-ia .card-link-new:hover { border-left: 4px solid #06b6d4; box-shadow: -10px 0 20px rgba(6, 182, 212, 0.1); }
+  .category-games .card-link-new:hover { border-left: 4px solid #a855f7; box-shadow: -10px 0 20px rgba(168, 85, 247, 0.1); }
+
+  /* Módulo Destacado (Highlight) */
+  .card-link-new.highlight {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.1), transparent);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+  }
+
+  .hero-btn-gold {
+    background: #F4FF25;
+    color: black !important;
+    padding: 16px 32px;
+    border-radius: 18px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 10px 30px rgba(244, 255, 37, 0.15);
+    transition: 0.4s;
+  }
+
+  .hero-btn-gold:hover {
+    transform: scale(1.05) translateY(-3px);
+    box-shadow: 0 15px 40px rgba(244, 255, 37, 0.3);
+  }
+
+  .cert-link {
+    padding: 16px 32px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    font-weight: 600;
+    transition: 0.3s;
+  }
+</style>
+
+<div class="glass p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-white/5 bg-white/5 backdrop-blur-xl">
+  
+  <div class="mb-12 text-center">
+    <h2 class="text-3xl md:text-5xl font-black text-white mb-4 tracking-tight">Módulos de Ecosistema</h2>
+    <div class="w-20 h-1 bg-amber-500 mx-auto mb-6 rounded-full"></div>
+    <p class="text-zinc-400 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+      Explora prototipos funcionales y herramientas estratégicas diseñadas para escalar modelos de negocio digitales bajo la infraestructura <span class="text-white font-bold">MaxiQueen</span>.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+    
+    <div class="space-y-4 category-comercio">
+      <div class="flex items-center mb-6">
+        <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center mr-3">
+          <span class="text-amber-500 text-xs">🛒</span>
+        </div>
+        <h3 class="text-amber-500 text-xs font-bold uppercase tracking-[0.2em]">Comercio & Retail</h3>
+      </div>
+      <a href="Build_IA_Chat_Bas.html" target="_blank" class="card-link-new">✅ Build Chat Oficial MQ</a>
+      <a href="playclick2.html" class="card-link-new">👑 Click 2s</a>
+      <a href="prodind.html" class="card-link-new">👑 Producto Individual</a>
+    </div>
+
+    <div class="space-y-4 category-ia">
+      <div class="flex items-center mb-6">
+        <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center mr-3">
+          <span class="text-cyan-500 text-xs">🧠</span>
+        </div>
+        <h3 class="text-cyan-500 text-xs font-bold uppercase tracking-[0.2em]">Inteligencia & Control</h3>
+      </div>
+      <a href="MQ_Chat_builder_os_IA.html" class="card-link-new highlight">👑 MQ Chat Builder IA</a>
+      <a href="dashboard.html" class="card-link-new">👑 Central Dashboard</a>
+      <a href="manager.html" class="card-link-new">👑 Business Manager</a>
+    </div>
+
+    <div class="space-y-4 category-games">
+      <div class="flex items-center mb-6">
+        <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3">
+          <span class="text-purple-500 text-xs">🎮</span>
+        </div>
+        <h3 class="text-purple-500 text-xs font-bold uppercase tracking-[0.2em]">Gamificación</h3>
+      </div>
+      <a href="PAG_INT_infor_JUEGO.html" target="_blank" class="card-link-new">📱 Ecosistema de Juegos</a>
+      <a href="sudoku-play2.0.html" target="_blank" class="card-link-new">🎮 Sudoku 2.0 (Pro)</a>
+      <a href="index-v7Activar_Sistema.html" class="card-link-new">👑 Juego de Activación</a>
+    </div>
+
+  </div>
+
+</div>
+ 
+<!-- ================= FOOTER OFICIAL MAXIQUEEN OS ================= -->
+<footer class="py-10 px-6 mt-20 fade-in">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="glass rounded-3xl border border-white/10 shadow-2xl px-8 py-10 text-center">
+
+      <!-- IDENTIDAD PRINCIPAL -->
+      <p class="text-lg md:text-2xl text-zinc-200 font-medium">
+        Sistema desarrollado por
+        <strong class="text-white font-bold tracking-wide">
+          César Julio Bedoya Barragán
+        </strong>
+      </p>
+
+      <!-- ORCID -->
+      <div class="mt-4">
+        <a href="https://orcid.org/0009-0004-4946-1374"
+           target="_blank"
+           rel="noopener"
+           class="inline-block text-amber-400 hover:text-rose-400 font-semibold tracking-wide transition duration-300">
+          ORCID · 0009-0004-4946-1374
+        </a>
+      </div>
+
+      <!-- FRASE DE POSICIONAMIENTO -->
+      <div class="mt-6">
+        <p class="text-sm md:text-base text-zinc-400 uppercase tracking-[0.25em]">
+          Arquitectura digital · Automatización · Expansión estratégica
+        </p>
+      </div>
+
+      <!-- NAVEGACIÓN LEGAL -->
+      <div class="mt-8 flex flex-wrap justify-center gap-6 text-sm md:text-base text-zinc-400">
+
+        <a href="privacidad.html"
+           class="footer-link">
+          Privacidad
+        </a>
+
+        <a href="cookies.html"
+           class="footer-link">
+          Cookies
+        </a>
+
+        <a href="terminos.html"
+           class="footer-link">
+          Términos
+        </a>
+
+      </div>
+
+      <!-- FIRMA FINAL -->
+      <div class="mt-8 pt-6 border-t border-white/10">
+        <p class="text-xs md:text-sm uppercase tracking-[0.3em] text-cyan-400 font-semibold">
+          MAXIQUEEN OS · Sistema digital original
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+  
+</footer>
+
+
+<!-- ================= ESTILO GRID REUTILIZABLE ================= -->
+<style>
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+</style>
+
+<style>
+.mq-hotmart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.mq-card-hot {
+    background: linear-gradient(145deg, rgba(20,20,20,0.9), rgba(5,5,5,0.9));
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 25px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.mq-card-hot::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at top right, rgba(234, 179, 8, 0.1), transparent);
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.mq-card-hot:hover {
+    transform: translateY(-10px);
+    border-color: var(--mq-gold);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 15px rgba(234, 179, 8, 0.2);
+}
+
+.mq-card-hot:hover::before { opacity: 1; }
+
+.hot-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.3));
+}
+
+.hot-label {
+    color: var(--mq-gold);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.hot-name {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.hot-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #dc2626;
+    color: white;
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 800;
+}
+</style>
+
+
+<section class="py-24 px-6 bg-grid fade-in">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <span class="text-amber-500 font-mono tracking-widest uppercase text-sm">Revenue Ecosystem</span>
+            <h2 class="text-4xl font-black text-white mt-2">NÚCLEO DE VENTAS HOTMART</h2>
+            <div class="w-24 h-1 bg-amber-500 mx-auto mt-4 rounded-full"></div>
+        </div>
+
+        <div class="mq-hotmart-grid">
+            
+            <a href="https://go.hotmart.com/P103285828N?dp=1" target="_blank" class="mq-card-hot">
+                <div class="hot-icon">🛒</div>
+                <span class="hot-label">Acceso Global</span>
+                <span class="hot-name">Marketplace Oficial</span>
+            </a>
+
+            <a href="https://pay.hotmart.com/P103285828N" target="_blank" class="mq-card-hot" style="border-color: rgba(234,179,8,0.3);">
+                <div class="hot-badge">OFERTA ACTIVA</div>
+                <div class="hot-icon">💳</div>
+                <span class="hot-label">Beneficio</span>
+                <span class="hot-name">Dcto MQ 40% Especial</span>
+            </a>
+
+            <a href="https://app-vlc.hotmart.com/affiliate-recruiting/view/6489M103285849" target="_blank" class="mq-card-hot">
+                <div class="hot-icon">💻</div>
+                <span class="hot-label">Partners</span>
+                <span class="hot-name">Reclutamiento Afiliados</span>
+            </a>
+
+            <a href="https://app.hotmart.com/membership/cesar-f9370874/community/management/15254181" target="_blank" class="mq-card-hot">
+                <div class="hot-icon">📂</div>
+                <span class="hot-label">Networking</span>
+                <span class="hot-name">Comunidad Exclusiva</span>
+            </a>
+
+        </div>
+    </div>
+</section>
+
+     
+<!-- ================= MOTOR VISUAL / INTERACCIÓN 3D MAXIQUEEN OS ================= -->
+<script>
+(() => {
+  "use strict";
+
+  /* ================= ELEMENTOS DINÁMICOS ================= */
+  const floatElements = document.querySelectorAll(".float-3d");
+  const bgCircles = document.querySelectorAll(".background-circle");
+  const footer = document.querySelector("footer");
+
+  let ticking = false;
+  let lastScrollY = window.scrollY;
+
+   /* ================= SEGURIDAD BÁSICA ================= */
+window.addEventListener("load", () => {
+  const token = localStorage.getItem("token");
+
+  /* 
+  Validación temporal desactivada para depuración estructural.
+  Reactivar cuando el sistema esté estable.
+  */
+  if (!token) {
+    console.warn("Token no encontrado. Acceso permitido temporalmente para revisión.");
+  } else {
+    document.documentElement.classList.add("mq-authenticated");
+  }
+});
+  /* ================= EFECTO PARALLAX / 3D ================= */
+  const handleMouseMove = (e) => {
+    const x = (e.clientX / window.innerWidth) - 0.5;
+    const y = (e.clientY / window.innerHeight) - 0.5;
+
+    /* ELEMENTOS PRINCIPALES */
+    floatElements.forEach((el, index) => {
+      const depth = 14 + (index * 4);
+
+      el.style.transform = `
+        perspective(1200px)
+        rotateY(${x * depth}deg)
+        rotateX(${y * -depth}deg)
+        translateZ(${depth * 0.6}px)
+      `;
+    });
+
+    /* FONDO */
+    bgCircles.forEach((el, index) => {
+      const factor = (index + 1) * 22;
+
+      el.style.transform = `
+        translate(${x * factor}px, ${y * factor}px)
+        scale(${1 + Math.abs(x * y) * 0.08})
+      `;
+    });
+  };
+
+  document.addEventListener("mousemove", handleMouseMove, {
+    passive: true
+  });
+
+  /* ================= FOOTER FLOTANTE INTELIGENTE ================= */
+  const updateFooter = () => {
+    const scrollY = window.scrollY;
+    const maxScroll = Math.max(
+      document.body.scrollHeight - window.innerHeight,
+      1
+    );
+
+    const progress = scrollY / maxScroll;
+    const footerLift = progress * 30;
+
+    if (footer) {
+      footer.style.transform = `translateY(-${footerLift}px)`;
+      footer.style.boxShadow = `
+        0 ${12 + footerLift / 2}px
+        ${28 + footerLift / 1.5}px
+        rgba(0,0,0,0.45)
+      `;
+      footer.style.backdropFilter = "blur(18px)";
+    }
+
+    ticking = false;
+  };
+
+  window.addEventListener("scroll", () => {
+    const currentScroll = window.scrollY;
+
+    if (Math.abs(currentScroll - lastScrollY) < 3) return;
+
+    lastScrollY = currentScroll;
+
+    if (!ticking) {
+      window.requestAnimationFrame(updateFooter);
+      ticking = true;
+    }
+  }, {
+    passive: true
+  });
+
+  /* ================= OPTIMIZACIÓN MOBILE ================= */
+  if (window.innerWidth < 768) {
+    document.removeEventListener("mousemove", handleMouseMove);
+  }
+
+})();
+
+
+</script>
+
+<section class="py-20 px-6 bg-black/20">
+  <div class="max-w-5xl mx-auto grid md:grid-columns-2 gap-8">
+    
+    <div class="p-8 rounded-3xl border border-white/10 bg-zinc-900/50 backdrop-blur">
+      <h3 class="text-xl font-bold text-white">Explorador OS</h3>
+      <p class="text-zinc-400 text-sm mt-2">Acceso a la documentación base y comunidad abierta.</p>
+      <div class="text-3xl font-black my-6">$0 <span class="text-sm font-normal text-zinc-500">/ siempre</span></div>
+      <ul class="text-sm text-zinc-300 space-y-3 mb-8">
+        <li>✔ Chat IA Básico</li>
+        <li>✔ Acceso a Galería</li>
+      </ul>
+      <button class="w-full py-3 rounded-xl border border-white/20 hover:bg-white/5 transition">Acceso Libre</button>
+    </div>
+
+    <div class="p-8 rounded-3xl border-2 border-amber-500/50 bg-gradient-to-b from-zinc-900 to-black relative overflow-hidden">
+      <div class="absolute top-0 right-0 bg-amber-500 text-black text-[10px] font-black px-4 py-1 rounded-bl-lg">RECOMENDADO</div>
+      <h3 class="text-xl font-bold text-white">Operador Pro</h3>
+      <p class="text-zinc-400 text-sm mt-2">Activación total del sistema y mentoría estructural.</p>
+      <div class="text-3xl font-black my-6">$59000<span class="text-sm font-normal text-zinc-500">/ pago único</span></div>
+      <ul class="text-sm text-zinc-300 space-y-3 mb-8">
+        <li>✔ **40% Dcto Aplicado**</li>
+        <li>✔ Núcleo Cognitivo Expandido</li>
+        <li>✔ Certificación de Operador</li>
+      </ul>
+      <a href="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js" class="block text-center w-full py-3 rounded-xl bg-amber-500 text-black font-bold hover:scale-105 transition">Activar con Hotmart</a>
+    </div>
+
+  </div>
+</section>
+
+
+
+
+<!-- ================= MOTOR VISUAL / INTERACCIÓN 3D MAXIQUEEN OS ================= -->
+<script>
+(() => {
+  "use strict";
+
+  /* ================= ELEMENTOS DINÁMICOS ================= */
+  const floatElements = document.querySelectorAll(".float-3d");
+  const bgCircles = document.querySelectorAll(".background-circle");
+  const footer = document.querySelector("footer");
+
+  let ticking = false;
+  let lastScrollY = window.scrollY;
+
+   /* ================= SEGURIDAD BÁSICA ================= */
+window.addEventListener("load", () => {
+  const token = localStorage.getItem("token");
+
+  /* 
+  Validación temporal desactivada para depuración estructural.
+  Reactivar cuando el sistema esté estable.
+  */
+  if (!token) {
+    console.warn("Token no encontrado. Acceso permitido temporalmente para revisión.");
+  } else {
+    document.documentElement.classList.add("mq-authenticated");
+  }
+});
+  /* ================= EFECTO PARALLAX / 3D ================= */
+  const handleMouseMove = (e) => {
+    const x = (e.clientX / window.innerWidth) - 0.5;
+    const y = (e.clientY / window.innerHeight) - 0.5;
+
+    /* ELEMENTOS PRINCIPALES */
+    floatElements.forEach((el, index) => {
+      const depth = 14 + (index * 4);
+
+      el.style.transform = `
+        perspective(1200px)
+        rotateY(${x * depth}deg)
+        rotateX(${y * -depth}deg)
+        translateZ(${depth * 0.6}px)
+      `;
+    });
+
+    /* FONDO */
+    bgCircles.forEach((el, index) => {
+      const factor = (index + 1) * 22;
+
+      el.style.transform = `
+        translate(${x * factor}px, ${y * factor}px)
+        scale(${1 + Math.abs(x * y) * 0.08})
+      `;
+    });
+  };
+
+  document.addEventListener("mousemove", handleMouseMove, {
+    passive: true
+  });
+
+  /* ================= FOOTER FLOTANTE INTELIGENTE ================= */
+  const updateFooter = () => {
+    const scrollY = window.scrollY;
+    const maxScroll = Math.max(
+      document.body.scrollHeight - window.innerHeight,
+      1
+    );
+
+    const progress = scrollY / maxScroll;
+    const footerLift = progress * 30;
+
+    if (footer) {
+      footer.style.transform = `translateY(-${footerLift}px)`;
+      footer.style.boxShadow = `
+        0 ${12 + footerLift / 2}px
+        ${28 + footerLift / 1.5}px
+        rgba(0,0,0,0.45)
+      `;
+      footer.style.backdropFilter = "blur(18px)";
+    }
+
+    ticking = false;
+  };
+
+  window.addEventListener("scroll", () => {
+    const currentScroll = window.scrollY;
+
+    if (Math.abs(currentScroll - lastScrollY) < 3) return;
+
+    lastScrollY = currentScroll;
+
+    if (!ticking) {
+      window.requestAnimationFrame(updateFooter);
+      ticking = true;
+    }
+  }, {
+    passive: true
+  });
+
+  /* ================= OPTIMIZACIÓN MOBILE ================= */
+  if (window.innerWidth < 768) {
+    document.removeEventListener("mousemove", handleMouseMove);
+  }
+
+})();
+</script>
+
+<!-- ================= ESTILO GRID REUTILIZABLE ================= -->
+<style>
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+</style>
+<!-- ================= ¿QUÉ ES MAXIQUEEN OS? ================= -->
+<section id="sistema"
+         class="py-28 px-6 fade-in relative overflow-hidden">
+
+  <!-- FONDO -->
+  <div class="absolute inset-0 bg-grid opacity-[0.03] pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto relative z-10">
+
+    <!-- TITULAR -->
+    <div class="text-center mb-20">
+      <h2 class="text-4xl md:text-6xl font-extrabold text-white leading-tight">
+        ¿Qué es
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-400">
+          MAXIQUEEN OS
+        </span>?
+      </h2>
+
+      <p class="mt-6 text-zinc-400 text-lg md:text-xl max-w-4xl mx-auto">
+        Mucho más que una marca.
+        Es una infraestructura digital diseñada para transformar creatividad,
+        negocio y operación en un ecosistema rentable y escalable.
+      </p>
+    </div>
+
+
+    <!-- GRID -->
+    <div class="grid md:grid-cols-2 gap-10 lg:gap-16 items-stretch">
+
+      <!-- DEFINICIÓN -->
+      <div class="glass rounded-3xl p-10 md:p-14 border border-white/10 shadow-2xl">
+
+        <p class="text-sm uppercase tracking-[0.3em] text-amber-400 font-semibold mb-4">
+          Definición estratégica
+        </p>
+
+        <h3 class="text-3xl md:text-4xl font-bold text-white mb-8">
+          Un sistema,
+          <span class="text-zinc-400">no una solución aislada</span>
+        </h3>
+
+        <div class="space-y-6 text-zinc-300 text-lg leading-relaxed">
+
+          <p>
+            MAXIQUEEN OS no fue creado para vender páginas sueltas,
+            diseños aislados o automatizaciones desconectadas.
+          </p>
+
+          <p>
+            Fue diseñado como un sistema digital integral para personas,
+            marcas y negocios que buscan crear, vender, automatizar y expandirse
+            sin depender de herramientas fragmentadas.
+          </p>
+
+          <p class="font-semibold text-white">
+            No vendemos páginas.
+            Construimos sistemas que producen resultados reales.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- MÓDULOS -->
+      <div class="glass rounded-3xl p-10 md:p-14 border border-cyan-400/10 shadow-2xl">
+
+        <p class="text-sm uppercase tracking-[0.3em] text-cyan-400 font-semibold mb-4">
+          Módulos operativos
+        </p>
+
+        <h3 class="text-3xl md:text-4xl font-bold text-white mb-8">
+          Ecosistema funcional
+        </h3>
+
+        <ul class="space-y-5 text-zinc-300 text-lg leading-relaxed">
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">🎨</span>
+            <span>Contenido creativo estratégico: guiones, reels, caricaturas, TikTok y narrativa visual.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">📱</span>
+            <span>Crecimiento social mediante posicionamiento real, identidad y expansión orgánica.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">🌐</span>
+            <span>Webs, landing pages y tiendas optimizadas para conversión.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">🛒</span>
+            <span>Estructura comercial: funnels, productos, inventario y operación de ventas.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">⚙️</span>
+            <span>Automatización profesional: deploy, infraestructura, VPS, subdominios y escalabilidad.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">🧠</span>
+            <span>Asistencia estratégica: análisis, estructura operativa y soporte profesional.</span>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+
+
+    <!-- CIERRE -->
+    <div class="text-center mt-20">
+      <p class="text-sm md:text-base uppercase tracking-[0.35em] text-cyan-400 font-semibold">
+        Crear · Operar · Automatizar · Escalar
+      </p>
+
+      <p class="mt-4 text-zinc-400 text-lg">
+        MAXIQUEEN OS convierte esfuerzo digital en infraestructura rentable.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ================= GRID STYLE ================= -->
+<style>
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+</style>
+
+<!-- ================= GALERÍA 1 ================= -->
+<section class="py-24 px-6 fade-in">
+  <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4">Sistema en acción</h2>
+    <p class="text-zinc-400 mb-12">
+      Casos reales · Módulos · Implementaciones
+    </p>
+
+    <div class="gallery grid grid-cols-1 md:grid-cols-3 gap-6" id="dynamicGallery">
+
+      <!-- Modulo Creativo -->
+<div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+  <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777666945/video-1129194306935731_ozg8l4.mp4" type="video/mp4">
+  </video>
+</div>
+
+      <!-- Módulo Social -->
+      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+  <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777666803/video-1129194893602339_fl42sp.mp4" type="video/mp4">
+  </video>
+</div>
+
+      <!-- Módulo Web -->
+      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+  <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777666944/video-1129192306935931_lmb7cl.mp4" type="video/mp4">
+  </video>
+</div>
+
+      <!-- Automatización -->
+      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+  <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777667691/animate-with-subtle-elegant-motion-soft-golden-shi_3_dj7d5c.mp4" type="video/mp4">
+  </video>
+</div>
+
+      <!-- Hosting Pro -->
+      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+  <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777683310/animate-with-subtle-elegant-motion-exactly-like-mo_1_gybgaf.mp4" type="video/mp4">
+  </video>
+</div>
+
+       <!-- Módulo Inteligencia -->
+      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+  <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777683847/animate-with-subtle-elegant-motion-exactly-like-mo_4_z0qohj.mp4" type="video/mp4">
+  </video>
+</div>
+       
+    </div>
+  </div>
+  
+  
+</section>
+
+<!-- ================= GALERÍA 2 ================= -->
+<section class="py-24 px-6 fade-in">
+  <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4">Resultados en acción</h2>
+    <p class="text-zinc-400 mb-12">
+    </p>
+
+    <div class="gallery grid grid-cols-1 md:grid-cols-3 gap-6" id="dynamicGallery">
+
+      <!-- Demo Creativo -->
+      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+        <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088762/ChatGPT_Image_30_ene_2026_09_55_32_p.m._yib9hk.png"
+             alt="Módulo Creativo"
+             class="rounded-3xl w-full h-full object-cover"
+             loading="lazy"
+             onclick="openLightbox(this.src)">
+      </div>
+
+      <!-- Modulo landing -->
+      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+        <video class="w-full max-w-xl mx-auto rounded-xl" controls>
+  <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777088749/animate-it_t3tzmk.mp4">
+</video>
+ </div>
+
+       <!-- Automatización -->
+<div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+  <video class="w-full h-full object-cover rounded-3xl" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1775244585/video-1057055004149662_xid3yq.mp4" type="video/mp4">
+  </video>
+</div>
+    </div>
+  </div>
+</section>
+       
+<!-- ================= LIGHTBOX ================= -->
+<div id="lightbox" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
+  <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl" aria-label="Cerrar">✕</button>
+  <div id="lightboxContent" class="max-w-4xl w-full px-4"></div>
+</div>
+
+<section id="planes" class="py-24 px-6 bg-grid">
+  <div class="max-w-6xl mx-auto text-center">
+    <span class="text-amber-500 font-mono text-xs tracking-widest uppercase">Escalabilidad Estructural</span>
+    <h2 class="text-4xl md:text-5xl font-black text-white mt-4 mb-16">Activa tu Ecosistema</h2>
+
+    <div class="grid md:grid-cols-3 gap-8 items-center">
+
+      <div class="bg-zinc-900/40 backdrop-blur-md p-8 rounded-[2rem] border border-white/5 hover:border-white/20 transition-all">
+        <h3 class="text-zinc-400 text-sm font-bold uppercase tracking-widest mb-2">Fase Inicial</h3>
+        <div class="text-2xl font-bold text-white mb-4">👑 Starter</div>
+        <div class="text-3xl font-black text-white mb-6">$49 <span class="text-sm font-light text-zinc-500">/ mes</span></div>
+        
+        <ul class="text-left text-sm text-zinc-300 space-y-4 mb-10">
+          <li class="flex items-center"> <span class="text-amber-500 mr-2">✔</span> Landing Page Operativa</li>
+          <li class="flex items-center"> <span class="text-amber-500 mr-2">✔</span> 5 Guiones de Contenido</li>
+          <li class="flex items-center"> <span class="text-amber-500 mr-2">✔</span> Hosting Básico Incluido</li>
+          <li class="flex items-center"> <span class="text-zinc-600 mr-2">✘</span> Automatización AI</li>
+        </ul>
+
+        <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Quiero%20activar%20el%20plan%20Starter."
+           class="block w-full py-4 rounded-2xl bg-zinc-800 text-white font-bold hover:bg-zinc-700 transition">
+          Activar Starter
+        </a>
+      </div>
+
+      <div class="relative bg-gradient-to-b from-zinc-800/80 to-black p-10 rounded-[2.5rem] border-2 border-amber-500 shadow-[0_0_40px_rgba(234,179,8,0.15)] z-10">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-amber-500 text-black text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-tighter">Más Popular</div>
+        
+        <h3 class="text-amber-500 text-sm font-bold uppercase tracking-widest mb-2">Crecimiento Real</h3>
+        <div class="text-2xl font-bold text-white mb-4">💰 Operador Pro</div>
+        <div class="text-4xl font-black text-white mb-6">$99 <span class="text-sm font-light text-zinc-500">/ mes</span></div>
+        
+        <ul class="text-left text-sm text-zinc-200 space-y-4 mb-10">
+          <li class="flex items-center"> <span class="text-amber-500 mr-2">✔</span> Web Completa + Blog</li>
+          <li class="flex items-center"> <span class="text-amber-500 mr-2">✔</span> 15 Guiones Estratégicos</li>
+          <li class="flex items-center"> <span class="text-amber-500 mr-2">✔</span> **Automatización de Leads**</li>
+          <li class="flex items-center"> <span class="text-amber-500 mr-2">✔</span> Soporte Estratégico 1:1</li>
+        </ul>
+
+        <a href="https://pay.hotmart.com/P103285828N" 
+           class="block w-full py-4 rounded-2xl bg-amber-500 text-black font-black hover:scale-105 shadow-lg shadow-amber-500/20 transition">
+          ¡CONSEGUIR ACCESO PRO!
+        </a>
+      </div>
+
+      <div class="bg-zinc-900/40 backdrop-blur-md p-8 rounded-[2rem] border border-white/5 hover:border-white/20 transition-all">
+        <h3 class="text-zinc-400 text-sm font-bold uppercase tracking-widest mb-2">Máximo Nivel</h3>
+        <div class="text-2xl font-bold text-white mb-4">🔵 Elite OS</div>
+        <div class="text-3xl font-black text-white mb-6">$199 <span class="text-sm font-light text-zinc-500">/ mes</span></div>
+        
+        <ul class="text-left text-sm text-zinc-300 space-y-4 mb-10">
+          <li class="flex items-center"> <span class="text-amber-500 mr-2">✔</span> Sistema Operativo Completo</li>
+          <li class="flex items-center"> <span class="text-amber-500 mr-2">✔</span> IA Local Personalizada</li>
+          <li class="flex items-center"> <span class="text-amber-500 mr-2">✔</span> Infraestructura Cloud Pro</li>
+          <li class="flex items-center"> <span class="text-amber-500 mr-2">✔</span> Soporte 24/7 Prioritario</li>
+        </ul>
+
+        <a href="https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Quiero%20el%20Plan%20Elite."
+           class="block w-full py-4 rounded-2xl border border-white/20 text-white font-bold hover:bg-white/5 transition">
+          Hablar con un Humano
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+.mq-setup-box {
+    background: linear-gradient(135deg, rgba(103, 58, 183, 0.1), rgba(0, 0, 0, 0.5));
+    border: 1px dashed rgba(139, 92, 246, 0.3);
+    border-radius: 24px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+}
+
+.hostinger-tag {
+    background: #673ab7;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.mq-btn-setup {
+    background: #F4FF25;
+    color: black;
+    padding: 15px 35px;
+    border-radius: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 10px 20px rgba(244, 255, 37, 0.2);
+    transition: 0.3s;
+}
+
+.mq-btn-setup:hover {
+    transform: scale(1.05);
+    background: #ffffff;
+}
+</style>
+
+<section class="py-16 px-6">
+    <div class="max-w-4xl mx-auto">
+        <div class="mq-setup-box">
+            <span class="hostinger-tag">SOCIO DE INFRAESTRUCTURA</span>
+            <h3 class="text-2xl md:text-3xl font-bold text-center text-white">
+                ¿Dónde vas a desplegar tu MaxiQueen OS?
+            </h3>
+            <p class="text-zinc-400 text-center text-sm max-w-lg">
+                Para que tu sistema sea estable, seguro y escalable, recomendamos **Hostinger**. 
+                Es la plataforma donde construimos nuestra propia arquitectura digital.
+            </p>
+            
+            <a href="https://hostinger.com/reach/referrals?REFERRALCODE=S6LMAXIQUWOR" 
+               target="_blank" 
+               class="mq-btn-setup">
+                OBTENER HOSTING CON DESCUENTO
+            </a>
+            
+            <p class="text-[10px] text-zinc-500 uppercase tracking-widest">
+                Recomendación oficial por MaxiQueen Dev Team
+            </p>
+        </div>
+    </div>
+</section>
+    
+<section class="py-20 px-6 bg-black/20">
+  <div class="max-w-5xl mx-auto grid md:grid-columns-2 gap-8">
+    
+    <div class="p-8 rounded-3xl border border-white/10 bg-zinc-900/50 backdrop-blur">
+      <h3 class="text-xl font-bold text-white">Explorador OS</h3>
+      <p class="text-zinc-400 text-sm mt-2">Acceso a la documentación base y comunidad abierta.</p>
+      <div class="text-3xl font-black my-6">$0 <span class="text-sm font-normal text-zinc-500">/ siempre</span></div>
+      <ul class="text-sm text-zinc-300 space-y-3 mb-8">
+        <li>✔ Chat IA Básico</li>
+        <li>✔ Acceso a Galería</li>
+      </ul>
+      <button class="w-full py-3 rounded-xl border border-white/20 hover:bg-white/5 transition">Acceso Libre</button>
+    </div>
+
+    <div class="p-8 rounded-3xl border-2 border-amber-500/50 bg-gradient-to-b from-zinc-900 to-black relative overflow-hidden">
+      <div class="absolute top-0 right-0 bg-amber-500 text-black text-[10px] font-black px-4 py-1 rounded-bl-lg">RECOMENDADO</div>
+      <h3 class="text-xl font-bold text-white">Operador Pro</h3>
+      <p class="text-zinc-400 text-sm mt-2">Activación total del sistema y mentoría estructural.</p>
+      <div class="text-3xl font-black my-6">$[Tu_Precio] <span class="text-sm font-normal text-zinc-500">/ pago único</span></div>
+      <ul class="text-sm text-zinc-300 space-y-3 mb-8">
+        <li>✔ **40% Dcto Aplicado**</li>
+        <li>✔ Núcleo Cognitivo Expandido</li>
+        <li>✔ Certificación de Operador</li>
+      </ul>
+      <a href="https://pay.hotmart.com/P103285828N" class="block text-center w-full py-3 rounded-xl bg-amber-500 text-black font-bold hover:scale-105 transition">Activar con Hotmart</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= GALERÍA 3 ================= -->
+<section class="py-24 px-6 fade-in">
+  <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4">Como funciona el sistema</h2>
+    <p class="text-zinc-400 mb-12">
+      Casos reales · Estructura · Construyendo lo imposible
+    </p>
+
+    <div class="gallery grid grid-cols-1 md:grid-cols-3 gap-6" id="dynamicGallery">
+
+      <!-- Demo Creativo -->
+      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+        <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088760/ChatGPT_Image_30_ene_2026_09_55_12_p.m._ar7xcp.png"
+             alt="LADRONA"
+             class="rounded-3xl w-full h-full object-cover"
+             loading="lazy"
+             onclick="openLightbox(this.src)">
+      </div>
+
+      <!-- Módulo Social -->
+      <div class="relative cursor-pointer group rounded-3xl overflow-hidden">
+        <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777325347/unnamed_1_xzgdmh.png"
+             alt="Social Media"
+             class="rounded-3xl w-full h-full object-cover"
+             loading="lazy"
+             onclick="openLightbox(this.src)">
+      </div>
+
+
+       <!-- ================= SECCIÓN VIDEO PREMIUM ================= -->
+<div class="relative max-w-4xl mx-auto my-12 group">
+  <!-- Resplandor Dorado de Fondo -->
+  <div class="absolute -inset-1 bg-gradient-to-r from-yellow-600 to-amber-400 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+  
+  <div class="relative cursor-pointer rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl">
+    <video class="w-full h-auto rounded-2xl" 
+           controls 
+           poster="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088786/maxiqueen-avatar.png_s47zc5.png">
+      <source src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777088338/Construyendo_lo_Imposible_gq4peo.mp4" type="video/mp4">
+      Tu navegador no soporta videos.
+    </video>
+  </div>
+</div>
+       
+</section>
+
+<!-- ================= PANEL DE CARGA CLOUDINARY ================= -->
+<div class="max-w-xl mx-auto p-8 rounded-3xl border border-yellow-500/20 bg-zinc-900/50 backdrop-blur-md text-center">
+  <h3 class="text-yellow-500 font-bold mb-4 uppercase tracking-widest text-sm">Cloud Asset Manager</h3>
+  
+  <div class="flex flex-col items-center gap-6">
+    <!-- Preview Inteligente -->
+    <div class="relative w-full aspect-video rounded-xl border-2 border-dashed border-zinc-700 overflow-hidden flex items-center justify-center bg-black/20">
+      <video id="preview" class="max-h-full object-contain" src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777687785/animate-with-subtle-elegant-motion-for-website-her_u2rwi1.mp4" >
+    </div>
+
+    <!-- Controles Estilizados -->
+    <div class="flex flex-wrap justify-center gap-4">
+      <label for="fileInput" class="cursor-pointer px-6 py-3 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300 hover:bg-zinc-700 transition-all text-sm font-medium">
+        Seleccionar Archivo
+      </label>
+      <input type="file" id="fileInput" class="hidden" />
+
+      <button id="uploadBtn" class="px-8 py-3 rounded-full bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold hover:scale-105 transition-transform shadow-lg shadow-yellow-500/20 text-sm">
+        SUBIR A CLOUDINARY
+      </button>
+    </div>
+  </div>
+</div>
+
+<img id="preview" width="300" />
+<script>
+document.getElementById("uploadBtn").addEventListener("click", async () => {
+    const fileInput = document.getElementById("fileInput");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Por favor, selecciona un activo para la suite MAXIQUEEN.");
+        return;
+    }
+
+    // Feedback visual de carga
+    const btn = document.getElementById("uploadBtn");
+    const originalText = btn.innerText;
+    btn.innerText = "PROCESANDO...";
+    btn.disabled = true;
+
+    try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "ml_default"); // Asegúrate de que este preset esté activo en Cloudinary
+
+        const res = await fetch("https://api.cloudinary.com/v1_1/maxiqueen-os/image/upload", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+        
+        if (data.secure_url) {
+            document.getElementById("preview").src = data.secure_url;
+            console.log("Activo sincronizado con éxito:", data.secure_url);
+        }
+    } catch (error) {
+        console.error("Error en la carga:", error);
+    } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
+});
+
+</script>
+
+<!-- ================= LICENCIA ================= -->
+<section class="mq-license-box fade-in">
+
+  <h3>Antes de entrar al sistema</h3>
+  <p>Este sistema funciona bajo principios humanos y estructurales:</p>
+
+  <ul class="mq-rules">
+    <li>Mantener criterio humano en decisiones críticas</li>
+    <li>Respetar el Método MaxiQueen OS</li>
+    <li>No usar automatización deshumanizada</li>
+  </ul>
+
+  <label class="mq-license-check">
+    <input type="checkbox" id="acceptMQ" />
+    Acepto la
+    <a href="/licencia-maxiqueenos.pdf" target="_blank" rel="noopener">Licencia MaxiQueen OS</a>
+     
+    </a>
+  </label>
+
+  <button id="continueMQ" disabled>
+    Entrar al sistema
+  </button>
+
+</section>
+
+  
+  <!-- ================= CHAT FLOATING ================= -->
+<div id="mq-chat" class="mq-chat-trigger hero-avatar" onclick="toggleChat()">
+   <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088797/MQ_OS_maxiqueen-avatar_hiywqu.png" class="avatar-glow">
+</div>
+<div class="mq-chat" id="chatBox">
+  <div class="mq-chat-header" onclick="toggleMinimize()">
+    <span style="font-weight: bold;">👑 MaxiQueen OS</span>
+    <div class="mq-chat-controls">
+      <button onclick="event.stopPropagation(); toggleMinimize()" style="background:none; border:none; color:gray; cursor:pointer;">−</button>
+      <button onclick="event.stopPropagation(); closeChat()" style="background:none; border:none; color:gray; cursor:pointer; margin-left:10px;">✕</button>
+    </div>
+  </div>
+
+  <div class="mq-chat-body" id="chatLog">
+    <div class="msg msg-bot">¡Hola! 👑 Soy el sistema MaxiQueen OS. ¿En qué punto estás ahora mismo?
+    
+1️⃣ Ideas
+2️⃣ Bloqueo
+3️⃣ Crecimiento</div>
+  </div>
+
+  <div class="mq-chat-input">
+    <input type="text" id="userInput" placeholder="Maxiqueen OS te atiende..." />
+    <button onclick="sendMessage()" style="background:var(--mq-gold); border:none; padding:8px 15px; border-radius:10px; cursor:pointer; font-weight:bold;">Enviar</button>
+  </div>
+</div>
+
+<script>
+
+   /* =======================
+   THEME TOGGLE
+======================= */
+function toggleTheme(){
+  const root = document.documentElement;
+  const current = root.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  localStorage.setItem('mq-theme', next);
+}
+(function(){
+  const saved = localStorage.getItem('mq-theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+})();
+
+/* =======================
+   LIGHTBOX
+======================= */
+const lightbox = document.getElementById('lightbox');
+const lightboxContent = document.getElementById('lightboxContent');
+
+function openLightbox(src){
+  lightboxContent.innerHTML = `<img src="${src}" class="w-full rounded-2xl shadow-xl" alt="">`;
+  lightbox.classList.remove('hidden');
+  lightbox.classList.add('flex');
+}
+function closeLightbox(){
+  lightbox.classList.add('hidden');
+  lightbox.classList.remove('flex');
+}
+lightbox.addEventListener('click', e => {
+  if(e.target === lightbox) closeLightbox();
+});
+
+
+/* =======================
+   LICENCIA CHECK
+======================= */
+const acceptMQ = document.getElementById('acceptMQ');
+const continueMQ = document.getElementById('continueMQ');
+if(acceptMQ){
+  acceptMQ.addEventListener('change', () => {
+    continueMQ.disabled = !acceptMQ.checked;
+  });
+}
+continueMQ.addEventListener('click', () => {
+  if(acceptMQ.checked){
+    // Guardar aceptación en sessionStorage
+    sessionStorage.setItem('mq-accepted-license', 'true');
+    // Aquí puedes redirigir o activar el sistema
+    alert("✅ Licencia aceptada. Entrando al sistema...");
+    // Ejemplo: mostrar chat o desbloquear contenido
+    document.getElementById('chatBox').style.display = 'flex';
+    // Puedes ocultar la sección de licencia si quieres
+    document.querySelector('.mq-license-box').style.display = 'none';
+  }
+});
+
+const chatLog = document.getElementById('chatLog');
+const input = document.getElementById('userInput');
+
+/* =========================
+   🧠 ESTADO GLOBAL
+========================= */
+let state = {
+  flujo: null,      
+  etapa: null,      
+  nivelDetectado: null,
+  tema: null,
+  ultimaPregunta: null
+};
+
+function logMessage(mensaje, tipo='sistema'){
+  const div = document.createElement('div');
+  div.className = tipo;
+  div.innerHTML = mensaje;
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+/* =========================
+   📦 RESPUESTAS BASE
+========================= */
+const triggers = {
+  sistema: {
+    quienSoy: `
+👑 ¿Quién soy?
+
+Soy MaxiQueen OS.
+No soy un bot tradicional.
+No soy un asistente automático frío.
+
+Soy un sistema conversacional diseñado para:
+✔ Ordenar ideas
+✔ Aclarar decisiones
+✔ Construir estructura
+✔ Acompañar procesos reales
+
+No reemplazo humanos.
+No doy respuestas vacías.
+No improviso.
+
+Funciono como:
+🧠 Guía
+🧭 Sistema de pensamiento
+🤝 Puente entre intención y estructura
+
+Si quieres, dime:
+👉 ¿Estás aquí más por claridad, por proyecto o por acompañamiento humano? 👀
+`,
+    queEs: `
+👑 ¿Qué es MaxiQueen OS?
+
+MaxiQueen OS es un sistema digital integral de:
+✔ Contenido
+✔ Estructura
+✔ Conversación
+✔ Automatización
+✔ Acompañamiento humano
+
+No es una herramienta.
+No es solo una web.
+No es solo un bot.
+
+Es un sistema que:
+✔ Piensa contigo
+✔ Te ordena por dentro
+✔ Te da dirección
+✔ Te ayuda a convertir intención en acción
+
+Si quieres, dime:
+👉 ¿Lo estás viendo más como ayuda personal, proyecto de negocio o crecimiento? 👀
+`,
+    comoFunciona: `
+👑 ¿Cómo funciona MaxiQueen OS?
+
+Funciona en capas:
+
+1️⃣ Conversación → te escucho
+2️⃣ Diagnóstico → entiendo tu situación
+3️⃣ Estructura → ordenamos ideas, proyecto o proceso
+4️⃣ Sistema → construimos algo estable
+5️⃣ Acompañamiento → no te dejo solo
+
+No es:
+❌ Automatización sin criterio
+❌ Contenido vacío
+❌ Respuestas rápidas sin profundidad
+
+Es:
+✔ Proceso
+✔ Sistema
+✔ Pensamiento estructurado
+
+Si quieres, dime:
+👉 ¿Te gustaría entenderlo más desde lo personal o desde lo técnico? 👀
+`,
+    diagnostico: `
+👑 ¿Qué es el diagnóstico en MaxiQueen OS?
+
+No es un test.
+No es un formulario.
+No es una etiqueta.
+
+Es una lectura real de:
+✔ Tu nivel actual
+✔ Tu estado mental
+✔ Tu etapa de proyecto
+✔ Tu tipo de bloqueo
+✔ Tu tipo de crecimiento
+
+Sirve para:
+✔ No venderte lo que no necesitas
+✔ No forzarte procesos incorrectos
+✔ No hacerte perder tiempo
+✔ Construir desde donde estás, no desde donde “deberías estar”
+
+Si quieres, dime:
+👉 ¿Quieres que te haga un diagnóstico ahora mismo? 👀
+`,
+    claridad: `
+👑 ¿Qué significa “claridad” aquí?
+
+No es motivación.
+No es “pensar positivo”.
+No es solo tener ideas.
+
+Claridad es:
+✔ Saber qué hacer primero
+✔ Saber qué no hacer
+✔ Saber por qué haces algo
+✔ Tener dirección sin ansiedad
+✔ Sentirte estable aunque el camino no esté completo
+
+En MaxiQueen OS, claridad = estructura mental funcional.
+
+Si quieres, dime:
+👉 ¿Sientes más ruido mental, bloqueo o exceso de ideas ahora mismo? 👀
+`,
+    servicio: `
+👑 ¿Cómo es el servicio en MaxiQueen OS?
+
+No es atención automática.
+No es soporte técnico frío.
+No es solo responder mensajes.
+
+Es:
+✔ Acompañamiento humano real
+✔ Conversación con criterio
+✔ Guía estratégica
+✔ Seguimiento de procesos
+✔ Apoyo cuando hay bloqueo
+
+No tratamos problemas.
+Tratamos procesos.
+
+Si quieres, dime:
+👉 ¿Buscas más guía, acompañamiento o estructura ahora mismo? 👀
+`,
+    asesoria: `
+👑 ¿Cómo es la asesoría?
+
+No es consultoría tradicional.
+No es coaching motivacional vacío.
+No es mentoría genérica.
+
+Es:
+✔ Diagnóstico real
+✔ Claridad estratégica
+✔ Diseño de sistema
+✔ Acompañamiento práctico
+✔ Pensamiento estructurado
+
+No te decimos qué hacer.
+Construimos contigo qué tiene sentido hacer.
+
+Si quieres, dime:
+👉 ¿Estás más en ideas, bloqueo o crecimiento ahora mismo? 👀
+`,
+    soporte: `
+👑 ¿Cómo es el soporte?
+
+No es tickets.
+No es respuestas automáticas.
+No es “revise la FAQ”.
+
+Es:
+✔ Contacto humano directo
+✔ Conversación real
+✔ Resolución con criterio
+✔ Acompañamiento cuando te atoras
+
+Soporte aquí no es técnico.
+Es estructural y humano.
+
+Si quieres, dime:
+👉 ¿Prefieres WhatsApp o Instagram para hablar ahora? 👀
+`,
+    comunidad: `
+👑 ¿Qué es la Comunidad MaxiQueen?
+
+No es un grupo de ruido.
+No es motivación vacía.
+No es consumo de contenido.
+
+Es un espacio para:
+✔ Pensar
+✔ Ordenar
+✔ Construir
+✔ Tomar decisiones
+✔ Avanzar con estructura
+
+Aquí no vienes a mirar.
+Vienes a trabajar en ti y en tu proceso.
+
+Si quieres, dime:
+👉 ¿Te interesa más comunidad o acompañamiento 1:1? 👀
+`,
+    sesiones: `
+👑 ¿Qué son las sesiones reales?
+
+Son encuentros humanos, no automáticos.
+
+Sirven para:
+✔ Desbloquear
+✔ Tomar decisiones
+✔ Reordenar procesos
+✔ Aclarar dirección
+✔ Corregir rumbo
+
+No son charlas motivacionales.
+Son sesiones estratégicas.
+
+Si quieres, dime:
+👉 ¿Te serviría más una sesión de claridad o de estructura ahora mismo? 👀
+`,
+    equipo: `
+👑 ¿Cuántas personas hay en MaxiQueen OS?
+
+MaxiQueen OS no es una empresa tradicional.
+Es un sistema en expansión.
+
+Tiene:
+✔ Núcleo humano estratégico
+✔ Acompañamiento directo
+✔ Infraestructura digital
+✔ Comunidad en crecimiento
+
+No medimos valor en cantidad de personas.
+Medimos valor en calidad de proceso.
+
+Si quieres, dime:
+👉 ¿Te interesa más quiénes somos o cómo podemos ayudarte? 👀
+`
+  },
+
+  emociones: {
+    pereza: `
+Gracias por decirlo directo 👑  
+
+La pereza muchas veces no es flojera.
+Es:
+✔ Cansancio mental
+✔ Saturación
+✔ Falta de dirección
+✔ Exceso sin estructura
+
+No se soluciona empujando.
+Se soluciona ordenando.
+
+Si quieres, dime:
+👉 ¿Te sientes más cansado, saturado o confundido ahora mismo? 👀
+`,
+    cansancio: `
+Tiene todo el sentido 👑  
+
+El cansancio no siempre es físico.
+Muchas veces es mental:
+✔ Demasiadas decisiones
+✔ Demasiadas ideas
+✔ Poco orden
+✔ Mucha presión interna
+
+No necesitas más motivación.
+Necesitas estructura liviana.
+
+Si quieres, dime:
+👉 ¿Te sientes más bloqueado, saturado o sin dirección ahora mismo? 👀
+`,
+    frustracion: `
+Gracias por decirlo 👑  
+
+La frustración casi nunca es falta de capacidad.
+Es falta de estructura en medio de intención.
+
+No se arregla empujando más.
+Se arregla ordenando mejor.
+
+Si quieres, dime:
+👉 ¿Te frustra más no avanzar o no saber qué avanzar? 👀
+`
+  },
+
+  ventas: {
+    planes: `
+👑 PLANES MAXIQUEEN OS — claros, humanos y sin letra pequeña
+
+No vendemos herramientas.
+No vendemos plataformas.
+No vendemos humo.
+
+Construimos sistemas que piensan contigo,
+te ordenan por dentro,
+y convierten intención en estructura real.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🌱 👑 STARTER — $49/mes
+Ideal si hoy tienes ideas, pero no sistema.
+
+✔ Orden mental y estratégico
+✔ Diagnóstico real
+✔ Base operativa clara
+✔ Ruta de acción sin ruido
+✔ Acompañamiento inicial humano
+
+Perfecto para:
+Personas bloqueadas,
+emprendedores en inicio,
+creadores con ideas dispersas.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 👑 PRO — $99/mes
+Para crecer, vender y automatizar con estructura.
+
+✔ Todo lo de Starter
+✔ Sistema activo de ventas
+✔ Automatizaciones clave
+✔ Optimización de procesos
+✔ Acompañamiento continuo
+
+Perfecto para:
+Negocios en marcha,
+creadores que ya venden sin sistema,
+personas listas para estructurar crecimiento.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🏰 👑 ELITE — $199/mes
+Infraestructura completa + acompañamiento prioritario.
+
+✔ Todo lo de Pro
+✔ Arquitectura completa del sistema
+✔ Automatización avanzada
+✔ Control total del ecosistema
+✔ Acceso directo a soporte humano
+
+Perfecto para:
+Marcas, creadores y proyectos
+que quieren crecer con estabilidad real.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+Si quieres, dime:
+👉 ¿Estás más en ideas, negocio activo o crecimiento serio ahora mismo? 👀👑
+`,
+    valor: `
+👑 ¿POR QUÉ MAXIQUEEN OS?
+
+No vendemos bots.
+No vendemos funnels.
+No vendemos automatización por automatizar.
+
+Vendemos:
+✔ Claridad
+✔ Orden
+✔ Dirección
+✔ Decisión
+✔ Sistema
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+Esto es lo que normalmente cambia en las personas:
+
+✔ Menos ruido mental
+✔ Menos decisiones improvisadas
+✔ Más foco
+✔ Más estructura
+✔ Más avance real
+✔ Menos ansiedad por “no saber qué hacer”
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+El valor no es tener una web.
+No es tener un bot.
+No es tener automatización.
+
+El valor es:
+Saber exactamente qué hacer con tu proyecto
+cuando nadie más te lo puede ordenar.
+
+Si quieres, dime:
+👉 ¿Hoy te falta más claridad, estructura o acompañamiento? 👑
+`
+  },
+
+  onboarding: {
+    inicio: `
+Hola 👑  
+Estoy aquí contigo, con calma.
+
+No soy un bot de respuestas rápidas.
+Soy parte del sistema MaxiQueen OS.
+
+¿En qué punto estás ahora mismo?
+
+1️⃣ Ideas  
+2️⃣ Bloqueo  
+3️⃣ Crecimiento  
+👉 o pereza / cansancio
+`
+  },
+
+  guia: {
+    flujo1: `
+👑 FLUJO 1 — ORDENAR IDEAS
+
+Este flujo es para ti si:
+✔ Tienes ideas, pero no sistema
+✔ Sientes ruido mental
+✔ No sabes por dónde empezar
+✔ Te cuesta tomar decisiones
+
+Aquí trabajamos:
+✔ Claridad personal
+✔ Dirección estratégica
+✔ Enfoque real
+✔ Prioridades concretas
+
+El objetivo no es hacer más.
+Es hacer mejor.
+
+Dime:
+👉 ¿Hoy sientes más confusión, bloqueo o exceso de ideas? 👀
+`,
+    flujo2: `
+👑 FLUJO 2 — CREAR ALGO VENDIBLE
+
+Este flujo es para ti si:
+✔ Ya tienes una idea clara
+✔ Quieres convertirla en oferta
+✔ Quieres vender sin improvisar
+✔ Quieres estructura comercial real
+
+Aquí trabajamos:
+✔ Propuesta de valor
+✔ Oferta clara
+✔ Mensaje correcto
+✔ Sistema de conversión
+
+El objetivo no es vender rápido.
+Es vender bien.
+
+Dime:
+👉 ¿Hoy tienes una idea clara o algo ya en marcha? 👀
+`,
+    flujo3: `
+📲 CONTACTO HUMANO — SIN BOTS
+
+Aquí no te responde un sistema.
+Te responde una persona real.
+
+Canales disponibles:
+✔ WhatsApp — atención directa
+✔ Instagram — contacto rápido
+✔ Comunidad — acompañamiento continuo
+
+Dime:
+👉 ¿Prefieres WhatsApp o Instagram ahora mismo? 👀
+`
+  },
+
+  comunidad: {
+    comunidad: `
+👥 COMUNIDAD MAXIQUEEN
+
+Este no es un grupo de ruido.
+No es motivación vacía.
+No es consumo de contenido.
+
+Es:
+✔ Acompañamiento humano
+✔ Sesiones reales
+✔ Seguimiento estratégico
+✔ Criterio compartido
+
+No entras para mirar.
+Entras para ordenar,
+decidir
+y avanzar.
+
+Dime:
+👉 ¿Prefieres empezar en comunidad o 1:1? 👀
+`
+  },
+
+  soporte: {
+    contacto: `
+📲 SOPORTE HUMANO
+
+Puedes hablar directamente con alguien real por:
+
+✔ WhatsApp:
+https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema.
+
+✔ Instagram
+✔ Comunidad interna
+
+Dime:
+👉 ¿Qué canal prefieres ahora mismo? 👀
+`
+  },
+
+  diagnostico: {
+    starter: `
+👑 Por lo que me cuentas, estás en etapa de **orden y claridad**.
+
+No necesitas más herramientas.
+Necesitas estructura básica bien hecha.
+
+Por eso, el punto ideal para ti ahora es:
+
+🌱 **STARTER**
+
+Te saca del ruido,
+te da base,
+y te deja listo para crecer sin caos.
+
+Si quieres, dime:
+👉 ¿Quieres que te explique cómo empezamos paso a paso? 👀
+`,
+    pro: `
+👑 Por lo que me cuentas, ya estás en **movimiento real**.
+
+No necesitas más ideas.
+Necesitas sistema, procesos y estructura de venta.
+
+Por eso, el punto ideal para ti ahora es:
+
+🚀 **PRO**
+
+Convierte tu esfuerzo en sistema,
+y tu sistema en crecimiento estable.
+
+Si quieres, dime:
+👉 ¿Quieres que te muestre cómo sería tu estructura inicial? 👀
+`,
+    elite: `
+👑 Por lo que me cuentas, estás en **etapa de expansión seria**.
+
+No necesitas hacks.
+Necesitas arquitectura sólida.
+
+Por eso, el punto ideal para ti ahora es:
+
+🏰 **ELITE**
+
+Sistema completo,
+control total,
+acompañamiento prioritario.
+
+Si quieres, dime:
+👉 ¿Quieres que veamos cómo se diseña tu ecosistema completo? 👀
+`
+  }
+};
+
+/* =========================
+   🎯 INTENTS BASE
+========================= */
+const intents = [
+  // Sistema / Identidad
+  {
+    keywords: ["quien eres","quién eres","que eres","qué eres"],
+    response: () => triggers.sistema.quienSoy
+  },
+  {
+    keywords: ["que es","qué es","qué es esto","que es esto","que es maxiqueen","qué es maxiqueen"],
+    response: () => triggers.sistema.queEs
+  },
+  {
+    keywords: ["como funciona","cómo funciona","funciona","como es el sistema"],
+    response: () => triggers.sistema.comoFunciona
+  },
+  {
+    keywords: ["diagnostico","diagnóstico"],
+    response: () => triggers.sistema.diagnostico
+  },
+  {
+    keywords: ["claridad","qué es claridad","que es claridad"],
+    response: () => triggers.sistema.claridad
+  },
+  {
+    keywords: ["servicio","cómo es el servicio","como es el servicio"],
+    response: () => triggers.sistema.servicio
+  },
+  {
+    keywords: ["asesoria","asesoría","cómo es la asesoria","como es la asesoria"],
+    response: () => triggers.sistema.asesoria
+  },
+  {
+    keywords: ["soporte","cómo es el soporte","como es el soporte"],
+    response: () => triggers.sistema.soporte
+  },
+  {
+    keywords: ["comunidad interna","que es la comunidad","qué es la comunidad"],
+    response: () => triggers.sistema.comunidad
+  },
+  {
+    keywords: ["sesiones","sesiones reales"],
+    response: () => triggers.sistema.sesiones
+  },
+  {
+    keywords: ["cuantas personas","cuántas personas","equipo","cuantos son"],
+    response: () => triggers.sistema.equipo
+  },
+
+  // Emociones
+  {
+    keywords: ["pereza","flojo","desganado"],
+    response: () => triggers.emociones.pereza
+  },
+  {
+    keywords: ["cansado","agotado","fatigado"],
+    response: () => triggers.emociones.cansancio
+  },
+  {
+    keywords: ["frustrado","frustración","estresado","estres"],
+    response: () => triggers.emociones.frustracion
+  },
+
+  // Ventas
+  {
+    keywords: ["precio","planes","pago"],
+    response: () => triggers.ventas.planes
+  },
+  {
+    keywords: ["costos","cuánto vale","cuanto cuesta","precio real"],
+    response: () => triggers.ventas.planes
+  },
+  {
+    keywords: ["valor","vale la pena","beneficio","beneficios","por qué","porque"],
+    response: () => triggers.ventas.valor
+  },
+
+  // Inicio
+  {
+    keywords: ["empezar","inicio","onboarding","arrancar","comenzar"],
+    response: () => triggers.onboarding.inicio
+  },
+  {
+    keywords: ["hola","buenas","hey","saludos"],
+    response: () => triggers.onboarding.inicio
+  },
+
+  // Flujos
+  {
+    keywords: ["1","ordenar","ordenar ideas","ideas"],
+    response: () => {
+      state.flujo = "flujo1";
+      state.etapa = "diagnostico";
+      return triggers.guia.flujo1;
+    }
+  },
+  {
+    keywords: ["2","crear","vendible","producto","oferta"],
+    response: () => {
+      state.flujo = "flujo2";
+      state.etapa = "diagnostico";
+      return triggers.guia.flujo2;
+    }
+  },
+  {
+    keywords: ["3","humano","persona","asesor","hablar","hablar con alguien"],
+    response: () => {
+      state.flujo = "flujo3";
+      state.etapa = "contacto";
+      return triggers.guia.flujo3;
+    }
+  },
+
+  // Confirmaciones
+  {
+    keywords: ["si","sí","ok","dale","vamos","perfecto","listo","de una"],
+    response: () => `
+Perfecto 👑  
+Entonces dime:
+
+1️⃣ Ordenar ideas  
+2️⃣ Crear algo vendible  
+3️⃣ Hablar con alguien humano  
+`
+  }
+];
+
+/* =========================
+   🧠 MOTOR DE CONTEXTO
+========================= */
+function contextualResponse(text) {
+
+  // FLUJO 1 — ORDENAR IDEAS
+  if (state.flujo === "flujo1" && state.etapa === "diagnostico") {
+    if (text.includes("confusion") || text.includes("confusión")) {
+      state.nivelDetectado = "starter";
+      state.etapa = "recomendacion";
+      return `
+Gracias por decirlo directo 👑  
+
+La confusión no es falta de capacidad.
+Es exceso de ruido sin estructura.
+
+Eso significa que ahora mismo necesitas:
+✔ Claridad
+✔ Prioridades
+✔ Dirección concreta
+
+No más ideas.
+No más teoría.
+
+Sistema.
+
+${triggers.diagnostico.starter}
+`;
+    }
+    if (text.includes("bloqueo")) {
+      state.nivelDetectado = "starter";
+      state.etapa = "recomendacion";
+      return `
+Gracias por decirlo 👑  
+
+El bloqueo casi nunca es pereza.
+Es saturación sin estructura.
+
+Eso significa que ahora necesitas:
+✔ Orden mental
+✔ Enfoque claro
+✔ Dirección accionable
+
+No presión.
+No más información.
+
+Sistema.
+
+${triggers.diagnostico.starter}
+`;
+    }
+    if (text.includes("exceso")) {
+      state.nivelDetectado = "starter";
+      state.etapa = "recomendacion";
+      return `
+Tiene todo el sentido 👑  
+
+El exceso de ideas no es problema creativo.
+Es problema de jerarquía.
+
+Eso significa que ahora necesitas:
+✔ Prioridades claras
+✔ Dirección estratégica
+✔ Enfoque real
+
+No más ideas.
+No más estímulos.
+
+Sistema.
+
+${triggers.diagnostico.starter}
+`;
+    }
+  }
+
+  // FLUJO 2 — CREAR ALGO VENDIBLE
+  if (state.flujo === "flujo2" && state.etapa === "diagnostico") {
+    if (text.includes("ya") || text.includes("tengo") || text.includes("en marcha")) {
+      state.nivelDetectado = "pro";
+      state.etapa = "recomendacion";
+      return `
+Buenísimo 👑  
+
+Si ya tienes algo en marcha,
+tu cuello de botella no es creatividad.
+
+Es:
+✔ Sistema
+✔ Mensaje
+✔ Conversión
+✔ Estructura
+
+Eso significa que ahora necesitas orden comercial,
+no más ideas.
+
+${triggers.diagnostico.pro}
+`;
+    }
+    if (text.includes("no") || text.includes("todavía") || text.includes("aún")) {
+      state.nivelDetectado = "starter";
+      state.etapa = "recomendacion";
+      return `
+Perfecto 👑  
+
+Si aún no tienes nada concreto,
+lo inteligente no es vender rápido.
+
+Es:
+✔ Ordenar primero
+✔ Definir bien
+✔ Construir con criterio
+
+Eso te ahorra tiempo, frustración y desgaste.
+
+${triggers.diagnostico.starter}
+`;
+    }
+  }
+
+  // DESPUÉS DE RECOMENDACIÓN — MANTENER CONTEXTO
+  if (state.etapa === "recomendacion") {
+    if (text.includes("como") || text.includes("cómo") || text.includes("funciona") || text.includes("empezamos")) {
+      return `
+Buenísima pregunta 👑  
+
+Lo importante ahora no es el plan,
+es cómo empezamos contigo realmente.
+
+El proceso suele ser:
+
+1️⃣ Diagnóstico humano profundo  
+2️⃣ Orden mental y estratégico  
+3️⃣ Diseño de estructura mínima viable  
+4️⃣ Acompañamiento paso a paso  
+5️⃣ Evolución según tu ritmo  
+
+No te tiramos info encima.
+Construimos contigo.
+
+Si quieres, dime:
+👉 ¿Prefieres avanzar paso a paso o ver primero el panorama completo? 👀
+`;
+    }
+    if (text.includes("si") || text.includes("sí") || text.includes("dale") || text.includes("ok")) {
+      return `
+Perfecto 👑  
+
+Entonces empezamos así:
+
+Primero te hago unas preguntas cortas
+para entender bien tu punto actual,
+y desde ahí construimos contigo.
+
+Dime:
+👉 ¿Hoy estás más enfocado en ti como persona o en tu proyecto como negocio? 👀
+`;
+    }
+  }
+
+  // FLUJO 3 — CONTACTO HUMANO
+  if (state.flujo === "flujo3") {
+    if (text.includes("whatsapp")) {
+      return `
+Perfecto 👑  
+
+Aquí tienes acceso directo a una persona real:
+
+📲 WhatsApp:
+👉 https://wa.me/573016625921  
+
+(Escríbenos y seguimos contigo sin bots.)
+
+¿Quieres que mientras tanto sigamos conversando aquí? 👀
+`;
+    }
+    if (text.includes("instagram")) {
+      return `
+Perfecto 👑  
+
+Aquí puedes escribirnos directo:
+
+📲 Instagram:
+👉 https://instagram.com/maxiqueenos  
+
+¿Quieres que mientras tanto sigamos conversando aquí? 👀
+`;
+    }
+  }
+
+  return null;
+}
+
+/* =========================
+   🎯 RESPUESTA PRINCIPAL
+========================= */
+function getResponse(message){
+  const text = message.toLowerCase();
+
+  // 1️⃣ CONTEXTO PRIMERO
+  const contextual = contextualResponse(text);
+  if (contextual) return contextual;
+
+  // 2️⃣ INTENTS NORMALES
+  for(const intent of intents){
+    if(intent.keywords.some(k => text.includes(k))){
+      return intent.response();
+    }
+  }
+
+  // 3️⃣ FALLBACK INTELIGENTE (NO GENÉRICO)
+  return `
+Te leo 👀  
+
+No quiero responderte como bot.
+Quiero entenderte bien.
+
+¿Me cuentas un poco mejor qué tienes en mente ahora mismo? 👑
+`;
+}
+
+/* =========================
+   🧩 UI
+========================= */
+function appendMessage(text, sender="bot"){
+  const msg = document.createElement('div');
+  msg.textContent = text;
+  msg.style.whiteSpace = "pre-line";
+  msg.className = sender === "user"
+    ? "text-right text-amber-400 font-semibold"
+    : "text-left text-zinc-200";
+  chatLog.appendChild(msg);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+function sendMessage(){
+  const message = input.value.trim();
+  if(!message) return;
+
+  appendMessage(message, "user");
+  input.value = "";
+  setTimeout(() => {
+    appendMessage(getResponse(message), "bot");
+  }, 200);
+
+ logMessage("👤 " + message, "user");
+
+ const response = getResponse(message);
+
+  setTimeout(() => {
+    logMessage(response, "sistema");
+  }, 400);
+
+  input.value = "";
+}
+
+input.addEventListener("keypress", function(e){
+  if(e.key === "Enter"){
+    sendMessage();
+  }
+});
+
+input.addEventListener("keydown", e => {
+  if(e.key === "Enter") sendMessage();
+});
+
+</script>
+
+<!-- ================= ESTILOS (CSS) - CORREGIDOS ================= -->
+<style>
+.mq-chat-trigger {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+.mq-chat-trigger:hover {
+  transform: scale(1.1);
+}
+
+.avatar-glow {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid #eab308;
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
+  object-fit: cover;
+}
+
+/* Efecto de pulso */
+.mq-chat-trigger::after {
+  content: '';
+  position: absolute;
+  width: 100%; height: 100%;
+  top: 0; left: 0;
+  border-radius: 50%;
+  border: 2px solid #eab308;
+  animation: pulse-ring 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+.mq-chat {
+  display: none; /* Se activa con JS */
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 320px;
+  max-height: 450px;
+  background: #09090b;
+  border: 1px solid #27272a;
+  border-radius: 15px;
+  flex-direction: column;
+  z-index: 1000;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.msg-user { text-align: right; color: #facc15; margin: 5px 0; font-weight: 600; }
+.msg-bot { text-align: left; color: #e4e4e7; margin: 5px 0; white-space: pre-line; }
+</style>
+
+<!-- ================= LÓGICA (JS) - UNIFICADA ================= -->
+<script>
+const input = document.getElementById('userInput');
+const chatLog = document.getElementById('chatLog');
+
+/* Control de Visibilidad */
+function toggleChat() {
+    const chat = document.getElementById("chatBox");
+    chat.style.display = (chat.style.display === "flex") ? "none" : "flex";
+}
+
+function closeChat() {
+    document.getElementById("chatBox").style.display = "none";
+}
+
+/* Motor de Mensajes */
+function sendMessage() {
+    const message = input.value.trim();
+    if (!message) return;
+
+    appendMessage(message, "user");
+    input.value = "";
+
+    // Simulación de respuesta basada en tu objeto 'triggers'
+    setTimeout(() => {
+        const reply = getResponse(message);
+        appendMessage(reply, "bot");
+    }, 400);
+}
+
+function appendMessage(text, sender) {
+    const div = document.createElement('div');
+    div.className = sender === "user" ? "msg-user" : "msg-bot";
+    div.innerText = text;
+    chatLog.appendChild(div);
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+});
+
+/* Aquí irían tus funciones getResponse e intents que ya tienes */
+function getResponse(message) {
+    const text = message.toLowerCase();
+    if (text.includes("hola") || text.includes("1")) return "Excelente elección 👑. ¿Qué tienes en mente?";
+    return "Te leo con atención... cuéntame más. 👑";
+}
+</script>
+
+       <script>
+// Elementos de la Licencia
+const acceptMQ = document.getElementById('acceptMQ');
+const continueMQ = document.getElementById('continueMQ');
+const licenseSection = document.getElementById('licenseSection');
+const chatTrigger = document.getElementById('chat-trigger');
+
+// Elementos del Chat
+const input = document.getElementById('userInput');
+const chatLog = document.getElementById('chatLog');
+
+/* ==========================================
+   LÓGICA DE DESBLOQUEO (LICENCIA)
+   ========================================== */
+if(acceptMQ) {
+  // Habilitar/Deshabilitar botón según el checkbox
+  acceptMQ.addEventListener('change', () => {
+    continueMQ.disabled = !acceptMQ.checked;
+  });
+}
+
+if(continueMQ) {
+  // Acción al hacer clic en "Entrar al sistema"
+  continueMQ.addEventListener('click', () => {
+    // 1. Ocultar la caja de licencia
+    licenseSection.style.display = 'none';
+    
+    // 2. Mostrar el botón flotante del chat (el trigger)
+    chatTrigger.style.display = 'flex';
+    
+    // 3. Opcional: Abrir el chat automáticamente al entrar
+    toggleChat();
+    
+    console.log("Sistema MaxiQueen OS activado.");
+  });
+}
+
+/* ==========================================
+   CONTROL DEL CHAT
+   ========================================== */
+function toggleChat() {
+    const chat = document.getElementById("chatBox");
+    // Si no tiene estilo definido, forzamos el toggle
+    if (chat.style.display === "flex") {
+        chat.style.display = "none";
+    } else {
+        chat.style.display = "flex";
+    }
+}
+
+function closeChat() {
+    document.getElementById("chatBox").style.display = "none";
+}
+
+function sendMessage() {
+    const message = input.value.trim();
+    if (!message) return;
+    appendMessage(message, "user");
+    input.value = "";
+    setTimeout(() => {
+        const reply = getResponse(message);
+        appendMessage(reply, "bot");
+    }, 400);
+}
+
+function appendMessage(text, sender) {
+    const div = document.createElement('div');
+    div.className = sender === "user" ? "msg-user" : "msg-bot";
+    div.innerText = text;
+    chatLog.appendChild(div);
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+// Escuchar la tecla Enter
+if(input) {
+  input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+  });
+}
+
+function getResponse(message) {
+    const text = message.toLowerCase();
+    if (text.includes("hola") || text.includes("1")) return "Excelente elección 👑. ¿Qué tienes en mente?";
+    return "Te leo con atención... cuéntame más. 👑";
+}
+</script>
+<!-- ================= SECCIÓN LEGAL Y LICENCIA ================= -->
+<section class="py-12 px-6 border-t border-zinc-900 bg-black/50">
+  <div class="max-w-4xl mx-auto text-center">
+    <div class="inline-block p-1 mb-6 rounded-full bg-gradient-to-r from-zinc-800 to-zinc-700">
+      <span class="px-4 py-1 text-xs font-bold text-zinc-400 uppercase tracking-widest bg-black rounded-full">Apache License 2.0</span>
+    </div>
+    
+    <h2 class="text-3xl font-bold text-white mb-4">Licencia de Uso Profesional</h2>
+    
+    <div class="text-zinc-400 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
+      <p>
+        El núcleo de <span class="text-yellow-500 font-medium">MaxiQueen OS</span> es de código abierto. 
+        Eres libre de usar, modificar y distribuir el sistema base, incluso para fines comerciales.
+      </p>
+      <p class="mt-4 border-l-2 border-yellow-600 pl-4 italic text-zinc-500">
+        Nota: La identidad visual, branding y módulos premium (Suite Black & Gold) están protegidos y no se incluyen bajo esta licencia.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SOPORTE Y PAGOS ================= -->
+<section class="py-16 text-center">
+  <div class="relative glass inline-block px-12 py-10 rounded-[2rem] border border-yellow-500/10 shadow-2xl overflow-hidden group">
+    <!-- Efecto de luz interna -->
+    <div class="absolute -top-24 -left-24 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl group-hover:bg-yellow-500/20 transition-all"></div>
+    
+    <h3 class="text-2xl font-bold text-white mb-2">Asistente MQ</h3>
+    <p class="mb-8 text-zinc-400">Finaliza tu solicitud o consulta con soporte técnico.</p>
+
+    <!-- Avatar de Soporte Interactuable -->
+    <div id="soporte-maxiqueen-container" class="relative inline-block">
+      <div class="absolute inset-0 bg-yellow-400 rounded-full animate-ping opacity-20"></div>
+      <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1775244577/MQ_OS_maxiqueen-avatar_ej0rzg.png" 
+           alt="Soporte MaxiQueen" 
+           id="avatar-soporte-action"
+           class="relative w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-zinc-900 shadow-2xl cursor-pointer hover:scale-110 hover:border-yellow-500 transition-all duration-300">
+    </div>
+
+    <div class="mt-8">
+      <span class="text-xs text-zinc-500 uppercase tracking-widest">Soporte 24/7 Activo</span>
+    </div>
+  </div>
+</section>
+
+<!-- SCRIPTS UNIFICADOS -->
+<script>
+  // Una sola función para manejar el redireccionamiento
+  document.getElementById("avatar-soporte-action").addEventListener("click", function() {
+    // Redirige al centro de ayuda o chat real
+    window.location.href = "https://maxiqueen.tawk.help/"; 
+  });
+</script>
+
+<!-- ================= RECURSOS DE CONFIRMACION ================= -->
+<section class="py-24 px-6 bg-black/30 fade-in">
+  <div class="max-w-5xl mx-auto text-center">
+    <h3 class="text-2xl font-bold mb-10">🔥 Enlaces y Recursos 🔥</h3>
+<h2>🔥🔥                   FEED MAXIQUEEN OS                    🔥                                   🔥</h2>
+<div id="feed"></div>
+
+
+    <ul class="space-y-4 text-zinc-300">
+      <li><a class="hover:text-amber-400 transition" href="AdmProCatalogo.html" target="_blank" rel="noopener">💻 Programacion de Productos MQ_OS</a></li>
+      <li><a class="hover:text-amber-400 transition" href="whatsappOS.html" target="_blank" rel="noopener">💻 Servicio Humano MQ_OS</a></li>
+      <li><a class="hover:text-amber-400 transition" href="Catalogosencillo_naranja.html" target="_blank" rel="noopener">💻 Catalogo Sencillo MQ_OS</a></li>
+      <li><a class="hover:text-amber-400 transition" href="Primeras_paginas_azul.html" target="_blank" rel="noopener"> 🧠 Primeras Paginas MQ_OS</a></li>
+      <li><a class="hover:text-amber-400 transition" href="index-v2_V1.html" target="_blank" rel="noopener">🔥 Versiones ModificadasC MQ_OS</a></li>
+      <li><a class="hover:text-amber-400 transition" href="https://go.hotmart.com/P103285828N?dp=1" target="_blank" rel="noopener">🛒 Hotmart Marketplace</a></li>
+      <li><a class="hover:text-amber-400 transition" href="https://pay.hotmart.com/P103285828N" target="_blank" rel="noopener">💳 Dcto MQ 40% descuento</a></li>
+      <li><a class="hover:text-amber-400 transition" href="https://app-vlc.hotmart.com/affiliate-recruiting/view/6489M103285849" target="_blank" rel="noopener">💻 Afiliados Hotmart</a></li>
+      <li><a class="hover:text-amber-400 transition" href="https://app.hotmart.com/membership/cesar-f9370874/community/management/15254181" target="_blank" rel="noopener">📂 Comunidad Hotmart</a></li>
+     
+</section>
+<!-- MÓDULO GENERADOR DE IMÁGENES MAXIQUEEN -->
+<div class="glass p-8 mt-10 text-center border border-yellow-500/20 rounded-3xl shadow-2xl">
+  <h3 class="text-2xl font-bold text-white mb-2">🎨 Generador Creativo</h3>
+  <p class="text-zinc-400 text-sm mb-6">Transforma tus ideas en activos visuales de élite.</p>
+
+  <div class="flex flex-col md:flex-row gap-3">
+    <input 
+      id="promptInput"
+      type="text" 
+      placeholder="Ej: Logo futurista dorado, oficina cyberpunk..."
+      class="flex-1 p-4 rounded-2xl bg-zinc-900 text-white border border-zinc-800 focus:border-yellow-500 outline-none transition-all"
+    />
+    <button id="generateBtn" onclick="generateImage()" class="px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold rounded-2xl hover:scale-105 transition-transform active:scale-95 shadow-lg shadow-yellow-500/20">
+      Generar
+    </button>
+  </div>
+
+  <!-- Contenedor de Resultado -->
+  <div id="imageContainer" class="mt-8 relative hidden group">
+    <div id="loadingSpinner" class="hidden flex flex-col items-center py-10">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mb-4"></div>
+      <p class="text-zinc-500 text-xs uppercase tracking-widest">Procesando con IA...</p>
+    </div>
+    <div id="imageResult" class="cursor-pointer overflow-hidden rounded-2xl border border-white/5">
+      <!-- La imagen aparecerá aquí -->
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" class="fixed inset-0 bg-black/95 hidden flex items-center justify-center z-[100] backdrop-blur-sm">
+  <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-4xl hover:text-yellow-500 transition-colors">✕</button>
+  <div id="lightboxContent" class="max-w-4xl max-h-[80vh] p-4"></div>
+</div>
+       
+       
+       <!-- ================= RECURSOS DE CONFIRMACION ================= -->
+<section class="py-24 px-6 bg-black/30 fade-in">
+  <div class="max-w-6xl mx-auto text-center">
+
+    <h3 class="text-2xl font-bold text-zinc-200 mb-4">
+      💻 Documentos y Recursos MaxiQueen OS
+    </h3>
+
+    <h2 class="text-4xl font-extrabold text-yellow-400 mb-12">
+      🛒 INFORMES MAXIQUEEN OS 🔥
+    </h2>
+
+    <!-- DOCUMENTOS -->
+    <div class="mb-12">
+      <h4 class="text-xl font-semibold text-white mb-4">📂 Documentación</h4>
+      <ul class="grid md:grid-cols-2 gap-4 text-left">
+        <li><a class="hover:text-yellow-400 transition" href="AA4001Establecer_los_resultados.pdf" target="_blank">PDF AA4001 Resultados</a></li>
+        <li><a class="hover:text-yellow-400 transition" href="DefSisMQ.html" target="_blank">Definición Sistema MQ</a></li>
+        <li><a class="hover:text-yellow-400 transition" href="mapa_visual_api.html" target="_blank">Mapa Visual API</a></li>
+        <li><a class="hover:text-yellow-400 transition" href="index-v7Activar Sistema.html" target="_blank">Activar Sistema V7</a></li>
+      </ul>
+    </div>
+
+    <!-- JUEGOS -->
+    <div class="mb-12">
+      <h4 class="text-xl font-semibold text-white mb-4">🎮 Plays y Experiencias</h4>
+      <ul class="grid md:grid-cols-2 gap-4 text-left">
+        <li><a class="hover:text-yellow-400 transition" href="Play1MQ.html" target="_blank">Play 1 MQ</a></li>
+        <li><a class="hover:text-yellow-400 transition" href="Play2ActNeg.html" target="_blank">Play 2 Act</a></li>
+        <li><a class="hover:text-yellow-400 transition" href="Play2MQ.html" target="_blank">Play 2 MQ</a></li>
+        <li><a class="hover:text-yellow-400 transition" href="Play3MQ.html" target="_blank">Play 3 MQ</a></li>
+      </ul>
+    </div>
+
+    <!-- ================= SECCIÓN REDES MAXIQUEEN OS ================= -->
+<div class="py-10">
+  <h4 class="text-xl font-bold text-white mb-8 text-center tracking-widest uppercase">
+    🌐 Canales Oficiales
+  </h4>
+  
+  <div class="flex flex-wrap justify-center gap-8">
+    
+    <!-- Instagram -->
+    <a href="https://www.instagram.com/maxiqueen_store" target="_blank" class="mq-social-link group">
+      <div class="mq-icon-wrapper">
+        <img src="https://cdn.simpleicons.org/instagram/E4405F" alt="Instagram">
+      </div>
+      <span class="mq-social-label">Instagram</span>
+    </a>
+
+    <!-- WhatsApp -->
+    <a href="https://wa.me/573016625921" target="_blank" class="mq-social-link group">
+      <div class="mq-icon-wrapper">
+        <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="WhatsApp">
+      </div>
+      <span class="mq-social-label">WhatsApp</span>
+    </a>
+
+    <!-- YouTube -->
+    <a href="https://www.youtube.com/@cesarbedoya2288" target="_blank" class="mq-social-link group">
+      <div class="mq-icon-wrapper">
+        <img src="https://cdn.simpleicons.org/youtube/FF0000" alt="YouTube">
+      </div>
+      <span class="mq-social-label">YouTube</span>
+    </a>
+
+    <!-- TikTok (Logo Blanco para fondo oscuro) -->
+    <a href="https://www.tiktok.com/@cesarbedoya9" target="_blank" class="mq-social-link group">
+      <div class="mq-icon-wrapper">
+        <img src="https://cdn.simpleicons.org/tiktok/white" alt="TikTok">
+      </div>
+      <span class="mq-social-label">TikTok</span>
+    </a>
+
+    <!-- Facebook (Logo Blanco para fondo oscuro) -->
+    <a href="https://www.facebook.com/MaxCJBB?rdid=WFOjPpkRDXHXdiHd&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DVm7tXTEm%2F#">
+      <div class="mq-icon-wrapper">
+        <img src="https://cdn.simpleicons.org/facebook/white" alt="Facebook">
+      </div>
+      <span class="mq-social-label">Facebook</span>
+    </a>
+
+  </div>
+</div>
+
+     </section>
+
+<style>
+  /* Asegúrate de tener este CSS básico para que se vean */
+  .mq-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 12px;
+    transition: 0.3s;
+  }
+  .mq-icon-wrapper img {
+    width: 100%;
+    height: auto;
+  }
+  .mq-social-link:hover .mq-icon-wrapper {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-5px);
+  }
+</style>
+
+<!-- CHECK DE LICENCIA (ESTRUCTURA CORREGIDA) -->
+<div class="mq-license-container p-4 bg-zinc-900/40 rounded-2xl border border-white/5 max-w-xl mx-auto">
+  <label class="flex items-center gap-3 cursor-pointer text-sm text-zinc-400 hover:text-zinc-200" for="acceptMQ">
+    <input type="checkbox" id="acceptMQ" class="accent-yellow-500 h-4 w-4" />
+    <span>
+      MaxiQueen_Neural - 
+      <a href="MaxiQueen_Neural_OS.pdf" target="_blank" rel="noopener" class="text-yellow-500 hover:underline">
+        Ver MaxiQueen OS Neural
+      </a>
+    </span>
+  </label>
+</div>
+       
+<script src="./js/lightbox.js"></script>
+<script src="./js/theme-toggle.js"></script>
+<script src="./js/licen.checkjs.js"></script>
+
+<script type="module" src="./js/chat.js"></script>
+<script type="module" src="./js/index.js"></script>
+
+<button onclick="goBack()">⬅ Volver</button>
+
+
+<!-- ================= SCRIPTS DE SISTEMA ================= -->
+<script>
+// Navegación
+function goBack() {
+    window.location.href = "/apps.html";
+}
+
+// Motor de Chat con Conexión a FastAPI/Vercel
+async function enviarMensaje() {
+    const input = document.getElementById('user-input');
+    const chatWindow = document.getElementById('chat-window');
+    const mensaje = input.value.trim();
+
+    if (!mensaje) return;
+
+    // 1. Renderizar mensaje de usuario
+    chatWindow.innerHTML += `
+        <div class="flex flex-col items-end">
+            <div class="bg-yellow-500/10 border border-yellow-500/20 p-3 rounded-2xl rounded-tr-none max-w-[85%]">
+                <p class="text-sm text-yellow-500 font-bold mb-1">Tú</p>
+                <p class="text-zinc-200">${mensaje}</p>
+            </div>
+        </div>`;
+    
+    input.value = '';
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    try {
+        // 2. Conexión con tu Backend de FastAPI en Vercel
+        // NOTA: Asegúrate de que la URL termine en tu endpoint /chat o /api/chat
+        const response = await fetch('https://tu-backend-mq.vercel.app/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ "prompt": mensaje }) // Ajustado a la estructura de tu API local
+        });
+        
+        const data = await response.json();
+        
+        // 3. Renderizar respuesta del sistema con Avatar
+chatWindow.innerHTML += `
+    <div class="flex flex-col items-start animate-fade-in">
+        <div class="flex items-center gap-2 mb-1">
+            <img src="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777088797/MQ_OS_maxiqueen-avatar_hiywqu.png" 
+                 class="w-6 h-6 rounded-full border border-rose-500/50">
+            <p class="text-[10px] text-rose-500 font-bold uppercase">MaxiQueen OS</p>
+        </div>
+        <div class="bg-zinc-800 border border-white/5 p-3 rounded-2xl rounded-tl-none max-w-[85%]">
+            <p class="text-sm text-zinc-300">${data.respuesta || data.message}</p>
+        </div>
+    </div>`;
+            
+    } catch (error) {
+        console.error("Error en MaxiQueen Neural:", error);
+        chatWindow.innerHTML += `<p class="text-xs text-rose-800 text-center">Error de conexión con el núcleo de IA.</p>`;
+    }
+
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+// =========================
+// 🎨 GENERADOR DE IMÁGENES IA OPTIMIZADO | MAXIQUEEN OS
+// =========================
+async function generateImage() {
+    const promptInput = document.getElementById("promptInput");
+    const container = document.getElementById("imageContainer");
+    const spinner = document.getElementById("loadingSpinner");
+    const resultDiv = document.getElementById("imageResult");
+    const btn = document.getElementById("generateBtn");
+
+    if (!promptInput || !container || !spinner || !resultDiv || !btn) {
+        console.error("Elementos del DOM faltantes.");
+        return;
+    }
+
+    const prompt = promptInput.value.trim();
+
+    if (!prompt) {
+        showAlert("Por favor, describe la imagen que deseas generar.");
+        return;
+    }
+
+    // Estado UI
+    btn.disabled = true;
+    btn.innerText = "Generando...";
+    container.classList.remove("hidden");
+    spinner.classList.remove("hidden");
+    resultDiv.innerHTML = "";
+
+    try {
+        // Seed único para evitar imágenes repetidas
+        const seed = Math.floor(Math.random() * 999999);
+
+        // URL del motor IA
+        const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=1024&height=1024&seed=${seed}&nologo=true`;
+
+        // Precarga segura
+        const img = new Image();
+        img.src = imageUrl;
+        img.alt = prompt;
+        img.loading = "lazy";
+        img.className = `
+            w-full 
+            h-auto 
+            rounded-2xl 
+            shadow-2xl 
+            cursor-pointer 
+            hover:scale-[1.02] 
+            hover:opacity-90 
+            transition-all 
+            duration-300
+        `;
+
+        img.onload = () => {
+            spinner.classList.add("hidden");
+            resultDiv.innerHTML = "";
+            resultDiv.appendChild(img);
+
+            // Click para expandir
+            img.onclick = () => openLightbox(imageUrl);
+
+            // Botón descarga
+            const downloadBtn = document.createElement("a");
+            downloadBtn.href = imageUrl;
+            downloadBtn.download = `maxiqueen-${seed}.png`;
+            downloadBtn.target = "_blank";
+            downloadBtn.className = `
+                mt-4 inline-block px-4 py-2 
+                bg-purple-600 hover:bg-purple-700 
+                text-white rounded-xl shadow-lg transition
+            `;
+            downloadBtn.innerText = "Descargar Imagen";
+
+            resultDiv.appendChild(downloadBtn);
+        };
+
+        img.onerror = () => {
+            throw new Error("No se pudo cargar la imagen.");
+        };
+
+    } catch (error) {
+        console.error("Error generating image:", error);
+        spinner.classList.add("hidden");
+        container.classList.add("hidden");
+        showAlert("Hubo un error al conectar con el motor de IA.");
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Generar Imagen";
+    }
+}
+
+// =========================
+// 🌌 LIGHTBOX PROFESIONAL
+// =========================
+function openLightbox(url) {
+    const lightbox = document.getElementById("lightbox");
+    const content = document.getElementById("lightboxContent");
+
+    if (!lightbox || !content) return;
+
+    content.innerHTML = `
+        <div class="relative">
+            <img 
+                src="${url}" 
+                alt="Vista previa"
+                class="max-w-full max-h-[90vh] rounded-2xl shadow-2xl border border-white/10"
+            >
+            <button 
+                onclick="closeLightbox()"
+                class="absolute top-2 right-2 bg-black/70 text-white px-3 py-1 rounded-lg hover:bg-black"
+            >
+                ✕
+            </button>
+        </div>
+    `;
+
+    lightbox.classList.remove("hidden");
+    lightbox.classList.add("flex");
+}
+
+// =========================
+// ❌ CERRAR LIGHTBOX
+// =========================
+function closeLightbox() {
+    const lightbox = document.getElementById("lightbox");
+
+    if (lightbox) {
+        lightbox.classList.add("hidden");
+        lightbox.classList.remove("flex");
+    }
+}
+
+// =========================
+// ⌨️ ENTER PARA ENVIAR CHAT
+// =========================
+document.addEventListener("DOMContentLoaded", () => {
+    const userInput = document.getElementById("user-input");
+
+    if (userInput) {
+        userInput.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                enviarMensaje();
+            }
+        });
+    }
+});
+
+// =========================
+// 🚨 ALERTA PERSONALIZADA
+// =========================
+function showAlert(message) {
+    alert(message); // Puedes reemplazar por modal premium luego
+}
+   
+// Soporte para tecla Enter
+document.getElementById('user-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') enviarMensaje();
+});
+</script>
+
+</body>
+</html>

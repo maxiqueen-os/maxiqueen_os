@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MAXIQUEEN OS • AI DIGITAL SYSTEM</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+background:#05070d;
+font-family:'Poppins',sans-serif;
+overflow-x:hidden;
+color:white;
+min-height:100vh;
+position:relative;
+}
+
+/* FONDO */
+
+.background{
+position:fixed;
+width:100%;
+height:100%;
+top:0;
+left:0;
+overflow:hidden;
+z-index:-2;
+background:
+radial-gradient(circle at top,#13203a 0%,#05070d 50%);
+}
+
+.grid{
+position:absolute;
+width:100%;
+height:100%;
+background-image:
+linear-gradient(rgba(0,255,255,.06) 1px,transparent 1px),
+linear-gradient(90deg,rgba(0,255,255,.06) 1px,transparent 1px);
+background-size:40px 40px;
+animation:gridMove 15s linear infinite;
+}
+
+@keyframes gridMove{
+0%{
+transform:translateY(0px);
+}
+100%{
+transform:translateY(40px);
+}
+}
+
+/* PARTICULAS */
+
+.particle{
+position:absolute;
+width:4px;
+height:4px;
+background:#00f0ff;
+border-radius:50%;
+box-shadow:0 0 10px #00f0ff;
+animation:float 10s linear infinite;
+opacity:.7;
+}
+
+@keyframes float{
+0%{
+transform:translateY(100vh);
+opacity:0;
+}
+10%{
+opacity:1;
+}
+100%{
+transform:translateY(-100vh);
+opacity:0;
+}
+}
+
+/* CONTENEDOR */
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:40px 20px;
+position:relative;
+z-index:2;
+}
+
+/* TOP BAR */
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:60px;
+padding:20px;
+border:1px solid rgba(255,255,255,.1);
+background:rgba(255,255,255,.04);
+backdrop-filter:blur(15px);
+border-radius:20px;
+}
+
+.logo{
+font-family:'Orbitron',sans-serif;
+font-size:28px;
+font-weight:900;
+background:linear-gradient(90deg,#00f0ff,#8b5cf6);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.online{
+color:#00ff88;
+font-size:14px;
+animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+0%{opacity:1;}
+50%{opacity:.4;}
+100%{opacity:1;}
+}
+
+/* HERO */
+
+.hero{
+text-align:center;
+padding:80px 20px;
+}
+
+.hero h1{
+font-size:clamp(50px,10vw,110px);
+font-family:'Orbitron',sans-serif;
+font-weight:900;
+line-height:1;
+margin-bottom:20px;
+
+background:linear-gradient(
+90deg,
+#00f0ff,
+#8b5cf6,
+#00f0ff
+);
+
+background-size:300%;
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+animation:shine 6s linear infinite;
+}
+
+@keyframes shine{
+0%{
+background-position:0%;
+}
+100%{
+background-position:300%;
+}
+}
+
+.hero p{
+font-size:20px;
+max-width:850px;
+margin:auto;
+line-height:1.8;
+color:#cfcfcf;
+}
+
+/* IA BOX */
+
+.ai-box{
+margin:50px auto;
+max-width:850px;
+padding:30px;
+border-radius:25px;
+
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(15px);
+
+border:1px solid rgba(255,255,255,.08);
+
+box-shadow:
+0 0 30px rgba(0,255,255,.1);
+}
+
+.ai-title{
+font-family:'Orbitron',sans-serif;
+font-size:20px;
+margin-bottom:15px;
+color:#00f0ff;
+}
+
+.typing{
+font-size:18px;
+line-height:1.8;
+min-height:90px;
+}
+
+/* BOTONES */
+
+.buttons{
+display:flex;
+gap:20px;
+justify-content:center;
+flex-wrap:wrap;
+margin-top:50px;
+}
+
+.btn{
+padding:20px 35px;
+border-radius:18px;
+text-decoration:none;
+font-weight:700;
+font-size:18px;
+transition:.4s;
+position:relative;
+overflow:hidden;
+}
+
+.btn-whatsapp{
+background:#25D366;
+color:black;
+box-shadow:0 0 25px rgba(37,211,102,.5);
+}
+
+.btn-whatsapp:hover{
+transform:translateY(-6px) scale(1.03);
+box-shadow:0 0 45px rgba(37,211,102,.8);
+}
+
+.btn-ai{
+background:rgba(255,255,255,.08);
+color:white;
+border:1px solid rgba(255,255,255,.12);
+}
+
+.btn-ai:hover{
+transform:translateY(-6px);
+background:rgba(255,255,255,.12);
+}
+
+/* CARDS */
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:25px;
+margin-top:90px;
+}
+
+.card{
+padding:35px;
+border-radius:25px;
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(15px);
+
+border:1px solid rgba(255,255,255,.08);
+
+transition:.5s;
+position:relative;
+overflow:hidden;
+}
+
+.card:hover{
+transform:translateY(-12px) scale(1.03);
+
+box-shadow:
+0 0 40px rgba(0,255,255,.2);
+}
+
+.card-icon{
+font-size:55px;
+margin-bottom:20px;
+}
+
+.card h3{
+font-size:22px;
+margin-bottom:15px;
+font-family:'Orbitron',sans-serif;
+}
+
+.card p{
+line-height:1.8;
+color:#cccccc;
+}
+
+/* STATS */
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
+margin-top:80px;
+}
+
+.stat{
+padding:30px;
+text-align:center;
+
+background:rgba(255,255,255,.05);
+
+border-radius:20px;
+border:1px solid rgba(255,255,255,.08);
+}
+
+.stat h2{
+font-size:50px;
+font-family:'Orbitron',sans-serif;
+color:#00f0ff;
+margin-bottom:10px;
+}
+
+/* FOOTER */
+
+.footer{
+margin-top:100px;
+text-align:center;
+padding:40px;
+color:#999;
+}
+
+/* WHATSAPP FLOAT */
+
+.whatsapp-float{
+position:fixed;
+right:20px;
+bottom:20px;
+width:75px;
+height:75px;
+
+background:#25D366;
+
+border-radius:50%;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+font-size:35px;
+
+text-decoration:none;
+
+box-shadow:
+0 0 25px rgba(37,211,102,.8);
+
+z-index:999;
+
+animation:floatButton 2s infinite;
+}
+
+@keyframes floatButton{
+0%{
+transform:translateY(0px);
+}
+50%{
+transform:translateY(-10px);
+}
+100%{
+transform:translateY(0px);
+}
+}
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+.hero{
+padding-top:40px;
+}
+
+.hero p{
+font-size:17px;
+}
+
+.typing{
+font-size:16px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="background">
+<div class="grid"></div>
+</div>
+
+<div id="particles"></div>
+
+<div class="container">
+
+<div class="topbar">
+
+<div class="logo">
+MAXIQUEEN OS
+</div>
+
+<div class="online">
+● AI ONLINE
+</div>
+
+</div>
+
+<section class="hero">
+
+<h1>
+MAXIQUEEN OS
+</h1>
+
+<p>
+Sistema Digital Inteligente para marcas, negocios y creadores.
+Web • IA • Automatización • Contenido • Atención humana.
+Todo integrado en una experiencia futurista premium.
+</p>
+
+<div class="ai-box">
+
+<div class="ai-title">
+MAXIQUEEN AI CORE
+</div>
+
+<div class="typing" id="typing"></div>
+
+</div>
+
+<div class="buttons">
+
+<a
+class="btn btn-whatsapp"
+href="https://wa.me/573016625921?text=Hola,%20vengo%20desde%20MAXIQUEEN%20OS%20y%20quiero%20activar%20el%20sistema"
+target="_blank"
+>
+💬 ACTIVAR SISTEMA
+</a>
+
+<a
+class="btn btn-ai"
+href="#services"
+>
+⚡ EXPLORAR SISTEMA
+</a>
+
+</div>
+
+</section>
+
+<section
+class="cards"
+id="services"
+>
+
+<div class="card">
+<div class="card-icon">🤖</div>
+<h3>IA Inteligente</h3>
+<p>
+Automatización avanzada, asistentes virtuales y sistemas inteligentes adaptados a tu marca.
+</p>
+</div>
+
+<div class="card">
+<div class="card-icon">🌐</div>
+<h3>Web Premium</h3>
+<p>
+Páginas modernas, futuristas y optimizadas para vender en celular y computador.
+</p>
+</div>
+
+<div class="card">
+<div class="card-icon">🎬</div>
+<h3>Contenido Viral</h3>
+<p>
+Diseño, videos, branding y presencia digital con identidad visual poderosa.
+</p>
+</div>
+
+<div class="card">
+<div class="card-icon">⚡</div>
+<h3>Automatización</h3>
+<p>
+Sistemas conectados para ahorrar tiempo y aumentar ventas automáticamente.
+</p>
+</div>
+
+</section>
+
+<section class="stats">
+
+<div class="stat">
+<h2>24/7</h2>
+<p>Sistema activo</p>
+</div>
+
+<div class="stat">
+<h2>AI</h2>
+<p>Asistencia inteligente</p>
+</div>
+
+<div class="stat">
+<h2>2026</h2>
+<p>Diseño futurista</p>
+</div>
+
+<div class="stat">
+<h2>∞</h2>
+<p>Escalabilidad</p>
+</div>
+
+</section>
+
+<div class="footer">
+
+MAXIQUEEN OS • Luxury AI Digital System
+
+<br><br>
+
+Cupos limitados • Activaciones manuales • Atención directa
+
+</div>
+
+</div>
+
+<a
+class="whatsapp-float"
+href="https://wa.me/573016625921?text=Hola,%20quiero%20información%20de%20MAXIQUEEN%20OS"
+target="_blank"
+>
+💬
+</a>
+
+<script>
+
+/* TYPING EFFECT */
+
+const text = `
+Inicializando MAXIQUEEN OS...
+
+Conectando inteligencia artificial...
+
+Sistema premium activado.
+
+Preparando automatizaciones...
+
+MAXIQUEEN AI ONLINE.
+`;
+
+let i = 0;
+
+function typingEffect(){
+
+if(i < text.length){
+
+document.getElementById("typing").innerHTML += text.charAt(i);
+
+i++;
+
+setTimeout(typingEffect,40);
+
+}
+
+}
+
+typingEffect();
+
+/* PARTICULAS */
+
+for(let i=0;i<60;i++){
+
+const particle=document.createElement("div");
+
+particle.classList.add("particle");
+
+particle.style.left=Math.random()*100+"vw";
+
+particle.style.animationDuration=
+(5+Math.random()*10)+"s";
+
+particle.style.opacity=Math.random();
+
+particle.style.transform=
+`scale(${Math.random()*2})`;
+
+document.body.appendChild(particle);
+
+}
+
+/* VOZ IA */
+
+window.addEventListener("load",()=>{
+
+setTimeout(()=>{
+
+const msg =
+new SpeechSynthesisUtterance(
+"Bienvenido a MaxiQueen O S. Sistema digital inteligente activado."
+);
+
+msg.lang="es-ES";
+
+msg.volume=0.8;
+
+speechSynthesis.speak(msg);
+
+},2000);
+
+});
+
+</script>
+
+</body>
+</html>

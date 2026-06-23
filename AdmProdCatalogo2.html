@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>MAXIQUEEN OS — Admin V2</title>
+  <style>
+    :root { --gold: #FFD700; --bg: #0a0a0a; --card: #161616; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: #eee; margin: 0; padding: 20px; }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px; }
+    
+    .grid-container { display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
+    
+    .product-card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--gold); }
+    .form-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    
+    input, textarea { background: #222; color: #fff; border: 1px solid #333; padding: 8px; border-radius: 6px; }
+    input:focus { border-color: var(--gold); outline: none; }
+    
+    .full-width { grid-column: span 2; }
+    
+    .btn { cursor: pointer; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; transition: 0.3s; }
+    .btn-add { background: var(--gold); color: #000; }
+    .btn-del { background: #ff4444; color: #fff; margin-top: 10px; }
+    .btn-copy { background: #333; color: var(--gold); width: 100%; margin-bottom: 10px; }
+
+    pre { background: #000; padding: 15px; border-radius: 8px; font-size: 0.8rem; height: 500px; overflow-y: auto; border: 1px solid #333; }
+    .sticky { position: sticky; top: 20px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>👑 MAXIQUEEN OS <small style="font-size: 0.5em; color: gray;">Admin V2.0</small></h1>
+  <button class="btn btn-add" onclick="addProduct()">＋ Nuevo Producto</button>
+</div>
+
+<div class="grid-container">
+  <div id="products-list"></div>
+
+  <div class="sticky">
+    <button class="btn btn-copy" onclick="copyJSON()">📋 Copiar JSON al Portapapeles</button>
+    <pre id="output"></pre>
+  </div>
+</div>
+
+<script>
+let productos = [
+  { id: "mq-os-inicial", nombre: "Acceso MAXIQUEEN OS Inicial", precio: 49000, moneda: "COP", descripcion: "Entrada al sistema.", link_pago: "", activo: true },
+  { id: "mq-auditoria", nombre: "Auditoría Digital", precio: 99000, moneda: "COP", descripcion: "Revisión completa.", link_pago: "", activo: true }
+];
+
+function render() {
+  const list = document.getElementById('products-list');
+  list.innerHTML = '';
+  
+  productos.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML = `
+      <div class="form-group">
+        <div><label>ID</label><input value="${p.id}" oninput="updateVal(${i}, 'id', this.value)"></div>
+        <div><label>Nombre</label><input value="${p.nombre}" oninput="updateVal(${i}, 'nombre', this.value)"></div>
+        <div><label>Precio</label><input type="number" value="${p.precio}" oninput="updateVal(${i}, 'precio', Number(this.value))"></div>
+        <div><label>Moneda</label><input value="${p.moneda}" oninput="updateVal(${i}, 'moneda', this.value)"></div>
+        <div class="full-width"><label>Descripción</label><textarea class="full-width" oninput="updateVal(${i}, 'descripcion', this.value)">${p.descripcion}</textarea></div>
+        <div class="full-width"><label>Link de Pago</label><input class="full-width" value="${p.link_pago}" oninput="updateVal(${i}, 'link_pago', this.value)"></div>
+      </div>
+      <button class="btn btn-del" onclick="removeProduct(${i})">🗑 Eliminar</button>
+    `;
+    list.appendChild(card);
+  });
+  updateOutput();
+}
+
+function updateVal(index, key, val) {
+  productos[index][key] = val;
+  updateOutput();
+}
+
+function updateOutput() {
+  document.getElementById('output').textContent = JSON.stringify(productos, null, 2);
+}
+
+function addProduct() {
+  productos.push({ id: "nuevo", nombre: "Nuevo", precio: 0, moneda: "COP", descripcion: "", link_pago: "", activo: true });
+  render();
+}
+
+function removeProduct(index) {
+  if(confirm("¿Seguro que quieres eliminarlo?")) {
+    productos.splice(index, 1);
+    render();
+  }
+}
+
+function copyJSON() {
+  const text = document.getElementById('output').textContent;
+  navigator.clipboard.writeText(text).then(() => alert("JSON copiado con éxito"));
+}
+
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MaxiQueen Admin</title>
+</head>
+<body>
+  <h2>Subir documento</h2>
+
+  <input type="file" id="fileInput" />
+  <button onclick="upload()">Subir</button>
+
+  <script>
+    async function upload() {
+      const file = document.getElementById("fileInput").files[0];
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      await fetch("http://localhost:3000/api/upload", {
+        method: "POST",
+        body: formData
+      });
+
+      alert("Documento subido 🚀");
+    }
+
+    // Estilos para la interfaz
+    const style = document.createElement('style');
+  </script>
+
+  
+</body>
+</html>

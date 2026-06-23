@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MaxiQueen OS - Quantum Core Runner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+        
+        :root {
+            --neon-gold: #FFD700;
+            --neon-cyan: #00f2fe;
+            --neon-crimson: #ff0055;
+            --cyber-bg: #030712;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--cyber-bg);
+            color: #f3f4f6;
+            font-family: 'Share Tech Mono', monospace;
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .cyber-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .neon-text-gold {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .neon-text-cyan {
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.6), 0 0 20px rgba(0, 242, 254, 0.3);
+        }
+
+        /* Remoción del resaltado azul al tocar en móviles */
+        input, button, div, canvas {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen w-screen flex justify-center items-center p-0 md:p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-gray-950 to-black">
+
+<div class="w-full max-w-md h-screen md:h-[92h] flex flex-col justify-between overflow-hidden relative border-0 md:border md:border-white/10 md:rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)] bg-black/40">
+    
+    <header class="cyber-panel p-4 flex flex-col gap-2 border-b border-white/10 z-10">
+        <div class="flex justify-between items-center">
+            <span class="text-xs tracking-widest text-zinc-500 uppercase font-bold">SYS_MODULE // GAMIFICATION</span>
+            <div class="flex gap-2 items-center">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
+                <span class="text-[10px] text-emerald-400 font-bold tracking-wider">CORE_ONLINE</span>
+            </div>
+        </div>
+        
+        <div class="flex justify-between items-end mt-1">
+            <div>
+                <h1 class="font-black text-2xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-yellow-500 style-font">
+                    MAXIQUEEN RUN
+                </h1>
+            </div>
+            <div class="text-right">
+                <span class="text-[10px] block text-zinc-500 tracking-wider">MULTIPLIER</span>
+                <span id="comboDisplay" class="text-xs font-bold text-cyan-400">X1.0 SPEED</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-white/5 text-sm">
+            <div class="bg-black/30 p-2 rounded-lg border border-cyan-500/20">
+                <div class="text-[10px] text-cyan-400/70 tracking-wider">DATA_STREAM (DIST)</div>
+                <div class="text-xl font-bold font-mono text-zinc-100"><span id="scoreVal">0</span><span class="text-xs text-zinc-500 ml-1">nm</span></div>
+            </div>
+            <div class="bg-black/30 p-2 rounded-lg border border-amber-500/20">
+                <div class="text-[10px] text-amber-400/70 tracking-wider">ORBES_CAPTURED</div>
+                <div class="text-xl font-bold font-mono text-amber-400 neon-text-gold"><span id="orbVal">0</span></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex-1 w-full relative flex items-center justify-center bg-gray-950/60 overflow-hidden">
+        <canvas id="gameCanvas" class="w-full h-full block"></canvas>
+
+        <div id="gameOverScreen" class="absolute inset-0 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center hidden z-30 transition-all duration-300">
+            <div class="w-16 h-16 rounded-full border-2 border-red-500 flex items-center justify-center mb-4 animate-bounce shadow-[0_0_20px_rgba(239,68,68,0.4)]">
+                <span class="text-red-500 text-2xl font-bold">⚠</span>
+            </div>
+            <h2 class="text-2xl font-extrabold text-red-500 tracking-widest mb-1">GLITCH_CRITICAL_ERROR</h2>
+            <p class="text-xs text-zinc-400 mb-6 max-w-xs">El núcleo de la matriz de MaxiQueen OS ha colapsado debido a una desincronización de coordenadas.</p>
+            
+            <div class="w-full bg-zinc-900/80 border border-white/5 rounded-xl p-4 mb-6 space-y-2 text-sm max-w-xs">
+                <div class="flex justify-between border-b border-white/5 pb-1">
+                    <span class="text-zinc-500">Métricas Recuperadas:</span>
+                    <span class="text-cyan-400 font-bold"><span id="finalScore">0</span> nm</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-zinc-500">Búfer de Orbes:</span>
+                    <span class="text-amber-400 font-bold"><span id="finalOrbs">0</span> unidades</span>
+                </div>
+            </div>
+
+            <button id="btnRestart" onclick="resetGame()" class="w-full max-w-xs bg-gradient-to-r from-amber-500 to-yellow-400 text-black text-sm font-black py-4 rounded-xl shadow-[0_4px_20px_rgba(245,158,11,0.3)] hover:brightness-110 active:scale-95 transition-all tracking-widest uppercase">
+                Reiniciar Módulo Núcleo
+            </button>
+        </div>
+    </div>
+
+    <div class="cyber-panel p-4 flex gap-3 border-t border-white/10 relative z-20 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+        <button class="w-16 h-16 bg-zinc-900/80 border border-white/10 rounded-2xl flex items-center justify-center text-xl font-bold active:bg-cyan-500 active:text-black transition-all active:scale-95 shadow-lg shadow-black" id="btnLeft">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        
+        <button class="flex-1 h-16 bg-gradient-to-b from-blue-600 to-blue-800 text-white border border-blue-400/30 rounded-2xl font-black text-sm tracking-widest uppercase active:from-cyan-400 active:to-cyan-500 active:text-black active:shadow-[0_0_20px_rgba(6,182,212,0.5)] transition-all active:scale-[0.98] shadow-lg shadow-black relative overflow-hidden" id="btnJump">
+            <span class="relative z-10">Impulso Vectorial (Saltar)</span>
+        </button>
+        
+        <button class="w-16 h-16 bg-zinc-900/80 border border-white/10 rounded-2xl flex items-center justify-center text-xl font-bold active:bg-cyan-500 active:text-black transition-all active:scale-95 shadow-lg shadow-black" id="btnRight">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // UI elements
+    const scoreDisplay = document.getElementById('scoreVal');
+    const orbDisplay = document.getElementById('orbVal');
+    const comboDisplay = document.getElementById('comboDisplay');
+    const gameOverScreen = document.getElementById('gameOverScreen');
+
+    // Inicializar Contexto de Audio Seguro (Web Audio API)
+    let audioCtx = null;
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    /* ========================= 🔊 MOTOR SINTETIZADOR DE AUDIO ========================= */
+    const SoundEngine = {
+        playBeep(freq, type, duration, endFreq = null) {
+            if (!audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gainNode = audioCtx.createGain();
+                
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                if (endFreq) {
+                    osc.frequency.exponentialRampToValueAtTime(endFreq, audioCtx.currentTime + duration);
+                }
+                
+                gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) { console.log("Audio Error context"); }
+        },
+        speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                utterance.rate = 1.1;
+                utterance.pitch = 0.9;
+                utterance.volume = 0.6;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+    };
+
+    // Parámetros de Escalamiento de Pantalla Inteligente (Evita pixeleado en Retina/OLED)
+    function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // Configuración Física Global
+    const GRAVITY = 0.55;
+    const SPEED_LIMIT = 8;
+    let gameSpeed = 3.5;
+    let score = 0;
+    let orbsCollected = 0;
+    let isGameOver = false;
+    let animationId;
+
+    // Entidades del Jugador
+    const player = {
+        x: 60,
+        y: 100,
+        width: 26,
+        height: 26,
+        vy: 0,
+        speed: 4.5,
+        jumpPower: -9.5,
+        jumpsLeft: 2, // Habilitación Doble Salto
+        isGrounded: false,
+        trail: []
+    };
+
+    let platforms = [];
+    let orbs = [];
+    let particles = [];
+    let glitches = []; // Nuevos obstáculos dinámicos
+
+    const keys = { left: false, right: false };
+
+    /* ========================= 🎇 MOTOR DE PARTÍCULAS ========================= */
+    class Particle {
+        constructor(x, y, color) {
+            this.x = x;
+            this.y = y;
+            this.vx = (Math.random() - 0.5) * 6;
+            this.vy = (Math.random() - 0.5) * 6;
+            this.radius = Math.random() * 3 + 1;
+            this.alpha = 1;
+            this.decay = Math.random() * 0.02 + 0.015;
+            this.color = color;
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.alpha -= this.decay;
+        }
+        draw(c) {
+            c.save();
+            c.globalAlpha = this.alpha;
+            c.shadowBlur = 10;
+            c.shadowColor = this.color;
+            c.fillStyle = this.color;
+            c.beginPath();
+            c.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            c.fill();
+            c.restore();
+        }
+    }
+
+    function createExplosion(x, y, color) {
+        for (let i = 0; i < 12; i++) {
+            particles.push(new Particle(x, y, color));
+        }
+    }
+
+    /* ========================= 🔁 LOGICA DEL NEGOCIO / RESET ========================= */
+    function resetGame() {
+        initAudio();
+        const displayWidth = canvas.clientWidth;
+        const displayHeight = canvas.clientHeight;
+        
+        player.x = 60;
+        player.y = displayHeight - 120;
+        player.vy = 0;
+        player.jumpsLeft = 2;
+        player.trail = [];
+        
+        score = 0;
+        orbsCollected = 0;
+        gameSpeed = 3.5;
+        isGameOver = false;
+        
+        platforms = [];
+        orbs = [];
+        particles = [];
+        glitches = [];
+
+        // Plataforma Segura Inicial
+        platforms.push({ x: 0, y: displayHeight - 50, width: displayWidth * 1.5, height: 50 });
+
+        gameOverScreen.classList.add('hidden');
+        cancelAnimationFrame(animationId);
+        
+        SoundEngine.playBeep(220, 'sawtooth', 0.3, 440);
+        SoundEngine.speak("Módulo cuántico reiniciado. Matriz en línea.");
+        
+        gameLoop();
+    }
+
+    /* ========================= 🔧 ARQUITECTURA DE PROCEDIMIENTO SINTÉTICO ========================= */
+    function spawnStructure() {
+        const displayWidth = canvas.clientWidth;
+        const displayHeight = canvas.clientHeight;
+        
+        const minGap = 70;
+        const maxGap = 160;
+        const gap = Math.random() * (maxGap - minGap) + minGap;
+
+        const lastPlatform = platforms[platforms.length - 1];
+        const newX = lastPlatform.x + lastPlatform.width + gap;
+
+        const minHeight = displayHeight - 160;
+        const maxHeight = displayHeight - 50;
+        const newY = Math.random() * (maxHeight - minHeight) + minHeight;
+        const newWidth = Math.random() * 120 + 80;
+
+        platforms.push({ x: newX, y: newY, width: newWidth, height: 16 });
+
+        // Probabilidad de instanciar Orbe Dorado
+        if (Math.random() > 0.4) {
+            orbs.push({
+                x: newX + newWidth / 2,
+                y: newY - 30,
+                radius: 7,
+                active: true
+            });
+        }
+
+        // Probabilidad de instanciar Glitch Malicioso (Obstáculo)
+        if (Math.random() > 0.65 && score > 20) {
+            glitches.push({
+                x: newX + (Math.random() * (newWidth - 20)),
+                y: newY - 14,
+                width: 14,
+                height: 14
+            });
+        }
+    }
+
+    /* ========================= ⚙️ MOTOR FISICO DE ACTUALIZACIÓN ========================= */
+    function update() {
+        if (isGameOver) return;
+
+        const displayWidth = canvas.clientWidth;
+        const displayHeight = canvas.clientHeight;
+
+        // Gestión del rastro cinemático (Trail Effect)
+        player.trail.push({ x: player.x + player.width/2, y: player.y + player.height/2 });
+        if (player.trail.length > 8) player.trail.shift();
+
+        // Traslación Lateral Asistida
+        if (keys.left) player.x -= player.speed;
+        if (keys.right) player.x += player.speed;
+
+        if (player.x < 0) player.x = 0;
+        if (player.x + player.width > displayWidth) player.x = displayWidth - player.width;
+
+        // Gravedad Vectorial
+        player.vy += GRAVITY;
+        player.y += player.vy;
+        player.isGrounded = false;
+
+        // Evaluación de colisiones con Plataformas (AABB Superior)
+        platforms.forEach(p => {
+            p.x -= gameSpeed;
+
+            if (player.vy > 0 && 
+                player.x < p.x + p.width && 
+                player.x + player.width > p.x && 
+                player.y + player.height > p.y && 
+                player.y + player.height < p.y + p.height + player.vy + 1) {
+
+                player.isGrounded = true;
+                player.vy = 0;
+                player.y = p.y - player.height;
+                player.jumpsLeft = 2; // Restaurar Saltos
+            }
+        });
+
+        // Limpieza de memoria (Estructuras fuera de pantalla)
+        if (platforms.length > 0 && platforms[0].x + platforms[0].width < 0) {
+            platforms.shift();
+        }
+        if (platforms.length === 0 || platforms[platforms.length - 1].x < displayWidth) {
+            spawnStructure();
+        }
+
+        // Detección y Absorción de Orbes
+        orbs.forEach(orb => {
+            orb.x -= gameSpeed;
+            if (orb.active) {
+                const distX = Math.abs(orb.x - (player.x + player.width / 2));
+                const distY = Math.abs(orb.y - (player.y + player.height / 2));
+
+                if (distX <= (player.width / 2 + orb.radius) && distY <= (player.height / 2 + orb.radius)) {
+                    orb.active = false;
+                    orbsCollected++;
+                    score += 15;
+                    createExplosion(orb.x, orb.y, '#FFD700');
+                    SoundEngine.playBeep(880, 'sine', 0.1, 1200);
+                }
+            }
+        });
+        orbs = orbs.filter(orb => orb.x + orb.radius > 0 && orb.active);
+
+        // Control y Desplazamiento de Glitches (Obstáculos)
+        glitches.forEach(g => {
+            g.x -= gameSpeed;
+            // Detección Estricta de Daño AABB
+            if (player.x < g.x + g.width &&
+                player.x + player.width > g.x &&
+                player.y < g.y + g.height &&
+                player.y + player.height > g.y) {
+                triggerGameOver();
+            }
+        });
+        glitches = glitches.filter(g => g.x + g.width > 0);
+
+        // Actualización de Partículas
+        particles.forEach(p => p.update());
+        particles = particles.filter(p => p.alpha > 0);
+
+        // Escalabilidad de Dificultad Dinámica
+        score += 0.05;
+        if (gameSpeed < SPEED_LIMIT) gameSpeed += 0.0008;
+
+        // Inyección de Data en DOM
+        scoreDisplay.innerText = Math.floor(score);
+        orbDisplay.innerText = orbsCollected;
+        comboDisplay.innerText = `X${(1 + (gameSpeed - 3.5) / 5).toFixed(1)} VEL`;
+
+        // Abismo térmico (Caída al vacío)
+        if (player.y > displayHeight) {
+            triggerGameOver();
+        }
+    }
+
+    /* ========================= ⚡ COMPORTAMIENTO DE ACCIÓN CREADO ========================= */
+    function jump() {
+        initAudio();
+        if (isGameOver) return;
+        
+        if (player.isGrounded || player.jumpsLeft > 0) {
+            player.vy = player.jumpPower;
+            player.isGrounded = false;
+            player.jumpsLeft--;
+            
+            // Sonido de Salto diferenciado por índice de empuje
+            const pitch = player.jumpsLeft === 1 ? 400 : 650;
+            SoundEngine.playBeep(pitch, 'square', 0.12, pitch + 150);
+            createExplosion(player.x + player.width/2, player.y + player.height, '#00f2fe');
+        }
+    }
+
+    function triggerGameOver() {
+        if (isGameOver) return;
+        isGameOver = true;
+        
+        document.getElementById('finalScore').innerText = Math.floor(score);
+        document.getElementById('finalOrbs').innerText = orbsCollected;
+        gameOverScreen.classList.remove('hidden');
+        
+        SoundEngine.playBeep(150, 'sawtooth', 0.6, 40);
+        SoundEngine.speak("Alerta. Glitch crítico detectado. Núcleo apagado.");
+        createExplosion(player.x + player.width/2, player.y + player.height/2, '#ff0055');
+    }
+
+     /* ========================= 🎨 PIPELINE DE RENDERIZADO VISUAL ========================= */
+    function draw() {
+        ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+        // 1. Dibujar el rastro estético del núcleo
+        ctx.save();
+        player.trail.forEach((t, index) => {
+            ctx.globalAlpha = (index / player.trail.length) * 0.25;
+            ctx.fillStyle = '#ff0055';
+            ctx.fillRect(t.x - player.width/2, t.y - player.height/2, player.width, player.height);
+        });
+        ctx.restore();
+
+        // 2. Dibujar Plataformas con bordes de Neon Líquido
+        platforms.forEach(p => {
+            let grad = ctx.createLinearGradient(p.x, p.y, p.x, p.y + p.height);
+            grad.addColorStop(0, '#1e2640');
+            grad.addColorStop(1, '#0f172a');
+            ctx.fillStyle = grad;
+            ctx.fillRect(p.x, p.y, p.width, p.height);
+
+            // Borde superior brillante Cyan
+            ctx.fillStyle = '#00f2fe';
+            ctx.fillRect(p.x, p.y, p.width, 2);
+        });
+
+        // 3. Dibujar Orbes Holográficos (Oro)
+        orbs.forEach(orb => {
+            ctx.save();
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(orb.x, orb.y, orb.radius, 0, Math.PI * 2);
+            ctx.fillStyle = '#FFD700';
+            ctx.fill();
+            
+            // Núcleo Blanco
+            ctx.beginPath();
+            ctx.arc(orb.x, orb.y, orb.radius * 0.4, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.restore();
+        });
+
+        // 4. Dibujar Glitches Críticos (Obstáculos Carmesí)
+        glitches.forEach(g => {
+            ctx.save();
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#ff0055';
+            ctx.fillStyle = '#ff0055';
+            ctx.fillRect(g.x, g.y, g.width, g.height);
+            
+            // Patrón cruz interna decorativa
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(g.x, g.y); ctx.lineTo(g.x + g.width, g.y + g.height);
+            ctx.moveTo(g.x + g.width, g.y); ctx.lineTo(g.x, g.y + g.height);
+            ctx.stroke();
+            ctx.restore();
+        });
+
+        // 5. Dibujar Partículas
+        particles.forEach(p => p.draw(ctx));
+
+        // 6. Dibujar el Avatar del Jugador (Núcleo Energético)
+        if (!isGameOver) {
+            ctx.save();
+            ctx.shadowBlur = 14;
+            ctx.shadowColor = '#ff0055';
+            ctx.fillStyle = '#ff0055'; // Capa base carmesí corporativo
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+
+            // Decorador Geométrico Interno (Microchip Look)
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(player.x + 4, player.y + 4, player.width - 8, player.width - 8);
+            ctx.fillStyle = '#030712';
+            ctx.fillRect(player.x + 8, player.y + 8, player.width - 16, player.width - 16);
+            ctx.restore();
+        }
+    }
+
+    // Loop Maestro
+    function gameLoop() {
+        update();
+        draw();
+        if (!isGameOver) {
+            animationId = requestAnimationFrame(gameLoop);
+        }
+    }
+
+    /* ========================= 🕹️ CONFIGURACIÓN DE ESCUCHAS DE CONTROL (PC / MÓVIL) ========================= */
+    
+    // Periféricos Teclado (PC)
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.right = false || (keys.left = true);
+        if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.left = false || (keys.right = true);
+        if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') jump();
+    });
+
+    window.addEventListener('keyup', (e) => {
+        if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
+        if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
+    });
+
+    // Enlaces de Interfaz Táctil Líquida (Mobile Setup)
+    const btnLeft = document.getElementById('btnLeft');
+    const btnRight = document.getElementById('btnRight');
+    const btnJump = document.getElementById('btnJump');
+
+    const bindTouchAction = (target, actionKey) => {
+        target.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); keys[actionKey] = true; });
+        target.addEventListener('touchend', (e) => { e.preventDefault(); keys[actionKey] = false; });
+        
+        // Soporte adicional si usan mouse en modo responsivo devtools
+        target.addEventListener('mousedown', (e) => { e.preventDefault(); initAudio(); keys[actionKey] = true; });
+        target.addEventListener('mouseup', (e) => { e.preventDefault(); keys[actionKey] = false; });
+        target.addEventListener('mouseleave', (e) => { e.preventDefault(); keys[actionKey] = false; });
+    };
+
+    bindTouchAction(btnLeft, 'left');
+    bindTouchAction(btnRight, 'right');
+
+    btnJump.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
+    btnJump.addEventListener('mousedown', (e) => { e.preventDefault(); jump(); });
+
+    // Lanzamiento automático inicial
+    resizeCanvas();
+    resetGame();
+</script>
+</body>
+</html>

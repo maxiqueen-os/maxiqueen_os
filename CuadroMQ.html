@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAXIQUEEN OS • PHANTOM QUEST 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #7000ff;
+            --neon-red: #ff0055;
+            --neon-green: #39ff14;
+            --bg-dark: #020617;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- MAINFRAME CONTAINER --- */
+        .os-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid rgba(0, 242, 255, 0.2);
+            border-right: 1px solid rgba(0, 242, 255, 0.2);
+            position: relative;
+        }
+
+        /* AD SLOTS */
+        .ad-zone {
+            height: 50px;
+            background: rgba(0, 0, 0, 0.6);
+            border-bottom: 1px solid var(--neon-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono';
+            font-size: 9px;
+            color: rgba(0, 242, 255, 0.4);
+            letter-spacing: 2px;
+        }
+
+        /* HUD */
+        #hud {
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.9);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            border-bottom: 2px solid var(--neon-purple);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-box { text-align: center; }
+        .stat-label { font-size: 8px; color: var(--neon-blue); display: block; margin-bottom: 2px; }
+        .stat-value { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono'; }
+
+        /* VIEWPORT */
+        #game-area {
+            flex-grow: 1;
+            position: relative;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            overflow: hidden;
+        }
+
+        canvas { width: 100%; height: 100%; display: block; }
+
+        /* OVERLAYS */
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.95);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100; text-align: center; padding: 20px;
+        }
+
+        .hidden { display: none !important; }
+
+        .btn-action {
+            padding: 15px 35px;
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            font-family: 'Orbitron';
+            font-weight: 900;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+        }
+
+        /* CONTROLES MÓVILES */
+        .mobile-ui {
+            padding: 20px;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--neon-purple);
+        }
+
+        #joystick-base {
+            width: 100px; height: 100px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            border-radius: 50%;
+            position: relative;
+        }
+
+        #joystick-knob {
+            width: 40px; height: 40px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .def-btn {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-red);
+            background: rgba(255, 0, 85, 0.1);
+            color: white; font-weight: 900; font-size: 10px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .def-btn:active { background: var(--neon-red); transform: scale(0.9); }
+
+    </style>
+</head>
+<body>
+
+<div class="os-container">
+    <div class="ad-zone">ADSENSE_H5_TOP_FRAME // REVENUE_ACTIVE</div>
+
+    <div id="hud">
+        <div class="stat-box"><span class="stat-label">DATA_SCORE</span><span id="score" class="stat-value">000</span></div>
+        <div class="stat-box"><span class="stat-label">INTEGRITY</span><span id="hp" class="stat-value" style="color: var(--neon-green)">100%</span></div>
+        <div class="stat-box"><span class="stat-label">TIME_LEFT</span><span id="time" class="stat-value">30s</span></div>
+    </div>
+
+    <div id="game-area">
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="start-screen" class="overlay">
+            <h1 style="color: var(--neon-blue); font-size: 24px; margin-bottom: 10px;">MAXIQUEEN OS</h1>
+            <p style="font-size: 10px; color: #888;">MISIÓN: RECOLECTA NODOS DE DATOS Y EVITA EL MALWARE</p>
+            <button class="btn-action" onclick="initGame()">INICIAR PROTOCOLO</button>
+        </div>
+
+        <div id="end-screen" class="overlay hidden">
+            <h2 id="end-title" style="color: var(--neon-red);">SISTEMA CAÍDO</h2>
+            <p id="final-score" style="margin: 15px 0;">PUNTOS: 0</p>
+            <button class="btn-action" onclick="location.reload()">REINICIAR KERNEL</button>
+        </div>
+    </div>
+
+    <div class="mobile-ui">
+        <div id="joystick-base">
+            <div id="joystick-knob"></div>
+        </div>
+        <div class="def-btn" id="defense-trigger">DEFENSA<br>(PULSO)</div>
+    </div>
+
+    <div class="ad-zone" style="border-top: 1px solid var(--neon-blue); border-bottom: none;">ADSENSE_H5_BOTTOM_FRAME // CONTEXT_SYNC</div>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const hpEl = document.getElementById('hp');
+    const timeEl = document.getElementById('time');
+
+    let gameActive = false;
+    let score = 0;
+    let hp = 100;
+    let timeLeft = 30;
+    let timerInterval;
+
+    // Entidades
+    let player = { x: 0, y: 0, size: 20, speed: 4, vx: 0, vy: 0, shieldActive: false };
+    let targets = []; // Nodos de datos
+    let enemies = []; // Malware
+    let particles = [];
+
+    // Controles
+    let keys = {};
+    let joystick = { active: false, x: 0, y: 0 };
+
+    function resize() {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+        player.x = canvas.width / 2;
+        player.y = canvas.height / 2;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // --- LOGICA DE ENTRADA ---
+    window.addEventListener('keydown', e => keys[e.code] = true);
+    window.addEventListener('keyup', e => keys[e.code] = false);
+
+    // Joystick Logic
+    const knob = document.getElementById('joystick-knob');
+    const base = document.getElementById('joystick-base');
+
+    base.addEventListener('touchstart', e => { joystick.active = true; });
+    window.addEventListener('touchmove', e => {
+        if (!joystick.active) return;
+        const touch = e.touches[0];
+        const rect = base.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        let dx = touch.clientX - centerX;
+        let dy = touch.clientY - centerY;
+        const dist = Math.min(40, Math.sqrt(dx*dx + dy*dy));
+        const angle = Math.atan2(dy, dx);
+
+        joystick.x = (Math.cos(angle) * dist) / 40;
+        joystick.y = (Math.sin(angle) * dist) / 40;
+
+        knob.style.transform = `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px))`;
+    });
+
+    window.addEventListener('touchend', () => {
+        joystick.active = false;
+        joystick.x = 0; joystick.y = 0;
+        knob.style.transform = 'translate(-50%, -50%)';
+    });
+
+    // Defensa
+    const defBtn = document.getElementById('defense-trigger');
+    const triggerDefense = () => {
+        if (hp > 10 && !player.shieldActive) {
+            player.shieldActive = true;
+            hp -= 5;
+            updateHUD();
+            setTimeout(() => player.shieldActive = false, 1500);
+        }
+    };
+    defBtn.addEventListener('touchstart', (e) => { e.preventDefault(); triggerDefense(); });
+    window.addEventListener('keydown', e => { if(e.code === 'Space') triggerDefense(); });
+
+    // --- CORE GAME ---
+    function initGame() {
+        document.getElementById('start-screen').classList.add('hidden');
+        gameActive = true;
+        spawnEntities();
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateHUD();
+            if (timeLeft <= 0) endGame("TIEMPO AGOTADO");
+        }, 1000);
+        loop();
+    }
+
+    function spawnEntities() {
+        if (!gameActive) return;
+        // Spawn de objetivos (azules/verdes)
+        if (targets.length < 5) {
+            targets.push({
+                x: Math.random() * (canvas.width - 40) + 20,
+                y: Math.random() * (canvas.height - 40) + 20,
+                size: 10
+            });
+        }
+        // Spawn de enemigos (rojos)
+        if (enemies.length < 4) {
+            enemies.push({
+                x: Math.random() > 0.5 ? -20 : canvas.width + 20,
+                y: Math.random() * canvas.height,
+                size: 15,
+                speed: 1.5 + Math.random() * 2
+            });
+        }
+        setTimeout(spawnEntities, 1000);
+    }
+
+    function updateHUD() {
+        scoreEl.innerText = score.toString().padStart(3, '0');
+        hpEl.innerText = `${hp}%`;
+        timeEl.innerText = `${timeLeft}s`;
+        hpEl.style.color = hp < 30 ? 'var(--neon-red)' : 'var(--neon-green)';
+    }
+
+    function endGame(reason) {
+        gameActive = false;
+        clearInterval(timerInterval);
+        document.getElementById('end-screen').classList.remove('hidden');
+        document.getElementById('end-title').innerText = reason;
+        document.getElementById('final-score').innerText = `DATOS RECOLECTADOS: ${score}`;
+    }
+
+    function loop() {
+        if (!gameActive) return;
+
+        // Limpiar
+        ctx.fillStyle = '#020617';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Grid decorativo
+        ctx.strokeStyle = 'rgba(0, 242, 255, 0.05)';
+        for(let i=0; i<canvas.width; i+=40) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke(); }
+        for(let i=0; i<canvas.height; i+=40) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke(); }
+
+        // Movimiento Jugador
+        let mx = 0, my = 0;
+        if (keys['KeyW'] || keys['ArrowUp']) my = -1;
+        if (keys['KeyS'] || keys['ArrowDown']) my = 1;
+        if (keys['KeyA'] || keys['ArrowLeft']) mx = -1;
+        if (keys['KeyD'] || keys['ArrowRight']) mx = 1;
+
+        if (joystick.active) { mx = joystick.x; my = joystick.y; }
+
+        player.x += mx * player.speed;
+        player.y += my * player.speed;
+
+        // Límites
+        player.x = Math.max(20, Math.min(canvas.width - 20, player.x));
+        player.y = Math.max(20, Math.min(canvas.height - 20, player.y));
+
+        // Dibujar Defensa (Pulso)
+        if (player.shieldActive) {
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, 60, 0, Math.PI*2);
+            ctx.strokeStyle = varColor('--neon-blue');
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(0, 242, 255, 0.1)';
+            ctx.fill();
+        }
+
+        // Dibujar Jugador
+        ctx.fillStyle = varColor('--neon-blue');
+        ctx.shadowBlur = 15; ctx.shadowColor = varColor('--neon-blue');
+        ctx.fillRect(player.x - 10, player.y - 10, 20, 20);
+        ctx.shadowBlur = 0;
+
+        // Gestionar Objetivos
+        targets.forEach((t, i) => {
+            ctx.fillStyle = varColor('--neon-green');
+            ctx.beginPath();
+            ctx.arc(t.x, t.y, t.size, 0, Math.PI*2);
+            ctx.fill();
+
+            // Colisión
+            if (Math.hypot(player.x - t.x, player.y - t.y) < 25) {
+                targets.splice(i, 1);
+                score += 10;
+                timeLeft += 2;
+                updateHUD();
+            }
+        });
+
+        // Gestionar Enemigos (Malware)
+        enemies.forEach((en, i) => {
+            // IA Simple: Persiguen al jugador
+            let angle = Math.atan2(player.y - en.y, player.x - en.x);
+            en.x += Math.cos(angle) * en.speed;
+            en.y += Math.sin(angle) * en.speed;
+
+            ctx.fillStyle = varColor('--neon-red');
+            ctx.fillRect(en.x - 7, en.y - 7, 14, 14);
+
+            // Colisión con jugador
+            let dist = Math.hypot(player.x - en.x, player.y - en.y);
+            if (dist < 20) {
+                if (player.shieldActive) {
+                    enemies.splice(i, 1); // El escudo destruye al enemigo
+                    score += 5;
+                } else {
+                    enemies.splice(i, 1);
+                    hp -= 20;
+                    updateHUD();
+                    if (hp <= 0) endGame("SISTEMA CORRUPTO");
+                }
+            }
+        });
+
+        requestAnimationFrame(loop);
+    }
+
+    function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+</script>
+</body>
+</html>

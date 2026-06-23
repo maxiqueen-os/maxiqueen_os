@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAXIQUEEN NITRO • CORE 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon: #00f3ff;
+            --pink: #ff00ff;
+            --bg: #050a15;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; }
+        body { 
+            background: var(--bg); color: white; font-family: 'Orbitron', sans-serif;
+            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+        }
+        #hud {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            padding: 15px; background: #000; border-bottom: 2px solid var(--neon);
+        }
+        .stat { text-align: center; }
+        .label { font-size: 0.6rem; color: var(--neon); display: block; }
+        .val { font-size: 1.1rem; font-weight: 900; }
+
+        #game-stage { flex-grow: 1; position: relative; background: #070f1d; }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+            padding: 20px; background: #000;
+        }
+        .btn {
+            padding: 20px; border: 1px solid var(--neon); border-radius: 8px;
+            background: rgba(0, 243, 255, 0.1); color: white; font-family: 'Orbitron';
+            font-weight: 900; font-size: 1rem;
+        }
+        .btn:active { background: var(--neon); color: black; }
+        .btn-repair { border-color: #fff200; color: #fff200; }
+    </style>
+</head>
+<body>
+
+<div id="hud">
+    <div class="stat"><span class="label">INTEGRIDAD</span><span id="hp" class="val">100%</span></div>
+    <div class="stat"><span class="label">CRÉDITOS</span><span id="coin" class="val">0</span></div>
+    <div class="stat"><span class="label">NIVEL</span><span id="lvl" class="val">1</span></div>
+</div>
+
+<div id="game-stage">
+    <canvas id="gameCanvas"></canvas>
+</div>
+
+<div id="controls">
+    <button class="btn" onclick="Game.move(-1)">IZQ</button>
+    <button class="btn btn-repair" onclick="Game.repair()">🛠</button>
+    <button class="btn" onclick="Game.move(1)">DER</button>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const Game = {
+        hp: 100,
+        coins: 0,
+        lvl: 1,
+        speed: 7,
+        lane: 1, // 0, 1, 2
+        carX: 0,
+        targetX: 0,
+        objects: [],
+        active: true,
+
+        colors: {
+            neon: '#00f3ff',
+            pink: '#ff00ff',
+            yellow: '#fff200'
+        },
+
+        init() {
+            this.resize();
+            window.addEventListener('resize', () => this.resize());
+            
+            // Teclado para PC
+            window.addEventListener('keydown', (e) => {
+                if(e.key === 'ArrowLeft') this.move(-1);
+                if(e.key === 'ArrowRight') this.move(1);
+            });
+
+            this.updateLanePos();
+            this.carX = this.targetX;
+            this.spawnLoop();
+            this.draw();
+        },
+
+        resize() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            this.updateLanePos();
+        },
+
+        updateLanePos() {
+            const laneWidth = canvas.width / 3;
+            this.targetX = (this.lane * laneWidth) + (laneWidth / 2);
+        },
+
+        move(dir) {
+            this.lane = Math.max(0, Math.min(2, this.lane + dir));
+            this.updateLanePos();
+        },
+
+        repair() {
+            if(this.coins >= 50 && this.hp < 100) {
+                this.coins -= 50;
+                this.hp = Math.min(100, this.hp + 30);
+                this.updateUI();
+            }
+        },
+
+        spawnLoop() {
+            if(!this.active) return;
+            
+            // Spawn Obstáculos o Monedas
+            const type = Math.random() > 0.3 ? 'obs' : 'coin';
+            this.objects.push({
+                x: (Math.floor(Math.random() * 3) * (canvas.width / 3)) + (canvas.width / 6),
+                y: -100,
+                type: type,
+                speed: this.speed + (this.lvl * 0.5)
+            });
+
+            setTimeout(() => this.spawnLoop(), 1200 / (1 + this.lvl * 0.1));
+        },
+
+        updateUI() {
+            document.getElementById('hp').innerText = this.hp + "%";
+            document.getElementById('coin').innerText = this.coins;
+            document.getElementById('lvl').innerText = this.lvl;
+        },
+
+        draw() {
+            if(!this.active) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar Carretera
+            ctx.strokeStyle = "rgba(0, 243, 255, 0.2)";
+            for(let i=1; i<3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * (canvas.width/3), 0);
+                ctx.lineTo(i * (canvas.width/3), canvas.height);
+                ctx.stroke();
+            }
+
+            // Suavizado de movimiento del carro
+            this.carX += (this.targetX - this.carX) * 0.15;
+
+            // Dibujar Jugador
+            this.drawCar(this.carX, canvas.height - 120);
+
+            // Actualizar Objetos
+            this.objects.forEach((obj, i) => {
+                obj.y += obj.speed;
+
+                if(obj.type === 'obs') {
+                    this.drawObstacle(obj.x, obj.y);
+                    // Colisión
+                    if(Math.abs(obj.x - this.carX) < 40 && Math.abs(obj.y - (canvas.height - 120)) < 50) {
+                        this.hp -= 20;
+                        this.objects.splice(i, 1);
+                        this.updateUI();
+                        if(this.hp <= 0) this.gameOver();
+                    }
+                } else {
+                    this.drawCoin(obj.x, obj.y);
+                    // Recolección
+                    if(Math.abs(obj.x - this.carX) < 40 && Math.abs(obj.y - (canvas.height - 120)) < 40) {
+                        this.coins += 10;
+                        if(this.coins % 100 === 0) this.lvl++;
+                        this.objects.splice(i, 1);
+                        this.updateUI();
+                    }
+                }
+
+                if(obj.y > canvas.height) this.objects.splice(i, 1);
+            });
+
+            requestAnimationFrame(() => this.draw());
+        },
+
+        drawCar(x, y) {
+            ctx.save();
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = this.colors.neon;
+            ctx.fillStyle = this.colors.neon;
+            // Carrocería
+            ctx.fillRect(x - 20, y, 40, 70);
+            // Cabina
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(x - 15, y + 10, 30, 15);
+            // Alerón
+            ctx.fillStyle = this.colors.pink;
+            ctx.fillRect(x - 25, y + 60, 50, 5);
+            ctx.restore();
+        },
+
+        drawObstacle(x, y) {
+            ctx.fillStyle = "#333";
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "red";
+            ctx.fillRect(x - 25, y, 50, 50);
+            ctx.fillStyle = "red";
+            ctx.fillRect(x - 20, y + 5, 40, 5);
+        },
+
+        drawCoin(x, y) {
+            ctx.fillStyle = this.colors.yellow;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = this.colors.yellow;
+            ctx.beginPath();
+            ctx.arc(x, y, 12, 0, Math.PI * 2);
+            ctx.fill();
+        },
+
+        gameOver() {
+            this.active = false;
+            alert("MAXIQUEEN OS: SISTEMA DAÑADO. REINICIANDO...");
+            location.reload();
+        }
+    };
+
+    window.onload = () => Game.init();
+</script>
+</body>
+</html>

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>MAXIQUEEN OS — Builder Avanzado 👑</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CodeMirror Dependencies -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-ocean.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+
+  <style>
+    :root {
+      --bg-base: #080808;
+      --bg-panel: #121212;
+      --bg-surface: #1e1e1e;
+      --accent: #FFD700;
+      --accent-hover: #e6c200;
+      --danger: #ff453a;
+      --text-main: #f5f5f7;
+      --text-muted: #888;
+      --border: #2a2a2a;
+      --radius: 8px;
+      --transition: all 0.2s ease;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      background: var(--bg-base);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    /* --- SIDEBAR --- */
+    #sidebar {
+      width: 280px;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      z-index: 5;
+    }
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-content {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .sidebar-section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin: 0 0 12px 0;
+      font-weight: 600;
+    }
+    
+    .component {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .component:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.1);
+    }
+
+    /* --- MAIN WORKSPACE --- */
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0; /* Important for flex children */
+    }
+
+    /* --- TOOLBAR --- */
+    #toolbar {
+      background: var(--bg-panel);
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    input, select {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      outline: none;
+      transition: var(--transition);
+    }
+    input:focus, select:focus { border-color: var(--accent); }
+    
+    .spacer { flex: 1; }
+
+    button {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border-radius: var(--radius);
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    button:hover { background: #2a2a2a; border-color: #444; }
+    button.primary { background: var(--accent); color: #000; border-color: var(--accent); }
+    button.primary:hover { background: var(--accent-hover); }
+    button.danger { color: var(--danger); }
+    button.danger:hover { background: rgba(255, 69, 58, 0.1); border-color: var(--danger); }
+
+    /* --- SPLIT VIEW (EDITOR + PREVIEW) --- */
+    #workspace-split {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    #editor-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    /* Override CodeMirror Defaults */
+    .CodeMirror {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      height: 100% !important;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+    }
+    
+    #preview-container {
+      height: 45%;
+      border-top: 2px solid var(--border);
+      background: #fff; /* Preview should be white base by default */
+      position: relative;
+    }
+    #preview {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+    .preview-label {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* --- VERSIONS PANEL --- */
+    #versionsPanel {
+      position: fixed;
+      right: 0;
+      top: 0;
+      width: 340px;
+      height: 100vh;
+      background: rgba(18, 18, 18, 0.95);
+      backdrop-filter: blur(10px);
+      border-left: 1px solid var(--border);
+      padding: 24px;
+      overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 100;
+      box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+    }
+    #versionsPanel.open { transform: translateX(0); }
+    
+    .version-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+    }
+    .version-card strong { display: block; color: var(--accent); margin-bottom: 4px; }
+    .version-card small { color: var(--text-muted); display: block; margin-bottom: 12px; }
+    .version-actions { display: flex; gap: 8px; }
+    .version-actions button { flex: 1; padding: 6px; font-size: 0.8rem; justify-content: center; }
+
+    .close-panel {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      padding: 0;
+    }
+
+    /* --- TOAST NOTIFICATIONS --- */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #32d74b;
+      color: #000;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 0.9rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: var(--transition);
+      pointer-events: none;
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+
+<body>
+
+<div id="sidebar">
+  <div class="sidebar-header">
+    <h2>👑 Builder OS</h2>
+  </div>
+  <div class="sidebar-content">
+    <p class="sidebar-section-title">Componentes Web</p>
+    <div class="component" onclick="insert(hero)">🌌 Hero Section</div>
+    <div class="component" onclick="insert(cta)">🎯 Call to Action</div>
+    <div class="component" onclick="insert(pricing)">💳 Pricing Cards</div>
+    <div class="component" onclick="insert(features)">✨ Beneficios</div>
+    <div class="component" onclick="insert(footer)">🏁 Footer</div>
+    
+    <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+    
+    <p class="sidebar-section-title">Gestión de Proyectos</p>
+    <input id="projectName" placeholder="Nombre del proyecto..." style="width:100%; margin-bottom:10px;">
+    <select id="projectList" onchange="loadProject()" style="width:100%;"></select>
+  </div>
+</div>
+
+<div id="main">
+  <div id="toolbar">
+    <button class="primary" onclick="forceRun()">▶ Ejecutar</button>
+    <button onclick="newProject()">🆕 Nuevo</button>
+    <button onclick="saveProject()">💾 Guardar Proyecto</button>
+    <button onclick="exportProject()">📦 Exportar a HTML</button>
+    <div class="spacer"></div>
+    <button onclick="toggleVersions()">🕒 Historial de Versiones</button>
+  </div>
+  
+  <div id="workspace-split">
+    <div id="editor-container"></div>
+    <div id="preview-container">
+      <div class="preview-label">Vista Previa en Vivo</div>
+      <iframe id="preview"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- Panel de Versiones -->
+<div id="versionsPanel">
+  <button class="close-panel" onclick="toggleVersions()">✖</button>
+  <h2 style="color:var(--accent); margin-top:0;">🕒 Historial</h2>
+  <p style="font-size:0.85rem; color:var(--text-muted);">Recupera versiones anteriores de tu proyecto activo.</p>
+  <div id="versionsList"></div>
+  <button class="danger" style="width:100%; margin-top:20px; justify-content:center;" onclick="clearVersions()">🧹 Borrar Historial</button>
+</div>
+
+<div id="toast">Notificación</div>
+
+<script>
+// --- INICIALIZACIÓN DEL EDITOR ---
+const editor = CodeMirror(document.getElementById("editor-container"), {
+  mode: "htmlmixed",
+  theme: "material-ocean",
+  lineNumbers: true,
+  autoCloseTags: true,
+  matchBrackets: true,
+  indentUnit: 2,
+  tabSize: 2,
+  lineWrapping: true
+});
+
+// --- PLANTILLAS Y COMPONENTES ---
+const baseTemplate = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Proyecto MAXIQUEEN</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root { --brand: #FFD700; --dark: #0e0f1a; --surface: #1a1d36; }
+    body { margin:0; font-family: system-ui, -apple-system, sans-serif; background: var(--dark); color:#fff; line-height: 1.6; }
+    * { box-sizing: border-box; }
+    .mq-btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; background: var(--brand); color: #000; text-decoration: none; border-radius: 8px; font-weight: 700; transition: transform 0.2s; }
+    .mq-btn:hover { transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+
+  <!-- Tu diseño empieza aquí -->
+  
+</body>
+</html>`;
+
+const hero = `<section style="padding: 100px 20px; text-align: center; background: linear-gradient(135deg, var(--dark), var(--surface));">
+  <div style="max-width: 800px; margin: 0 auto;">
+    <h1 style="font-size: 3rem; margin-bottom: 1rem; line-height: 1.2;">👑 Escala tu Negocio Digital</h1>
+    <p style="font-size: 1.2rem; color: #a0aabf; margin-bottom: 2rem;">Sistemas, automatización y estrategias de alto impacto para emprendedores modernos.</p>
+    <a href="#" class="mq-btn">Comenzar Ahora</a>
+  </div>
+</section>`;
+
+const cta = `<section style="padding: 80px 20px; background: var(--brand); color: #000; text-align: center;">
+  <div style="max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.2); padding: 40px; border-radius: 24px; backdrop-filter: blur(10px);">
+    <h2 style="font-size: 2rem; margin-top:0;">¿Listo para el siguiente nivel?</h2>
+    <p style="font-size: 1.1rem; margin-bottom: 30px;">Únete a cientos de emprendedores usando nuestro sistema.</p>
+    <a href="#" class="mq-btn" style="background:#000; color:var(--brand);">Agendar Llamada</a>
+  </div>
+</section>`;
+
+const pricing = `<section style="padding: 80px 20px; max-width: 1000px; margin: 0 auto;">
+  <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 50px;">Nuestros Planes</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+    
+    <div style="background: var(--surface); padding: 40px; border-radius: 20px; border: 1px solid #2a2d4a;">
+      <h3 style="font-size: 1.5rem; margin-top:0; color: #a0aabf;">Starter</h3>
+      <div style="font-size: 2.5rem; font-weight: bold; margin: 20px 0;">$49k <span style="font-size: 1rem; color: #a0aabf; font-weight: normal;">COP</span></div>
+      <ul style="list-style: none; padding: 0; margin-bottom: 30px; color: #d1d5db;">
+        <li style="margin-bottom: 10px;">✓ Acceso al OS Base</li>
+        <li style="margin-bottom: 10px;">✓ Comunidad Privada</li>
+      </ul>
+      <a href="#" class="mq-btn" style="width: 100%; background: #2a2d4a; color: #fff;">Elegir Starter</a>
+    </div>
+
+    <div style="background: linear-gradient(to bottom, #1f2345, var(--surface)); padding: 40px; border-radius: 20px; border: 2px solid var(--brand); position: relative;">
+      <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--brand); color: #000; padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.8rem;">RECOMENDADO</div>
+      <h3 style="font-size: 1.5rem; margin-top:0; color: var(--brand);">Pro Audit</h3>
+      <div style="font-size: 2.5rem; font-weight: bold; margin: 20px 0;">$99k <span style="font-size: 1rem; color: #a0aabf; font-weight: normal;">COP</span></div>
+      <ul style="list-style: none; padding: 0; margin-bottom: 30px; color: #d1d5db;">
+        <li style="margin-bottom: 10px;">✓ Todo lo de Starter</li>
+        <li style="margin-bottom: 10px;">✓ Auditoría Digital 1:1</li>
+        <li style="margin-bottom: 10px;">✓ Roadmap Estratégico</li>
+      </ul>
+      <a href="#" class="mq-btn" style="width: 100%;">Elegir Pro</a>
+    </div>
+
+  </div>
+</section>`;
+
+const features = `<section style="padding: 80px 20px; background: var(--surface);">
+  <div style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; text-align: center;">
+    <div>
+      <div style="font-size: 3rem; margin-bottom: 15px;">⚡</div>
+      <h3 style="font-size: 1.3rem;">Despliegue Rápido</h3>
+      <p style="color: #a0aabf;">Lanza tus ideas en minutos, no en meses.</p>
+    </div>
+    <div>
+      <div style="font-size: 3rem; margin-bottom: 15px;">🛡️</div>
+      <h3 style="font-size: 1.3rem;">Arquitectura Segura</h3>
+      <p style="color: #a0aabf;">Construido con las mejores prácticas de la industria.</p>
+    </div>
+    <div>
+      <div style="font-size: 3rem; margin-bottom: 15px;">📈</div>
+      <h3 style="font-size: 1.3rem;">Escalabilidad Total</h3>
+      <p style="color: #a0aabf;">Crece sin límites ni cuellos de botella técnicos.</p>
+    </div>
+  </div>
+</section>`;
+
+const footer = `<footer style="padding: 40px 20px; text-align: center; border-top: 1px solid #2a2d4a; color: #a0aabf; font-size: 0.9rem;">
+  <p>© 2026 MAXIQUEEN OS. Todos los derechos reservados.</p>
+</footer>`;
+
+// --- CORE LOGIC & LIVE PREVIEW ---
+let runTimeout;
+
+function forceRun() {
+  document.getElementById("preview").srcdoc = editor.getValue();
+}
+
+function autoRun() {
+  clearTimeout(runTimeout);
+  runTimeout = setTimeout(() => {
+    forceRun();
+  }, 800); // 800ms debounce
+}
+
+function insert(component) {
+  const cursor = editor.getCursor();
+  // Insertar de manera limpia con espacios
+  editor.replaceRange("\\n\\n" + component + "\\n\\n", cursor);
+  
+  // Auto-formatear la inserción (opcional, CodeMirror lo intenta)
+  editor.setSelection(cursor, editor.getCursor());
+  editor.execCommand("indentAuto");
+  editor.setCursor(editor.getCursor()); // limpiar selección
+  
+  autosave();
+  forceRun();
+  showToast("Componente insertado");
+}
+
+// --- PROJECT MANAGEMENT ---
+function getProjects() { return JSON.parse(localStorage.getItem("mq-builder-projects") || "{}"); }
+function saveProjects(data) { localStorage.setItem("mq-builder-projects", JSON.stringify(data)); }
+
+function refreshProjectList() {
+  const projects = getProjects();
+  const list = document.getElementById("projectList");
+  list.innerHTML = "<option value=''>📂 Seleccionar proyecto...</option>";
+  for(const name in projects) {
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    list.appendChild(opt);
+  }
+}
+
+function saveProject() {
+  const name = document.getElementById("projectName").value.trim();
+  if(!name) { 
+    alert("Por favor, asigna un nombre al proyecto en el panel izquierdo."); 
+    return; 
+  }
+
+  const projects = getProjects();
+  projects[name] = editor.getValue();
+  saveProjects(projects);
+  saveVersion(name, editor.getValue());
+  
+  refreshProjectList();
+  document.getElementById("projectList").value = name;
+  showToast("💾 Proyecto y versión guardados");
+}
+
+function loadProject() {
+  const name = document.getElementById("projectList").value;
+  if(!name) return;
+  const projects = getProjects();
+  editor.setValue(projects[name] || baseTemplate);
+  document.getElementById("projectName").value = name;
+  forceRun();
+  showToast("Proyecto cargado");
+}
+
+function newProject() {
+  if(confirm("¿Iniciar un nuevo lienzo? Asegúrate de haber guardado tus cambios.")) {
+    editor.setValue(baseTemplate);
+    document.getElementById("projectName").value = "";
+    document.getElementById("projectList").value = "";
+    forceRun();
+  }
+}
+
+function exportProject() {
+  const html = editor.getValue();
+  const projectName = document.getElementById("projectName").value || "mq-website";
+  const blob = new Blob([html], {type:"text/html;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = projectName + ".html";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast("📦 Archivo HTML exportado");
+}
+
+// --- VERSION SYSTEM ---
+function getVersions() { return JSON.parse(localStorage.getItem("mq-builder-versions") || "{}"); }
+function saveVersions(data) { localStorage.setItem("mq-builder-versions", JSON.stringify(data)); }
+
+function saveVersion(project, code) {
+  const versions = getVersions();
+  if(!versions[project]) versions[project] = [];
+  versions[project].push({
+    date: new Date().toLocaleString(),
+    code
+  });
+  // Mantener solo las últimas 15 versiones para no saturar localStorage
+  if(versions[project].length > 15) versions[project].shift(); 
+  saveVersions(versions);
+  refreshVersions();
+}
+
+function refreshVersions() {
+  const panel = document.getElementById("versionsList");
+  const project = document.getElementById("projectName").value;
+  const versions = getVersions()[project] || [];
+  panel.innerHTML = "";
+  
+  if (versions.length === 0) {
+    panel.innerHTML = "<p style='color:var(--text-muted); font-size:0.9rem;'>No hay versiones guardadas para este proyecto.</p>";
+    return;
+  }
+
+  // Mostrar en orden reverso (más nuevo primero)
+  versions.slice().reverse().forEach((v, index) => {
+    const realIndex = versions.length - 1 - index;
+    const div = document.createElement("div");
+    div.className = "version-card";
+    div.innerHTML = `
+      <strong>Versión ${realIndex + 1}</strong>
+      <small>${v.date}</small>
+      <div class="version-actions">
+        <button onclick="restoreVersion(${realIndex})">♻ Restaurar</button>
+      </div>
+    `;
+    panel.appendChild(div);
+  });
+}
+
+function restoreVersion(index) {
+  const project = document.getElementById("projectName").value;
+  const versions = getVersions()[project];
+  if(!versions) return;
+  if(confirm("¿Restaurar esta versión? Los cambios actuales no guardados se perderán.")) {
+    editor.setValue(versions[index].code);
+    forceRun();
+    toggleVersions();
+    showToast("Versión restaurada");
+  }
+}
+
+function clearVersions() {
+  const project = document.getElementById("projectName").value;
+  if(!project) return;
+  if(confirm("🚨 ¿Borrar todo el historial de versiones de este proyecto?")) {
+    const versions = getVersions();
+    delete versions[project];
+    saveVersions(versions);
+    refreshVersions();
+    showToast("Historial eliminado");
+  }
+}
+
+function toggleVersions() {
+  const panel = document.getElementById("versionsPanel");
+  panel.classList.toggle("open");
+  if (panel.classList.contains("open")) {
+    refreshVersions();
+  }
+}
+
+// --- UTILS & AUTOSAVE ---
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3000);
+}
+
+function autosave() {
+  localStorage.setItem("mq-builder-autosave", editor.getValue());
+}
+
+// Escuchar cambios en el editor para Auto-Run y Auto-Save
+editor.on("change", () => {
+  autosave();
+  autoRun();
+});
+
+// --- BOOTSTRAP ---
+window.onload = () => {
+  const autosaved = localStorage.getItem("mq-builder-autosave");
+  if(autosaved && autosaved !== baseTemplate) {
+    if(confirm("🔁 Hemos detectado un borrador sin guardar de tu sesión anterior. ¿Deseas recuperarlo?")) {
+      editor.setValue(autosaved);
+    } else {
+      editor.setValue(baseTemplate);
+      localStorage.removeItem("mq-builder-autosave");
+    }
+  } else {
+    editor.setValue(baseTemplate);
+  }
+  
+  refreshProjectList();
+  forceRun();
+};
+</script>
+
+</body>
+</html>

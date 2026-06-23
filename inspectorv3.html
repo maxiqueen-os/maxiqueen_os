@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>MAXIQUEEN OS — Page Manager Pro 👑</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+/* ================= VARIABLES ================= */
+:root {
+  --mq-neon-1: #00ff88;
+  --mq-neon-2: #00ffaa;
+  --mq-neon-3: #00e676;
+  --bg-black: #000000;
+  --bg-space: #05070f;
+  --glass-bg: rgba(0, 255, 136, 0.03);
+  --glass-border: rgba(0, 255, 136, 0.15);
+  --glass-hover: rgba(0, 255, 136, 0.08);
+  --text-main: #e0ffe8;
+  --text-muted: #5a8570;
+  --error: #ff3366;
+  --warning: #ffaa00;
+  --glow-subtle: 0 0 10px rgba(0, 255, 136, 0.2);
+  --glow-strong: 0 0 20px rgba(0, 255, 136, 0.4);
+}
+
+/* ================= RESET & BASICS ================= */
+* { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; outline: none; }
+body {
+  margin: 0; height: 100vh; display: flex; flex-direction: column;
+  background: radial-gradient(circle at top, var(--bg-space), var(--bg-black));
+  color: var(--text-main); overflow: hidden; font-size: 14px;
+}
+
+/* ================= SCROLLBARS ================= */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-black); }
+::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--mq-neon-1); }
+
+/* ================= SYSTEM PANEL (TOP) ================= */
+#system-panel {
+  height: 40px; background: rgba(0,0,0,0.8); border-bottom: 1px solid var(--glass-border);
+  display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
+  font-family: 'Courier New', Courier, monospace; font-size: 0.75rem; z-index: 200;
+}
+.sys-group { display: flex; align-items: center; gap: 15px; }
+.sys-item { display: flex; align-items: center; gap: 5px; color: var(--text-muted); }
+.sys-val { color: var(--mq-neon-1); font-weight: bold; }
+.sys-btn {
+  background: none; border: 1px solid var(--glass-border); color: var(--text-muted);
+  cursor: pointer; padding: 2px 8px; font-size: 0.7rem; border-radius: 3px; transition: 0.2s;
+}
+.sys-btn:hover, .sys-btn.active { color: var(--mq-neon-1); border-color: var(--mq-neon-1); box-shadow: var(--glow-subtle); }
+
+/* ================= LAYOUT ================= */
+#app-container { display: flex; flex: 1; overflow: hidden; position: relative; }
+
+/* ================= SIDEBAR ================= */
+#sidebar {
+  width: 320px; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--glass-border); display: flex; flex-direction: column;
+  z-index: 100; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sidebar-header { padding: 20px; border-bottom: 1px solid var(--glass-border); }
+.brand { font-size: 1.1rem; font-weight: 700; color: var(--mq-neon-1); text-shadow: var(--glow-subtle); margin-bottom: 15px; display: flex; justify-content: space-between; }
+.search-container { position: relative; }
+.search-box {
+  width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: var(--text-main);
+  padding: 8px 12px 8px 30px; border-radius: 6px; font-size: 0.85rem; transition: 0.3s;
+}
+.search-box:focus { border-color: var(--mq-neon-1); box-shadow: var(--glow-subtle); }
+.search-icon { position: absolute; left: 10px; top: 9px; color: var(--text-muted); font-size: 0.8rem; }
+
+/* Tree View */
+#directory { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 4px; }
+.tree-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s;
+  border: 1px solid transparent;
+}
+.tree-item:hover { background: var(--glass-hover); border-color: var(--glass-border); }
+.tree-item.active {
+  background: rgba(0, 255, 136, 0.08); border-color: var(--mq-neon-1);
+  box-shadow: inset 2px 0 0 var(--mq-neon-1);
+}
+.folder-name { color: var(--mq-neon-2); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display:flex; align-items:center; gap:6px;}
+.page-info { display: flex; align-items: center; gap: 8px; }
+.page-icon { color: var(--text-muted); }
+.page-name { font-weight: 500; }
+.page-meta { font-size: 0.65rem; color: var(--text-muted); }
+.actions button { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; transition: 0.2s; opacity: 0; }
+.tree-item:hover .actions button { opacity: 1; }
+.actions button:hover { color: var(--mq-neon-1); }
+
+/* Sidebar Footer */
+.sidebar-footer { padding: 15px; border-top: 1px solid var(--glass-border); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* ================= BUTTONS ================= */
+.btn {
+  padding: 8px 12px; border-radius: 6px; font-weight: 600; font-size: 0.8rem;
+  cursor: pointer; transition: all 0.2s; border: 1px solid var(--glass-border);
+  background: var(--glass-bg); color: var(--text-main); display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn:hover { background: var(--glass-hover); border-color: var(--mq-neon-1); color: var(--mq-neon-1); }
+.btn-primary { background: rgba(0, 255, 136, 0.1); border-color: var(--mq-neon-1); color: var(--mq-neon-1); }
+.btn-primary:hover { background: var(--mq-neon-1); color: #000; box-shadow: var(--glow-strong); }
+.btn-danger:hover { background: var(--error); border-color: var(--error); color: #fff; box-shadow: 0 0 15px rgba(255,51,102,0.4); }
+
+/* ================= WORKSPACE (MAIN) ================= */
+#workspace { flex: 1; display: flex; flex-direction: column; background: transparent; position: relative; }
+#toolbar {
+  height: 60px; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+}
+.toolbar-title { font-size: 1rem; font-weight: 600; color: var(--text-main); display:flex; align-items:center; gap:10px; }
+.device-toggles { display: flex; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 6px; overflow: hidden; }
+.device-toggles button { background: none; border: none; padding: 6px 15px; color: var(--text-muted); cursor: pointer; transition: 0.2s; font-size: 1.1rem; }
+.device-toggles button.active { background: var(--glass-hover); color: var(--mq-neon-1); }
+
+#canvas-container {
+  flex: 1; display: flex; justify-content: center; align-items: center;
+  background: radial-gradient(circle at center, rgba(0,255,136,0.02) 0%, transparent 70%),
+              url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjEiIGZpbGw9InJnYmEoMCwgMjU1LCAxMzYsIDAuMSkiLz48L3N2Zz4=');
+  padding: 20px; overflow: hidden;
+}
+.iframe-wrapper {
+  background: #fff; border: 1px solid var(--glass-border); border-radius: 8px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s;
+  overflow: hidden; display: flex; flex-direction: column; width: 100%; height: 100%;
+}
+.iframe-wrapper.tablet { width: 768px; height: 1024px; max-height: 100%; }
+.iframe-wrapper.mobile { width: 375px; height: 812px; max-height: 100%; border-radius: 30px; border: 8px solid #111; }
+#viewer { width: 100%; height: 100%; border: none; background: #fff; }
+
+/* ================= TOAST PREMIUM ================= */
+#toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 9999; }
+.toast {
+  background: rgba(5, 7, 15, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--glass-border);
+  color: #fff; padding: 15px 20px; border-radius: 8px; font-size: 0.85rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6); display: flex; flex-direction: column; min-width: 280px;
+  animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; overflow: hidden; position: relative;
+}
+.toast-header { display: flex; align-items: center; gap: 8px; font-weight: bold; margin-bottom: 4px; }
+.toast-success .toast-header { color: var(--mq-neon-1); }
+.toast-error .toast-header { color: var(--error); }
+.toast-info .toast-header { color: var(--mq-neon-2); }
+.toast-msg { color: var(--text-muted); }
+.toast-bar { position: absolute; bottom: 0; left: 0; height: 3px; width: 100%; animation: toastProgress 4s linear forwards; }
+.toast-success .toast-bar { background: var(--mq-neon-1); }
+.toast-error .toast-bar { background: var(--error); }
+.toast-info .toast-bar { background: var(--mq-neon-2); }
+
+@keyframes toastIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes toastOut { to { transform: translateX(120%); opacity: 0; } }
+@keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
+
+/* ================= DRAG & DROP ================= */
+.drop-zone { border: 2px dashed transparent; transition: 0.2s; }
+.drop-zone.drag-over { border-color: var(--mq-neon-1); background: rgba(0, 255, 136, 0.1); }
+</style>
+</head>
+
+<body>
+
+<div id="system-panel">
+  <div class="sys-group">
+    <span style="color:var(--mq-neon-1); font-weight:bold;">MQ_OS CMS v2.0</span>
+    <div class="sys-item">STATE: <span class="sys-val" id="sys-sync">SYNCED</span></div>
+    <div class="sys-item">PAGES: <span class="sys-val" id="sys-pages">0</span></div>
+    <div class="sys-item">STORAGE: <span class="sys-val" id="sys-storage">0 KB</span></div>
+    <div class="sys-item">MEM: <span class="sys-val" id="sys-mem">-- MB</span></div>
+  </div>
+  <div class="sys-group">
+    <button class="sys-btn active" id="btn-audio" onclick="App.toggleAudio()" title="Sound FX">🔊 FX</button>
+    <button class="sys-btn active" id="btn-voice" onclick="App.toggleVoice()" title="Voice AI">🤖 AI</button>
+    <button class="sys-btn" onclick="App.undo()" title="Deshacer (Ctrl+Z)">↺ UNDO</button>
+    <button class="sys-btn" onclick="App.redo()" title="Rehacer (Ctrl+Y)">↻ REDO</button>
+  </div>
+</div>
+
+<div id="app-container">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <span>📄 DIRECTORIO</span>
+      </div>
+      <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-box" id="searchInput" placeholder="Buscar páginas, IDs..." oninput="UI.filterDirectory()">
+      </div>
+    </div>
+    
+    <div id="directory">
+      </div>
+    
+    <div class="sidebar-footer">
+      <button class="btn btn-primary" onclick="App.createPage()">➕ Página</button>
+      <button class="btn" onclick="App.createFolder()">📁 Carpeta</button>
+      <button class="btn" onclick="App.exportProject()">📤 Export</button>
+      <button class="btn" onclick="document.getElementById('fileInput').click()">📥 Import</button>
+      <input type="file" id="fileInput" style="display:none" accept=".json" onchange="App.importProject(event)">
+    </div>
+  </aside>
+
+  <main id="workspace">
+    <div id="toolbar">
+      <div class="toolbar-title" id="currentTitle">
+        <span style="color:var(--text-muted)">//</span> Seleccione un archivo
+      </div>
+      
+      <div style="display:flex; gap: 15px; align-items:center;">
+        <div class="device-toggles" id="device-controls" style="display:none;">
+          <button class="active" onclick="UI.setPreviewMode('desktop')" title="Desktop">🖥️</button>
+          <button onclick="UI.setPreviewMode('tablet')" title="Tablet">📱</button>
+          <button onclick="UI.setPreviewMode('mobile')" title="Mobile">🤳</button>
+        </div>
+        <div id="page-actions" style="display:none; gap: 8px;">
+          <button class="btn" onclick="App.openBuilder()">🛠️ Builder Pro</button>
+          <button class="btn" onclick="App.renameCurrent()">✏️ Renombrar</button>
+          <button class="btn btn-danger" onclick="App.deleteCurrent()">🗑️ Eliminar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="canvas-container">
+      <div class="iframe-wrapper" id="iframe-wrapper">
+        <iframe id="viewer" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+/**
+ * MAXIQUEEN OS - PRO CMS CORE
+ * Architect: Enterprise System AI
+ */
+
+/* ================= STATE & DATA ================= */
+const State = {
+  project: {
+    id: crypto.randomUUID(),
+    name: "MAXIQUEEN Workspace",
+    lastModified: Date.now(),
+    folders: [{ id: 'root', name: 'Directorio Raíz' }],
+    pages: []
+  },
+  currentIndex: null,
+  history: [],
+  historyPointer: -1,
+  settings: { audio: true, voice: true },
+  
+  saveSnapshot() {
+    // Truncate future history if we are overriding after an undo
+    if (this.historyPointer < this.history.length - 1) {
+      this.history = this.history.slice(0, this.historyPointer + 1);
+    }
+    const snapshot = JSON.stringify(this.project);
+    // Don't save identical consecutive snapshots
+    if (this.history.length > 0 && this.history[this.historyPointer] === snapshot) return;
+    
+    this.history.push(snapshot);
+    if(this.history.length > 30) this.history.shift(); // Keep last 30 states
+    else this.historyPointer++;
+    
+    this._persist();
+  },
+  
+  _persist() {
+    this.project.lastModified = Date.now();
+    const data = JSON.stringify(this.project);
+    localStorage.setItem("MQ_CMS_DATA", data);
+    
+    // Update stats
+    document.getElementById('sys-storage').innerText = (new Blob([data]).size / 1024).toFixed(1) + " KB";
+    document.getElementById('sys-sync').innerText = "SAVED";
+    document.getElementById('sys-pages').innerText = this.project.pages.length;
+    setTimeout(() => document.getElementById('sys-sync').innerText = "SYNCED", 1000);
+  },
+
+  load() {
+    const data = localStorage.getItem("MQ_CMS_DATA");
+    if(data) {
+      try {
+        const parsed = JSON.parse(data);
+        // Migrations backward compatibility
+        if(!parsed.folders) parsed.folders = [{ id: 'root', name: 'Directorio Raíz' }];
+        parsed.pages.forEach(p => { if(!p.folderId) p.folderId = 'root'; });
+        this.project = parsed;
+      } catch(e) { console.error("Data corruption"); }
+    } else {
+      // Default initial state
+      this.project.pages.push({
+        id: crypto.randomUUID(), name: "Index", folderId: 'root',
+        html: `<!DOCTYPE html><html><body style="background:#000;color:#00ff88;font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;"><h2>MAXIQUEEN OS EN LÍNEA</h2></body></html>`
+      });
+    }
+    this.saveSnapshot();
+  }
+};
+
+/* ================= AUDIO & VOICE ENGINE ================= */
+const AudioSys = {
+  ctx: null,
+  synth: window.speechSynthesis,
+  voice: null,
+
+  init() {
+    try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){}
+    const setVoice = () => {
+      const voices = this.synth.getVoices();
+      this.voice = voices.find(v => v.lang.includes('es')) || voices[0];
+    };
+    if(this.synth.getVoices().length) setVoice();
+    else this.synth.onvoiceschanged = setVoice;
+  },
+
+  play(type) {
+    if(!State.settings.audio || !this.ctx) return;
+    if(this.ctx.state === 'suspended') this.ctx.resume();
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain); gain.connect(this.ctx.destination);
+    
+    const now = this.ctx.currentTime;
+    if(type === 'click') {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+      gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+      osc.start(now); osc.stop(now + 0.1);
+    } else if(type === 'save') {
+      osc.type = 'triangle'; osc.frequency.setValueAtTime(400, now); osc.frequency.setValueAtTime(800, now + 0.15);
+      gain.gain.setValueAtTime(0.05, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
+      osc.start(now); osc.stop(now + 0.3);
+    } else if(type === 'delete') {
+      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, now); osc.frequency.setValueAtTime(50, now + 0.2);
+      gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
+    }
+  },
+
+  speak(text) {
+    if(!State.settings.voice || !this.synth) return;
+    this.synth.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    if(this.voice) u.voice = this.voice;
+    u.rate = 1.1; u.pitch = 1.0; u.volume = 0.7;
+    this.synth.speak(u);
+  }
+};
+
+/* ================= UI CONTROLLER ================= */
+const UI = {
+  renderDirectory() {
+    const container = document.getElementById('directory');
+    container.innerHTML = '';
+    const query = document.getElementById('searchInput').value.toLowerCase();
+
+    State.project.folders.forEach(folder => {
+      // Don't show empty folders during active search unless folder matches
+      const folderPages = State.project.pages.filter(p => p.folderId === folder.id);
+      const folderMatches = folder.name.toLowerCase().includes(query);
+      
+      const filteredPages = folderPages.filter(p => 
+        p.name.toLowerCase().includes(query) || p.id.toLowerCase().includes(query) || p.html.toLowerCase().includes(query)
+      );
+
+      if(query && !folderMatches && filteredPages.length === 0) return;
+
+      // Render Folder Header (Drop Zone)
+      const folderEl = document.createElement('div');
+      folderEl.className = 'tree-item drop-zone';
+      folderEl.innerHTML = `<div class="folder-name">📁 ${folder.name}</div>`;
+      
+      // Drag & Drop events for folder
+      folderEl.ondragover = (e) => { e.preventDefault(); folderEl.classList.add('drag-over'); };
+      folderEl.ondragleave = () => folderEl.classList.remove('drag-over');
+      folderEl.ondrop = (e) => {
+        e.preventDefault(); folderEl.classList.remove('drag-over');
+        const pageId = e.dataTransfer.getData('text/plain');
+        App.movePageToFolder(pageId, folder.id);
+      };
+      container.appendChild(folderEl);
+
+      // Render Pages inside folder
+      (query && !folderMatches ? filteredPages : folderPages).forEach(page => {
+        const index = State.project.pages.findIndex(p => p.id === page.id);
+        const pageEl = document.createElement('div');
+        pageEl.className = `tree-item ${State.currentIndex === index ? 'active' : ''}`;
+        pageEl.style.paddingLeft = '24px';
+        pageEl.draggable = true;
+        
+        pageEl.ondragstart = (e) => { e.dataTransfer.setData('text/plain', page.id); };
+        pageEl.onclick = () => App.openPage(index);
+        
+        pageEl.innerHTML = `
+          <div class="page-info">
+            <span class="page-icon">📄</span>
+            <div>
+              <div class="page-name">${page.name}</div>
+              <div class="page-meta">ID: ${page.id.split('-')[0]}</div>
+            </div>
+          </div>
+          <div class="actions">
+            <button onclick="event.stopPropagation(); App.duplicatePage(${index})" title="Duplicar">⧉</button>
+          </div>
+        `;
+        container.appendChild(pageEl);
+      });
+    });
+  },
+
+  filterDirectory() { this.renderDirectory(); },
+
+  loadViewer() {
+    const title = document.getElementById('currentTitle');
+    const actions = document.getElementById('page-actions');
+    const controls = document.getElementById('device-controls');
+    const viewer = document.getElementById('viewer');
+
+    if(State.currentIndex !== null && State.project.pages[State.currentIndex]) {
+      const page = State.project.pages[State.currentIndex];
+      title.innerHTML = `<span style="color:var(--mq-neon-1)">📄</span> ${page.name}`;
+      actions.style.display = 'flex';
+      controls.style.display = 'flex';
+      viewer.srcdoc = page.html;
+    } else {
+      title.innerHTML = `<span style="color:var(--text-muted)">//</span> Seleccione un archivo`;
+      actions.style.display = 'none';
+      controls.style.display = 'none';
+      viewer.srcdoc = '';
+    }
+    this.renderDirectory();
+  },
+
+  setPreviewMode(mode) {
+    const wrapper = document.getElementById('iframe-wrapper');
+    wrapper.className = `iframe-wrapper ${mode === 'desktop' ? '' : mode}`;
+    document.querySelectorAll('.device-toggles button').forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    AudioSys.play('click');
+  },
+
+  toast(title, msg, type = 'info') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    const icon = type === 'success' ? '✔' : type === 'error' ? '⚠' : 'ℹ';
+    toast.innerHTML = `
+      <div class="toast-header"><span>${icon}</span> ${title}</div>
+      <div class="toast-msg">${msg}</div>
+      <div class="toast-bar"></div>
+    `;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.animation = 'toastOut 0.4s forwards';
+      setTimeout(() => toast.remove(), 400);
+    }, 4000);
+  }
+};
+
+/* ================= APP CONTROLLER ================= */
+const App = {
+  init() {
+    AudioSys.init();
+    State.load();
+    UI.loadViewer();
+    setInterval(this.updateMem, 2000);
+  },
+
+  updateMem() {
+    if(performance && performance.memory) {
+      document.getElementById('sys-mem').innerText = (performance.memory.usedJSHeapSize / 1048576).toFixed(1) + " MB";
+    }
+  },
+
+  toggleAudio() {
+    State.settings.audio = !State.settings.audio;
+    const btn = document.getElementById('btn-audio');
+    btn.classList.toggle('active', State.settings.audio);
+    if(State.settings.audio) AudioSys.play('click');
+  },
+
+  toggleVoice() {
+    State.settings.voice = !State.settings.voice;
+    const btn = document.getElementById('btn-voice');
+    btn.classList.toggle('active', State.settings.voice);
+    if(State.settings.voice) AudioSys.speak("Asistencia por voz activada.");
+  },
+
+  createPage() {
+    const name = prompt("Nombre de la nueva página:");
+    if(!name) return;
+    State.project.pages.push({
+      id: crypto.randomUUID(), name: name, folderId: 'root',
+      html: `<!DOCTYPE html><html><body style="background:#000;color:#00ff88;font-family:sans-serif;padding:40px;"><h1>${name}</h1><p>Módulo iniciado.</p></body></html>`
+    });
+    State.currentIndex = State.project.pages.length - 1;
+    State.saveSnapshot();
+    UI.loadViewer();
+    AudioSys.play('save');
+    AudioSys.speak(`Página ${name} creada.`);
+    UI.toast("Página Creada", `El nodo ${name} se inicializó correctamente.`, "success");
+  },
+
+  createFolder() {
+    const name = prompt("Nombre de la carpeta:");
+    if(!name) return;
+    State.project.folders.push({ id: crypto.randomUUID(), name });
+    State.saveSnapshot();
+    UI.renderDirectory();
+    AudioSys.play('click');
+  },
+
+  openPage(index) {
+    State.currentIndex = index;
+    UI.loadViewer();
+    AudioSys.play('click');
+  },
+
+  renameCurrent() {
+    if(State.currentIndex === null) return;
+    const p = State.project.pages[State.currentIndex];
+    const name = prompt("Renombrar archivo:", p.name);
+    if(name && name !== p.name) {
+      p.name = name;
+      State.saveSnapshot();
+      UI.loadViewer();
+      AudioSys.play('click');
+    }
+  },
+
+  duplicatePage(index) {
+    const p = State.project.pages[index];
+    State.project.pages.push({ ...p, id: crypto.randomUUID(), name: p.name + " (Copia)" });
+    State.saveSnapshot();
+    UI.renderDirectory();
+    AudioSys.play('save');
+    UI.toast("Duplicado", `Se generó una copia de ${p.name}`, "info");
+  },
+
+  deleteCurrent() {
+    if(State.currentIndex === null) return;
+    const p = State.project.pages[State.currentIndex];
+    if(confirm(`¿Eliminar permanentemente la página: ${p.name}?`)) {
+      State.project.pages.splice(State.currentIndex, 1);
+      State.currentIndex = null;
+      State.saveSnapshot();
+      UI.loadViewer();
+      AudioSys.play('delete');
+      AudioSys.speak("Página eliminada del sistema.");
+      UI.toast("Eliminado", `El nodo ${p.name} ha sido purgado.`, "error");
+    }
+  },
+
+  movePageToFolder(pageId, folderId) {
+    const page = State.project.pages.find(p => p.id === pageId);
+    if(page && page.folderId !== folderId) {
+      page.folderId = folderId;
+      State.saveSnapshot();
+      UI.renderDirectory();
+      AudioSys.play('save');
+    }
+  },
+
+  undo() {
+    if(State.historyPointer > 0) {
+      State.historyPointer--;
+      State.project = JSON.parse(State.history[State.historyPointer]);
+      State.currentIndex = null;
+      State._persist();
+      UI.loadViewer();
+      AudioSys.play('click');
+      UI.toast("Historial", "Cambio deshecho (Undo)", "info");
+    }
+  },
+
+  redo() {
+    if(State.historyPointer < State.history.length - 1) {
+      State.historyPointer++;
+      State.project = JSON.parse(State.history[State.historyPointer]);
+      State.currentIndex = null;
+      State._persist();
+      UI.loadViewer();
+      AudioSys.play('click');
+      UI.toast("Historial", "Cambio rehecho (Redo)", "info");
+    }
+  },
+
+  exportProject() {
+    const blob = new Blob([JSON.stringify(State.project, null, 2)], {type: "application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `MQ_CMS_Backup_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    AudioSys.play('save');
+    AudioSys.speak("Proyecto exportado exitosamente.");
+    UI.toast("Exportación Completa", "Archivo JSON generado y descargado.", "success");
+  },
+
+  importProject(e) {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if(!data.pages) throw new Error("Formato inválido");
+        State.project = data;
+        State.currentIndex = null;
+        // Clean history on new import
+        State.history = []; State.historyPointer = -1;
+        State.saveSnapshot();
+        UI.loadViewer();
+        AudioSys.play('save');
+        AudioSys.speak("Estructura de proyecto importada.");
+        UI.toast("Importación Exitosa", "Directorio cargado al sistema.", "success");
+      } catch(err) {
+        AudioSys.play('delete');
+        UI.toast("Error Crítico", "El archivo JSON está corrupto o es incompatible.", "error");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = ''; // Reset
+  },
+
+  openBuilder() {
+    if(State.currentIndex === null) return;
+    AudioSys.play('click');
+    UI.toast("Enlace Builder", "Abriendo interfaz de desarrollo profesional...", "info");
+    const win = window.open("builder.html", "builder");
+    
+    // Pro Integration: Enviar estado y escuchar sincronización
+    setTimeout(() => {
+      if(win) {
+        win.postMessage({ 
+          type: "LOAD_PAGE", 
+          html: State.project.pages[State.currentIndex].html,
+          index: State.currentIndex
+        }, "*");
+      }
+    }, 1000);
+  }
+};
+
+/* ================= BUILDER SYNC LISTENER ================= */
+window.addEventListener("message", e => {
+  if(e.data?.type === "SYNC_PAGE" || e.data?.type === "SAVE_PAGE") {
+    const { html, index } = e.data;
+    if(State.project.pages[index] && State.project.pages[index].html !== html) {
+      State.project.pages[index].html = html;
+      State.saveSnapshot();
+      if(State.currentIndex === index) {
+        // Soft refresh del iframe sin parpadear completamente si es posible, o reload.
+        document.getElementById('viewer').srcdoc = html;
+      }
+      if(e.data.type === "SAVE_PAGE") {
+        AudioSys.play('save');
+        UI.toast("Sincronización PRO", "Cambios recibidos y guardados desde Builder.", "success");
+      }
+    }
+  }
+});
+
+/* ================= HOTKEYS ================= */
+document.addEventListener('keydown', e => {
+  if(e.ctrlKey || e.metaKey) {
+    if(e.key === 'z' && !e.shiftKey) { e.preventDefault(); App.undo(); }
+    if(e.key === 'y' || (e.key === 'z' && e.shiftKey)) { e.preventDefault(); App.redo(); }
+  }
+});
+
+/* ================= BOOTSTRAP ================= */
+document.addEventListener('DOMContentLoaded', () => App.init());
+
+</script>
+</body>
+</html>

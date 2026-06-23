@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaxiQueen OS · Organigrama v2</title>
+<style>
+:root{--bg:#050507;--neon-gold:#FFD700;--neon-cyan:#00FFF7;--neon-purple:#A855F7;--neon-green:#39FF14;--neon-orange:#FF6B00;--neon-pink:#FF10F0;--neon-blue:#00BFFF;--neon-teal:#00FFC6;--neon-yellow:#FFE600;--neon-gray:#9CA3AF;--neon-violet:#C084FC;--neon-red:#FF3B3B}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#e5e7eb;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+.bg-glow{position:fixed;inset:0;pointer-events:none;background:radial-gradient(600px at 20% 10%,rgba(168,85,247,.15),transparent),radial-gradient(500px at 80% 90%,rgba(0,255,247,.12),transparent)}
+header{padding:32px 24px 12px;text-align:center}
+h1{margin:0;font-size:clamp(24px,4vw,40px);letter-spacing:.04em;text-shadow:0 0 12px rgba(255,255,255,.3)}
+.subtitle{opacity:.7;margin-top:6px}
+.topbar{max-width:1100px;margin:16px auto;padding:12px 16px;border:1px solid rgba(168,85,247,.4);border-radius:12px;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);box-shadow:0 0 20px rgba(168,85,247,.2);display:flex;justify-content:between;align-items:center;flex-wrap:wrap;gap:16px}
+.topbar-left{flex:1;min-width:280px}
+.topbar-right{display:flex;gap:8px;align-items:center}
+.topbar input{background:#0b0b12;border:1px solid #333;color:#fff;padding:8px 10px;border-radius:8px;width:240px;outline:none;transition:.2s}
+.topbar input:focus{border-color:var(--neon-purple);box-shadow:0 0 8px rgba(168,85,247,.5)}
+.topbar button{background:#1a1a24;color:#fff;border:1px solid #555;padding:8px 12px;border-radius:8px;cursor:pointer}
+.topbar button:hover{box-shadow:0 0 10px rgba(0,255,247,.5)}
+.counter-banner{max-width:1100px;margin:0 auto;padding:0 16px;display:flex;gap:16px;font-size:13px}
+.counter-box{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);padding:6px 12px;border-radius:8px}
+.center{display:flex;flex-direction:column;align-items:center;gap:16px;margin:24px 0}
+.core{width:140px;height:140px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#1a1a1a,#000);border:2px solid var(--neon-purple);box-shadow:0 0 30px rgba(168,85,247,.6),inset 0 0 20px rgba(168,85,247,.2);display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;letter-spacing:.1em}
+.btn-sales{background:transparent;border:2px solid var(--neon-green);color:#fff;padding:14px 24px;border-radius:14px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.08em;box-shadow:0 0 20px rgba(57,255,20,.4);transition:.2s}
+.btn-sales:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(57,255,20,.7)}
+.grid{max-width:1200px;margin:0 auto;padding:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.card{position:relative;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;backdrop-filter:blur(4px);transition:.2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.card.gold{border-color:var(--neon-gold);box-shadow:0 0 18px rgba(255,215,0,.15)}
+.card.cyan{border-color:var(--neon-cyan);box-shadow:0 0 18px rgba(0,255,247,.15)}
+.card.purple{border-color:var(--neon-purple);box-shadow:0 0 18px rgba(168,85,247,.15)}
+.card.green{border-color:var(--neon-green);box-shadow:0 0 18px rgba(57,255,20,.15)}
+.card.orange{border-color:var(--neon-orange);box-shadow:0 0 18px rgba(255,107,0,.15)}
+.card.pink{border-color:var(--neon-pink);box-shadow:0 0 18px rgba(255,16,240,.15)}
+.card.blue{border-color:var(--neon-blue);box-shadow:0 0 18px rgba(0,191,255,.15)}
+.card.teal{border-color:var(--neon-teal);box-shadow:0 0 18px rgba(0,255,198,.15)}
+.card.yellow{border-color:var(--neon-yellow);box-shadow:0 0 18px rgba(255,230,0,.15)}
+.card.gray{border-color:var(--neon-gray);box-shadow:0 0 18px rgba(156,163,175,.15)}
+.card.violet{border-color:var(--neon-violet);box-shadow:0 0 18px rgba(192,132,252,.15)}
+.card.red{border-color:var(--neon-red);box-shadow:0 0 18px rgba(255,59,59,.15)}
+.badge{position:absolute;top:10px;right:10px;font-size:11px;padding:4px 8px;border-radius999px;background:#0a0a0f;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:#555;box-shadow:0 0 6px currentColor}
+.dot.live{background:#39FF14;color:#39FF14;animation:pulse 1.5s infinite}
+.dot.off{background:#ff3b3b;color:#ff3b3b}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+h3{margin:8px 0 4px;font-size:16px}
+.role{opacity:.7;font-size:12px;margin-bottom:8px}
+.url{font-size:12px;word-break:break-all;color:#a5b4fc;text-decoration:none}
+.url:hover{text-decoration:underline}
+.meta{display:flex;gap:12px;margin:8px 0;font-size:12px;opacity:.8}
+.checklist{margin-top:10px;font-size:12px}
+.checklist label{display:flex;gap:6px;align-items:flex-start;margin:4px 0;cursor:pointer}
+.checklist input{margin-top:2px}
+footer{max-width:1100px;margin:24px auto;padding:12px 16px;text-align:center;opacity:.7;font-size:12px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal.active{display:flex}
+.modal-content{background:#0a0a0f;border:1px solid rgba(57,255,20,.5);border-radius:16px;max-width:1000px;width:100%;padding:24px;box-shadow:0 0 40px rgba(57,255,20,.3);max-height:90vh;overflow:auto}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:16px}
+.plan{background:#11111a;border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px}
+.plan h4{margin:0 0 8px}
+.price{font-size:24px;font-weight:700;margin:8px 0;color:var(--neon-green)}
+.plan ul{margin:8px 0 12px;padding-left:18px;font-size:13px;opacity:.9}
+.plan a{display:inline-block;margin-top:8px;padding:8px 12px;background:transparent;border:1px solid var(--neon-green);color:#fff;border-radius:8px;text-decoration:none;font-size:13px}
+.plan a:hover{box-shadow:0 0 12px rgba(57,255,20,.5)}
+.close{float:right;background:none;border:1px solid #444;color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<header>
+<h1>MAXIQUEEN OS · ORGANIGRAMA v2</h1>
+<div class="subtitle">Command Center — Negro + neón. Cada URL es un empleado vivo.</div>
+</header>
+
+<div class="topbar">
+<div class="topbar-left">
+<strong>📊 Analytics · Visitas</strong>
+<div style="margin-top:6px;font-size:13px;opacity:.8">Filtro operacional activo — Conecta tu GA4 local</div>
+<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+<input id="gaInput" placeholder="Conecta GA4 ID (G-XXXX)">
+<button onclick="connectGA()">Conectar</button>
+<span id="gaStatus" style="font-size:12px;opacity:.7"></span>
+</div>
+</div>
+<div class="topbar-right">
+<input id="searchBar" placeholder="🔍 Filtrar por nodo, función o rol..." oninput="filterGrid()">
+</div>
+</div>
+
+<div class="counter-banner">
+<div class="counter-box">Nodos Online: <b id="onlineCount" style="color:var(--neon-green)">0</b></div>
+<div class="counter-box">Nodos Offline: <b id="offlineCount" style="color:var(--neon-red)">0</b></div>
+</div>
+
+<div class="center">
+<div class="core">MAXIQUEEN<br>OS</div>
+<button class="btn-sales" onclick="openSales()">⚡ Activar modo ventas</button>
+<div style="font-size:13px;opacity:.7">MercadoPago Colombia · 3 planes listos</div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+Sistema desarrollado por César Julio Bedoya Barragán<br>
+Última sincronización: <span id="sync">--:--:--</span> · actualiza cada 30s Implícitamente<br>
+<span style="color:#39FF14">Status: Live & Operational</span>
+</footer>
+
+<div class="modal" id="salesModal">
+<div class="modal-content">
+<button class="close" onclick="closeSales()">Cerrar ✕</button>
+<h2 style="margin-top:0;text-shadow:0 0 10px rgba(57,255,20,.5)">MODO VENTAS · MERCADOPAGO COLOMBIA</h2>
+<p style="opacity:.8">Edita y exporta fichas listas para cobrar. Los precios están en COP.</p>
+<div class="plans" id="plans"></div>
+<div style="margin-top:16px;display:flex;gap:8px">
+<button onclick="downloadPlans()" style="background:transparent;border:1px solid #555;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer">Descargar fichas como HTML</button>
+</div>
+<p style="font-size:12px;opacity:.6;margin-top:8px">Reemplaza pref_id en MercadoPago cuando tengas tus links reales desde tu cuenta.</p>
+</div>
+</div>
+
+<script>
+const employees=[
+{cls:'gold',title:'CEO – Estrategia',role:'Posicionamiento y autoridad',url:'https://maxiqueen-os.vercel.app',func:'Narrativa, certificados Google Ads y ORCID',gaps:['Propuesta con precios claros','CTA Comprar ahora visible']},
+{cls:'cyan',title:'COO – Centro de Mando',role:'Dashboard operativo',url:'https://maxiqueen-os-v2.vercel.app',func:'Reúne backend, API status, módulos',gaps:['Panel ventas tiempo real','Métricas conversión']},
+{cls:'purple',title:'CTO – Núcleo Técnico',role:'Infraestructura',url:'https://backend-maxi-queen-os.vercel.app',func:'Python Core, JS Runtime, AI Modules',gaps:['Documentación API pública','Endpoint facturación']},
+{cls:'green',title:'Ventas – Cajero',role:'Cierre transaccional',url:'https://maxiqueen-os.vercel.app',func:'Pago seguro MercadoPago',gaps:['3 planes con precios','Checkout 1-clic']},
+{cls:'orange',title:'Producto – Fábrica',role:'Creación de oferta',url:'https://maxiqueen-os.vercel.app',func:'Programación Productos, Catálogo',gaps:['Fichas con demo','Botón comprar']},
+{cls:'pink',title:'Gaming – Entretenimiento',role:'Adquisición',url:'https://play-maxi-queen-os.vercel.app',func:'ShadowRunner, NeonRunner',gaps:['Monetización in-game','Captura emails']},
+{cls:'blue',title:'QA – Verificación',role:'Confianza',url:'https://maxiqueen-ver.vercel.app',func:'Sistema MQ-Ver',gaps:['Sello visible en checkout','Reporte automático']},
+{cls:'teal',title:'Mobile – App',role:'Experiencia móvil',url:'https://maxiqueen-os-app.vercel.app',func:'WebApp PWA',gaps:['Instalable','Push ofertas']},
+{cls:'yellow',title:'Soporte – Atención',role:'Retención',url:'https://maxiqueen-os.vercel.app',func:'Asistente MQ 24/7',gaps:['Base conocimiento','Chatbot vendedor']},
+{cls:'gray',title:'Legal – Compliance',role:'Protección',url:'https://maxiqueen-os.vercel.app',func:'Políticas privacidad, cookies',gaps:['Términos venta','Política reembolsos']},
+{cls:'violet',title:'Academia – Aprendizaje',role:'Educación',url:'https://maxiqueen-os.vercel.app',func:'Manual PDF, Black Box 4000',gaps:['Curso onboarding pago','Certificación propia']},
+{cls:'red',title:'Marketing – Distribución',role:'Tráfico',url:'https://www.instagram.com',func:'Sisters Shop, redes',gaps:['Landing por canal','Pixel tracking']},
+];
+
+let onlineNodes = 0;
+let offlineNodes = 0;
+
+function render(){
+ const grid=document.getElementById('grid');
+ grid.innerHTML='';
+ onlineNodes = 0;
+ offlineNodes = 0;
+ updateCounters();
+
+ employees.forEach((e,i)=>{
+  let savedVisits = localStorage.getItem('visits_'+i);
+  if(!savedVisits){
+    savedVisits = Math.floor(Math.random()*800+200);
+    localStorage.setItem('visits_'+i, savedVisits);
+  } else {
+    savedVisits = Number(savedVisits) + 1;
+    localStorage.setItem('visits_'+i, savedVisits);
+  }
+
+  const card=document.createElement('div');
+  card.className='card '+e.cls;
+  card.setAttribute('data-search', `${e.title} ${e.role} ${e.func}`.toLowerCase());
+  card.innerHTML=`
+   <div class="badge"><span class="dot" id="dot${i}"></span><span id="stat${i}">CHECKING</span></div>
+   <h3>${e.title}</h3>
+   <div class="role">${e.role}</div>
+   <a class="url" href="${e.url}" target="_blank">${e.url}</a>
+   <div class="meta"><span>Visitas: <b>${savedVisits}</b></span><span id="ping${i}">· —</span></div>
+   <div style="font-size:12px;opacity:.8;margin:6px 0">${e.func}</div>
+   <div class="checklist">${e.gaps.map((g,gi)=>`<label><input type="checkbox" data-emp="${i}" data-gap="${gi}" ${localStorage.getItem('chk_'+i+'_'+gi)?'checked':''}> <span>${g}</span></label>`).join('')}</div>
+  `;
+  grid.appendChild(card);
+  checkLive(e.url,i);
+ });
+
+ document.querySelectorAll('.checklist input').forEach(cb=>cb.addEventListener('change',ev=>{
+   localStorage.setItem('chk_'+ev.target.dataset.emp+'_'+ev.target.dataset.gap, ev.target.checked?1:'')
+ }));
+}
+
+async function checkLive(url,i){
+ const start=performance.now();
+ try{
+  const ctrl=new AbortController(); setTimeout(()=>ctrl.abort(),4000);
+  await fetch(url,{method:'HEAD',mode:'no-cors',signal:ctrl.signal});
+  const ms=Math.round(performance.now()-start);
+  document.getElementById('dot'+i).className='dot live';
+  document.getElementById('stat'+i).textContent='ONLINE';
+  document.getElementById('ping'+i).textContent='· '+ms+'ms';
+  onlineNodes++;
+  updateCounters();
+ }catch{
+  document.getElementById('dot'+i).className='dot off';
+  document.getElementById('stat'+i).textContent='OFFLINE';
+  offlineNodes++;
+  updateCounters();
+ }
+}
+
+function updateCounters(){
+  document.getElementById('onlineCount').textContent = onlineNodes;
+  document.getElementById('offlineCount').textContent = offlineNodes;
+}
+
+function filterGrid(){
+  const query = document.getElementById('searchBar').value.toLowerCase();
+  const cards = document.querySelectorAll('.grid .card');
+  cards.forEach(card => {
+    const text = card.getAttribute('data-search');
+    if(text.includes(query)){
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+function syncTime(){document.getElementById('sync').textContent=new Date().toLocaleTimeString();}
+setInterval(syncTime,30000);syncTime();
+
+function connectGA(){
+ const id=document.getElementById('gaInput').value.trim();
+ if(!id){document.getElementById('gaStatus').textContent='Ingresa un ID';return}
+ localStorage.setItem('ga4',id);
+ document.getElementById('gaStatus').textContent='Conectado – '+id;
+}
+if(localStorage.getItem('ga4')){document.getElementById('gaInput').value=localStorage.getItem('ga4');document.getElementById('gaStatus').textContent='Conectado'}
+
+const plansData=[
+{ name:'PLAN STARTER', price:'$49.000 COP/mes', feats:['Acceso dashboard v2','1 juego premium','Soporte email','Actualizaciones mensuales'], id:'STARTER_MQ_V2'},
+{ name:'PLAN PRO', price:'$149.000 COP/mes', feats:['Todo Starter','IA Chat V2 ilimitado','5 juegos + Play Core','Soporte 24/7','Panel analíticas'], id:'PRO_MQ_V2'},
+{ name:'PLAN ÉLITE', price:'$399.000 COP/mes', feats:['Todo Pro','Backend dedicado','Verificación MQ-Ver','Consultoría 1:1 mensual','White-label'], id:'ELITE_MQ_V2'},
+];
+
+function openSales(){
+ document.getElementById('salesModal').classList.add('active');
+ const container=document.getElementById('plans');
+ container.innerHTML='';
+ plansData.forEach(p=>{
+  const div=document.createElement('div');div.className='plan';
+  div.innerHTML=`<h4>${p.name}</h4><div class="price">${p.price}</div><ul>${p.feats.map(f=>`<li>${f}</li>`).join('')}</ul><a href="https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${p.id}" target="_blank">Pagar con MercadoPago</a>`;
+  container.appendChild(div);
+ });
+}
+function closeSales(){document.getElementById('salesModal').classList.remove('active')}
+function downloadPlans(){
+ const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>MaxiQueen Planes</title><style>body{background:#050507;color:#fff;font-family:sans-serif;padding:24px}.plan{background:#11111a;border:1px solid #333;border-radius:14px;padding:16px;margin-bottom:16px;max-width:300px}.price{color:#39FF14;font-size:20px;font-weight:bold}a{color:#fff;text-decoration:none;border:1px solid #39FF14;padding:6px 12px;display:inline-block;margin-top:8px;border-radius:6px}</style></head><body>${document.getElementById('plans').innerHTML}</body></html>`;
+ const blob=new Blob([html],{type:'text/html'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='maxiqueen-planes-mercadopago.html';a.click();URL.revokeObjectURL(a.href);
+}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>MaxiQueen Game</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="game">
+
+  <h1>🚀 Activa tu negocio</h1>
+
+  <p>💰 Dinero: $<span id="money">0</span></p>
+  <p>📈 Nivel: <span id="level">1</span></p>
+
+  <div class="actions">
+    <button onclick="crearContenido()">🎨 Crear contenido</button>
+    <button onclick="vender()">🛒 Vender</button>
+    <button onclick="automatizar()">⚙️ Automatizar</button>
+  </div>
+
+  <div id="log"></div>
+
+  <button class="cta" onclick="finalizar()">
+    🚀 Activar sistema real
+  </button>
+
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>

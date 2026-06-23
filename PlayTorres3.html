@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MAXIQUEEN OS • SNAKE PROTOCOL V2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-green: #00ff66;
+            --neon-purple: #bc13fe;
+            --neon-gold: #ffdb58;
+            --dark-bg: #050a0f;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Reset estricto para evitar scroll indeseado */
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background: var(--dark-bg);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            flex-direction: column;
+            /* dvh asegura que respeta la barra de navegación del móvil */
+            height: 100dvh; 
+            overflow: hidden;
+        }
+
+        /* CABECERA Y HUD */
+        #header {
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.8);
+            border-bottom: 2px solid var(--neon-green);
+            flex-shrink: 0;
+        }
+
+        .stat { text-align: center; }
+        .stat-label { font-size: 0.6rem; color: var(--neon-green); display: block; }
+        .stat-value { font-size: 1rem; font-weight: 900; }
+
+        /* SELECTOR DE AVATARS */
+        #avatar-selector {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            width: 100%;
+            overflow-x: auto;
+            background: var(--glass);
+            flex-shrink: 0;
+            /* Ocultar barra de scroll */
+            scrollbar-width: none; 
+        }
+        #avatar-selector::-webkit-scrollbar { display: none; }
+
+        .avatar-card {
+            min-width: 90px;
+            padding: 8px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .avatar-card.active {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 102, 0.1);
+            transform: scale(1.05);
+        }
+
+        /* ÁREA DE JUEGO ADAPTATIVA */
+        #game-area {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            min-height: 0; /* Clave para que flexbox no desborde */
+            position: relative;
+        }
+
+        /* EL SECRETO DEL RESPONSIVE: Aspect Ratio y Max Dimensiones */
+        canvas {
+            background: #000;
+            border: 2px solid #1a1a1a;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.15);
+            /* Mantenerlo siempre cuadrado */
+            aspect-ratio: 1 / 1;
+            /* Escalar dinámicamente sin pasarse del contenedor */
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* CONTROLES MÓVILES */
+        #controls-container {
+            flex-shrink: 0;
+            padding: 10px 15px 25px 15px; /* Extra padding abajo para gestos de OS */
+            display: flex;
+            justify-content: center;
+        }
+
+        #controls {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            grid-template-rows: repeat(2, 50px);
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn-ctrl {
+            background: var(--glass);
+            border: 1px solid #333;
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .btn-ctrl:active { background: var(--neon-green); color: black; transform: scale(0.95); }
+
+        .btn-up { grid-column: 2; grid-row: 1; }
+        .btn-left { grid-column: 1; grid-row: 2; }
+        .btn-down { grid-column: 2; grid-row: 2; }
+        .btn-right { grid-column: 3; grid-row: 2; }
+
+        /* OVERLAY GAME OVER */
+        #overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <div class="stat"><span class="stat-label">AVATAR</span><span id="current-name" class="stat-value">NEON</span></div>
+    <div class="stat"><span class="stat-label">PUNTOS</span><span id="score-val" class="stat-value">0</span></div>
+    <div class="stat"><span class="stat-label">NIVEL</span><span id="lv-val" class="stat-value">1</span></div>
+</div>
+
+<div id="avatar-selector">
+    <div class="avatar-card active" onpointerdown="selectAvatar('NEON', '#00ff66', 110)" id="av-neon">
+        <div>🟢</div><strong>NEON</strong><p>Equilibrado</p>
+    </div>
+    <div class="avatar-card" onpointerdown="selectAvatar('PHANTOM', '#bc13fe', 85)" id="av-phantom">
+        <div>🟣</div><strong>PHANTOM</strong><p>Rápido</p>
+    </div>
+    <div class="avatar-card" onpointerdown="selectAvatar('ROYAL', '#ffdb58', 140)" id="av-royal">
+        <div>🟡</div><strong>ROYAL</strong><p>Puntos x2</p>
+    </div>
+</div>
+
+<div id="game-area">
+    <!-- Resolución lógica fija, CSS ajusta el tamaño visual -->
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    
+    <div id="overlay">
+        <h2 style="color: var(--neon-purple); margin-bottom: 20px; text-shadow: 0 0 10px var(--neon-purple);">SISTEMA CAÍDO</h2>
+        <button onpointerdown="startGame()" style="padding: 15px 30px; background: var(--neon-green); color: black; border: none; border-radius: 8px; font-family: 'Orbitron'; font-weight: 900; font-size: 1.1rem;">REINICIAR</button>
+    </div>
+</div>
+
+<div id="controls-container">
+    <div id="controls">
+        <div class="btn-ctrl btn-up" onpointerdown="setDir('UP')">▲</div>
+        <div class="btn-ctrl btn-left" onpointerdown="setDir('LEFT')">◀</div>
+        <div class="btn-ctrl btn-down" onpointerdown="setDir('DOWN')">▼</div>
+        <div class="btn-ctrl btn-right" onpointerdown="setDir('RIGHT')">▶</div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Motor Lógico: Siempre 400x400 internamente (Cuadrícula 20x20)
+    const TILE_SIZE = 20;
+    const TILES_X = canvas.width / TILE_SIZE; // 20
+    const TILES_Y = canvas.height / TILE_SIZE; // 20
+    
+    let snake = [];
+    let food = {x: 0, y: 0};
+    let dir = 'RIGHT';
+    let nextDir = 'RIGHT';
+    let score = 0;
+    let level = 1;
+    let gameInterval;
+    let currentAvatar = { name: 'NEON', color: '#00ff66', baseSpeed: 110 };
+
+    function selectAvatar(name, color, speed) {
+        currentAvatar = { name, color, baseSpeed: speed };
+        document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('active'));
+        document.getElementById('av-' + name.toLowerCase()).classList.add('active');
+        document.getElementById('current-name').innerText = name;
+        document.getElementById('current-name').style.color = color;
+        startGame();
+    }
+
+    function startGame() {
+        // Inicialización
+        snake = [{x: 5, y: 10}, {x: 4, y: 10}, {x: 3, y: 10}];
+        dir = 'RIGHT';
+        nextDir = 'RIGHT';
+        score = 0;
+        level = 1;
+        
+        updateHUD();
+        document.getElementById('overlay').style.display = 'none';
+        
+        spawnFood();
+        
+        if(gameInterval) clearInterval(gameInterval);
+        gameInterval = setInterval(update, currentAvatar.baseSpeed);
+    }
+
+    function updateHUD() {
+        document.getElementById('score-val').innerText = score;
+        document.getElementById('lv-val').innerText = level;
+    }
+
+    function spawnFood() {
+        let isSafe = false;
+        while(!isSafe) {
+            food = {
+                x: Math.floor(Math.random() * TILES_X),
+                y: Math.floor(Math.random() * TILES_Y)
+            };
+            isSafe = !snake.some(s => s.x === food.x && s.y === food.y);
+        }
+    }
+
+    function setDir(newDir) {
+        const opposites = { 'UP': 'DOWN', 'DOWN': 'UP', 'LEFT': 'RIGHT', 'RIGHT': 'LEFT' };
+        if (newDir !== opposites[dir]) nextDir = newDir;
+    }
+
+    // CONTROLES DE TECLADO (PC)
+    window.addEventListener('keydown', e => {
+        if(['ArrowUp', 'w', 'W'].includes(e.key)) setDir('UP');
+        if(['ArrowDown', 's', 'S'].includes(e.key)) setDir('DOWN');
+        if(['ArrowLeft', 'a', 'A'].includes(e.key)) setDir('LEFT');
+        if(['ArrowRight', 'd', 'D'].includes(e.key)) setDir('RIGHT');
+    });
+
+    // CONTROLES TÁCTILES: SWIPE (Móvil)
+    let touchStartX = 0;
+    let touchStartY = 0;
+    
+    document.getElementById('game-area').addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, {passive: true});
+
+    document.getElementById('game-area').addEventListener('touchend', e => {
+        let touchEndX = e.changedTouches[0].screenX;
+        let touchEndY = e.changedTouches[0].screenY;
+        let dx = touchEndX - touchStartX;
+        let dy = touchEndY - touchStartY;
+        
+        // Requiere un deslizamiento mínimo de 30px para contar como Swipe
+        if(Math.abs(dx) > 30 || Math.abs(dy) > 30) {
+            if(Math.abs(dx) > Math.abs(dy)) {
+                if(dx > 0) setDir('RIGHT');
+                else setDir('LEFT');
+            } else {
+                if(dy > 0) setDir('DOWN');
+                else setDir('UP');
+            }
+        }
+    }, {passive: true});
+
+    function update() {
+        dir = nextDir;
+        const head = { x: snake[0].x, y: snake[0].y };
+
+        if(dir === 'UP') head.y--;
+        if(dir === 'DOWN') head.y++;
+        if(dir === 'LEFT') head.x--;
+        if(dir === 'RIGHT') head.x++;
+
+        // Colisión con Paredes
+        if(head.x < 0 || head.x >= TILES_X || head.y < 0 || head.y >= TILES_Y) return gameOver();
+
+        // Colisión Consigo misma
+        if(snake.some(s => s.x === head.x && s.y === head.y)) return gameOver();
+
+        snake.unshift(head);
+
+        // Lógica de comer
+        if(head.x === food.x && head.y === food.y) {
+            score += (currentAvatar.name === 'ROYAL') ? 20 : 10;
+            
+            if(score % 100 === 0 || (currentAvatar.name === 'ROYAL' && score % 200 === 0)) {
+                level++;
+                increaseDifficulty();
+            }
+            updateHUD();
+            spawnFood();
+        } else {
+            snake.pop(); // Elimina la cola si no come
+        }
+
+        draw();
+    }
+
+    function increaseDifficulty() {
+        clearInterval(gameInterval);
+        // Cada nivel reduce el tiempo en 3ms, con un tope máximo de velocidad (45ms)
+        const newSpeed = Math.max(45, currentAvatar.baseSpeed - (level * 3));
+        gameInterval = setInterval(update, newSpeed);
+    }
+
+    function draw() {
+        // Limpiar lienzo
+        ctx.fillStyle = '#030508';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Grid (Opcional pero estético)
+        ctx.strokeStyle = '#111';
+        ctx.lineWidth = 1;
+        for(let i=0; i<=canvas.width; i+=TILE_SIZE) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+        }
+
+        // Dibujar Comida
+        ctx.fillStyle = '#ff0055';
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#ff0055';
+        ctx.beginPath();
+        ctx.arc(food.x * TILE_SIZE + TILE_SIZE/2, food.y * TILE_SIZE + TILE_SIZE/2, TILE_SIZE/2 - 2, 0, Math.PI*2);
+        ctx.fill();
+
+        // Dibujar Serpiente
+        ctx.shadowColor = currentAvatar.color;
+        snake.forEach((s, index) => {
+            ctx.fillStyle = index === 0 ? '#ffffff' : currentAvatar.color;
+            ctx.shadowBlur = index === 0 ? 20 : 5;
+            
+            if(currentAvatar.name === 'PHANTOM' && index !== 0) {
+                ctx.globalAlpha = 0.5; // Efecto fantasma
+            } else {
+                ctx.globalAlpha = 1.0;
+            }
+
+            // Un pequeño padding para que los bloques no estén 100% pegados visualmente
+            ctx.fillRect(s.x * TILE_SIZE + 1, s.y * TILE_SIZE + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+        });
+        
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1.0;
+    }
+
+    function gameOver() {
+        clearInterval(gameInterval);
+        document.getElementById('overlay').style.display = 'flex';
+        // Vibración en móviles soportados
+        if (typeof navigator.vibrate === "function") {
+            navigator.vibrate([200, 100, 200]);
+        }
+    }
+
+    // Auto-iniciar al cargar
+    window.onload = startGame;
+</script>
+</body>
+</html>

@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxiQueen OS Ventas — El Sistema Operativo que Llena tu Agenda en Automático</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mq-gold: #D4A96A;
+            --mq-pink: #FF2E78;
+            --mq-bg: #070708;
+        }
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--mq-bg);
+            color: #EAEAEA;
+            overflow-x: hidden;
+        }
+        h1, h2, h3 { font-family: 'Syne', sans-serif; font-weight: 800; letter-spacing: -0.02em; }
+        .gradient-text {
+            background: linear-gradient(95deg, #fff 20%, var(--mq-gold) 50%, #FFC2D9 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass {
+            background: rgba(15,15,17,0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .gold-glow { box-shadow: 0 0 40px rgba(212,169,106,0.25), 0 0 80px rgba(255,46,120,0.15); }
+        .btn-primary {
+            background: linear-gradient(100deg, var(--mq-gold), #F7D9A4);
+            color: #0a0a0a;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212,169,106,0.4); }
+        .btn-whatsapp {
+            background: #25D366;
+            color: #001a08;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        .btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(37,211,102,0.3); }
+        .shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+        .shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: skewX(-20deg);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer { 100% { left: 150%; } }
+        .faq-open .faq-answer { grid-template-rows: 1fr; padding-bottom: 1rem; }
+        .faq-answer { display: grid; grid-template-rows: 0fr; transition: all 0.4s ease; }
+        .faq-answer > div { overflow: hidden; }
+        @media (max-width: 390px) {
+            h1 { font-size: 2.3rem !important; line-height: 1.1 !important; }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-pink-500/30 selection:text-white">
+
+    <!-- TOP BAR URGENCIA -->
+    <div class="fixed top-0 w-full z-[60] bg-gradient-to-r from-[#FF2E78] to-[#D4A96A] text-black text-center text-[12px] sm:text-sm font-semibold py-2 px-2">
+        🔥 ÚLTIMOS 7 CUPOS DE NOVIEMBRE — Cierre hoy 11:59 PM. Sube a $197.000 mañana.
+    </div>
+
+    <!-- NAV -->
+    <nav class="fixed top-[32px] sm:top-[36px] w-full z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="glass rounded-2xl px-4 py-3 flex items-center justify-between mt-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D4A96A] to-[#FF2E78] flex items-center justify-center font-black text-black">MQ</div>
+                    <div>
+                        <p class="font-bold leading-none">MaxiQueen</p>
+                        <p class="text-[10px] tracking-[0.2em] text-white/60 -mt-1">OS VENTAS</p>
+                    </div>
+                </div>
+                <a href="https://wa.me/573016625921?text=Hola,%20quiero%20acceso%20a%20MaxiQueen%20OS%20Ventas%20por%20$147.000%20COP" class="hidden sm:flex btn-whatsapp text-sm px-4 py-2 rounded-xl items-center gap-2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.04 0C5.46 0 .14 5.3.12 11.82a11.8 11.8 0 0 0 1.58 5.94L0 24l6.38-1.67a11.82 11.82 0 0 0 5.66 1.44h.01c6.58 0 11.9-5.3 11.92-11.82a11.8 11.8 0 0 0-3.45-8.47ZM12.05 21.6h-.01a9.7 9.7 0 0 1-4.95-1.35l-.35-.21-3.79.99 1.01-3.69-.23-.38a9.68 9.68 0 0 1-1.49-5.14c0-5.37 4.39-9.74 9.8-9.74a9.72 9.72 0 0 1 6.9 2.85 9.66 9.66 0 0 1 2.87 6.88c-.02 5.37-4.4 9.75-9.76 9.75Zm5.38-7.28c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07s-1.27-.47-2.42-1.49c-.9-.8-1.5-1.79-1.68-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.48-.5-.67-.51-.17-.01-.37-.02-.57-.02s-.52.07-.8.37c-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35Z"/></svg>
+                    Comprar por WhatsApp
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="relative pt-40 pb-20 overflow-hidden">
+        <div class="absolute inset-0 -z-10">
+            <div class="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-[#FF2E78]/15 blur-[120px]"></div>
+            <div class="absolute bottom-[-30%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#D4A96A]/15 blur-[120px]"></div>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <div class="inline-flex items-center gap-2 glass px-3 py-1.5 rounded-full text-xs mb-6">
+                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                    VALIDADO EN 200+ NEGOCIOS DE BELLEZA EN COLOMBIA
+                </div>
+                <h1 class="text-[42px] sm:text-5xl lg:text-[68px] leading-[0.95]">Deja de perseguir clientas. <span class="gradient-text">Haz que te rueguen por una cita.</span></h1>
+                <p class="mt-6 text-lg text-white/70 max-w-xl">MaxiQueen OS Ventas es el sistema operativo que instalas en 48 horas para atraer, convertir y retener clientas premium en automático — sin pautas costosas, sin depender de referidos, sin contestar DM a las 11pm.</p>
+                
+                <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                    <a href="https://wa.me/573016625921?text=Hola,%20quiero%20mi%20MaxiQueen%20OS%20por%20$147.000%20COP%20YA" class="btn-primary px-7 py-4 rounded-2xl text-base sm:text-lg text-center shimmer">
+                        Quiero mi OS por $147.000 COP
+                    </a>
+                    <a href="https://wa.me/573016625921?text=Hola,%20quiero%20la%20implementación%20DONE-FOR-YOU%20de%20$897.000%20COP" class="glass px-7 py-4 rounded-2xl text-base font-semibold text-center hover:bg-white/10 transition">
+                        Quiero que lo instalen por mí — $897.000
+                    </a>
+                </div>
+
+                <div class="mt-6 flex items-center gap-4 text-sm text-white/60">
+                    <div class="flex -space-x-2">
+                        <img src="https://i.pravatar.cc/32?img=5" class="w-8 h-8 rounded-full border-2 border-black"/>
+                        <img src="https://i.pravatar.cc/32?img=32" class="w-8 h-8 rounded-full border-2 border-black"/>
+                        <img src="https://i.pravatar.cc/32?img=8" class="w-8 h-8 rounded-full border-2 border-black"/>
+                    </div>
+                    <p><span class="text-white font-semibold">+1.247</span> beauty bosses ya activaron su OS</p>
+                </div>
+            </div>
+
+            <div class="relative">
+                <div class="glass rounded-[2rem] p-2 gold-glow">
+                    <div class="bg-[#0B0B0E] rounded-[1.5rem] overflow-hidden border border-white/10">
+                        <div class="h-11 flex items-center gap-1.5 px-4 border-b border-white/5">
+                            <span class="w-3 h-3 rounded-full bg-red-500/80"></span><span class="w-3 h-3 rounded-full bg-yellow-500/80"></span><span class="w-3 h-3 rounded-full bg-green-500/80"></span>
+                            <p class="ml-3 text-xs text-white/50">maxiqueen-os.app/dashboard</p>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-xs text-white/50 mb-3">PIPELINE HOY</p>
+                            <div class="grid grid-cols-3 gap-3 mb-6">
+                                <div class="bg-white/5 rounded-xl p-3 border border-white/5"><p class="text-2xl font-bold text-[#D4A96A]">47</p><p class="text-[11px] text-white/50">Leads Nuevos</p></div>
+                                <div class="bg-white/5 rounded-xl p-3 border border-white/5"><p class="text-2xl font-bold text-[#FF2E78]">23</p><p class="text-[11px] text-white/50">Citas Agendadas</p></div>
+                                <div class="bg-white/5 rounded-xl p-3 border border-white/5"><p class="text-2xl font-bold text-white">18</p><p class="text-[11px] text-white/50">Pagos Confirmados</p></div>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between items-center bg-white/[0.03] p-3 rounded-lg"><span>WhatsApp Auto → Carolina M.</span><span class="text-green-400 text-xs">PAGÓ $280.000</span></div>
+                                <div class="flex justify-between items-center bg-white/[0.03] p-3 rounded-lg"><span>Recordatorio → Valentina R.</span><span class="text-yellow-400 text-xs">Confirmó 4pm</span></div>
+                                <div class="flex justify-between items-center bg-white/[0.03] p-3 rounded-lg"><span>Recuperación → Daniela S.</span><span class="text-white/60 text-xs">Reagendó</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute -bottom-6 -left-6 glass px-4 py-3 rounded-xl text-sm">
+                    <p class="text-white/60">Ingreso últimas 24h</p>
+                    <p class="text-2xl font-bold gradient-text">$1.847.000 COP</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- PROBLEMA -->
+    <section class="py-16 border-t border-white/5">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl">Si tu negocio depende de tu celular... <span class="text-white/50">no tienes un negocio, tienes un autoempleo caro.</span></h2>
+            <div class="grid md:grid-cols-3 gap-4 mt-12 text-left">
+                <div class="glass rounded-2xl p-6"><p class="text-[#FF2E78] font-semibold mb-2">Publicas y rezas</p><p class="text-white/70 text-sm">Historias todos los días, 30 vistas, 0 citas. El algoritmo te odia.</p></div>
+                <div class="glass rounded-2xl p-6"><p class="text-[#FF2E78] font-semibold mb-2">Cierras por chat a las 11pm</p><p class="text-white/70 text-sm">Respondes "precio?" 50 veces, te dejan en visto, gastas vida.</p></div>
+                <div class="glass rounded-2xl p-6"><p class="text-[#FF2E78] font-semibold mb-2">Agenda con huecos</p><p class="text-white/70 text-sm">Lunes lleno, martes vacío. Nunca sabes cuánto vas a facturar.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SISTEMA -->
+    <section class="py-20">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto">
+                <p class="text-[#D4A96A] font-semibold tracking-widest text-xs mb-3">EL SISTEMA</p>
+                <h2 class="text-4xl lg:text-5xl">MaxiQueen OS instala 3 motores en tu negocio</h2>
+            </div>
+            <div class="grid lg:grid-cols-3 gap-6 mt-14">
+                <div class="glass rounded-[2rem] p-8 hover:-translate-y-1 transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#D4A96A]/30 to-transparent border border-[#D4A96A]/30 flex items-center justify-center mb-5">01</div>
+                    <h3 class="text-2xl mb-3">Atracción Magnética</h3>
+                    <p class="text-white/70">15 plantillas de contenido probadas + guiones de Reels que traen clientas que PAGAN, no que preguntan. Calendario de 30 días listo para copiar/pegar.</p>
+                </div>
+                <div class="glass rounded-[2rem] p-8 hover:-translate-y-1 transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#FF2E78]/30 to-transparent border border-[#FF2E78]/30 flex items-center justify-center mb-5">02</div>
+                    <h3 class="text-2xl mb-3">Conversión en Automático</h3>
+                    <p class="text-white/70">Embudo de WhatsApp con 27 respuestas rápidas, menú interactivo, link de pago, y seguimiento que convierte 3 de cada 10 en cita pagada. Sin tú estar pegada.</p>
+                </div>
+                <div class="glass rounded-[2rem] p-8 hover:-translate-y-1 transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-white/20 to-transparent border border-white/20 flex items-center justify-center mb-5">03</div>
+                    <h3 class="text-2xl mb-3">Retención & Recompra</h3>
+                    <p class="text-white/70">Sistema de recordatorios, recuperación de clientas perdidas, y programa de referidas que llena tu agenda de clientas iguales a tu favorita.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LO QUE INCLUYE -->
+    <section class="py-20 bg-gradient-to-b from-transparent to-black/40 border-y border-white/5">
+        <div class="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-start">
+            <div>
+                <h2 class="text-4xl lg:text-5xl mb-6">Todo lo que recibes HOY por <span class="gradient-text">$147.000 COP</span></h2>
+                <p class="text-white/70 mb-8">Acceso inmediato. Un solo pago. Actualizaciones de por vida.</p>
+                <div class="space-y-3">
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">MaxiQueen CRM en Notion + Sheets</p><p class="text-sm text-white/60">Gestiona 500+ clientas sin enredos</p></div></div>
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">Banco de 200+ Respuestas de WhatsApp</p><p class="text-sm text-white/60">Precio, objeciones, seguimientos, cobros</p></div></div>
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">15 Plantillas Canva Premium</p><p class="text-sm text-white/60">Historias, feed, promociones listas</p></div></div>
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">Calculadora de Precios Rentables</p><p class="text-sm text-white/60">Deja de regalar tu trabajo</p></div></div>
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">Guiones de Cierre por Audio</p><p class="text-sm text-white/60">Exactamente qué decir para cobrar</p></div></div>
+                </div>
+                <a href="https://wa.me/573016625921?text=Hola,%20quiero%20pagar%20los%20$147.000%20COP%20de%20MaxiQueen%20OS" class="mt-8 inline-flex btn-whatsapp px-8 py-4 rounded-2xl text-lg w-full sm:w-auto justify-center">Activar mi OS ahora — $147.000</a>
+                <p class="text-xs text-white/50 mt-3">Pago seguro por Nequi, Daviplata, Bancolombia o link de pago.</p>
+            </div>
+            <div class="lg:sticky lg:top-28">
+                <div class="glass rounded-[2rem] p-1 gold-glow">
+                    <div class="bg-[#0B0B0E] rounded-[1.8rem] p-8 border border-white/10">
+                        <p class="text-xs tracking-widest text-[#D4A96A] font-semibold mb-2">UPGRADE RECOMENDADO</p>
+                        <h3 class="text-3xl mb-3">OS IMPLEMENTADO</h3>
+                        <p class="text-5xl font-bold mb-2">$897.000 <span class="text-lg text-white/50 font-normal">COP</span></p>
+                        <p class="text-white/70 text-sm mb-6">Nosotros lo instalamos TODO en 72h. Tú solo recibes clientas.</p>
+                        <ul class="space-y-3 text-sm mb-8">
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> Setup completo de CRM + WhatsApp Business</li>
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> 30 piezas de contenido personalizadas con tu marca</li>
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> Configuración de pagos automáticos (Wompi/Bold)</li>
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> 1:1 de 90min para lanzar tu primera campaña</li>
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> Garantía: 20 citas en 30 días o trabajamos gratis</li>
+                        </ul>
+                        <a href="https://wa.me/573016625921?text=Hola,%20QUIERO%20la%20implementación%20completa%20de%20$897.000%20COP" class="btn-primary w-full py-4 rounded-xl text-center block">Quiero Done-For-You</a>
+                        <p class="text-center text-xs text-white/50 mt-3">Solo 3 cupos este mes. 2 ya tomados.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIOS -->
+    <section class="py-20">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-center text-3xl lg:text-4xl mb-12">No es teoría. Son agendas llenas.</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Pasé de $2.1M a $6.4M en 28 días. No aumenté precios, solo instalé el OS y dejé de dar descuentos por DM.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=16" class="w-10 h-10 rounded-full"/><div><p class="font-semibold text-sm">Karen M. — Lashes Bogotá</p><p class="text-xs text-white/50">Plan $147.000</p></div></div></div>
+                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Tomé el de $897.000. En 3 días tenía todo listo. La primera semana agenda llena sin publicar nada nuevo.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=47" class="w-10 h-10 rounded-full"/><div><p class="font-semibold text-sm">Daniela T. — Nails Medellín</p><p class="text-xs text-white/50">Plan Implementado</p></div></div></div>
+                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Recuperé 34 clientas perdidas con el mensaje #7. $4.2M solo en reagendamientos.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=23" class="w-10 h-10 rounded-full"/><div><p class="font-semibold text-sm">Valeria S. — Micropigmentación Cali</p><p class="text-xs text-white/50">Plan $147.000</p></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-20 border-t border-white/5">
+        <div class="max-w-3xl mx-auto px-4">
+            <h2 class="text-3xl lg:text-4xl text-center mb-10">Preguntas frecuentes</h2>
+            <div class="space-y-3" id="faq">
+                <div class="faq-item glass rounded-2xl px-6 cursor-pointer">
+                    <button class="w-full flex justify-between items-center py-5 text-left <!DOCTYPE html>
+<html lang="es-CO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxiQueen OS Ventas — El Sistema Operativo que Llena tu Agenda en Automático</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mq-gold: #D4A96A;
+            --mq-pink: #FF2E78;
+            --mq-bg: #070708;
+        }
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--mq-bg);
+            color: #EAEAEA;
+            overflow-x: hidden;
+        }
+        h1, h2, h3 { font-family: 'Syne', sans-serif; font-weight: 800; letter-spacing: -0.02em; }
+        .gradient-text {
+            background: linear-gradient(95deg, #fff 20%, var(--mq-gold) 50%, #FFC2D9 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass {
+            background: rgba(15,15,17,0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .gold-glow { box-shadow: 0 0 40px rgba(212,169,106,0.25), 0 0 80px rgba(255,46,120,0.15); }
+        .btn-primary {
+            background: linear-gradient(100deg, var(--mq-gold), #F7D9A4);
+            color: #0a0a0a;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212,169,106,0.4); }
+        .btn-whatsapp {
+            background: #25D366;
+            color: #001a08;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        .btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(37,211,102,0.3); }
+        .shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+        .shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: skewX(-20deg);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer { 100% { left: 150%; } }
+        .faq-open .faq-answer { grid-template-rows: 1fr; padding-bottom: 1rem; }
+        .faq-answer { display: grid; grid-template-rows: 0fr; transition: all 0.4s ease; }
+        .faq-answer > div { overflow: hidden; }
+        @media (max-width: 390px) {
+            h1 { font-size: 2.3rem !important; line-height: 1.1 !important; }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-pink-500/30 selection:text-white">
+
+    <!-- TOP BAR URGENCIA -->
+    <div class="fixed top-0 w-full z-[60] bg-gradient-to-r from-[#FF2E78] to-[#D4A96A] text-black text-center text-[12px] sm:text-sm font-semibold py-2 px-2">
+        🔥 ÚLTIMOS 7 CUPOS DE NOVIEMBRE — Cierre hoy 11:59 PM. Sube a $197.000 mañana.
+    </div>
+
+    <!-- NAV -->
+    <nav class="fixed top-[32px] sm:top-[36px] w-full z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="glass rounded-2xl px-4 py-3 flex items-center justify-between mt-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D4A96A] to-[#FF2E78] flex items-center justify-center font-black text-black">MQ</div>
+                    <div>
+                        <p class="font-bold leading-none">MaxiQueen</p>
+                        <p class="text-[10px] tracking-[0.2em] text-white/60 -mt-1">OS VENTAS</p>
+                    </div>
+                </div>
+                <a href="https://wa.me/573016625921?text=Hola,%20quiero%20acceso%20a%20MaxiQueen%20OS%20Ventas%20por%20$147.000%20COP" class="hidden sm:flex btn-whatsapp text-sm px-4 py-2 rounded-xl items-center gap-2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.04 0C5.46 0 .14 5.3.12 11.82a11.8 11.8 0 0 0 1.58 5.94L0 24l6.38-1.67a11.82 11.82 0 0 0 5.66 1.44h.01c6.58 0 11.9-5.3 11.92-11.82a11.8 11.8 0 0 0-3.45-8.47ZM12.05 21.6h-.01a9.7 9.7 0 0 1-4.95-1.35l-.35-.21-3.79.99 1.01-3.69-.23-.38a9.68 9.68 0 0 1-1.49-5.14c0-5.37 4.39-9.74 9.8-9.74a9.72 9.72 0 0 1 6.9 2.85 9.66 9.66 0 0 1 2.87 6.88c-.02 5.37-4.4 9.75-9.76 9.75Zm5.38-7.28c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07s-1.27-.47-2.42-1.49c-.9-.8-1.5-1.79-1.68-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.48-.5-.67-.51-.17-.01-.37-.02-.57-.02s-.52.07-.8.37c-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35Z"/></svg>
+                    Comprar por WhatsApp
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="relative pt-40 pb-20 overflow-hidden">
+        <div class="absolute inset-0 -z-10">
+            <div class="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-[#FF2E78]/15 blur-[120px]"></div>
+            <div class="absolute bottom-[-30%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#D4A96A]/15 blur-[120px]"></div>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <div class="inline-flex items-center gap-2 glass px-3 py-1.5 rounded-full text-xs mb-6">
+                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                    VALIDADO EN 200+ NEGOCIOS DE BELLEZA EN COLOMBIA
+                </div>
+                <h1 class="text-[42px] sm:text-5xl lg:text-[68px] leading-[0.95]">Deja de perseguir clientas. <span class="gradient-text">Haz que te rueguen por una cita.</span></h1>
+                <p class="mt-6 text-lg text-white/70 max-w-xl">MaxiQueen OS Ventas es el sistema operativo que instalas en 48 horas para atraer, convertir y retener clientas premium en automático — sin pautas costosas, sin depender de referidos, sin contestar DM a las 11pm.</p>
+                
+                <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                    <a href="https://wa.me/573016625921?text=Hola,%20quiero%20mi%20MaxiQueen%20OS%20por%20$147.000%20COP%20YA" class="btn-primary px-7 py-4 rounded-2xl text-base sm:text-lg text-center shimmer">
+                        Quiero mi OS por $147.000 COP
+                    </a>
+                    <a href="https://wa.me/573016625921?text=Hola,%20quiero%20la%20implementación%20DONE-FOR-YOU%20de%20$897.000%20COP" class="glass px-7 py-4 rounded-2xl text-base font-semibold text-center hover:bg-white/10 transition">
+                        Quiero que lo instalen por mí — $897.000
+                    </a>
+                </div>
+
+                <div class="mt-6 flex items-center gap-4 text-sm text-white/60">
+                    <div class="flex -space-x-2">
+                        <img src="https://i.pravatar.cc/32?img=5" class="w-8 h-8 rounded-full border-2 border-black"/>
+                        <img src="https://i.pravatar.cc/32?img=32" class="w-8 h-8 rounded-full border-2 border-black"/>
+                        <img src="https://i.pravatar.cc/32?img=8" class="w-8 h-8 rounded-full border-2 border-black"/>
+                    </div>
+                    <p><span class="text-white font-semibold">+1.247</span> beauty bosses ya activaron su OS</p>
+                </div>
+            </div>
+
+            <div class="relative">
+                <div class="glass rounded-[2rem] p-2 gold-glow">
+                    <div class="bg-[#0B0B0E] rounded-[1.5rem] overflow-hidden border border-white/10">
+                        <div class="h-11 flex items-center gap-1.5 px-4 border-b border-white/5">
+                            <span class="w-3 h-3 rounded-full bg-red-500/80"></span><span class="w-3 h-3 rounded-full bg-yellow-500/80"></span><span class="w-3 h-3 rounded-full bg-green-500/80"></span>
+                            <p class="ml-3 text-xs text-white/50">maxiqueen-os.app/dashboard</p>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-xs text-white/50 mb-3">PIPELINE HOY</p>
+                            <div class="grid grid-cols-3 gap-3 mb-6">
+                                <div class="bg-white/5 rounded-xl p-3 border border-white/5"><p class="text-2xl font-bold text-[#D4A96A]">47</p><p class="text-[11px] text-white/50">Leads Nuevos</p></div>
+                                <div class="bg-white/5 rounded-xl p-3 border border-white/5"><p class="text-2xl font-bold text-[#FF2E78]">23</p><p class="text-[11px] text-white/50">Citas Agendadas</p></div>
+                                <div class="bg-white/5 rounded-xl p-3 border border-white/5"><p class="text-2xl font-bold text-white">18</p><p class="text-[11px] text-white/50">Pagos Confirmados</p></div>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between items-center bg-white/[0.03] p-3 rounded-lg"><span>WhatsApp Auto → Carolina M.</span><span class="text-green-400 text-xs">PAGÓ $280.000</span></div>
+                                <div class="flex justify-between items-center bg-white/[0.03] p-3 rounded-lg"><span>Recordatorio → Valentina R.</span><span class="text-yellow-400 text-xs">Confirmó 4pm</span></div>
+                                <div class="flex justify-between items-center bg-white/[0.03] p-3 rounded-lg"><span>Recuperación → Daniela S.</span><span class="text-white/60 text-xs">Reagendó</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute -bottom-6 -left-6 glass px-4 py-3 rounded-xl text-sm">
+                    <p class="text-white/60">Ingreso últimas 24h</p>
+                    <p class="text-2xl font-bold gradient-text">$1.847.000 COP</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- PROBLEMA -->
+    <section class="py-16 border-t border-white/5">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl">Si tu negocio depende de tu celular... <span class="text-white/50">no tienes un negocio, tienes un autoempleo caro.</span></h2>
+            <div class="grid md:grid-cols-3 gap-4 mt-12 text-left">
+                <div class="glass rounded-2xl p-6"><p class="text-[#FF2E78] font-semibold mb-2">Publicas y rezas</p><p class="text-white/70 text-sm">Historias todos los días, 30 vistas, 0 citas. El algoritmo te odia.</p></div>
+                <div class="glass rounded-2xl p-6"><p class="text-[#FF2E78] font-semibold mb-2">Cierras por chat a las 11pm</p><p class="text-white/70 text-sm">Respondes "precio?" 50 veces, te dejan en visto, gastas vida.</p></div>
+                <div class="glass rounded-2xl p-6"><p class="text-[#FF2E78] font-semibold mb-2">Agenda con huecos</p><p class="text-white/70 text-sm">Lunes lleno, martes vacío. Nunca sabes cuánto vas a facturar.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SISTEMA -->
+    <section class="py-20">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto">
+                <p class="text-[#D4A96A] font-semibold tracking-widest text-xs mb-3">EL SISTEMA</p>
+                <h2 class="text-4xl lg:text-5xl">MaxiQueen OS instala 3 motores en tu negocio</h2>
+            </div>
+            <div class="grid lg:grid-cols-3 gap-6 mt-14">
+                <div class="glass rounded-[2rem] p-8 hover:-translate-y-1 transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#D4A96A]/30 to-transparent border border-[#D4A96A]/30 flex items-center justify-center mb-5">01</div>
+                    <h3 class="text-2xl mb-3">Atracción Magnética</h3>
+                    <p class="text-white/70">15 plantillas de contenido probadas + guiones de Reels que traen clientas que PAGAN, no que preguntan. Calendario de 30 días listo para copiar/pegar.</p>
+                </div>
+                <div class="glass rounded-[2rem] p-8 hover:-translate-y-1 transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#FF2E78]/30 to-transparent border border-[#FF2E78]/30 flex items-center justify-center mb-5">02</div>
+                    <h3 class="text-2xl mb-3">Conversión en Automático</h3>
+                    <p class="text-white/70">Embudo de WhatsApp con 27 respuestas rápidas, menú interactivo, link de pago, y seguimiento que convierte 3 de cada 10 en cita pagada. Sin tú estar pegada.</p>
+                </div>
+                <div class="glass rounded-[2rem] p-8 hover:-translate-y-1 transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-white/20 to-transparent border border-white/20 flex items-center justify-center mb-5">03</div>
+                    <h3 class="text-2xl mb-3">Retención & Recompra</h3>
+                    <p class="text-white/70">Sistema de recordatorios, recuperación de clientas perdidas, y programa de referidas que llena tu agenda de clientas iguales a tu favorita.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LO QUE INCLUYE -->
+    <section class="py-20 bg-gradient-to-b from-transparent to-black/40 border-y border-white/5">
+        <div class="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-start">
+            <div>
+                <h2 class="text-4xl lg:text-5xl mb-6">Todo lo que recibes HOY por <span class="gradient-text">$147.000 COP</span></h2>
+                <p class="text-white/70 mb-8">Acceso inmediato. Un solo pago. Actualizaciones de por vida.</p>
+                <div class="space-y-3">
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">MaxiQueen CRM en Notion + Sheets</p><p class="text-sm text-white/60">Gestiona 500+ clientas sin enredos</p></div></div>
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">Banco de 200+ Respuestas de WhatsApp</p><p class="text-sm text-white/60">Precio, objeciones, seguimientos, cobros</p></div></div>
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">15 Plantillas Canva Premium</p><p class="text-sm text-white/60">Historias, feed, promociones listas</p></div></div>
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">Calculadora de Precios Rentables</p><p class="text-sm text-white/60">Deja de regalar tu trabajo</p></div></div>
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">Guiones de Cierre por Audio</p><p class="text-sm text-white/60">Exactamente qué decir para cobrar</p></div></div>
+                </div>
+                <a href="https://wa.me/573016625921?text=Hola,%20quiero%20pagar%20los%20$147.000%20COP%20de%20MaxiQueen%20OS" class="mt-8 inline-flex btn-whatsapp px-8 py-4 rounded-2xl text-lg w-full sm:w-auto justify-center">Activar mi OS ahora — $147.000</a>
+                <p class="text-xs text-white/50 mt-3">Pago seguro por Nequi, Daviplata, Bancolombia o link de pago.</p>
+            </div>
+            <div class="lg:sticky lg:top-28">
+                <div class="glass rounded-[2rem] p-1 gold-glow">
+                    <div class="bg-[#0B0B0E] rounded-[1.8rem] p-8 border border-white/10">
+                        <p class="text-xs tracking-widest text-[#D4A96A] font-semibold mb-2">UPGRADE RECOMENDADO</p>
+                        <h3 class="text-3xl mb-3">OS IMPLEMENTADO</h3>
+                        <p class="text-5xl font-bold mb-2">$897.000 <span class="text-lg text-white/50 font-normal">COP</span></p>
+                        <p class="text-white/70 text-sm mb-6">Nosotros lo instalamos TODO en 72h. Tú solo recibes clientas.</p>
+                        <ul class="space-y-3 text-sm mb-8">
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> Setup completo de CRM + WhatsApp Business</li>
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> 30 piezas de contenido personalizadas con tu marca</li>
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> Configuración de pagos automáticos (Wompi/Bold)</li>
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> 1:1 de 90min para lanzar tu primera campaña</li>
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> Garantía: 20 citas en 30 días o trabajamos gratis</li>
+                        </ul>
+                        <a href="https://wa.me/573016625921?text=Hola,%20QUIERO%20la%20implementación%20completa%20de%20$897.000%20COP" class="btn-primary w-full py-4 rounded-xl text-center block">Quiero Done-For-You</a>
+                        <p class="text-center text-xs text-white/50 mt-3">Solo 3 cupos este mes. 2 ya tomados.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIOS -->
+    <section class="py-20">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-center text-3xl lg:text-4xl mb-12">No es teoría. Son agendas llenas.</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Pasé de $2.1M a $6.4M en 28 días. No aumenté precios, solo instalé el OS y dejé de dar descuentos por DM.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=16" class="w-10 h-10 rounded-full"/><div><p class="font-semibold text-sm">Karen M. — Lashes Bogotá</p><p class="text-xs text-white/50">Plan $147.000</p></div></div></div>
+                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Tomé el de $897.000. En 3 días tenía todo listo. La primera semana agenda llena sin publicar nada nuevo.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=47" class="w-10 h-10 rounded-full"/><div><p class="font-semibold text-sm">Daniela T. — Nails Medellín</p><p class="text-xs text-white/50">Plan Implementado</p></div></div></div>
+                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Recuperé 34 clientas perdidas con el mensaje #7. $4.2M solo en reagendamientos.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=23" class="w-10 h-10 rounded-full"/><div><p class="font-semibold text-sm">Valeria S. — Micropigmentación Cali</p><p class="text-xs text-white/50">Plan $147.000</p></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-20 border-t border-white/5">
+        <div class="max-w-3xl mx-auto px-4">
+            <h2 class="text-3xl lg:text-4xl text-center mb-10">Preguntas frecuentes</h2>
+            <div class="space-y-3" id="faq">
+                <div class="faq-item glass rounded-2xl px-6 cursor-pointer">
+                    <button class="w-full flex justify-between items-center py-5 text-left 
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxiQueen OS Ventas — El Sistema Operativo que Llena tu Agenda en Automático</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mq-gold: #D4A96A;
+            --mq-pink: #FF2E78;
+            --mq-bg: #070708;
+        }
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--mq-bg);
+            color: #EAEAEA;
+            overflow-x: hidden;
+        }
+        h1, h2, h3 { font-family: 'Syne', sans-serif; font-weight: 800; letter-spacing: -0.02em; }
+        .gradient-text {
+            background: linear-gradient(95deg, #fff 20%, var(--mq-gold) 50%, #FFC2D9 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass {
+            background: rgba(15,15,17,0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .gold-glow { box-shadow: 0 0 40px rgba(212,169,106,0.25), 0 0 80px rgba(255,46,120,0.15); }
+        .btn-primary {
+            background: linear-gradient(100deg, var(--mq-gold), #F7D9A4);
+            color: #0a0a0a;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212,169,106,0.4); }
+        .btn-whatsapp {
+            background: #25D366;
+            color: #001a08;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        .btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(37,211,102,0.3); }
+        .shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+        .shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: skewX(-20deg);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer { 100% { left: 150%; } }
+        .faq-open .faq-answer { grid-template-rows: 1fr; padding-bottom: 1rem; }
+        .faq-answer { display: grid; grid-template-rows: 0fr; transition: all 0.4s ease; }
+        .faq-answer > div { overflow: hidden; }
+        @media (max-width: 390px) {
+            h1 { font-size: 2.3rem !important; line-height: 1.1 !important; }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-pink-500/30 selection:text-white">
+
+    <!-- TOP BAR URGENCIA -->
+    <div class="fixed top-0 w-full z-[60] bg-gradient-to-r from-[#FF2E78] to-[#D4A96A] text-black text-center text-[12px] sm:text-sm font-semibold py-2 px-2">
+        🔥 ÚLTIMOS 7 CUPOS DE NOVIEMBRE — Cierre hoy 11:59 PM. Sube a $197.000 mañana.
+    </div>
+
+    <!-- NAV -->
+    <nav class="fixed top-[32px] sm:top-[36px] w-full z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="glass rounded-2xl px-4 py-3 flex items-center justify-between mt-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D4A96A] to-[#FF2E78] flex items-center justify-center font-black text-black">MQ</div>
+                    <div>
+                        <p class="font-bold leading-none">MaxiQueen</p>
+                        <p class="text-[10px] tracking-[0.2em] text-white/60 -mt-1">OS VENTAS</p>
+                    </div>
+                </div>
+                <a href="https://wa.me/573016625921?text=Hola,%20quiero%20acceso%20a%20MaxiQueen%20OS%20Ventas%20por%20$147.000%20COP" class="hidden sm:flex btn-whatsapp text-sm px-4 py-2 rounded-xl items-center gap-2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.04 0C5.46 0 .14 5.3.12 11.82a11.8 11.8 0 0 0 1.58 5.94L0 24l6.38-1.67a11.82 11.82 0 0 0 5.66 1.44h.01c6.58 0 11.9-5.3 11.92-11.82a11.8 11.8 0 0 0-3.45-8.47ZM12.05 21.6h-.01a9.7 9.7 0 0 1-4.95-1.35l-.35-.21-3.79.99 1.01-3.69-.23-.38a9.68 9.68 0 0 1-1.49-5.14c0-5.37 4.39-9.74 9.8-9.74a9.72 9.72 0 0 1 6.9 2.85 9.66 9.66 0 0 1 2.87 6.88c-.02 5.37-4.4 9.75-9.76 9.75Zm5.38-7.28c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07s-1.27-.47-2.42-1.49c-.9-.8-1.5-1.79-1.68-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.48-.5-.67-.51-.17-.01-.37-.02-.57-.02s-.52.07-.8.37c-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35Z"/></svg>
+                    Comprar por WhatsApp
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="relative pt-40 pb-20 overflow-hidden">
+        <div class="absolute inset-0 -z-10">
+            <div class="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-[#FF2E78]/15 blur-[120px]"></div>
+            <div class="absolute bottom-[-30%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#D4A96A]/15 blur-[120px]"></div>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <div class="inline-flex items-center gap-2 glass px-3 py-1.5 rounded-full text-xs mb-6">
+                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                    VALIDADO EN 200+ NEGOCIOS DE BELLEZA EN COLOMBIA
+                </div>
+                <h1 class="text-[42px] sm:text-5xl lg:text-[68px] leading-[0.95]">Deja de perseguir clientas. <span class="gradient-text">Haz que te rueguen por una cita.</span></h1>
+                <p class="mt-6 text-lg text-white/70 max-w-xl">MaxiQueen OS Ventas es el sistema operativo que instalas en 48 horas para atraer, convertir y retener clientas premium en automático — sin pautas costosas, sin depender de referidos, sin contestar DM a las 11pm.</p>
+                
+                <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                    <a href="https://wa.me/573016625921?text=Hola,%20quiero%20mi%20MaxiQueen%20OS%20por%20$147.000%20COP%20YA" class="btn-primary px-7 py-4 rounded-2xl text-base sm:text-lg text-center shimmer">
+                        Quiero mi OS por $147.000 COP
+                    </a>
+                    <a href="https://wa.me/573016625921?text=Hola,%20quiero%20la%20implementación%20DONE-FOR-YOU%20de%20$897.000%20COP" class="glass px-7 py-4 rounded-2xl text-base font-semibold text-center hover:bg-white/10 transition">
+                        Quiero que lo instalen por mí — $897.000
+                    </a>
+                </div>
+
+                <div class="mt-6 flex items-center gap-4 text-sm text-white/60">
+                    <div class="flex -space-x-2">
+                        <img src="https://i.pravatar.cc/32?img=5" class="w-8 h-8 rounded-full border-2 border-black"/>
+                        <img src="https://i.pravatar.cc/32?img=32" class="w-8 h-8 rounded-full border-2 border-black"/>
+                        <img src="https://i.pravatar.cc/32?img=8" class="w-8 h-8 rounded-full border-2 border-black"/>
+                    </div>
+                    <p><span class="text-white font-semibold">+1.247</span> beauty bosses ya activaron su OS</p>
+                </div>
+            </div>
+
+            <div class="relative">
+                <div class="glass rounded-[2rem] p-2 gold-glow">
+                    <div class="bg-[#0B0B0E] rounded-[1.5rem] overflow-hidden border border-white/10">
+                        <div class="h-11 flex items-center gap-1.5 px-4 border-b border-white/5">
+                            <span class="w-3 h-3 rounded-full bg-red-500/80"></span><span class="w-3 h-3 rounded-full bg-yellow-500/80"></span><span class="w-3 h-3 rounded-full bg-green-500/80"></span>
+                            <p class="ml-3 text-xs text-white/50">maxiqueen-os.app/dashboard</p>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-xs text-white/50 mb-3">PIPELINE HOY</p>
+                            <div class="grid grid-cols-3 gap-3 mb-6">
+                                <div class="bg-white/5 rounded-xl p-3 border border-white/5"><p class="text-2xl font-bold text-[#D4A96A]">47</p><p class="text-[11px] text-white/50">Leads Nuevos</p></div>
+                                <div class="bg-white/5 rounded-xl p-3 border border-white/5"><p class="text-2xl font-bold text-[#FF2E78]">23</p><p class="text-[11px] text-white/50">Citas Agendadas</p></div>
+                                <div class="bg-white/5 rounded-xl p-3 border border-white/5"><p class="text-2xl font-bold text-white">18</p><p class="text-[11px] text-white/50">Pagos Confirmados</p></div>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between items-center bg-white/[0.03] p-3 rounded-lg"><span>WhatsApp Auto → Carolina M.</span><span class="text-green-400 text-xs">PAGÓ $280.000</span></div>
+                                <div class="flex justify-between items-center bg-white/[0.03] p-3 rounded-lg"><span>Recordatorio → Valentina R.</span><span class="text-yellow-400 text-xs">Confirmó 4pm</span></div>
+                                <div class="flex justify-between items-center bg-white/[0.03] p-3 rounded-lg"><span>Recuperación → Daniela S.</span><span class="text-white/60 text-xs">Reagendó</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute -bottom-6 -left-6 glass px-4 py-3 rounded-xl text-sm">
+                    <p class="text-white/60">Ingreso últimas 24h</p>
+                    <p class="text-2xl font-bold gradient-text">$1.847.000 COP</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- PROBLEMA -->
+    <section class="py-16 border-t border-white/5">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl">Si tu negocio depende de tu celular... <span class="text-white/50">no tienes un negocio, tienes un autoempleo caro.</span></h2>
+            <div class="grid md:grid-cols-3 gap-4 mt-12 text-left">
+                <div class="glass rounded-2xl p-6"><p class="text-[#FF2E78] font-semibold mb-2">Publicas y rezas</p><p class="text-white/70 text-sm">Historias todos los días, 30 vistas, 0 citas. El algoritmo te odia.</p></div>
+                <div class="glass rounded-2xl p-6"><p class="text-[#FF2E78] font-semibold mb-2">Cierras por chat a las 11pm</p><p class="text-white/70 text-sm">Respondes "precio?" 50 veces, te dejan en visto, gastas vida.</p></div>
+                <div class="glass rounded-2xl p-6"><p class="text-[#FF2E78] font-semibold mb-2">Agenda con huecos</p><p class="text-white/70 text-sm">Lunes lleno, martes vacío. Nunca sabes cuánto vas a facturar.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SISTEMA -->
+    <section class="py-20">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto">
+                <p class="text-[#D4A96A] font-semibold tracking-widest text-xs mb-3">EL SISTEMA</p>
+                <h2 class="text-4xl lg:text-5xl">MaxiQueen OS instala 3 motores en tu negocio</h2>
+            </div>
+            <div class="grid lg:grid-cols-3 gap-6 mt-14">
+                <div class="glass rounded-[2rem] p-8 hover:-translate-y-1 transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#D4A96A]/30 to-transparent border border-[#D4A96A]/30 flex items-center justify-center mb-5">01</div>
+                    <h3 class="text-2xl mb-3">Atracción Magnética</h3>
+                    <p class="text-white/70">15 plantillas de contenido probadas + guiones de Reels que traen clientas que PAGAN, no que preguntan. Calendario de 30 días listo para copiar/pegar.</p>
+                </div>
+                <div class="glass rounded-[2rem] p-8 hover:-translate-y-1 transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#FF2E78]/30 to-transparent border border-[#FF2E78]/30 flex items-center justify-center mb-5">02</div>
+                    <h3 class="text-2xl mb-3">Conversión en Automático</h3>
+                    <p class="text-white/70">Embudo de WhatsApp con 27 respuestas rápidas, menú interactivo, link de pago, y seguimiento que convierte 3 de cada 10 en cita pagada. Sin tú estar pegada.</p>
+                </div>
+                <div class="glass rounded-[2rem] p-8 hover:-translate-y-1 transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-white/20 to-transparent border border-white/20 flex items-center justify-center mb-5">03</div>
+                    <h3 class="text-2xl mb-3">Retención & Recompra</h3>
+                    <p class="text-white/70">Sistema de recordatorios, recuperación de clientas perdidas, y programa de referidas que llena tu agenda de clientas iguales a tu favorita.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LO QUE INCLUYE -->
+    <section class="py-20 bg-gradient-to-b from-transparent to-black/40 border-y border-white/5">
+        <div class="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-start">
+            <div>
+                <h2 class="text-4xl lg:text-5xl mb-6">Todo lo que recibes HOY por <span class="gradient-text">$147.000 COP</span></h2>
+                <p class="text-white/70 mb-8">Acceso inmediato. Un solo pago. Actualizaciones de por vida.</p>
+                <div class="space-y-3">
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">MaxiQueen CRM en Notion + Sheets</p><p class="text-sm text-white/60">Gestiona 500+ clientas sin enredos</p></div></div>
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">Banco de 200+ Respuestas de WhatsApp</p><p class="text-sm text-white/60">Precio, objeciones, seguimientos, cobros</p></div></div>
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">15 Plantillas Canva Premium</p><p class="text-sm text-white/60">Historias, feed, promociones listas</p></div></div>
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">Calculadora de Precios Rentables</p><p class="text-sm text-white/60">Deja de regalar tu trabajo</p></div></div>
+                    <div class="flex gap-3 glass p-4 rounded-xl"><span class="text-[#D4A96A]">✓</span><div><p class="font-semibold">Guiones de Cierre por Audio</p><p class="text-sm text-white/60">Exactamente qué decir para cobrar</p></div></div>
+                </div>
+                <a href="https://wa.me/573016625921?text=Hola,%20quiero%20pagar%20los%20$147.000%20COP%20de%20MaxiQueen%20OS" class="mt-8 inline-flex btn-whatsapp px-8 py-4 rounded-2xl text-lg w-full sm:w-auto justify-center">Activar mi OS ahora — $147.000</a>
+                <p class="text-xs text-white/50 mt-3">Pago seguro por Nequi, Daviplata, Bancolombia o link de pago.</p>
+            </div>
+            <div class="lg:sticky lg:top-28">
+                <div class="glass rounded-[2rem] p-1 gold-glow">
+                    <div class="bg-[#0B0B0E] rounded-[1.8rem] p-8 border border-white/10">
+                        <p class="text-xs tracking-widest text-[#D4A96A] font-semibold mb-2">UPGRADE RECOMENDADO</p>
+                        <h3 class="text-3xl mb-3">OS IMPLEMENTADO</h3>
+                        <p class="text-5xl font-bold mb-2">$897.000 <span class="text-lg text-white/50 font-normal">COP</span></p>
+                        <p class="text-white/70 text-sm mb-6">Nosotros lo instalamos TODO en 72h. Tú solo recibes clientas.</p>
+                        <ul class="space-y-3 text-sm mb-8">
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> Setup completo de CRM + WhatsApp Business</li>
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> 30 piezas de contenido personalizadas con tu marca</li>
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> Configuración de pagos automáticos (Wompi/Bold)</li>
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> 1:1 de 90min para lanzar tu primera campaña</li>
+                            <li class="flex gap-2"><span class="text-green-400">✓</span> Garantía: 20 citas en 30 días o trabajamos gratis</li>
+                        </ul>
+                        <a href="https://wa.me/573016625921?text=Hola,%20QUIERO%20la%20implementación%20completa%20de%20$897.000%20COP" class="btn-primary w-full py-4 rounded-xl text-center block">Quiero Done-For-You</a>
+                        <p class="text-center text-xs text-white/50 mt-3">Solo 3 cupos este mes. 2 ya tomados.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIOS -->
+    <section class="py-20">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-center text-3xl lg:text-4xl mb-12">No es teoría. Son agendas llenas.</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Pasé de $2.1M a $6.4M en 28 días. No aumenté precios, solo instalé el OS y dejé de dar descuentos por DM.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=16" class="w-10 h-10 rounded-full"/><div><p class="font-semibold text-sm">Karen M. — Lashes Bogotá</p><p class="text-xs text-white/50">Plan $147.000</p></div></div></div>
+                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Tomé el de $897.000. En 3 días tenía todo listo. La primera semana agenda llena sin publicar nada nuevo.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=47" class="w-10 h-10 rounded-full"/><div><p class="font-semibold text-sm">Daniela T. — Nails Medellín</p><p class="text-xs text-white/50">Plan Implementado</p></div></div></div>
+                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Recuperé 34 clientas perdidas con el mensaje #7. $4.2M solo en reagendamientos.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=23" class="w-10 h-10 rounded-full"/><div><p class="font-semibold text-sm">Valeria S. — Micropigmentación Cali</p><p class="text-xs text-white/50">Plan $147.000</p></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-20 border-t border-white/5">
+        <div class="max-w-3xl mx-auto px-4">
+            <h2 class="text-3xl lg:text-4xl text-center mb-10">Preguntas frecuentes</h2>
+            <div class="space-y-3" id="faq">
+                <div class="faq-item glass rounded-2xl px-6 cursor-pointer">
+                    <button class="w-full flex justify-between items-center py-5 text-left font-semibold">¿Es $147.000 pago único o mensual? <span class="text-2xl text-white/40">+</span></button>
+                    <div class="faq-answer"><div><p class="text-white/70 pb-1">Pago único. Acceso de por vida y todas las actualizaciones. Sin mensualidades escondidas.</p></div></div>
+                </div>
+                <div class="faq-item glass rounded-2xl px-6 cursor-pointer">
+                    <button class="w-full flex justify-between items-center py-5 text-left font-semibold">¿Y si compro el de $897.000 qué cambia? <span class="text-2xl text-white/40">+</span></button>
+                    <div class="faq-answer"><div><p class="text-white/70 pb-1">Nosotros hacemos todo por ti en 72 horas: configuramos, personalizamos y lanzamos. Ideal si no tienes tiempo.</p></div></div>
+                </div>
+                <div class="faq-item glass rounded-2xl px-6 cursor-pointer">
+                    <button class="w-full flex justify-between items-center py-5 text-left font-semibold">¿Funciona si estoy empezando? <span class="text-2xl text-white/40">+</span></button>
+                    <div class="faq-answer"><div><p class="text-white/70 pb-1">Sí. El OS está diseñado para pasar de 0 a agenda llena sin experiencia en marketing.</p></div></div>
+                </div>
+                <div class="faq-item glass rounded-2xl px-6 cursor-pointer">
+                    <button class="w-full flex justify-between items-center py-5 text-left font-semibold">¿Tiene garantía? <span class="text-2xl text-white/40">+</span></button>
+                    <div class="faq-answer"><div><p class="text-white/70 pb-1">7 días en plan $147.000. Si no te sirve, devolvemos 100%. En plan $897.000: 20 citas en 30 días o seguimos gratis.</p></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="py-24 relative">
+        <div class="absolute inset-0 -z-10 bg-gradient-to-t from-[#FF2E78]/20 to-transparent blur-3xl"></div>
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-4xl lg:text-6xl leading-[1.05]">Tu agenda no se llena sola. <span class="gradient-text">Se opera.</span></h2>
+            <p class="mt-6 text-lg text-white/70 max-w-2xl mx-auto">Hoy puedes seguir contestando "info precio" a medianoche. O puedes instalar MaxiQueen OS y despertar con pagos confirmados.</p>
+            <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="https://wa.me/573016625921?text=Hola,%20listo%20para%20pagar%20$147.000%20COP%20por%20MaxiQueen%20OS" class="btn-whatsapp px-10 py-5 rounded-2xl text-lg shimmer">Activar por $147.000 COP</a>
+                <a href="https://wa.me/573016625921?text=Hola,%20quiero%20el%20plan%20IMPLEMENTADO%20de%20$897.000%20COP" class="glass px-10 py-5 rounded-2xl text-lg font-semibold hover:bg-white/10">Implementación $897.000</a>
+            </div>
+            <p class="text-xs text-white/50 mt-6">Disponible hoy. Mañana sube de precio. Soporte directo por WhatsApp: +57 301 6625921</p>
+        </div>
+    </section>
+
+    <footer class="border-t border-white/5 py-10 text-center text-sm text-white/40">
+        <p>© 2025 MaxiQueen OS Ventas. Hecho en Colombia para beauty bosses que facturan en serio.</p>
+        <p class="mt-2">Contacto directo: <a href="https://wa.me/573016625921" class="underline hover:text-white">WhatsApp +57 301 6625921</a></p>
+    </footer>
+
+    <!-- CTA MOBILE STICKY -->
+    <div class="sm:hidden fixed bottom-0 inset-x-0 z-50 p-3 bg-gradient-to-t from-black to-black/70 backdrop-blur">
+        <a href="https://wa.me/573016625921?text=Hola,%20quiero%20MaxiQueen%20OS%20por%20$147.000" class="btn-whatsapp w-full py-4 rounded-2xl text-base font-bold flex items-center justify-center gap-2 shadow-2xl">
+            Comprar por WhatsApp — $147.000
+        </a>
+    </div>
+
+    <script>
+        // FAQ Accordion
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.querySelector('button').addEventListener('click', () => {
+                const isOpen = item.classList.contains('faq-open');
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('faq-open'));
+                if (!isOpen) item.classList.add('faq-open');
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'});
+            });
+        });
+    </script>
+<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
+</body>
+</html>

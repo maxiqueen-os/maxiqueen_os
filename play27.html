@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAXIQUEEN OS • MULTIVERSE RUNNER V2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --accent: #7000ff;
+            --danger: #ff0055;
+            --warning: #ffcc00;
+            --bg-dark: #030712;
+            --glass: rgba(15, 23, 42, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            background: var(--bg-dark); 
+            color: white; 
+            font-family: 'Inter', sans-serif; 
+            overflow: hidden;
+            display: flex; flex-direction: column; height: 100vh;
+        }
+
+        /* START SCREEN */
+        #start-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 7, 18, 0.95);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 999; backdrop-filter: blur(10px);
+        }
+        
+        .btn-launch {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            border: none; padding: 15px 40px; border-radius: 30px;
+            color: white; font-weight: 900; font-size: 1.2rem; letter-spacing: 2px;
+            cursor: pointer; box-shadow: 0 10px 30px rgba(0, 242, 255, 0.3);
+            transition: transform 0.2s;
+        }
+        .btn-launch:active { transform: scale(0.95); }
+
+        /* HUD PREMIUM */
+        #hud {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 30px; background: var(--glass);
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 100; box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+        }
+
+        .stats-container { display: flex; gap: 40px; }
+        .stat { display: flex; flex-direction: column; }
+        .stat-label { font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+        .stat-val { font-size: 1.4rem; font-weight: 900; color: white; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
+        .val-primary { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
+
+        /* MAXIQUEEN AI AVATAR */
+        .ai-core {
+            display: flex; align-items: center; gap: 15px;
+        }
+        .ai-avatar {
+            width: 45px; height: 45px; border-radius: 50%;
+            background: radial-gradient(circle at top left, var(--primary), var(--accent));
+            border: 2px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 20px var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; letter-spacing: -1px;
+            transition: all 0.1s ease;
+        }
+        .ai-avatar.speaking {
+            transform: scale(1.15);
+            box-shadow: 0 0 40px var(--primary), inset 0 0 20px white;
+        }
+        .ai-text { font-size: 0.8rem; color: var(--primary); font-weight: 600; letter-spacing: 1px; }
+
+        /* GAME AREA */
+        #game-wrapper { flex-grow: 1; position: relative; background: #000; overflow: hidden; }
+        canvas { display: block; }
+
+        /* MOBILE CONTROLS */
+        #mobile-controls {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 25px 40px; background: var(--glass);
+            border-top: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px); height: 140px;
+        }
+        .joy-group { display: flex; gap: 20px; }
+        .btn-ctrl {
+            width: 70px; height: 70px; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: white; transition: 0.1s;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        .btn-jump { 
+            width: 85px; height: 85px; border-radius: 50%; 
+            background: rgba(0, 242, 255, 0.1); border-color: var(--primary);
+            color: var(--primary); font-weight: 900; font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+        }
+        .btn-ctrl:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
+        .btn-jump:active { transform: scale(0.9); background: var(--primary); color: #000; }
+
+        #msg-overlay {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; pointer-events: none; z-index: 50;
+        }
+        .level-up { 
+            font-size: 2.5rem; font-weight: 900; color: white; 
+            text-shadow: 0 10px 30px var(--primary); display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="start-screen">
+    <h1 style="color: white; margin-bottom: 10px; font-weight: 900; letter-spacing: 2px;">MAXIQUEEN OS</h1>
+    <p style="color: var(--primary); margin-bottom: 40px; letter-spacing: 4px; font-size: 0.8rem;">MULTIVERSE ENGINE V2</p>
+    <button class="btn-launch" onclick="bootSystem()">INICIAR ENLACE</button>
+</div>
+
+<div id="hud">
+    <div class="ai-core">
+        <div class="ai-avatar" id="avatar">MQ</div>
+        <div class="ai-text" id="ai-status">EN LÍNEA</div>
+    </div>
+    <div class="stats-container">
+        <div class="stat"><span class="stat-label">Sector</span><span class="stat-val" id="lvl-ui">01</span></div>
+        <div class="stat"><span class="stat-label">Data</span><span class="stat-val val-primary" id="coin-ui">000</span></div>
+    </div>
+</div>
+
+<div id="game-wrapper">
+    <div id="msg-overlay"><div id="level-msg" class="level-up">SECTOR ASEGURADO</div></div>
+    <canvas id="canvas"></canvas>
+</div>
+
+<div id="mobile-controls">
+    <div class="joy-group">
+        <div class="btn-ctrl" id="leftBtn">◀</div>
+        <div class="btn-ctrl" id="rightBtn">▶</div>
+    </div>
+    <div class="btn-ctrl btn-jump" id="jumpBtn">UP</div>
+</div>
+
+<script>
+/**
+ * MAXIQUEEN ENGINE V2
+ * Física avanzada, Partículas, Doble Salto, IA de Voz Integrada.
+ */
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const lvlUI = document.getElementById('lvl-ui');
+const coinUI = document.getElementById('coin-ui');
+const avatar = document.getElementById('avatar');
+const statusText = document.getElementById('ai-status');
+
+// --- SISTEMA DE VOZ MAXIQUEEN ---
+const synth = window.speechSynthesis;
+let mqVoice = null;
+
+function initVoice() {
+    const voices = synth.getVoices();
+    mqVoice = voices.find(v => v.lang.includes('es') && v.name.includes('Google')) || voices.find(v => v.lang.includes('es')) || voices[0];
+}
+if (speechSynthesis.onvoiceschanged !== undefined) { speechSynthesis.onvoiceschanged = initVoice; }
+
+function speakAI(text) {
+    if (synth.speaking) synth.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (mqVoice) utterance.voice = mqVoice;
+    utterance.pitch = 1.1; utterance.rate = 1.1;
+    
+    utterance.onstart = () => { avatar.classList.add('speaking'); statusText.innerText = "PROCESANDO..."; };
+    utterance.onend = () => { avatar.classList.remove('speaking'); statusText.innerText = "EN LÍNEA"; };
+    synth.speak(utterance);
+}
+
+// --- CONFIGURACIÓN GLOBAL ---
+const TILE = 50;
+const GRAVITY = 0.5;
+const FRICTION = 0.82;
+
+let width, height;
+function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = document.getElementById('game-wrapper').clientHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// --- ESTADO Y ENTIDADES ---
+const Game = { lvl: 1, coins: 0, cameraX: 0, isRunning: false, frames: 0 };
+let platforms = [], items = [], particles = [], portal = null;
+
+class Particle {
+    constructor(x, y, color, speed = 4) {
+        this.x = x; this.y = y; this.color = color;
+        this.vx = (Math.random() - 0.5) * speed;
+        this.vy = (Math.random() - 0.5) * speed;
+        this.life = 1; this.decay = Math.random() * 0.05 + 0.02;
+    }
+    update() { this.x += this.vx; this.y += this.vy; this.life -= this.decay; }
+    draw() {
+        ctx.globalAlpha = Math.max(0, this.life);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, 4, 4);
+        ctx.globalAlpha = 1;
+    }
+}
+
+const Player = {
+    x: 100, y: 0, vx: 0, vy: 0, w: 30, h: 45,
+    speed: 6, jumpForce: -12, jumps: 0, maxJumps: 2,
+    
+    update() {
+        if (keys.left) this.vx = -this.speed;
+        else if (keys.right) this.vx = this.speed;
+        else this.vx *= FRICTION;
+
+        if (keys.jumpJustPressed && this.jumps < this.maxJumps) {
+            this.vy = this.jumpForce;
+            this.jumps++;
+            keys.jumpJustPressed = false;
+            for(let i=0; i<5; i++) particles.push(new Particle(this.x + this.w/2, this.y + this.h, '#00f2ff', 2));
+        }
+
+        this.vy += GRAVITY;
+        this.x += this.vx; this.y += this.vy;
+
+        let grounded = false;
+
+        // Colisiones
+        platforms.forEach(p => {
+            if (this.x < p.x + p.w && this.x + this.w > p.x && this.y < p.y + p.h && this.y + this.h > p.y) {
+                if (p.type === 'spike') return this.die();
+                
+                if (this.vy > 0 && this.y + this.h - this.vy <= p.y) {
+                    this.y = p.y - this.h; this.vy = 0; grounded = true; this.jumps = 0;
+                } else if (this.vx > 0 && this.x + this.w - this.vx <= p.x) this.x = p.x - this.w;
+                else if (this.vx < 0 && this.x - this.vx >= p.x + p.w) this.x = p.x + p.w;
+                else if (this.vy < 0) { this.y = p.y + p.h; this.vy = 0; }
+            }
+        });
+
+        // Items
+        items.forEach(item => {
+            if (!item.collected && this.x < item.x + item.w && this.x + this.w > item.x && this.y < item.y + item.h && this.y + this.h > item.y) {
+                item.collected = true; Game.coins += 10;
+                coinUI.innerText = Game.coins.toString().padStart(3, '0');
+                for(let i=0; i<10; i++) particles.push(new Particle(item.x+10, item.y+10, '#ffcc00'));
+            }
+        });
+
+        if (portal && this.x < portal.x + portal.w && this.x + this.w > portal.x) this.nextLevel();
+        if (this.y > height + 200) this.die();
+
+        // Cámara suave
+        Game.cameraX += (this.x - width / 3 - Game.cameraX) * 0.1;
+        if(Game.cameraX < 0) Game.cameraX = 0;
+    },
+
+    die() {
+        speakAI("Anomalía detectada. Reiniciando secuencia.");
+        Game.isRunning = false;
+        for(let i=0; i<30; i++) particles.push(new Particle(this.x, this.y, '#ff0055', 8));
+        setTimeout(() => location.reload(), 1500);
+    },
+
+    nextLevel() {
+        Game.isRunning = false;
+        speakAI(`Sector ${Game.lvl} asegurado. Extrayendo datos.`);
+        document.getElementById('level-msg').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('level-msg').style.display = 'none';
+            Game.lvl++; lvlUI.innerText = Game.lvl.toString().padStart(2, '0');
+            initLevel();
+            Game.isRunning = true;
+        }, 2500);
+    },
+
+    draw() {
+        ctx.fillStyle = '#00f2ff';
+        ctx.shadowBlur = 15; ctx.shadowColor = '#00f2ff';
+        ctx.fillRect(this.x, this.y, this.w, this.h);
+        ctx.shadowBlur = 0;
+        
+        // Estela
+        if(Game.frames % 3 === 0) particles.push(new Particle(this.x + this.w/2, this.y + this.h/2, 'rgba(0, 242, 255, 0.3)', 1));
+    }
+};
+
+// --- NIVELES ---
+function initLevel() {
+    platforms = []; items = []; particles = []; portal = null;
+    Player.x = 100; Player.y = 0; Player.vx = 0; Player.vy = 0;
+
+    const map = [
+        "                                  ",
+        "     CC      CC        CC         ",
+        "    111     111       111     P   ",
+        "                              11  ",
+        "11111111  111111333311111111111111"
+    ];
+
+    for (let r = 0; r < map.length; r++) {
+        for (let c = 0; c < map[r].length; c++) {
+            let px = c * TILE, py = height - (map.length - r) * TILE;
+            if (map[r][c] === '1') platforms.push({ x: px, y: py, w: TILE, h: TILE, type: 'block' });
+            if (map[r][c] === '3') platforms.push({ x: px, y: py + 25, w: TILE, h: 25, type: 'spike' });
+            if (map[r][c] === 'C') items.push({ x: px + 15, y: py + 15, w: 20, h: 20, collected: false });
+            if (map[r][c] === 'P') portal = { x: px, y: py - 100, w: 60, h: 150 };
+        }
+    }
+}
+
+// --- INPUTS ---
+const keys = { left: false, right: false, jumpJustPressed: false };
+window.addEventListener('keydown', e => {
+    if(e.code === 'ArrowLeft') keys.left = true;
+    if(e.code === 'ArrowRight') keys.right = true;
+    if(e.code === 'ArrowUp' || e.code === 'Space') if(!e.repeat) keys.jumpJustPressed = true;
+});
+window.addEventListener('keyup', e => {
+    if(e.code === 'ArrowLeft') keys.left = false;
+    if(e.code === 'ArrowRight') keys.right = false;
+});
+
+const bindTouch = (id, action) => {
+    const el = document.getElementById(id);
+    el.addEventListener('touchstart', e => { e.preventDefault(); if(action === 'jump') keys.jumpJustPressed = true; else keys[action] = true; });
+    el.addEventListener('touchend', e => { e.preventDefault(); if(action !== 'jump') keys[action] = false; });
+};
+bindTouch('leftBtn', 'left'); bindTouch('rightBtn', 'right'); bindTouch('jumpBtn', 'jump');
+
+// --- BUCLE PRINCIPAL ---
+function bootSystem() {
+    document.getElementById('start-screen').style.display = 'none';
+    initVoice();
+    speakAI("Sistemas V 2 inicializados. Entorno virtual listo.");
+    initLevel();
+    Game.isRunning = true;
+    loop();
+}
+
+function loop() {
+    if(!Game.isRunning) { requestAnimationFrame(loop); return; }
+    
+    ctx.fillStyle = '#030712'; ctx.fillRect(0, 0, width, height);
+
+    // Grid de fondo cyber
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)'; ctx.lineWidth = 1;
+    let offsetX = Game.cameraX * 0.2 % 50;
+    for(let i=0; i<width; i+=50) { ctx.beginPath(); ctx.moveTo(i - offsetX, 0); ctx.lineTo(i - offsetX, height); ctx.stroke(); }
+
+    ctx.save();
+    ctx.translate(-Game.cameraX, 0);
+
+    // Renderizar Mundo
+    platforms.forEach(p => {
+        if(p.type === 'block') {
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+            ctx.fillRect(p.x, p.y, p.w, p.h);
+            ctx.strokeStyle = 'rgba(0, 242, 255, 0.3)';
+            ctx.strokeRect(p.x, p.y, p.w, p.h);
+            ctx.fillStyle = 'rgba(0, 242, 255, 0.1)';
+            ctx.fillRect(p.x, p.y, p.w, 2);
+        } else {
+            ctx.fillStyle = '#ff0055';
+            ctx.beginPath(); ctx.moveTo(p.x, p.y+p.h); ctx.lineTo(p.x+p.w/2, p.y); ctx.lineTo(p.x+p.w, p.y+p.h); ctx.fill();
+        }
+    });
+
+    items.forEach(i => {
+        if(!i.collected) {
+            ctx.fillStyle = '#ffcc00'; ctx.shadowBlur = 10; ctx.shadowColor = '#ffcc00';
+            ctx.fillRect(i.x + Math.sin(Game.frames*0.1)*2, i.y, 15, 15); ctx.shadowBlur = 0;
+        }
+    });
+
+    if(portal) {
+        ctx.fillStyle = `rgba(112, 0, 255, ${0.2 + Math.sin(Game.frames*0.05)*0.1})`;
+        ctx.fillRect(portal.x, portal.y, portal.w, portal.h);
+    }
+
+    // Partículas
+    for(let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update(); particles[i].draw();
+        if(particles[i].life <= 0) particles.splice(i, 1);
+    }
+
+    Player.update(); Player.draw();
+    ctx.restore();
+
+    Game.frames++;
+    requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>

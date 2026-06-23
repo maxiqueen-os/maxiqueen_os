@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUDOKU MAXIQUEEN PRO - Game Hub 👑</title>
+    <style>
+        :root {
+            --bg: #0b0f1a;
+            --surface: #161b2a;
+            --primary: #7c3aed;
+            --secondary: #374151;
+            --accent: #10b981;
+            --error: #ef4444;
+            --text: #ffffff;
+            --border: #2d3748;
+            --mq-gold: #fbbf24;
+            --mq-accent: #00f2ff;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            z-index: 10;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 10px 0;
+            background: linear-gradient(90deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- Estilos Sudoku --- */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: var(--surface);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            border: 1px solid var(--border);
+        }
+
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            border: 2px solid var(--text);
+            background: var(--text);
+            gap: 1px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            aspect-ratio: 1;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .cell {
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            user-select: none;
+            aspect-ratio: 1;
+        }
+
+        .cell:nth-child(3n) { border-right: 2px solid var(--text); }
+        .cell:nth-child(9n) { border-right: none; }
+        .cell:nth-child(n+19):nth-child(-n+27),
+        .cell:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid var(--text); }
+
+        .cell.fixed { background: #1f2937; font-weight: 800; color: #9ca3af; }
+        .cell.selected { background: var(--primary) !important; color: white; }
+        .cell.related { background: #1e293b; }
+        .cell.error { color: var(--error); animation: shake 0.25s; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+
+        /* --- Controles --- */
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        .num-btn {
+            padding: 12px 5px;
+            background: var(--secondary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .difficulty-btns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: 25px;
+        }
+
+        .btn-sm {
+            padding: 8px;
+            background: #1f2937;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        #status-msg {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--mq-accent);
+            min-height: 20px;
+        }
+
+        /* --- MAXIQUEEN GAME HUB (30 slots) --- */
+        .hub-section {
+            width: 100%;
+            margin-top: 30px;
+            padding-bottom: 100px;
+        }
+
+        .hub-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0, 242, 255, 0.3);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .hub-title {
+            color: var(--mq-accent);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .hub-count {
+            background: var(--primary);
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .hub-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Una columna para que parezcan tarjetas de sistema */
+            gap: 10px;
+        }
+
+        /* Si quieres que se vean más pequeños en desktop */
+        @media (min-width: 400px) {
+            .hub-grid { grid-template-columns: repeat(1, 1fr); }
+        }
+
+        .hub-card {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 10px 12px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hub-card:hover {
+            background: rgba(124, 58, 237, 0.15);
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .hub-card.empty {
+            opacity: 0.4;
+            border-style: dashed;
+            cursor: default;
+        }
+
+        .hub-card.empty:hover {
+            transform: none;
+            border-color: rgba(255,255,255,0.08);
+        }
+
+        .card-id {
+            font-size: 0.6rem;
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--mq-accent);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 12px;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .card-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .card-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-status {
+            font-size: 0.65rem;
+            color: #8892b0;
+        }
+
+        .card-arrow {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+            opacity: 0.6;
+        }
+
+        /* Chat */
+        .chat-trigger {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 55px;
+            height: 55px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .chat-trigger img { width: 70%; height: 70%; object-fit: contain; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <h1>SUDOKU MAXIQUEEN PRO 👑</h1>
+
+    <div class="stats-bar">
+        <span id="timer">⏱️ 00:00</span>
+        <span id="lives">❤️ 3</span>
+    </div>
+
+    <div id="grid" class="sudoku-grid"></div>
+
+    <div class="numpad">
+        <button class="num-btn" onclick="inputValue(1)">1</button>
+        <button class="num-btn" onclick="inputValue(2)">2</button>
+        <button class="num-btn" onclick="inputValue(3)">3</button>
+        <button class="num-btn" onclick="inputValue(4)">4</button>
+        <button class="num-btn" onclick="inputValue(5)">5</button>
+        <button class="num-btn" onclick="inputValue(6)">6</button>
+        <button class="num-btn" onclick="inputValue(7)">7</button>
+        <button class="num-btn" onclick="inputValue(8)">8</button>
+        <button class="num-btn" onclick="inputValue(9)">9</button>
+        <button class="num-btn" style="background:#4b5563" onclick="inputValue(0)">⌫</button>
+    </div>
+
+    <div class="difficulty-btns">
+        <button class="btn-sm" onclick="newGame('easy')">Fácil</button>
+        <button class="btn-sm" onclick="newGame('medium')">Medio</button>
+        <button class="btn-sm" onclick="newGame('hard')">Difícil</button>
+        <button class="btn-sm" onclick="newGame('expert')">Experto</button>
+        <button class="btn-sm" onclick="newGame('extreme')">Extremo</button>
+        <button class="btn-sm" onclick="solveGame()">Resolver</button>
+    </div>
+
+    <div id="status-msg">Selecciona dificultad para iniciar</div>
+
+    <!-- SECCIÓN DE HUB CON 30 SLOTS -->
+    <div class="hub-section">
+        <div class="hub-header">
+            <span class="hub-title">LIBRERÍA DE JUEGOS MAXIQUEEN OS</span>
+            <span class="hub-count">30 MODS</span>
+        </div>
+        
+        <div class="hub-grid" id="hubGrid">
+            <!-- Los 30 botones se generan aquí -->
+        </div>
+    </div>
+</div>
+
+<div class="chat-trigger">
+    <img src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1626257545/MQ_OS_maxiqueen-avatar_hiywqu.png" alt="Avatar">
+</div>
+
+<script>
+    // Configuración de los juegos del HUB
+    // Aquí puedes actualizar los enlaces y nombres a medida que creamos más
+    const gameList = [
+        { id: "MQ-01", name: "Sudoku Pro Edition", status: "Active System", link: "#" },
+        { id: "MQ-02", name: "Fut_MQ_Reflex 5", status: "Advanced Patch", link: "https://juegos-maxi-queen-os.vercel.app/rojo-play3.html" },
+        { id: "MQ-03", name: "Play_Senc_Click", status: "Beta Release", link: "https://juegos-maxi-queen-os.vercel.app/click4.html" },
+        { id: "MQ-04", name: "Derrumba Torres", status: "Initial Build", link: "https://juegos-maxi-queen-os.vercel.app/play-inicial.html" },
+        { id: "MQ-05", name: "Cuadro con Niveles", status: "Stable", link: "https://juegos-maxi-queen-os.vercel.app/cuadro-play1.html" },
+        { id: "MQ-06", name: "Sudoku Agent MQ 11", status: "Alpha", link: "https://juegos-maxi-queen-os.vercel.app/play11.html" },
+        // Los demás se llenarán como slots vacíos automáticamente
+    ];
+
+    function renderHub() {
+        const hubGrid = document.getElementById('hubGrid');
+        hubGrid.innerHTML = '';
+
+        for (let i = 1; i <= 30; i++) {
+            const padId = i.toString().padStart(2, '0');
+            const game = gameList.find(g => g.id === `MQ-${padId}`);
+            
+            if (game) {
+                hubGrid.innerHTML += `
+                    <a href="${game.link}" class="hub-card">
+                        <span class="card-id">${game.id}</span>
+                        <div class="card-info">
+                            <span class="card-name">${game.name}</span>
+                            <span class="card-status">${game.status}</span>
+                        </div>
+                        <div class="card-arrow">→</div>
+                    </a>
+                `;
+            } else {
+                hubGrid.innerHTML += `
+                    <div class="hub-card empty">
+                        <span class="card-id">MQ-${padId}</span>
+                        <div class="card-info">
+                            <span class="card-name">Slot Disponible</span>
+                            <span class="card-status">Esperando Actualización...</span>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    // --- Lógica del Sudoku (Simplificada para el Hub) ---
+    let solution = [];
+    let selectedCell = null;
+    let lives = 3;
+    let timerInt;
+
+    function initGrid() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+        for (let i = 0; i < 81; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.onclick = () => {
+                document.querySelectorAll('.cell').forEach(c => c.classList.remove('selected'));
+                cell.classList.add('selected');
+                selectedCell = i;
+            };
+            grid.appendChild(cell);
+        }
+    }
+
+    function newGame(lvl) {
+        clearInterval(timerInt);
+        lives = 3;
+        document.getElementById('lives').textContent = "❤️ " + lives;
+        document.getElementById('status-msg').textContent = "Cargando nivel " + lvl + "...";
+        // Aquí iría la lógica de generación del tablero del código anterior
+        initGrid(); 
+        // Simulación de carga rápida
+        setTimeout(() => { document.getElementById('status-msg').textContent = "¡A jugar!"; }, 500);
+    }
+
+    function solveGame() {
+        document.getElementById('status-msg').textContent = "Algoritmo resolviendo...";
+    }
+
+    function inputValue(n) {
+        console.log("Input:", n, "en celda:", selectedCell);
+    }
+
+    // Inicializar Hub y Juego
+    renderHub();
+    initGrid();
+</script>
+
+</body>
+</html>

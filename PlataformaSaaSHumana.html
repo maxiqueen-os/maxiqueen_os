@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaxiQueen Cloud™ Ecosistema Total - Animado y Dinámico</title>
+<style>
+body { margin:0; font-family:'Arial', sans-serif; background:#0d0d0d; color:white; }
+.container { display:flex; flex-direction:column; align-items:center; padding:20px; }
+.layer { border-radius:15px; padding:20px; margin:15px 0; width:95%; max-width:1200px; background: linear-gradient(145deg, #1c0b3a, #2c0f4f); box-shadow:0 8px 25px rgba(0,0,0,0.9); position:relative; transition: all 0.5s; }
+h2 { display:flex; align-items:center; gap:10px; margin-bottom:10px; color:#f1c40f; }
+.layer div { margin-top:10px; background: rgba(255,255,255,0.05); padding:15px; border-radius:10px; transition: all 0.5s; }
+input { width:100%; padding:12px; border-radius:10px; border:none; margin-top:10px; font-size:16px; }
+.arrow, .curve-arrow { position:relative; margin: 20px auto; }
+.arrow { width:4px; height:50px; background:linear-gradient(to bottom, #f1c40f, #3498db); animation: pulse 1.5s infinite alternate; }
+.arrow::after { content:''; position:absolute; bottom:-10px; left:-6px; border-left:10px solid transparent; border-right:10px solid transparent; border-top:10px solid #f1c40f; }
+.curve-arrow svg { width: 100%; height:80px; overflow: visible; }
+.curve-arrow path { stroke:#f1c40f; stroke-width:3; fill:none; stroke-dasharray: 300; stroke-dashoffset: 300; animation: dash 2s infinite linear; }
+@keyframes dash { 0% { stroke-dashoffset: 300; } 50% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 300; } }
+@keyframes pulse { 0% { background: linear-gradient(to bottom, #f1c40f, #3498db); } 50% { background: linear-gradient(to bottom, #f1c40f, #8e44ad); } 100% { background: linear-gradient(to bottom, #f1c40f, #d4af37); } }
+.state-badge { display:inline-block; padding:5px 10px; border-radius:8px; font-weight:bold; margin:2px; transition: all 0.5s; }
+.state-diagnostico { background:#f1c40f; color:black; }
+.state-estructurando { background:#3498db; color:white; }
+.state-construyendo { background:#9b59b6; color:white; }
+.state-vendiendo { background:#2ecc71; color:black; }
+.state-escalando { background:#e74c3c; color:white; }
+.logo { width:60px; height:60px; border-radius:50%; background:linear-gradient(45deg,#d4af37,#3498db); display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:20px; color:white; margin-right:10px; }
+.curve-arrow .highlight { stroke:#d4af37; stroke-width:4; stroke-dasharray: 300; stroke-dashoffset: 300; animation: dash-highlight 1.5s linear forwards; }
+@keyframes dash-highlight { 0% { stroke-dashoffset: 300; } 100% { stroke-dashoffset: 0; } }
+.document-upload { margin-top:10px; }
+.module { position:relative; padding:15px; background:rgba(255,255,255,0.05); border-radius:10px; flex:1; min-width:120px; text-align:center; cursor:pointer; transition: transform 0.3s, background 0.3s; }
+.module:hover { transform: translateY(-5px); background: rgba(241,196,15,0.3); }
+.module-connector { position:absolute; pointer-events:none; }
+.module-tooltip { position:absolute; background: rgba(0,0,0,0.85); color:white; padding:5px 10px; border-radius:8px; font-size:14px; pointer-events:none; opacity:0; transition: opacity 0.3s; z-index:10; }
+</style>
+</head>
+<body>
+<div class="container">
+<!-- Aquí van las capas existentes (Chat, QueenPanel, Cloud) -->
+<!-- Módulos Cloud con interactividad -->
+<div id="maxiqueen-cloud" class="layer">
+  <h2>3️⃣ MaxiQueen Cloud™ (Plataforma SaaS Humana)</h2>
+  <div style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center; position:relative;" id="cloudModuleContainer">
+    <div class="module" data-module="Core Humano" data-tooltip="Decisiones estratégicas y prioridades del núcleo humano">Core Humano</div>
+    <div class="module" data-module="Web Cloud" data-tooltip="Gestión de hosting, subdominios y despliegue">Web Cloud</div>
+    <div class="module" data-module="Content Cloud" data-tooltip="Identidad, guiones, TikTok y contenido creativo">Content Cloud</div>
+    <div class="module" data-module="Sales Cloud" data-tooltip="Landing pages, funnels y checkout">Sales Cloud</div>
+    <div class="module" data-module="Automation Cloud" data-tooltip="Formularios, seguimiento y respuestas automatizadas">Automation Cloud</div>
+    <div class="module" data-module="Queen Community" data-tooltip="Soporte y comunidad activa">Queen Community</div>
+  </div>
+  <div id="cloudUpload"><input type="file" class="document-upload" /></div>
+  <div id="finalOutcome"><strong>Resultado Final:</strong> Sistema digital funcional, cliente guiado, proceso replicable, generación de ingresos, oferta + CTA integrada</div>
+  <svg class="module-connector" style="position:absolute; top:0; left:0; width:100%; height:300px; pointer-events:none;"></svg>
+</div>
+<div id="tooltip" class="module-tooltip"></div>
+</div>
+<script>
+const tooltip = document.getElementById('tooltip');
+const cloudModules = document.querySelectorAll('#cloudModuleContainer .module');
+cloudModules.forEach(mod => {
+  mod.addEventListener('mouseenter', e => {
+    tooltip.innerText = mod.dataset.tooltip;
+    const rect = mod.getBoundingClientRect();
+    tooltip.style.left = rect.left + rect.width/2 - tooltip.offsetWidth/2 + 'px';
+    tooltip.style.top = rect.top - 30 + 'px';
+    tooltip.style.opacity = 1;
+  });
+  mod.addEventListener('mouseleave', e => {
+    tooltip.style.opacity = 0;
+  });
+  mod.addEventListener('click', e => {
+    alert('Abrir documento o sub-flujo de: ' + mod.dataset.module);
+  });
+});
+</script>
+</body>
+</html>

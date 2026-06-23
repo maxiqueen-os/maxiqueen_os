@@ -1,0 +1,1624 @@
+axiqueen_os_v7_web_artifact_1_b1ff0e447f06
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAXIQUEEN OS v7 | Global Mastery</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Font Awesome 6 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<!-- Fonts: Orbitron / JetBrains Mono / Inter -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        'orbitron': ['Orbitron', 'sans-serif'],
+        'mono': ['"JetBrains Mono"', 'monospace'],
+        'inter': ['Inter', 'sans-serif'],
+      },
+      colors: {
+        'mq-bg': '#050507',
+        'mq-purple': '#8A2BE2',
+        'mq-green': '#00FF9C',
+        'mq-cyan': '#00D4FF',
+        'mq-panel': 'rgba(13, 14, 22, 0.82)',
+        'mq-border': 'rgba(138, 43, 226, 0.35)',
+      },
+      boxShadow: {
+        'neon-purple': '0 0 18px rgba(138,43,226,0.45), 0 0 40px rgba(138,43,226,0.16)',
+        'neon-green': '0 0 18px rgba(0,255,156,0.35)',
+        'neon-cyan': '0 0 18px rgba(0,212,255,0.32)',
+      }
+    }
+  }
+}
+</script>
+
+<style type="text/tailwindcss">
+  body {
+    background-color: #050507;
+    color: #d9e4ed;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+  /* Grid de fondo */
+  .mq-grid-bg {
+    background-image:
+      linear-gradient(rgba(138,43,226,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(138,43,226,0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .vignette {
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(5,5,7,0.8) 100%);
+  }
+
+  .font-orbitron { font-family: 'Orbitron', sans-serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Glass Panel */
+  .glass-panel {
+    background: rgba(13, 14, 22, 0.78);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(138, 43, 226, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
+  }
+  .glass-panel-strong {
+    background: rgba(10, 11, 18, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(138, 43, 226, 0.38);
+  }
+
+  /* Botón Cyber */
+  .btn-cyber {
+    clip-path: polygon(10px 0%, 100% 0%, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0% 100%, 0% 10px);
+    transition: all .18s ease;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .btn-cyber:active { transform: scale(0.97); }
+  .btn-cyber-green {
+    background: #00FF9C;
+    color: #041610;
+    box-shadow: 0 0 22px rgba(0,255,156,0.25);
+  }
+  .btn-cyber-green:hover { box-shadow: 0 0 32px rgba(0,255,156,0.45); filter: brightness(1.06); }
+  .btn-cyber-purple {
+    background: rgba(138,43,226,0.13);
+    color: #e6d4ff;
+    border: 1px solid rgba(138,43,226,0.55);
+  }
+  .btn-cyber-purple:hover { background: rgba(138,43,226,0.24); }
+  .btn-cyber-dark {
+    background: rgba(255,255,255,0.045);
+    color: #c9d7e4;
+    border: 1px solid rgba(255,255,255,0.13);
+  }
+  .btn-cyber-dark:hover { background: rgba(255,255,255,0.082); }
+
+  /* Stats chips */
+  .stat-chip {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 12px;
+  }
+
+  /* Queen Avatar */
+  .queen-face {
+    background: radial-gradient(circle at 50% 38%, #1a1330 0%, #0d0a18 70%);
+    border: 2px solid rgba(138,43,226,0.65);
+    box-shadow: 0 0 30px rgba(138,43,226,0.30), inset 0 0 28px rgba(0,212,255,0.07);
+  }
+  .queen-mouth {
+    width: 28px;
+    height: 7px;
+    border-radius: 0 0 20px 20px;
+    background: #00FF9C;
+    box-shadow: 0 0 10px rgba(0,255,156,0.7);
+    transition: all .09s ease;
+  }
+  .queen-talking .queen-mouth {
+    animation: talk .18s infinite alternate;
+  }
+  @keyframes talk {
+    0% { height: 5px; width: 20px; opacity: .95;}
+    100% { height: 16px; width: 30px; opacity: 1;}
+  }
+  .queen-eyes { width:6px;height:6px;background:#00D4FF; border-radius:50%; box-shadow:0 0 8px #00D4FF; }
+
+  /* Tower cells */
+  .tower-cell {
+    aspect-ratio: 1/1;
+    background: rgba(255,255,255,0.028);
+    border: 1px dashed rgba(255,255,255,0.13);
+    border-radius: 14px;
+    transition: all .15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .tower-cell.drag-over { border-color: #00FF9C; background: rgba(0,255,156,0.07); }
+  .tower-cell.sell-mode { border-color: #ff5a6a; border-style: solid; cursor: crosshair; }
+  .tower-cell.sell-mode:hover { background: rgba(255,80,100,0.09); }
+
+  .tower-token {
+    width: 78%;
+    height: 78%;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: grab;
+    user-select: none;
+    transition: transform .12s ease;
+    position: relative;
+  }
+  .tower-token:active { cursor: grabbing; transform: scale(0.96); }
+  .tower-token.selected {
+    outline: 2px solid #00FF9C;
+    outline-offset: 3px;
+    box-shadow: 0 0 18px rgba(0,255,156,0.45);
+  }
+
+  /* Flashcard 3D */
+  .flashcard-scene { perspective: 1100px; }
+  .flashcard-inner {
+    transition: transform 0.55s cubic-bezier(.23,1,.32,1);
+    transform-style: preserve-3d;
+  }
+  .flashcard-inner.flipped { transform: rotateY(180deg); }
+  .flashcard-face {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .flashcard-back { transform: rotateY(180deg); }
+
+  /* CRT Overlay */
+  #crt-overlay {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,255,156,0.031) 3px,
+      rgba(0,0,0,0) 4px
+    );
+    opacity: 0;
+    transition: opacity .25s;
+  }
+  #crt-overlay.on { opacity: 1; }
+  #crt-overlay.on::after {
+    content: '';
+    position: absolute;
+    inset:0;
+    background: linear-gradient(transparent 50%, rgba(0,0,0,0.035) 50%);
+    background-size: 100% 4px;
+  }
+
+  /* Neon text */
+  .neon-purple-text { text-shadow: 0 0 18px rgba(138,43,226,0.55); }
+  .neon-green-text { color:#00FF9C; text-shadow: 0 0 14px rgba(0,255,156,0.38); }
+  .neon-cyan-text { color:#00D4FF; text-shadow: 0 0 14px rgba(0,212,255,0.36); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 7px; }
+  ::-webkit-scrollbar-track { background: #0b0b11; }
+  ::-webkit-scrollbar-thumb { background: #34204f; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #5b3190; }
+
+  /* Toast */
+  #toast-wrap {
+    position: fixed; right: 18px; top: 18px; z-index: 9000; display:flex; flex-direction:column; gap:8px;
+  }
+  .mq-toast {
+    background: rgba(18,19,31,0.96);
+    border:1px solid rgba(0,255,156,0.38);
+    color:#d9ffeF;
+    padding:10px 14px;
+    border-radius:12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size:12.5px;
+    box-shadow:0 8px 40px rgba(0,0,0,.55);
+    animation: toast-in .22s ease;
+  }
+  @keyframes toast-in { from { opacity:0; transform: translateY(-8px);} to {opacity:1; transform:translateY(0);} }
+
+  /* Modal backdrop */
+  .mq-modal-bg {
+    background: rgba(3,3,7,0.72);
+    backdrop-filter: blur(8px);
+  }
+
+  /* Level up flash */
+  .lvl-flash {
+    position: fixed; inset:0; background: radial-gradient(circle, rgba(0,255,156,0.11) 0%, transparent 62%);
+    pointer-events: none; z-index:8000; opacity:0;
+  }
+  .lvl-flash.go { animation: lvlpop .9s ease; }
+  @keyframes lvlpop {
+    0% { opacity:0; } 15% { opacity:1; } 100% { opacity:0; }
+  }
+
+  /* Checkbox mq */
+  .mq-check {
+    appearance:none;
+    width:18px;height:18px;
+    border:1.5px solid rgba(255,255,255,0.28);
+    border-radius:5px;
+    background: rgba(255,255,255,0.025);
+    display:inline-block;
+    position:relative;
+    cursor:pointer;
+    vertical-align: middle;
+    flex-shrink:0;
+  }
+  .mq-check:checked {
+    background:#00FF9C;
+    border-color:#00FF9C;
+  }
+  .mq-check:checked::after{
+    content:'✓'; color:#03150f; font-size:12px; font-weight:800;
+    position:absolute; left:3px; top:-1px;
+  }
+
+  .skin-ring-active { box-shadow: 0 0 0 2px #00FF9C, 0 0 24px rgba(0,255,156,0.35); }
+</style>
+</head>
+<body class="min-h-screen font-inter bg-mq-bg relative">
+
+<!-- CRT Overlay -->
+<div id="crt-overlay"></div>
+<div class="lvl-flash" id="level-flash"></div>
+<div id="toast-wrap"></div>
+
+<!-- GRID BACKGROUND -->
+<div class="fixed inset-0 mq-grid-bg"></div>
+<div class="fixed inset-0 vignette pointer-events-none"></div>
+
+<!-- ===================== LOADER ===================== -->
+<div id="view-loader" class="fixed inset-0 z-[70] flex items-center justify-center bg-[#050507]">
+  <div class="w-full max-w-md px-8 text-center">
+    <div class="font-orbitron font-black tracking-wider text-[17px] text-[#cdb5ff]">MAXIQUEEN OS</div>
+    <div class="font-mono text-[11px] text-[#8a7f9a] mt-1 tracking-widest">v7 // GLOBAL MASTERY</div>
+    
+    <div class="mt-10 glass-panel rounded-[18px] p-8">
+      <div class="font-mono text-[11px] text-zinc-400 tracking-widest">INICIALIZANDO NÚCLEO COGNITIVO</div>
+      <div class="mt-5 h-[9px] w-full rounded-full bg-[#12121c] border border-[#24173a] overflow-hidden relative">
+        <div id="loader-bar" class="h-full rounded-full transition-all duration-100" style="width:0%; background: linear-gradient(90deg, #8A2BE2, #00D4FF, #00FF9C); box-shadow: 0 0 14px rgba(0,255,156,0.45);"></div>
+      </div>
+      <div class="flex justify-between mt-3 font-mono text-[11px] text-zinc-500">
+        <span id="loader-pct">0%</span>
+        <span id="loader-label">CARGANDO MÓDULOS…</span>
+      </div>
+      <div id="loader-log" class="mt-4 font-mono text-[11px] text-[#8a8297] text-left h-[52px] overflow-hidden opacity-80 leading-relaxed">
+        > boot seq…
+      </div>
+    </div>
+    <div class="mt-6 text-[10.5px] font-mono text-zinc-600">© 2024 MQ // CIFRADO E2E</div>
+  </div>
+</div>
+
+<!-- ===================== HERO ===================== -->
+<div id="view-hero" class="relative z-10 min-h-screen flex items-center justify-center px-6 hidden">
+  <div class="max-w-6xl w-full grid lg:grid-cols-[1.25fr_.9fr] gap-12 items-center py-16">
+    <!-- Left -->
+    <div>
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#2a1c45] bg-[#111117]/70 font-mono text-[11px] text-[#bba9d8]">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#00FF9C] shadow-[0_0_8px_#00FF9C]"></span>
+        MAXIQUEEN OS v7 — GLOBAL MASTERY
+      </div>
+      <h1 class="font-orbitron font-black text-[46px] sm:text-[68px] md:text-[84px] leading-[0.93] mt-5 tracking-tight">
+        <span class="text-white">DOMINIO</span><br>
+        <span class="text-[#d1b6ff] neon-purple-text">COGNITIVO</span>
+      </h1>
+      <p class="mt-6 text-[15.5px] leading-relaxed text-zinc-300 max-w-xl">
+        Entrena tu mente. Construye tu imperio. Fusiona torres, asimila frameworks de negocio y escala tu nivel operativo en un entorno cyberpunk de alto rendimiento.
+      </p>
+      <div class="flex flex-wrap gap-4 mt-8">
+        <button id="btn-enter-core" class="btn-cyber btn-cyber-green px-8 py-[15px] text-[13.5px] rounded-[10px]">
+          [ ACCEDER AL NÚCLEO ]
+        </button>
+        <button id="btn-hero-audio" class="btn-cyber btn-cyber-dark px-5 py-[15px] text-[12.5px] rounded-[10px]">
+          <i class="fa-solid fa-volume-high mr-2 text-zinc-400"></i>Activar audio
+        </button>
+      </div>
+      <div class="flex gap-8 mt-10 font-mono text-[11px] text-zinc-400">
+        <div><span class="text-zinc-500">MODO</span><br><span class="text-[#00FF9C]">ONLINE</span></div>
+        <div><span class="text-zinc-500">NODOS</span><br><span class="text-white">18 / 18</span></div>
+        <div><span class="text-zinc-500">LATENCIA</span><br><span class="text-white">7ms</span></div>
+      </div>
+    </div>
+    <!-- Right visual card -->
+    <div class="relative">
+      <div class="glass-panel rounded-[28px] p-8 shadow-neon-purple">
+        <div class="font-mono text-[11px] text-zinc-400 tracking-widest">PREVIEW // QUEEN TOWER MK-IV</div>
+        <div class="mt-6 flex items-center justify-center">
+          <!-- big tower preview -->
+          <div class="w-40 h-40 rounded-[22px] flex items-center justify-center relative" style="background: radial-gradient(circle at 40% 35%, rgba(138,43,226,0.33), rgba(13,9,28,0.95)); border:1.5px solid rgba(138,43,226,0.7); box-shadow: 0 0 44px rgba(138,43,226,0.28);">
+            <i class="fa-solid fa-chess-queen text-[54px] text-[#c79dff] drop-shadow-[0_0_18px_rgba(138,43,226,0.8)]"></i>
+            <div class="absolute -top-2 -right-2 bg-[#00FF9C] text-[#03140f] font-mono font-bold text-[11px] px-2 py-1 rounded-full">T5</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mt-7 text-center font-mono text-[10.5px] text-zinc-400">
+          <div class="stat-chip py-2">YIELD<br><span class="text-[#00FF9C] font-bold">15/s</span></div>
+          <div class="stat-chip py-2">FUSIÓN<br><span class="text-[#00D4FF] font-bold">x2.4</span></div>
+          <div class="stat-chip py-2">ROI<br><span class="text-white font-bold">410%</span></div>
+        </div>
+        <div class="mt-5 text-[11.5px] text-zinc-400 leading-relaxed">
+          Sistema de progresión real, guardado local, 18 flashcards estratégicas, merge-drag & voz sintética ES-CO.
+        </div>
+      </div>
+      <!-- floating pills -->
+      <div class="absolute -left-5 top-10 glass-panel rounded-full px-3 py-1.5 font-mono text-[10.5px] text-[#a3ffe0] border-[#00ff9c33]">XP +35</div>
+      <div class="absolute -right-3 bottom-14 glass-panel rounded-full px-3 py-1.5 font-mono text-[10.5px] text-[#b7eaff] border-[#00d4ff33]">RA_CHA x9</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DASHBOARD ===================== -->
+<div id="view-dashboard" class="relative z-10 min-h-screen px-4 sm:px-8 lg:px-12 py-7 max-w-[1180px] mx-auto hidden">
+  <!-- Top bar -->
+  <header class="flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="w-10 h-10 rounded-[12px] bg-[#15131f] border border-[#2d1d47] flex items-center justify-center font-orbitron font-extrabold text-[#d0b7ff]">MQ</div>
+      <div>
+        <div class="font-orbitron font-extrabold tracking-wider text-[14px] text-zinc-200">MAXIQUEEN OS</div>
+        <div class="font-mono text-[10.5px] text-zinc-500">v7 • GLOBAL MASTERY • ES-CO</div>
+      </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="btn-crt-toggle" class="btn-cyber btn-cyber-dark text-[11px] px-3 py-2 rounded-[8px]">
+        <i class="fa-solid fa-tv mr-1.5"></i> CRT OFF
+      </button>
+      <button id="btn-reset-progress" class="btn-cyber btn-cyber-dark text-[11px] px-3 py-2 rounded-[8px] text-zinc-300 hover:text-red-300">
+        <i class="fa-solid fa-rotate-left mr-1.5"></i>Reset
+      </button>
+      <button id="btn-back-hero" class="btn-cyber btn-cyber-dark text-[11px] px-3 py-2 rounded-[8px]">
+        Salir
+      </button>
+    </div>
+  </header>
+
+  <!-- Stats row -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+    <div class="stat-chip px-4 py-3">
+      <div class="font-mono text-[10px] text-zinc-500 tracking-wider">ENERGÍA</div>
+      <div class="font-orbitron text-[22px] font-extrabold text-[#00D4FF]"><span id="stat-energia">120</span></div>
+    </div>
+    <div class="stat-chip px-4 py-3">
+      <div class="font-mono text-[10px] text-zinc-500 tracking-wider">RECURSOS</div>
+      <div class="font-orbitron text-[22px] font-extrabold text-[#00FF9C]"><span id="stat-recursos">250</span></div>
+    </div>
+    <div class="stat-chip px-4 py-3">
+      <div class="font-mono text-[10px] text-zinc-500 tracking-wider">XP</div>
+      <div class="font-orbitron text-[22px] font-extrabold text-white"><span id="stat-xp">0</span></div>
+    </div>
+    <div class="stat-chip px-4 py-3">
+      <div class="font-mono text-[10px] text-zinc-500 tracking-wider">NIVEL</div>
+      <div class="font-orbitron text-[22px] font-extrabold text-[#d2b6ff]"><span id="stat-nivel">1</span> / 25</div>
+    </div>
+  </div>
+
+  <!-- Level progress -->
+  <div class="mt-3 glass-panel rounded-[14px] px-4 py-3 flex items-center gap-4">
+    <div class="font-mono text-[11px] text-zinc-400 whitespace-nowrap">PROGRESO NIVEL</div>
+    <div class="flex-1 h-[9px] bg-[#151621] rounded-full overflow-hidden border border-[#221833]">
+      <div id="level-bar" class="h-full rounded-full transition-all duration-500" style="width:12%; background: linear-gradient(90deg, #8A2BE2, #00D4FF);"></div>
+    </div>
+    <div class="font-mono text-[11px] text-zinc-400"><span id="level-pct">0%</span></div>
+  </div>
+
+  <!-- Main 3-col layout -->
+  <div class="grid grid-cols-1 xl:grid-cols-[320px_1fr_320px] gap-5 mt-6 items-start">
+
+    <!-- LEFT: Queen -->
+    <div class="glass-panel rounded-[22px] p-5">
+      <div class="font-mono text-[10.5px] text-zinc-500 tracking-widest">AVATAR // QUEEN</div>
+      <div class="flex flex-col items-center mt-4">
+        <div id="queen-avatar" class="queen-face w-[132px] h-[132px] rounded-full flex flex-col items-center justify-center relative transition-all">
+          <div class="text-[38px]">👑</div>
+          <div class="flex gap-5 mt-2">
+            <div class="queen-eyes"></div>
+            <div class="queen-eyes"></div>
+          </div>
+          <div class="queen-mouth mt-3" id="queen-mouth"></div>
+          <div id="queen-skin-glow" class="absolute inset-0 rounded-full pointer-events-none opacity-60" style="box-shadow: inset 0 0 34px rgba(0,212,255,0.19);"></div>
+        </div>
+        <div class="mt-4 font-orbitron font-bold text-[15px]" id="queen-skin-name">Queen Clásica</div>
+        <div class="font-mono text-[11px] text-zinc-500">Síntesis ES-CO</div>
+        <button id="btn-voice-toggle" class="btn-cyber btn-cyber-purple w-full mt-4 py-[11px] text-[12px] rounded-[10px]">
+          <i class="fa-solid fa-volume-high mr-2"></i>Activar Voz
+        </button>
+        <button id="btn-queen-say" class="btn-cyber btn-cyber-dark w-full mt-2 py-[10px] text-[11.5px] rounded-[10px]">
+          Saludar
+        </button>
+        <div class="w-full mt-4 bg-[#10111b] border border-[#241a37] rounded-xl px-3 py-3 font-mono text-[11.5px] text-zinc-300 min-h-[62px]" id="queen-bubble">
+          Sistema listo, operadora.
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER: Modules -->
+    <div class="space-y-5">
+      <!-- Quick panels -->
+      <div class="grid sm:grid-cols-3 gap-3">
+        <button data-open-modal="modal-despliegues" class="open-modal-btn glass-panel rounded-[16px] px-4 py-4 text-left hover:border-[#8A2BE2aa] transition">
+          <div class="text-[#00D4FF]"><i class="fa-solid fa-satellite-dish"></i></div>
+          <div class="font-orbitron font-bold mt-2 text-[13.5px]">DESPLIEGUES</div>
+          <div class="font-mono text-[11px] text-zinc-400 mt-1">Logs en vivo</div>
+        </button>
+        <button data-open-modal="modal-trafico" class="open-modal-btn glass-panel rounded-[16px] px-4 py-4 text-left hover:border-[#8A2BE2aa] transition">
+          <div class="text-[#ff64b4]"><i class="fa-brands fa-tiktok"></i></div>
+          <div class="font-orbitron font-bold mt-2 text-[13.5px]">TRÁFICO REDES</div>
+          <div class="font-mono text-[11px] text-zinc-400 mt-1">Simulador TikTok</div>
+        </button>
+        <button data-open-modal="modal-global" class="open-modal-btn glass-panel rounded-[16px] px-4 py-4 text-left hover:border-[#8A2BE2aa] transition">
+          <div class="text-[#00FF9C]"><i class="fa-solid fa-earth-americas"></i></div>
+          <div class="font-orbitron font-bold mt-2 text-[13.5px]">RED GLOBAL</div>
+          <div class="font-mono text-[11px] text-zinc-400 mt-1">Ranking</div>
+        </button>
+      </div>
+
+      <!-- Queen Towers Module Card -->
+      <div class="glass-panel rounded-[22px] p-5 md:p-6 relative overflow-hidden">
+        <div class="absolute right-0 top-0 w-44 h-44 bg-[#8A2BE2] opacity-[0.07] blur-[60px] pointer-events-none"></div>
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div class="font-mono text-[10.5px] text-zinc-500 tracking-widest">MÓDULO PRINCIPAL</div>
+            <div class="font-orbitron font-extrabold text-[22px] text-white mt-1">QUEEN TOWERS</div>
+            <div class="text-[13px] text-zinc-400 mt-1 max-w-md">Fusiona torres, escala income pasivo. Merge drag & drop + tap-to-tap.</div>
+          </div>
+          <div class="text-right font-mono text-[11px] text-zinc-400">
+            Torres activas<br>
+            <span class="text-white text-[16px] font-bold" id="dash-tower-count">0</span>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-3 mt-4">
+          <button id="btn-open-towers" class="btn-cyber btn-cyber-green px-6 py-[12px] text-[12.5px] rounded-[10px]">
+            ABRIR MÓDULO <i class="fa-solid fa-arrow-right ml-2"></i>
+          </button>
+          <div class="font-mono text-[11.5px] text-zinc-400 self-center">Income: <span id="dash-income" class="text-[#00FF9C] font-bold">0 / 4s</span></div>
+        </div>
+      </div>
+
+      <!-- Núcleo Mental -->
+      <div class="glass-panel rounded-[22px] p-5 md:p-6 relative overflow-hidden">
+        <div class="absolute right-0 top-0 w-44 h-44 bg-[#00D4FF] opacity-[0.06] blur-[60px] pointer-events-none"></div>
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div class="font-mono text-[10.5px] text-zinc-500 tracking-widest">ENTRENAMIENTO</div>
+            <div class="font-orbitron font-extrabold text-[22px] text-white mt-1">NÚCLEO MENTAL</div>
+            <div class="text-[13px] text-zinc-400 mt-1 max-w-md">18 Flashcards de negocio / tech. Asimila para +150 XP.</div>
+          </div>
+          <div class="text-right font-mono text-[11px] text-zinc-400">
+            Racha<br>
+            <span class="text-[#00D4FF] text-[16px] font-bold" id="dash-streak">0</span>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-3 mt-4">
+          <button id="btn-open-mental" class="btn-cyber btn-cyber-purple px-6 py-[12px] text-[12.5px] rounded-[10px]">
+            ENTRENAR <i class="fa-solid fa-brain ml-2"></i>
+          </button>
+          <div class="font-mono text-[11.5px] text-zinc-400 self-center">Progreso: <span id="dash-cards" class="text-white font-bold">0 / 18</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Misiones + Tienda -->
+    <div class="space-y-5">
+      <div class="glass-panel rounded-[22px] p-5">
+        <div class="font-orbitron font-bold text-[14px]">MISIONES DIARIAS</div>
+        <div class="mt-3 space-y-3 text-[13px]" id="missions-list">
+          <!-- JS renders -->
+        </div>
+        <div class="font-mono text-[11px] text-zinc-500 mt-3">Se reinician manualmente con Reset.</div>
+      </div>
+
+      <div class="glass-panel rounded-[22px] p-5">
+        <div class="font-orbitron font-bold text-[14px]">TIENDA // SKINS QUEEN</div>
+        <div class="mt-3 space-y-2.5" id="skin-shop">
+          <!-- JS renders -->
+        </div>
+      </div>
+
+      <div class="glass-panel rounded-[16px] px-4 py-3 font-mono text-[11px] text-zinc-400">
+        <div class="flex justify-between"><span>Guardado</span><span class="text-[#00FF9C]">localStorage mqos_v7</span></div>
+        <div class="flex justify-between mt-1"><span>Audio</span><span id="dash-audio-state">Off</span></div>
+        <div class="flex justify-between mt-1"><span>Voz</span><span id="dash-voice-state">Mute</span></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center font-mono text-[11px] text-zinc-600 mt-12 pb-6">
+    MAXIQUEEN OS v7 — Hecho en Colombia • Modo offline, 100% funcional.
+  </footer>
+</div>
+
+<!-- ===================== QUEEN TOWERS VIEW ===================== -->
+<div id="view-towers" class="relative z-10 min-h-screen px-4 sm:px-8 lg:px-12 py-7 max-w-[1080px] mx-auto hidden">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <div class="font-mono text-[11px] text-zinc-500">MÓDULO ACTIVO</div>
+      <h2 class="font-orbitron font-extrabold text-[28px] sm:text-[32px]">QUEEN TOWERS</h2>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="font-mono text-[12px] bg-[#12121d] border border-[#2a2140] rounded-xl px-3 py-2">
+        Recursos: <span class="text-[#00FF9C] font-bold" id="towers-recursos">0</span>
+      </div>
+      <button id="btn-towers-back" class="btn-cyber btn-cyber-dark px-4 py-[10px] rounded-[10px] text-[12px]">
+        <i class="fa-solid fa-arrow-left mr-2"></i>Dashboard
+      </button>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-[1fr_310px] gap-6 mt-6 items-start">
+    <!-- Grid -->
+    <div class="glass-panel rounded-[22px] p-4 sm:p-6">
+      <div class="grid grid-cols-4 gap-3 sm:gap-4" id="tower-grid">
+        <!-- JS renders 16 cells -->
+      </div>
+      <div class="font-mono text-[11px] text-zinc-400 mt-4">
+        Arrastra una torre sobre otra igual para fusionar. En móvil: toca para seleccionar, toca destino para mover/fusionar.
+      </div>
+    </div>
+
+    <!-- Side controls -->
+    <div class="space-y-4">
+      <div class="glass-panel rounded-[22px] p-5">
+        <div class="font-orbitron font-bold">Control de Torre</div>
+        <button id="btn-buy-tower" class="btn-cyber btn-cyber-green w-full mt-3 py-[13px] rounded-[10px] text-[13px]">
+          COMPRAR TORRE T-1<br>
+          <span class="opacity-90 text-[12px]" id="tower-cost-label">Costo: 10</span>
+        </button>
+        <div class="grid grid-cols-2 gap-2 mt-3">
+          <button id="btn-sell-mode" class="btn-cyber btn-cyber-dark py-[10px] rounded-[10px] text-[12px]">
+            <i class="fa-solid fa-sack-dollar mr-1"></i> Vender
+          </button>
+          <button id="btn-clear-selection" class="btn-cyber btn-cyber-dark py-[10px] rounded-[10px] text-[12px]">
+            Limpiar
+          </button>
+        </div>
+        <div id="sell-hint" class="hidden font-mono text-[11px] text-[#ff8a97] mt-2">Modo venta activo. Clic en una torre para vender (50%).</div>
+        <div class="mt-4 text-[12.5px] text-zinc-300 leading-relaxed">
+          Ingreso pasivo: <b class="text-[#00FF9C]"><span id="towers-income">0</span> / 4s</b><br>
+          Fusión: +<span id="towers-xp-fusion-info">35</span> XP por nivel.<br>
+          Torres: <b><span id="towers-count-side">0</span> / 16</b>
+        </div>
+      </div>
+
+      <div class="glass-panel rounded-[22px] p-5">
+        <div class="font-mono text-[11px] text-zinc-400 mb-2">NIVELES DE TORRE</div>
+        <div class="space-y-2 text-[12.5px] font-mono">
+          <div class="flex justify-between"><span class="text-zinc-300"><i class="fa-solid fa-cube text-zinc-400 mr-2"></i>T1 Nodo</span><span class="text-zinc-500">3/s</span></div>
+          <div class="flex justify-between"><span class="text-zinc-300"><i class="fa-solid fa-chess-rook text-[#00D4FF] mr-2"></i>T2 Torre</span><span class="text-zinc-500">6/s</span></div>
+          <div class="flex justify-between"><span class="text-zinc-300"><i class="fa-solid fa-chess-knight text-[#a86cff] mr-2"></i>T3 Spire</span><span class="text-zinc-500">9/s</span></div>
+          <div class="flex justify-between"><span class="text-zinc-300"><i class="fa-solid fa-chess-bishop text-[#ffa94d] mr-2"></i>T4 Crown</span><span class="text-zinc-500">12/s</span></div>
+          <div class="flex justify-between"><span class="text-zinc-300"><i class="fa-solid fa-chess-queen text-[#00FF9C] mr-2"></i>T5 Queen</span><span class="text-zinc-500">15/s</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== NÚCLEO MENTAL VIEW ===================== -->
+<div id="view-mental" class="relative z-10 min-h-screen px-4 sm:px-8 lg:px-10 py-7 max-w-[980px] mx-auto hidden">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <div class="font-mono text-[11px] text-zinc-500">ENTRENAMIENTO COGNITIVO</div>
+      <h2 class="font-orbitron font-extrabold text-[28px] sm:text-[32px]">NÚCLEO MENTAL</h2>
+    </div>
+    <button id="btn-mental-back" class="btn-cyber btn-cyber-dark px-4 py-[10px] rounded-[10px] text-[12px]">
+      <i class="fa-solid fa-arrow-left mr-2"></i>Dashboard
+    </button>
+  </div>
+
+  <div class="grid md:grid-cols-[1fr_300px] gap-6 mt-6 items-start">
+    <div class="glass-panel rounded-[24px] p-6 sm:p-9">
+      <div class="flex justify-between font-mono text-[11px] text-zinc-400 mb-4">
+        <span>Flashcard <b class="text-white" id="card-counter">1 / 18</b></span>
+        <span>Racha: <b class="neon-cyan-text" id="card-streak">0</b></span>
+      </div>
+
+      <div class="flashcard-scene">
+        <div id="flashcard" class="flashcard-inner relative w-full min-h-[270px] sm:min-h-[300px] cursor-pointer">
+          <!-- Front -->
+          <div class="flashcard-face absolute inset-0 rounded-[20px] p-7 sm:p-10 flex flex-col justify-center items-center text-center" style="background: radial-gradient(120% 120% at 50% 0%, rgba(138,43,226,0.17), rgba(17,15,28,0.96)); border:1px solid rgba(138,43,226,0.45);">
+            <div class="font-mono text-[10.5px] text-zinc-400 tracking-widest">CONCEPTO</div>
+            <div id="card-front-text" class="font-orbitron font-extrabold text-[28px] sm:text-[34px] mt-4 tracking-wide">ARQUITECTURA</div>
+            <div class="font-mono text-[11px] text-zinc-500 mt-6">Click / tap para revelar</div>
+          </div>
+          <!-- Back -->
+          <div class="flashcard-face flashcard-back absolute inset-0 rounded-[20px] p-7 sm:p-10 flex flex-col justify-center items-center text-center" style="background: radial-gradient(120% 120% at 50% 0%, rgba(0,255,156,0.10), rgba(10,20,18,0.97)); border:1px solid rgba(0,255,156,0.38);">
+            <div class="font-mono text-[10.5px] text-[#8fffd2] tracking-widest">DEFINICIÓN ESTRATÉGICA</div>
+            <div id="card-back-text" class="font-orbitron font-extrabold text-[22px] sm:text-[27px] mt-4 text-[#c8ffe9]">ECOSISTEMA INTEGRAL</div>
+            <div class="font-mono text-[11px] text-[#86d8bc] mt-4">Click para volver</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-3 mt-6">
+        <button id="btn-card-assimilate" class="btn-cyber btn-cyber-green px-6 py-[13px] rounded-[10px] text-[13px] flex-1 sm:flex-none sm:min-w-[210px]">
+          <i class="fa-solid fa-check mr-2"></i>ASIMILADO (+150 XP)
+        </button>
+        <button id="btn-card-retry" class="btn-cyber btn-cyber-dark px-5 py-[13px] rounded-[10px] text-[13px]">
+          Reintentar
+        </button>
+      </div>
+      <div class="font-mono text-[11px] text-zinc-500 mt-3">
+        Tip: asimila para avanzar. Reintentar no suma XP y reinicia racha.
+      </div>
+    </div>
+
+    <!-- Side info -->
+    <div class="space-y-4">
+      <div class="glass-panel rounded-[20px] p-5">
+        <div class="font-orbitron font-bold">Progreso</div>
+        <div class="mt-3 font-mono text-[12.5px] text-zinc-300 space-y-1.5">
+          <div>Asimiladas: <b id="mental-assimilated">0</b> / 18</div>
+          <div>Racha actual: <b class="neon-cyan-text" id="mental-streak-side">0</b></div>
+          <div>XP ganado aquí: <b id="mental-xp">0</b></div>
+        </div>
+        <button id="btn-mental-restart" class="btn-cyber btn-cyber-dark w-full mt-3 py-[10px] rounded-[10px] text-[12px]">Reiniciar mazo</button>
+      </div>
+      <div class="glass-panel rounded-[20px] p-5 text-[12.5px] text-zinc-400 leading-relaxed">
+        Las 18 tarjetas cubren growth, posicionamiento, mentalidad y ejecución. Entrena 5 min diarios para mantener tu edge cognitivo.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODALS ===================== -->
+
+<!-- Modal: Despliegues -->
+<div id="modal-despliegues" class="fixed inset-0 z-[60] hidden">
+  <div class="mq-modal-bg absolute inset-0" data-close-modal></div>
+  <div class="relative max-w-2xl mx-auto mt-16 sm:mt-24 glass-panel-strong rounded-[22px] p-5 sm:p-6 mx-4 shadow-2xl">
+    <div class="flex items-center justify-between">
+      <div class="font-orbitron font-bold text-[18px]"><i class="fa-solid fa-satellite-dish text-[#00D4FF] mr-2"></i>DESPLIEGUES // LIVE LOG</div>
+      <button class="text-zinc-400 hover:text-white text-xl px-2" data-close-modal>&times;</button>
+    </div>
+    <div id="deploy-log" class="mt-4 h-[320px] overflow-auto bg-[#0a0a12] border border-[#1f1830] rounded-xl p-3 font-mono text-[12px] leading-relaxed text-[#b8d8cf]">
+      > Sistema de despliegues iniciado…<br>
+    </div>
+    <div class="flex justify-end gap-2 mt-3 font-mono text-[11px]">
+      <span class="text-zinc-500">Auto-refresh cada 3s</span>
+      <button id="btn-deploy-clear" class="text-[#00D4FF] hover:underline">Limpiar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Tráfico redes -->
+<div id="modal-trafico" class="fixed inset-0 z-[60] hidden">
+  <div class="mq-modal-bg absolute inset-0" data-close-modal></div>
+  <div class="relative max-w-xl mx-auto mt-16 sm:mt-24 glass-panel-strong rounded-[22px] p-5 sm:p-6 mx-4">
+    <div class="flex items-center justify-between">
+      <div class="font-orbitron font-bold text-[18px]"><i class="fa-brands fa-tiktok text-pink-400 mr-2"></i>TRÁFICO REDES // TIKTOK SIM</div>
+      <button class="text-zinc-400 hover:text-white text-xl px-2" data-close-modal>&times;</button>
+    </div>
+    <div class="mt-4 grid grid-cols-2 gap-3">
+      <div class="bg-[#0d0d16] border border-[#241a36] rounded-xl p-4 text-center">
+        <div class="font-mono text-[11px] text-zinc-400">VISTAS</div>
+        <div class="font-orbitron text-[26px] font-extrabold text-white mt-1" id="tt-views">84,120</div>
+        <div class="text-[11px] text-[#00FF9C] font-mono" id="tt-views-rate">+ 312 /s</div>
+      </div>
+      <div class="bg-[#0d0d16] border border-[#241a36] rounded-xl p-4 text-center">
+        <div class="font-mono text-[11px] text-zinc-400">FOLLOWERS</div>
+        <div class="font-orbitron text-[26px] font-extrabold text-white mt-1" id="tt-followers">5,402</div>
+        <div class="text-[11px] text-[#00D4FF] font-mono" id="tt-followers-rate">+ 3 /s</div>
+      </div>
+    </div>
+    <div class="mt-4 bg-[#0d0d16] border border-[#241a36] rounded-xl p-4">
+      <div class="font-mono text-[11px] text-zinc-400 mb-2">ÚLTIMO VIDEO</div>
+      <div class="text-[14px] text-zinc-200">“Cómo escalar tu imperio cognitivo en 7 días”</div>
+      <div class="mt-2 h-2 bg-[#161625] rounded-full overflow-hidden"><div id="tt-bar" class="h-full bg-gradient-to-r from-pink-500 to-[#00D4FF]" style="width:62%"></div></div>
+      <div class="font-mono text-[11px] text-zinc-500 mt-2">Engagement 8.4% • CTR 12.1%</div>
+    </div>
+    <div class="flex gap-2 mt-3">
+      <button id="btn-tt-boost" class="btn-cyber btn-cyber-purple px-4 py-[10px] rounded-[10px] text-[12px]">Impulsar +5k vistas (25 recursos)</button>
+      <button data-close-modal class="btn-cyber btn-cyber-dark px-4 py-[10px] rounded-[10px] text-[12px]">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Red Global -->
+<div id="modal-global" class="fixed inset-0 z-[60] hidden">
+  <div class="mq-modal-bg absolute inset-0" data-close-modal></div>
+  <div class="relative max-w-xl mx-auto mt-16 sm:mt-24 glass-panel-strong rounded-[22px] p-5 sm:p-6 mx-4">
+    <div class="flex items-center justify-between">
+      <div class="font-orbitron font-bold text-[18px]"><i class="fa-solid fa-ranking-star text-[#00FF9C] mr-2"></i>RED GLOBAL // RANKING</div>
+      <button class="text-zinc-400 hover:text-white text-xl px-2" data-close-modal>&times;</button>
+    </div>
+    <div class="mt-4 bg-[#0b0b14] border border-[#221836] rounded-xl overflow-hidden">
+      <table class="w-full text-[13px] font-mono">
+        <thead class="text-zinc-400 text-[11px] uppercase tracking-wider bg-[#12121f]">
+          <tr><th class="text-left px-4 py-2">#</th><th class="text-left px-4 py-2">Operador</th><th class="text-right px-4 py-2">XP</th><th class="text-right px-4 py-2">Nivel</th></tr>
+        </thead>
+        <tbody id="global-ranking-body" class="text-zinc-300">
+          <!-- JS -->
+        </tbody>
+      </table>
+    </div>
+    <div class="font-mono text-[11px] text-zinc-500 mt-3">Tu posición se actualiza en vivo con tu XP real.</div>
+  </div>
+</div>
+
+<!-- ===================== SCRIPT ===================== -->
+<script>
+/* ============================================================
+   MAXIQUEEN OS v7 | Global Mastery
+   Vanilla JS - Single File
+   ============================================================ */
+
+const LS_KEY = 'mqos_v7';
+
+const defaultState = () => ({
+  energia: 120,
+  recursos: 250,
+  xp: 0,
+  missions: { m1:false, m2:false, m3:false },
+  skin: 'classic', // classic | neon | obsidian
+  skinsOwned: { classic: true },
+  crt: false,
+  audioEnabled: false,
+  voiceEnabled: false,
+  towers: Array(16).fill(null), // null or { level: 1..5 }
+  towerCost: 10,
+  mental: {
+    index: 0,
+    streak: 0,
+    assimilated: [], // indices
+    xpEarned: 0
+  },
+  tiktok: { views: 84120, followers: 5402 }
+});
+
+let state = loadState();
+
+function loadState(){
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return defaultState();
+    const parsed = JSON.parse(raw);
+    // merge to ensure new fields exist
+    return {...defaultState(), ...parsed, mental: {...defaultState().mental, ...(parsed.mental||{}) } };
+  } catch(e){ return defaultState(); }
+}
+function saveState(){
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+
+/* ---------- Audio (WebAudio beeps) ---------- */
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx){
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){}
+  }
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+function beep(freq=720, duration=0.08, vol=0.11, type='square'){
+  if(!state.audioEnabled || !audioCtx) return;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = type;
+  o.frequency.value = freq;
+  o.connect(g); g.connect(audioCtx.destination);
+  g.gain.setValueAtTime(vol, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  o.start(); o.stop(audioCtx.currentTime + duration);
+}
+function sfxClick(){ beep(620, 0.06, 0.09, 'square'); }
+function sfxOk(){ beep(880, 0.09, 0.1, 'sine'); beep(1120, 0.09, 0.075, 'sine'); }
+function sfxBad(){ beep(220, 0.13, 0.09, 'sawtooth'); }
+function sfxMerge(level){ beep(460 + level*90, 0.1, 0.13, 'triangle'); }
+
+/* ---------- Speech Synthesis ---------- */
+let selectedVoice = null;
+function updateVoice(){
+  const voices = window.speechSynthesis.getVoices();
+  selectedVoice = voices.find(v => /es-(CO|ES|MX|US)/i.test(v.lang)) || voices.find(v=> v.lang.startsWith('es')) || null;
+}
+if('speechSynthesis' in window){
+  window.speechSynthesis.onvoiceschanged = updateVoice;
+  updateVoice();
+}
+let speaking = false;
+function speak(text){
+  if(!state.voiceEnabled || !('speechSynthesis' in window)) {
+    queenBubble(text);
+    return;
+  }
+  try{
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    if(selectedVoice) u.voice = selectedVoice;
+    u.lang = selectedVoice ? selectedVoice.lang : 'es-ES';
+    u.rate = 1.04;
+    u.pitch = 1.05;
+    u.onstart = () => { speaking = true; document.getElementById('queen-avatar').classList.add('queen-talking'); };
+    u.onend = () => { speaking = false; document.getElementById('queen-avatar').classList.remove('queen-talking'); };
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+  queenBubble(text);
+}
+function queenBubble(text){
+  const el = document.getElementById('queen-bubble');
+  if(el) el.textContent = text;
+}
+
+/* ---------- Toast ---------- */
+function toast(msg){
+  const wrap = document.getElementById('toast-wrap');
+  const d = document.createElement('div');
+  d.className = 'mq-toast';
+  d.textContent = msg;
+  wrap.appendChild(d);
+  setTimeout(()=> { d.style.opacity='0'; d.style.transition='opacity .3s'; setTimeout(()=>d.remove(), 320); }, 2300);
+}
+
+/* ---------- Progression ---------- */
+function getLevel(xp){
+  return Math.min(25, Math.floor(xp / 500) + 1);
+}
+function levelProgress(xp){
+  const lvl = getLevel(xp);
+  const base = (lvl-1)*500;
+  const prog = xp - base;
+  return Math.min(100, Math.round((prog/500)*100));
+}
+let lastLevel = getLevel(state.xp);
+function addXP(amount, reason){
+  const before = getLevel(state.xp);
+  state.xp += amount;
+  const after = getLevel(state.xp);
+  saveState();
+  renderStats();
+  if(after > before){
+    state.recursos += 100;
+    saveState();
+    levelUpEffect(after);
+    speak(`Nivel ${after} alcanzado, operadora. Bonificación acreditada.`);
+    toast(`⭐ NIVEL ${after} • +100 recursos`);
+  } else if(reason){
+    toast(`+${amount} XP • ${reason}`);
+  }
+  return after > before;
+}
+function levelUpEffect(lvl){
+  const flash = document.getElementById('level-flash');
+  flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+  sfxOk();
+}
+
+/* ---------- Render global stats ---------- */
+function renderStats(){
+  document.getElementById('stat-energia').textContent = state.energia;
+  document.getElementById('stat-recursos').textContent = state.recursos;
+  document.getElementById('stat-xp').textContent = state.xp.toLocaleString('es-CO');
+  const lvl = getLevel(state.xp);
+  document.getElementById('stat-nivel').textContent = lvl;
+  document.getElementById('level-pct').textContent = levelProgress(state.xp) + '%';
+  document.getElementById('level-bar').style.width = levelProgress(state.xp) + '%';
+  // dashboard mirrors
+  const tc = state.towers.filter(Boolean).length;
+  document.getElementById('dash-tower-count') && (document.getElementById('dash-tower-count').textContent = tc);
+  document.getElementById('dash-income') && (document.getElementById('dash-income').textContent = towerIncome() + ' / 4s');
+  document.getElementById('dash-streak') && (document.getElementById('dash-streak').textContent = state.mental.streak);
+  document.getElementById('dash-cards') && (document.getElementById('dash-cards').textContent = state.mental.assimilated.length + ' / 18');
+
+  // tower view mirrors
+  const tr = document.getElementById('towers-recursos');
+  if(tr) tr.textContent = state.recursos;
+  const ti = document.getElementById('towers-income');
+  if(ti) ti.textContent = towerIncome();
+  const tcs = document.getElementById('towers-count-side');
+  if(tcs) tcs.textContent = tc;
+  const tcost = document.getElementById('tower-cost-label');
+  if(tcost) tcost.textContent = 'Costo: ' + state.towerCost;
+
+  document.getElementById('dash-audio-state').textContent = state.audioEnabled ? 'On' : 'Off';
+  document.getElementById('dash-voice-state').textContent = state.voiceEnabled ? 'Activa' : 'Mute';
+}
+
+/* ---------- Views ---------- */
+const views = ['view-loader','view-hero','view-dashboard','view-towers','view-mental'];
+function showView(id){
+  views.forEach(v => document.getElementById(v).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+/* ---------- LOADER ---------- */
+function runLoader(){
+  showView('view-loader');
+  const bar = document.getElementById('loader-bar');
+  const pct = document.getElementById('loader-pct');
+  const log = document.getElementById('loader-log');
+  const steps = [
+    '> Cargando núcleo MQ…',
+    '> Sincronizando red global…',
+    '> Inicializando Queen TTS es-CO…',
+    '> Verificando módulos Towers / Mental…',
+    '> Cifrado E2E OK…',
+    '> Listo.'
+  ];
+  let p = 0;
+  const timer = setInterval(()=>{
+    p += Math.random()*18+6;
+    if(p>=100) p=100;
+    bar.style.width = p+'%';
+    pct.textContent = Math.floor(p)+'%';
+    if(Math.random() > .65){
+      log.innerHTML = steps[Math.min(Math.floor(p/18), steps.length-1)] + '<br>' + log.innerHTML.split('<br>').slice(0,2).join('<br>');
+    }
+    if(p>=100){
+      clearInterval(timer);
+      setTimeout(()=> showView('view-hero'), 420);
+    }
+  }, 140);
+}
+
+/* ============================================================
+   DASHBOARD / Misiones / Skins
+   ============================================================ */
+const MISSIONS = [
+  { key:'m1', label:'Fusionar 1 torre', xp: 90 },
+  { key:'m2', label:'Asimilar 2 flashcards', xp: 120 },
+  { key:'m3', label:'Comprar 1 skin / 1 torre', xp: 75 },
+];
+function renderMissions(){
+  const wrap = document.getElementById('missions-list');
+  wrap.innerHTML = '';
+  MISSIONS.forEach(m => {
+    const done = state.missions[m.key];
+    const row = document.createElement('label');
+    row.className = 'flex items-center gap-3 cursor-pointer';
+    row.innerHTML = `
+      <input type="checkbox" class="mq-check" data-mission="${m.key}" ${done ? 'checked disabled':''}>
+      <span class="${done ? 'line-through text-zinc-500' : 'text-zinc-200'}">${m.label} <span class="text-[#00FF9C]">+${m.xp} XP</span></span>
+    `;
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('input[data-mission]').forEach(cb=>{
+    cb.addEventListener('change', e=>{
+      if(cb.checked && !state.missions[cb.dataset.mission]){
+        sfxOk();
+        state.missions[cb.dataset.mission] = true;
+        const m = MISSIONS.find(x=>x.key===cb.dataset.mission);
+        addXP(m.xp, 'Misión completada');
+        saveState();
+        renderMissions();
+        speak('Misión completada. Excelente ejecución.');
+      }
+    });
+  });
+}
+
+const SKINS = [
+  { id:'classic', name:'Queen Clásica', price:0, glow:'rgba(0,212,255,0.19)' },
+  { id:'neon', name:'Queen Neón', price:120, glow:'rgba(0,255,156,0.34)' },
+  { id:'obsidian', name:'Queen Obsidiana', price:220, glow:'rgba(255,64,140,0.28)' },
+];
+function renderSkinShop(){
+  const wrap = document.getElementById('skin-shop');
+  wrap.innerHTML='';
+  SKINS.forEach(s=>{
+    const owned = !!state.skinsOwned[s.id];
+    const active = state.skin === s.id;
+    const div = document.createElement('div');
+    div.className = 'flex items-center justify-between bg-[#10111a] border border-[#23233a] rounded-xl px-3 py-2.5';
+    div.innerHTML = `
+      <div>
+        <div class="text-[13px] text-zinc-200">${s.name}${active ? ' <span class="text-[#00FF9C] text-[11px]">• activa</span>':''}</div>
+        <div class="font-mono text-[11px] text-zinc-500">${s.price===0 ? 'Gratis' : s.price + ' recursos'}</div>
+      </div>
+      <button class="btn-cyber ${owned ? (active ? 'btn-cyber-green' : 'btn-cyber-dark') : 'btn-cyber-purple'} text-[11.5px] px-3 py-[8px] rounded-[8px]" data-skin="${s.id}">
+        ${owned ? (active ? 'Activa':'Equipar') : 'Comprar'}
+      </button>
+    `;
+    wrap.appendChild(div);
+  });
+  wrap.querySelectorAll('button[data-skin]').forEach(btn=>{
+    btn.onclick = ()=>{
+      sfxClick();
+      const id = btn.dataset.skin;
+      const skin = SKINS.find(x=>x.id===id);
+      if(state.skinsOwned[id]){
+        state.skin = id;
+        saveState();
+        applySkin();
+        toast('Skin equipada: ' + skin.name);
+      } else {
+        if(state.recursos >= skin.price){
+          state.recursos -= skin.price;
+          state.skinsOwned[id] = true;
+          state.skin = id;
+          saveState();
+          applySkin();
+          renderStats();
+          toast('Compraste ' + skin.name);
+          speak('Nuevo aspecto desbloqueado.');
+          // mission 3 auto-complete
+          if(!state.missions.m3){
+            state.missions.m3 = true;
+            addXP(75, 'Misión Tienda');
+            renderMissions();
+          }
+        } else {
+          sfxBad();
+          toast('Recursos insuficientes');
+        }
+      }
+      renderSkinShop();
+    };
+  });
+}
+function applySkin(){
+  const glow = document.getElementById('queen-skin-glow');
+  const nameEl = document.getElementById('queen-skin-name');
+  const skin = SKINS.find(s=>s.id===state.skin) || SKINS[0];
+  if(glow) glow.style.boxShadow = `inset 0 0 34px ${skin.glow}`;
+  if(nameEl) nameEl.textContent = skin.name;
+  document.getElementById('queen-avatar').className = 'queen-face w-[132px] h-[132px] rounded-full flex flex-col items-center justify-center relative transition-all' + (state.skin==='neon' ? ' skin-ring-active' : '');
+}
+
+/* ============================================================
+   QUEEN TOWERS
+   ============================================================ */
+const TOWER_ICONS = {
+  1: { icon:'fa-cube', color:'#9bb0c8', glow:'rgba(155,176,200,0.18)' },
+  2: { icon:'fa-chess-rook', color:'#00D4FF', glow:'rgba(0,212,255,0.24)' },
+  3: { icon:'fa-chess-knight', color:'#b77dff', glow:'rgba(183,125,255,0.28)' },
+  4: { icon:'fa-chess-bishop', color:'#ffaf5c', glow:'rgba(255,175,92,0.3)' },
+  5: { icon:'fa-chess-queen', color:'#00FF9C', glow:'rgba(0,255,156,0.36)' },
+};
+let towerSelectedIndex = null;
+let sellMode = false;
+
+function towerIncome(){
+  return state.towers.reduce((sum, t)=> sum + (t ? t.level * 3 : 0), 0);
+}
+
+function renderTowers(){
+  const grid = document.getElementById('tower-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  state.towers.forEach((t, i)=>{
+    const cell = document.createElement('div');
+    cell.className = 'tower-cell' + (sellMode ? ' sell-mode' : '');
+    cell.dataset.index = i;
+
+    if(t){
+      const td = TOWER_ICONS[t.level];
+      const token = document.createElement('div');
+      token.className = 'tower-token' + (towerSelectedIndex === i ? ' selected' : '');
+      token.draggable = true;
+      token.dataset.index = i;
+      token.style.background = `radial-gradient(circle at 35% 30%, rgba(255,255,255,0.085), rgba(10,12,22,0.95))`;
+      token.style.border = `1.4px solid ${td.color}99`;
+      token.style.boxShadow = `0 0 22px ${td.glow}, inset 0 0 18px rgba(255,255,255,0.025)`;
+      token.innerHTML = `
+        <i class="fa-solid ${td.icon}" style="color:${td.color}; font-size:26px; text-shadow:0 0 14px ${td.glow}"></i>
+        <div class="font-mono text-[11px] mt-1" style="color:${td.color}">T${t.level}</div>
+      `;
+
+      // Drag events
+      token.addEventListener('dragstart', e=>{
+        e.dataTransfer.setData('text/plain', i);
+        setTimeout(()=> token.style.opacity='0.4', 0);
+      });
+      token.addEventListener('dragend', ()=> token.style.opacity='1');
+
+      // Click / tap select
+      token.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        handleTowerTap(i);
+      });
+
+      cell.appendChild(token);
+    } else {
+      cell.innerHTML = `<span class="font-mono text-[11px] text-zinc-600">—</span>`;
+    }
+
+    // Drop target
+    cell.addEventListener('dragover', e=>{ e.preventDefault(); cell.classList.add('drag-over'); });
+    cell.addEventListener('dragleave', ()=> cell.classList.remove('drag-over'));
+    cell.addEventListener('drop', e=>{
+      e.preventDefault();
+      cell.classList.remove('drag-over');
+      const from = parseInt(e.dataTransfer.getData('text/plain'),10);
+      handleTowerMove(from, i);
+    });
+
+    // Tap on empty cell to move selected
+    cell.addEventListener('click', ()=>{
+      if(towerSelectedIndex !== null){
+        handleTowerMove(towerSelectedIndex, i);
+      } else if(sellMode && t){
+        sellTower(i);
+      }
+    });
+
+    grid.appendChild(cell);
+  });
+  renderStats();
+}
+
+function handleTowerTap(index){
+  sfxClick();
+  if(sellMode){
+    sellTower(index);
+    return;
+  }
+  const tower = state.towers[index];
+  if(!tower) return;
+  if(towerSelectedIndex === null){
+    towerSelectedIndex = index;
+    renderTowers();
+    toast('Torre T'+tower.level+' seleccionada');
+    return;
+  }
+  if(towerSelectedIndex === index){
+    towerSelectedIndex = null;
+    renderTowers();
+    return;
+  }
+  handleTowerMove(towerSelectedIndex, index);
+}
+
+function handleTowerMove(from, to){
+  if(from === to){ towerSelectedIndex = null; renderTowers(); return; }
+  const a = state.towers[from];
+  const b = state.towers[to];
+  if(!a) { towerSelectedIndex = null; renderTowers(); return; }
+
+  if(!b){
+    // move
+    state.towers[to] = a;
+    state.towers[from] = null;
+    towerSelectedIndex = null;
+    saveState();
+    renderTowers();
+    sfxClick();
+    return;
+  }
+  // merge?
+  if(b.level === a.level && a.level < 5){
+    const newLevel = a.level + 1;
+    state.towers[to] = { level: newLevel };
+    state.towers[from] = null;
+    towerSelectedIndex = null;
+    const xpGain = newLevel * 35;
+    addXP(xpGain, `Fusión T${newLevel}`);
+    saveState();
+    sfxMerge(newLevel);
+    speak(`Fusión exitosa. Torre nivel ${newLevel} desplegada.`);
+    renderTowers();
+    // Mission 1 auto-complete on first merge
+    if(!state.missions.m1){
+      state.missions.m1 = true;
+      addXP(90, 'Misión Torres');
+      renderMissions();
+      saveState();
+    }
+    return;
+  }
+  // can't merge different levels: swap
+  state.towers[to] = a;
+  state.towers[from] = b;
+  towerSelectedIndex = null;
+  saveState();
+  renderTowers();
+  sfxClick();
+}
+
+function sellTower(index){
+  const t = state.towers[index];
+  if(!t) return;
+  // Sell value = 50% of purchase scaling approximate: base cost * level * 0.7 ?
+  // Simpler: towerCost at time of buying is variable, we'll use: level * towerCost_base * 0.5
+  // We will use: (10 * (1.15^(level))) * 0.5 approx -> use level*7 + 3
+  const sellValue = Math.floor((10 * Math.pow(1.15, t.level-1)) * 0.5) + t.level * 2;
+  state.recursos += sellValue;
+  state.towers[index] = null;
+  towerSelectedIndex = null;
+  saveState();
+  renderTowers();
+  toast(`Torre vendida +${sellValue} recursos`);
+  sfxOk();
+}
+
+function buyTower(){
+  sfxClick();
+  const cost = state.towerCost;
+  if(state.recursos < cost){
+    sfxBad();
+    toast('Recursos insuficientes');
+    return;
+  }
+  const emptyIdx = state.towers.findIndex(t => !t);
+  if(emptyIdx === -1){
+    sfxBad();
+    toast('Grid lleno. Fusiona para liberar espacio.');
+    return;
+  }
+  state.recursos -= cost;
+  state.towers[emptyIdx] = { level: 1 };
+  state.towerCost = Math.floor(state.towerCost * 1.15);
+  saveState();
+  renderTowers();
+  toast('Torre T-1 adquirida');
+  // If mission m3 expects "comprar 1 skin / 1 torre"
+  if(!state.missions.m3){
+    // mark only if we haven't bought skin; we still allow tower purchase to count
+    // We'll allow it
+    state.missions.m3 = true;
+    addXP(75, 'Misión Tienda');
+    renderMissions();
+  }
+}
+
+/* Passive income */
+setInterval(()=>{
+  const inc = towerIncome();
+  if(inc > 0){
+    state.recursos += inc;
+    state.energia = Math.min(240, state.energia + 1);
+    saveState();
+    if(document.getElementById('view-towers') && !document.getElementById('view-towers').classList.contains('hidden')){
+      renderTowers();
+    } else {
+      renderStats();
+    }
+  }
+}, 4000);
+
+/* ============================================================
+   NÚCLEO MENTAL
+   ============================================================ */
+const FLASHCARDS = [
+  { front:'ARQUITECTURA', back:'ECOSISTEMA INTEGRAL' },
+  { front:'VENTA ESTRATÉGICA', back:'POSICIONAMIENTO PREMIUM' },
+  { front:'TRACCIÓN', back:'VELOCIDAD DE EJECUCIÓN' },
+  { front:'OFERTA IRRESISTIBLE', back:'VALOR > PRECIO x10' },
+  { front:'DISTRIBUCIÓN', back:'OMNICANAL INTELIGENTE' },
+  { front:'MARGEN', back:'UNIT ECONOMICS SANOS' },
+  { front:'NARRATIVA', back:'STORYTELLING DE MARCA' },
+  { front:'RETENCIÓN', back:'LTV / CHURN CONTROLADO' },
+  { front:'ACQUISITION', back:'CAC OPTIMIZADO' },
+  { front:'PRODUCT MARKET FIT', back:'DOLOR REAL RESUELTO' },
+  { front:'ESCALA', back:'SISTEMAS, NO HÉROES' },
+  { front:'FOCO', back:'DECIR NO ESTRATÉGICO' },
+  { front:'VELOCIDAD', back:'ITERACIÓN SEMANAL' },
+  { front:'AUTORIDAD', back:'PRUEBA SOCIAL COMPOUND' },
+  { front:'CAPITAL', back:'RUNWAY 18 MESES' },
+  { front:'EQUIPO A-PLAYER', back:'TALENTO DENSIDAD ALTA' },
+  { front:'MÉTRICA NORTE', back:'UNA SOLA VERDAD' },
+  { front:'MENTALIDAD QUEEN', back:'EJECUCIÓN IMPLACABLE' },
+];
+
+function renderMentalCard(){
+  const idx = state.mental.index % FLASHCARDS.length;
+  const card = FLASHCARDS[idx];
+  document.getElementById('card-front-text').textContent = card.front;
+  document.getElementById('card-back-text').textContent = card.back;
+  document.getElementById('card-counter').textContent = (idx+1) + ' / ' + FLASHCARDS.length;
+  document.getElementById('card-streak').textContent = state.mental.streak;
+  document.getElementById('mental-assimilated').textContent = state.mental.assimilated.length;
+  document.getElementById('mental-streak-side').textContent = state.mental.streak;
+  document.getElementById('mental-xp').textContent = state.mental.xpEarned;
+  // unflip
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+
+/* ============================================================
+   MODALS: Despliegues / Trafico / Global
+   ============================================================ */
+let deployInterval = null;
+const deployLines = [
+  'NODO-AMS • sync OK • 12ms',
+  'NODO-BOG • deploy t4 • success',
+  'EDGE-CDN • cache purge • 248 ms',
+  'QUEEN-API • auth refresh • OK',
+  'TIKTOK-PIPE • ingest 4.2k evt',
+  'BILLING-CORE • 14 tx / min',
+  'ML-RANK • model v7.3 hot',
+  'VAULT • secrets rotated',
+  'OBSERVABILITY • p95 78ms',
+];
+function startDeployLogs(){
+  const box = document.getElementById('deploy-log');
+  if(deployInterval) clearInterval(deployInterval);
+  deployInterval = setInterval(()=>{
+    const modal = document.getElementById('modal-despliegues');
+    if(modal.classList.contains('hidden')) return;
+    const line = deployLines[Math.floor(Math.random()*deployLines.length)];
+    const ts = new Date().toLocaleTimeString('es-CO', { hour12:false });
+    box.innerHTML += `[${ts}] ${line}<br>`;
+    box.scrollTop = box.scrollHeight;
+  }, 3000);
+}
+
+/* TikTok sim */
+let ttInterval = null;
+function startTikTok(){
+  if(ttInterval) clearInterval(ttInterval);
+  ttInterval = setInterval(()=>{
+    const modal = document.getElementById('modal-trafico');
+    if(modal.classList.contains('hidden')) return;
+    state.tiktok.views += Math.floor(Math.random()*420 + 120);
+    if(Math.random() > 0.62) state.tiktok.followers += Math.floor(Math.random()*3+1);
+    saveState();
+    document.getElementById('tt-views').textContent = state.tiktok.views.toLocaleString('es-CO');
+    document.getElementById('tt-followers').textContent = state.tiktok.followers.toLocaleString('es-CO');
+    document.getElementById('tt-bar').style.width = (55 + Math.sin(Date.now()/2200)*8).toFixed(1)+'%';
+  }, 1100);
+}
+
+/* Global ranking */
+function renderGlobalRanking(){
+  const tbody = document.getElementById('global-ranking-body');
+  const myXp = state.xp;
+  const players = [
+    { name:'TÚ • MQ-OPS', xp: myXp, me:true },
+    { name:'VALKYRIE_9', xp: Math.max(120, myXp - 340) },
+    { name:'NOVA_SYND', xp: Math.max(80, myXp - 620) },
+    { name:'ORION-7', xp: Math.max(40, myXp - 980) },
+    { name:'ECHO_NODE', xp: Math.max(10, myXp - 1320) },
+  ].sort((a,b)=> b.xp - a.xp);
+  tbody.innerHTML = players.map((p,i)=>`
+    <tr class="${p.me ? 'bg-[#151528]' : ''}">
+      <td class="px-4 py-[10px] ${p.me ? 'text-[#00FF9C]' : 'text-zinc-400'}">#${i+1}</td>
+      <td class="px-4 py-[10px] ${p.me ? 'text-white font-bold' : ''}">${p.name}${p.me ? ' <span class="text-[10px] text-[#00FF9C]">YOU</span>':''}</td>
+      <td class="px-4 py-[10px] text-right">${p.xp.toLocaleString('es-CO')}</td>
+      <td class="px-4 py-[10px] text-right text-zinc-400">${Math.min(25, Math.floor(p.xp/500)+1)}</td>
+    </tr>
+  `).join('');
+}
+
+/* Modal open/close wiring */
+function setupModals(){
+  document.querySelectorAll('.open-modal-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      sfxClick();
+      const id = btn.dataset.openModal;
+      document.getElementById(id).classList.remove('hidden');
+      if(id==='modal-global') renderGlobalRanking();
+    });
+  });
+  document.querySelectorAll('[data-close-modal]').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      const modal = e.target.closest('.fixed');
+      if(modal) modal.classList.add('hidden');
+      sfxClick();
+    });
+  });
+  // click backdrop closes
+  document.querySelectorAll('.mq-modal-bg').forEach(bg=>{
+    bg.addEventListener('click', ()=> bg.parentElement.classList.add('hidden'));
+  });
+}
+
+/* ============================================================
+   EVENT BINDINGS
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', ()=>{
+
+  runLoader();
+
+  /* HERO */
+  document.getElementById('btn-enter-core').onclick = ()=>{
+    sfxOk();
+    ensureAudio();
+    showView('view-dashboard');
+    renderStats();
+    renderMissions();
+    renderSkinShop();
+    applySkin();
+    speak('Bienvenida al núcleo, operadora. Sistema Queen operativo.');
+  };
+  document.getElementById('btn-hero-audio').onclick = ()=>{
+    state.audioEnabled = !state.audioEnabled;
+    if(state.audioEnabled) ensureAudio();
+    const b = document.getElementById('btn-hero-audio');
+    b.innerHTML = state.audioEnabled ? '<i class="fa-solid fa-volume-high mr-2 text-zinc-300"></i>Audio ON' : '<i class="fa-solid fa-volume-xmark mr-2 text-zinc-400"></i>Activar audio';
+    sfxClick();
+    toast(state.audioEnabled ? 'Audio UI activado' : 'Audio UI desactivado');
+    saveState();
+  };
+
+  /* Dashboard nav */
+  document.getElementById('btn-open-towers').onclick = ()=>{
+    sfxClick();
+    showView('view-towers');
+    renderTowers();
+  };
+  document.getElementById('btn-open-mental').onclick = ()=>{
+    sfxClick();
+    showView('view-mental');
+    renderMentalCard();
+  };
+  document.getElementById('btn-towers-back').onclick = ()=>{
+    sfxClick();
+    showView('view-dashboard');
+    renderStats();
+  };
+  document.getElementById('btn-mental-back').onclick = ()=>{
+    sfxClick();
+    showView('view-dashboard');
+    renderStats();
+  };
+  document.getElementById('btn-back-hero').onclick = ()=>{
+    sfxClick();
+    showView('view-hero');
+  };
+
+  /* Voice toggle */
+  const voiceBtn = document.getElementById('btn-voice-toggle');
+  function refreshVoiceBtn(){
+    voiceBtn.innerHTML = state.voiceEnabled
+      ? '<i class="fa-solid fa-volume-xmark mr-2"></i>Silenciar Voz'
+      : '<i class="fa-solid fa-volume-high mr-2"></i>Activar Voz';
+  }
+  refreshVoiceBtn();
+  voiceBtn.onclick = ()=>{
+    state.voiceEnabled = !state.voiceEnabled;
+    saveState();
+    refreshVoiceBtn();
+    sfxClick();
+    if(state.voiceEnabled){
+      updateVoice();
+      speak('Voz Queen activada. Lista para operar.');
+    } else {
+      window.speechSynthesis.cancel();
+      document.getElementById('queen-avatar').classList.remove('queen-talking');
+      queenBubble('Voz silenciada.');
+    }
+    renderStats();
+  };
+  document.getElementById('btn-queen-say').onclick = ()=>{
+    sfxClick();
+    speak('Sistema Queen operativo. Mantén foco, ejecuta con precisión.');
+  };
+
+  /* CRT toggle */
+  const crtBtn = document.getElementById('btn-crt-toggle');
+  function syncCrt(){
+    document.getElementById('crt-overlay').classList.toggle('on', state.crt);
+    crtBtn.innerHTML = state.crt ? '<i class="fa-solid fa-tv mr-1.5"></i> CRT ON' : '<i class="fa-solid fa-tv mr-1.5"></i> CRT OFF';
+  }
+  syncCrt();
+  crtBtn.onclick = ()=>{
+    state.crt = !state.crt;
+    saveState();
+    syncCrt();
+    sfxClick();
+    toast(state.crt ? 'CRT Scanlines ON' : 'CRT OFF');
+  };
+
+  /* Reset */
+  document.getElementById('btn-reset-progress').onclick = ()=>{
+    sfxClick();
+    if(confirm('¿Segura? Esto borrará TODO tu progreso local de MAXIQUEEN OS v7.')){
+      localStorage.removeItem(LS_KEY);
+      location.reload();
+    }
+  };
+
+  /* Towers controls */
+  document.getElementById('btn-buy-tower').onclick = buyTower;
+  document.getElementById('btn-sell-mode').onclick = ()=>{
+    sfxClick();
+    sellMode = !sellMode;
+    towerSelectedIndex = null;
+    document.getElementById('sell-hint').classList.toggle('hidden', !sellMode);
+    document.getElementById('btn-sell-mode').classList.toggle('btn-cyber-purple', sellMode);
+    renderTowers();
+  };
+  document.getElementById('btn-clear-selection').onclick = ()=>{
+    sfxClick();
+    towerSelectedIndex = null;
+    sellMode = false;
+    document.getElementById('sell-hint').classList.add('hidden');
+    renderTowers();
+  };
+
+  /* Mental controls */
+  const flashEl = document.getElementById('flashcard');
+  flashEl.addEventListener('click', ()=>{
+    sfxClick();
+    flashEl.classList.toggle('flipped');
+  });
+  document.getElementById('btn-card-assimilate').onclick = ()=>{
+    sfxOk();
+    const idx = state.mental.index % FLASHCARDS.length;
+    if(!state.mental.assimilated.includes(idx)){
+      state.mental.assimilated.push(idx);
+    }
+    state.mental.streak += 1;
+    state.mental.xpEarned += 150;
+    addXP(150, 'Flashcard asimilada');
+    state.mental.index = (state.mental.index + 1) % FLASHCARDS.length;
+    saveState();
+    speak('Concepto asimilado. Siguiente.');
+    renderMentalCard();
+    // mission m2
+    if(state.mental.assimilated.length >= 2 && !state.missions.m2){
+      state.missions.m2 = true;
+      addXP(120, 'Misión Mental');
+      renderMissions();
+      saveState();
+    }
+  };
+  document.getElementById('btn-card-retry').onclick = ()=>{
+    sfxBad();
+    state.mental.streak = 0;
+    saveState();
+    renderMentalCard();
+    toast('Racha reiniciada');
+    speak('Reintento registrado.');
+  };
+  document.getElementById('btn-mental-restart').onclick = ()=>{
+    sfxClick();
+    if(confirm('¿Reiniciar mazo? Se mantiene XP ganado.')){
+      state.mental.index = 0;
+      state.mental.streak = 0;
+      state.mental.assimilated = [];
+      saveState();
+      renderMentalCard();
+      toast('Mazo reiniciado');
+    }
+  };
+
+  /* Modals */
+  setupModals();
+  startDeployLogs();
+  startTikTok();
+
+  document.getElementById('btn-deploy-clear').onclick = ()=>{
+    document.getElementById('deploy-log').innerHTML = '> Log limpiado…<br>';
+    sfxClick();
+  };
+
+  document.getElementById('btn-tt-boost').onclick = ()=>{
+    sfxClick();
+    if(state.recursos >= 25){
+      state.recursos -= 25;
+      state.tiktok.views += 5000;
+      saveState();
+      renderStats();
+      toast('+5,000 vistas • Campaña impulsada');
+      speak('Tráfico impulsado. Momentum en alza.');
+    } else {
+      sfxBad();
+      toast('Necesitas 25 recursos');
+    }
+  };
+
+  // initial renders
+  renderStats();
+  renderMissions();
+  renderSkinShop();
+  applySkin();
+  renderTowers();
+  renderMentalCard();
+});
+</script>
+<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
+</body>
+</html>

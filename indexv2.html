@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MaxiQueen OS | Sistema Digital Integral</title>
+
+<meta name="description" content="Sistema digital integral...">
+<meta property="og:image" content="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777734693/repository-open-graph-template_ajkllh.png">
+<meta name="twitter:card" content="summary_large_image">
+   
+<link rel="stylesheet" href="./css/style.css">
+<link rel="icon" href="/maxiqueen-os/favicon.ico" type="image/x-icon">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+
+<style>
+/* =====================
+   VARIABLES / TEMAS
+===================== */
+:root {
+  --accent:#facc15;
+   background:var(--bg-main);
+   color:var(--text-main);
+  --text-main:#f4ff23;
+  --card-bg:#151517;
+  --border-soft:#34ff19;
+  --btn-bg:#facc15;
+  --btn-text:#6e3838;
+  --bg-soft:rgba(4, 9, 19, 0.45);
+}
+
+[data-theme="light"] {
+  --accent:#22e670;
+  background:var(--bg-main);
+  color:var(--text-main);
+  --text-main:#0cff07;
+  --card-bg:#000000;
+  --border-soft:#a7ff03;
+  --btn-bg:#ef8300;
+  --btn-text:#690707;
+  --bg-soft:rgb(9, 9, 67);
+}
+
+html,body{
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 251, 16, 0.174), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(8, 43, 117, 0.08), transparent 40%),
+    linear-gradient(180deg, #282f3dc2 15%, #020a2b85 100%);
+  color:var(--text-main)!important;
+  font-family:'Poppins',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  overflow-x:hidden;
+  transition:background .35s,color .35s;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* =====================
+   ANIMACIONES
+===================== */
+@keyframes floatInfinite{
+  0%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+  25%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  50%{transform:translate3d(0,-4px,0) rotateX(-1deg) rotateY(1deg);}
+  75%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+}
+
+@keyframes bounce-slow{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-14px);}
+}
+.animate-bounce-slow{animation:bounce-slow 3.2s ease-in-out infinite;}
+
+@keyframes pulse-slow{
+  0%,100%{opacity:.18;}
+  50%{opacity:.35;}
+}
+.animate-pulse-slow{animation:pulse-slow 6s ease-in-out infinite;}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
+}
+
+/* =====================
+   ANIMACIONES
+===================== */
+@keyframes floatInfinite{
+  0%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+  25%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  50%{transform:translate3d(0,-4px,0) rotateX(-1deg) rotateY(1deg);}
+  75%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+}
+
+@keyframes bounce-slow{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-14px);}
+}
+.animate-bounce-slow{animation:bounce-slow 3.2s ease-in-out infinite;}
+
+@keyframes pulse-slow{
+  0%,100%{opacity:.18;}
+  50%{opacity:.35;}
+}
+.animate-pulse-slow{animation:pulse-slow 6s ease-in-out infinite;}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
+}
+
+/* =====================
+   HERO / LOGO
+===================== */
+.hero-avatar{
+  position:relative;
+  animation:floatInfinite 7s ease-in-out infinite;
+}
+.hero-avatar::after{
+  content:'';
+  position:absolute;
+  inset:-14px;
+  border-radius:9999px;
+  background:conic-gradient(from 0deg,#f43f5e,#f59e0b,#facc15,#22c55e,#38bdf8,#a855f7,#f43f5e);
+  filter:blur(20px);
+  opacity:.75;
+  z-index:-1;
+}
+
+/* =====================
+   GALERÍA
+===================== */
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:1.5rem;
+}
+.gallery img{
+  width:100%;
+  border-radius:1.5rem;
+  object-fit:cover;
+  transition:.35s cubic-bezier(.4,0,.2,1);
+}
+.gallery img:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 40px rgba(250,204,21,.35);
+}
+
+/* =====================
+   WHATSAPP FLOAT
+===================== */
+.whatsapp-float{
+  position:fixed;
+  bottom:22px;
+  left:22px;
+  background:#25D366;
+  color:white;
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 10px 28px rgba(0,0,0,.35);
+  z-index:1000;
+  transition:.25s cubic-bezier(.4,0,.2,1);
+}
+.whatsapp-float:hover{transform:scale(1.12);}
+ 
+
+   
+/* =====================
+   TOGGLE TEMA
+===================== */
+.toggle-theme{
+  position:fixed;
+  top:18px;
+  right:18px;
+  background:var(--bg-soft);
+  border:1px solid rgba(64,255,255,.12);
+  padding:7px 16px;
+  border-radius:999px;
+  font-size:.8rem;
+  cursor:pointer;
+  z-index:1000;
+  backdrop-filter:blur(10px);
+  transition:.25s;
+}
+.toggle-theme:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+
+   /* ===================== CHAT ====================== */
+.mq-chat{
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  width:360px;
+  max-height:520px;
+  display:flex;
+  flex-direction:column;
+  border-radius:22px;
+  overflow:hidden;
+  backdrop-filter:blur(25px);
+  background:linear-gradient(
+    145deg,
+    rgba(28, 28, 42, 0.9),
+    rgba(15,15,20,0.8)
+  );
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.6),
+    0 0 40px rgba(250,204,21,.15);
+  z-index:9999;
+}
+
+.mq-chat-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 16px;
+  font-weight:600;
+  background:rgba(255,255,255,0.03);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.mq-chat-controls button{
+  background:none;
+  border:none;
+  color:#ccc;
+  font-size:14px;
+  margin-left:8px;
+  cursor:pointer;
+}
+
+.mq-chat-controls button:hover{
+  color:#41c0eb;
+}
+
+.mq-chat-body{
+  flex:1;
+  padding:14px;
+  overflow-y:auto;
+  font-size:14px;
+}
+
+.mq-chat-input{
+  display:flex;
+  padding:12px;
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+
+.mq-chat-input input{
+  flex:1;
+  padding:8px 10px;
+  border-radius:8px;
+  border:none;
+  background:rgba(255,255,255,0.05);
+  color:#fff;
+}
+
+.mq-chat-input button{
+  margin-left:8px;
+  padding:8px 14px;
+  border-radius:8px;
+  border:none;
+  background:#facc15;
+  color:#000;
+  font-weight:600;
+  cursor:pointer;
+}
+.chat-input button:hover{filter:brightness(1.1);}
+
+.social-icon{width:20px;height:20px;object-fit:contain;display:inline-block}
+/* =====================
+   LICENCIA BOX
+===================== */
+.mq-license-box{
+  max-width:820px;
+  margin:5rem auto 6rem;
+  padding:2.5rem 2.2rem;
+  border-radius:1.75rem;
+  background:var(--bg-soft);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.08);
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.mq-license-box h3{
+  font-size:1.6rem;
+  font-weight:800;
+  margin-bottom:1rem;
+}
+.mq-license-box p{margin-bottom:1rem;color:#d1d5db}
+.mq-license-box ul{
+  text-align:left;
+  max-width:420px;
+  margin:1.25rem auto 1.5rem;
+  color:#e5e7eb;
+}
+.mq-license-box li{margin-bottom:.4rem;}
+.mq-license-check{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  margin-bottom:1rem;
+}
+.mq-license-box button{
+  padding:.7rem 1.6rem;
+  border-radius:999px;
+  background:var(--accent);
+  color:#120834;
+  font-weight:700;
+  transition:.2s;
+}
+.mq-license-box button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+.mq-license-box button:not(:disabled):hover{
+  transform:translateY(-1px);
+  filter:brightness(1.05);
+  box-shadow:0 10px 24px rgba(250,204,21,.35);
+}
+
+   /* Estilo del Certificado Google MaxiQueen OS */
+.cert-google {
+  display: inline-block;
+  padding: 12px 20px;
+  margin: 15px 0;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  color: white !important;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  
+  /* Gradiente oficial de Google con tu toque MQ_OS */
+  background: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
+  background-size: 200% auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cert-google:hover {
+  background-position: right center;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(66, 133, 244, 0.4);
+}
+
+.cert-google::before {
+  content: '🏆'; /* Icono de trofeo antes del texto */
+  margin-right: 8px;
+}
+
+   /* Estilo dinámico para el Chat */
+.mq-chat {
+  /* ... otros estilos ... */
+  border: 2px solid var(--accent); /* El borde cambiará de amarillo a verde */
+  box-shadow: 0 0 20px var(--bg-soft);
+}
+
+.mq-chat-header {
+  background: var(--accent);
+  color: var(--btn-text); /* El texto del header se adapta para ser legible */
+}
+
+.msg-user {
+  color: var(--accent); /* Tus mensajes resaltan con el color activo */
+}
+
+/* Estado del chat cuando está visible */
+.mq-chat {
+  display: none; /* Inicia oculto */
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 320px;
+  height: 500px;
+  background: #0b0e14;
+  flex-direction: column;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  z-index: 9999;
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+/* Clase que se activa al minimizar */
+.minimized {
+  height: 45px !important;
+  min-height: 45px !important;
+  overflow: hidden;
+}
+
+.mq-chat-header {
+  cursor: pointer; /* Para que el usuario sepa que puede hacer clic ahí */
+}
+
+/* Contenedor de sugerencias */
+.mq-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(0, 255, 0, 0.1);
+}
+
+/* Botones de sugerencia */
+.suggestion-btn {
+  background: #1a1f26;
+  color: #00ff00; /* Verde neón para resaltar */
+  border: 1px solid #00ff00;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.suggestion-btn:hover {
+  background: #00ff00;
+  color: #000;
+  transform: translateY(-2px);
+}
+
+   :root {
+  --mq-yellow: #FFCC00; /* Oro */
+  --mq-blue: #0033A0;   /* Estructura */
+  --mq-red: #CE1126;    /* Acción */
+}
+
+.mq-chat {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 320px;
+  background: #111;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
+}
+
+.mq-chat.is-minimized {
+  width: 200px; /* Se hace más pequeña al minimizar si quieres */
+}
+
+.mq-chat-header {
+  background: var(--mq-blue); /* Azul bandera */
+  color: white;
+  padding: 10px 15px;
+  border-radius: 12px 12px 0 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--mq-yellow); /* Toque amarillo */
+}
+
+.mq-chat-controls button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.mq-chat-controls button:hover { opacity: 1; }
+
+.msg-bot {
+  border-left: 3px solid var(--mq-red); /* Rojo bandera para el sistema */
+  padding-left: 10px;
+}
+   
+</style>
+
+</head>
+
+<body class="transition-colors duration-500 ease-in-out bg-black text-white">
+  
+<div class="container">
+
+  <!-- ================= ECOSISTEMA / ACCESO OFICIAL MAXIQUEEN OS ================= -->
+<section class="py-16 px-6 fade-in bg-zinc-950">
+  <div class="max-w-6xl mx-auto text-center">
+
+    <!-- TÍTULO PREMIUM -->
+    <div class="mb-12">
+        <a href="https://res.cloudinary.com/maxiqueen-os/image/upload/v1777325346/ChatGPT_Image_22_abr_2026_17_39_46_tpaady.png"
+           target="_blank"
+           class="inline-block text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-600 hover:scale-105 transition duration-300">
+          👑 MAXIQUEEN OS 👑
+        </a>
+        <p class="mt-4 text-xs md:text-sm text-zinc-500 uppercase tracking-[0.4em]">
+          The Future Business Infrastructure • v7.0
+        </p>
+    </div>
+
+    <!-- CONTENEDOR TIPO DASHBOARD -->
+    <div class="glass p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-white/5 bg-white/5 backdrop-blur-xl">
+      
+      <div class="mb-12">
+        <h2 class="text-2xl md:text-4xl font-bold text-white mb-4">Módulos de Ecosistema</h2>
+        <p class="text-zinc-400 max-w-2xl mx-auto">
+          Explora prototipos funcionales y herramientas estratégicas diseñadas para escalar modelos de negocio digitales.
+        </p>
+      </div>
+
+      <!-- GRID CATEGORIZADO -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- CATEGORÍA: COMERCIO & VENTAS -->
+        <div class="space-y-4">
+          <h3 class="text-amber-500 text-xs font-bold uppercase tracking-widest text-left ml-2">Comercio & Retail</h3>
+          <a href="MaxiQueen_Store.html" class="card-link-new">✅ Store Oficial MQ</a>
+          <a href="ChatOS.html" class="card-link-new">
+  <img src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777666802/animate-with-subtle-elegant-motion-soft-golden-shi_2_fc8whf.mp4" alt="Logo MaxiQueen" style="width: 20px; height: auto; vertical-align: middle; margin-right: 8px;">
+  Asistencia Chat MQs
+</a>
+          <a href="prodind.html" class="card-link-new">👑 Producto Individual Multiplataforma MQ</a>
+        </div>
+
+        <!-- CATEGORÍA: HERRAMIENTAS & IA -->
+        <div class="space-y-4">
+          <h3 class="text-cyan-500 text-xs font-bold uppercase tracking-widest text-left ml-2">Inteligencia & Control</h3>
+          <a href="MQ_Buil_IA.html" class="card-link-new"> MQ Chat Builder IA</a>
+          <a href="dashboard.html" class="card-link-new">👑 Central Dashboard</a>
+          <a href="LANDINGMQ1.html" class="card-link-new">👑 Business Manager</a>
+        </div>
+
+        <!-- CATEGORÍA: ENTRETENIMIENTO -->
+        <div class="space-y-4">
+          <h3 class="text-purple-500 text-xs font-bold uppercase tracking-widest text-left ml-2">Gamificación</h3>
+          <a href="PAG_INT_infor_JUEGO.html" class="card-link-new">📱 Ecosistema de Juegos</a>
+          <a href="sudoku-play2.0.html" class="card-link-new">🎮 Sudoku 2.0 (Pro)</a>
+          <a href="Builder_chat_MQ.html" class="card-link-new">👑 Juego de Activación</a>
+        </div>
+
+      </div>
+
+      <!-- ACCESOS RÁPIDOS (BOTONES DE ACCIÓN) -->
+      <div class="mt-16 flex flex-wrap justify-center gap-4">
+        <a href="Editor_crear_Bas.html" class="hero-btn-gold">
+            🚀 Ir al Editor de Sistemas
+        </a>
+        <a href="" target="_blank" class="cert-link">
+            🛡️ Certificado Google Ads
+        </a>
+      </div>
+
+    </div>
+
+     <!-- GRID CATEGORIZADO: IDENTIDAD COLOMBIA -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  
+  <!-- CATEGORÍA: AMARILLO (Riqueza y Comercio) -->
+  <div class="space-y-4 p-4 rounded-2xl border border-yellow-500/10 bg-yellow-500/5 shadow-[0_0_15px_-5px_rgba(245,158,11,0.1)]">
+    <h3 class="text-yellow-400 text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
+      <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+      Comercio & Retail
+    </h3>
+    <div class="flex flex-col gap-3">
+      <a href="MaxiQueen_Store.html" target="_blank" class="card-link-col yellow">✅ Store Oficial MQ</a>
+      <a href="Modulos.html" class="card-link-col yellow">👑 Módulos MQ</a>
+       <a href="ChatOS.html" class="card-link-col yellow">👑 Chat Asistent MQ</a>
+      <a href="CRM_PAG_FEB.html" class="card-link-col yellow">👑 MaxiQueen OS CRM </a>
+    </div>
+  </div>
+
+  <!-- CATEGORÍA: AZUL (Mares e Inteligencia) -->
+  <div class="space-y-4 p-4 rounded-2xl border border-blue-500/10 bg-blue-500/5 shadow-[0_0_15px_-5px_rgba(59,130,246,0.1)]">
+    <h3 class="text-blue-400 text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
+      <span class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+      Inteligencia & Control
+    </h3>
+    <div class="flex flex-col gap-3">
+      <a href="Cloudos.html" class="card-link-col blue">👑 MQ Cloudos IA</a>
+      <a href="dashboard.html" class="card-link-col blue">👑 Central Dashboard</a>
+      <a href="Arquitectura-cliente.html" class="card-link-col blue">👑 Business Manager</a>
+      <a href="CuadroMQ.html" class="card-link-col blue">👑 CuadroMQ.html </a> 
+    </div>
+  </div>
+
+  <!-- CATEGORÍA: ROJO (Pasión y Gamificación) -->
+  <div class="space-y-4 p-4 rounded-2xl border border-red-500/10 bg-red-500/5 shadow-[0_0_15px_-5px_rgba(239,68,68,0.1)]">
+    <h3 class="text-red-500 text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
+      <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+      Gamificación
+    </h3>
+    <div class="flex flex-col gap-3">
+      <a href="PAG_INT_infor_JUEGO.html" target="_blank" class="card-link-col red">📱 Ecosistema de Juegos</a>
+      <a href="sudoku-play2.0.html" target="_blank" class="card-link-col red">🎮 Sudoku 2.0 (Pro)</a>
+      <a href="anclajeplay.html" class="card-link-col red">👑 Juego de Anclaje</a>
+    </div>
+  </div>
+
+</div>
+
+    <!-- FOOTER DEL ECOSISTEMA -->
+    <div class="mt-12 opacity-60">
+      <p class="text-xs uppercase tracking-[0.3em] text-amber-400 font-semibold">
+        Un sistema • Múltiples activos • Evolución constante
+      </p>
+    </div>
+
+  </div>
+
+    <div style="text-align: center; margin: 20px 0;">
+    <a href="https://share.google/6eVkV3qHz1q1Ne1xZ" 
+       class="cert-google fade-in" 
+       target="_blank" 
+       rel="noopener noreferrer">
+       💻 Certificado Google ADS MQ_OS
+    </a>
+</div>
+   
+</section>
+
+<!-- ================= TOGGLE DARK/LIGHT ================= -->
+<button 
+  class="toggle-theme"
+  onclick="toggleTheme()"
+  aria-label="Cambiar tema entre modo oscuro y claro"
+  title="Cambiar tema"
+  type="button"
+>
+  <span class="theme-icon">🧪</span>
+  <span class="theme-text">MaxiTema</span>
+</button>  
+<!-- ================= ESTILO REUTILIZABLE ================= -->
+<style>
+.card-link {
+ display: block;
+ padding: 1rem 1.2rem;
+ border-radius: 1rem;
+ background: rgba(255,255,255,0.03);
+ border: 1px solid rgba(255,255,255,0.08);
+ color: #f4f4f5;
+ font-weight: 500;
+ transition: all 0.3s ease;
+}
+
+.card-link:hover {
+ transform: translateY(-4px);
+ border-color: rgba(251,191,36,0.5);
+ background: rgba(255,255,255,0.06);
+}
+</style> <!-- AQUÍ CERRAMOS EL STYLE -->
+
+<<!-- ================= LÓGICA JAVASCRIPT ================= -->
+<script> <!-- AQUÍ ABRIMOS EL SCRIPT -->
+function toggleTheme() {
+ const html = document.documentElement;
+ const currentTheme = html.getAttribute('data-theme');
+ const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+ html.setAttribute('data-theme', newTheme);
+ localStorage.setItem('theme', newTheme);
+
+ // Corrección: Faltaban las llaves para que imprima la variable en consola
+ console.log(`MAXIQUEEN OS: Modo ${newTheme} activado.`);
+}
+
+// Cargar preferencia al iniciar
+document.addEventListener('DOMContentLoaded', () => {
+ const savedTheme = localStorage.getItem('theme') || 'dark';
+ document.documentElement.setAttribute('data-theme', savedTheme);
+});
+</script>
+
+
+<!-- ================= HERO ULTRA-PRO MAXIQUEEN OS ================= -->
+<section class="relative min-h-screen flex items-center justify-center text-center px-6 overflow-hidden bg-black">
+
+  <!-- ================= FONDO DINÁMICO (VIDEO ANIMADO) ================= -->
+  <div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
+    <video src="https://res.cloudinary.com/maxr opacity-20 scale-110">
+    </video>
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,black_90%)]"></div>
+  </div>
+
+  <!-- Capa de Grilla Estética -->
+  <div class="absolute inset-0 bg-grid opacity-[0.05] pointer-events-none"></div>
+
+  <!-- ================= CONTENIDO INTEGRADO ================= -->
+  <div class="relative z-10 max-w-5xl flex flex-col items-center">
+
+    <!-- LOGO PRINCIPAL (Video Animado con Efecto Oro) -->
+    <div class="hero-avatar inline-block mb-10">
+      <div class="relative p-1 rounded-full bg-gradient-to-b from-yellow-400/30 to-transparent border border-yellow-500/40 shadow-[0_0_60px_rgba(250,204,21,0.3)] backdrop-blur-xl">
+        <div class="w-36 h-36 md:w-48 md:h-48 rounded-full bg-black/40 overflow-hidden flex items-center justify-center border border-white/5">
+
+          </video>
+          <div class="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.1),transparent_50%)] pointer-events-none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TITULAR PRINCIPAL -->
+    <h1 class="text-5xl md:text-8xl font-extrabold tracking-tighter leading-none mb-6">
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-rose-400 drop-shadow-sm">
+        MAXIQUEEN OS
+      </span>
+      <span class="block mt-4 text-zinc-100 text-xl md:text-3xl font-semibold tracking-normal opacity-90">
+        Convierte tu caos digital en un sistema inteligente
+      </span>
+    </h1>
+
+    <!-- DESCRIPCIÓN -->
+    <div class="space-y-6 max-w-4xl">
+      <p class="text-zinc-300 text-lg md:text-2xl leading-relaxed">
+        ⚠️ <strong class="text-yellow-500/90">MAXIQUEEN OS</strong> es un sistema digital humano diseñado para transformar ideas, 
+        historias y negocios en activos automatizados capaces de generar ingresos reales, 
+        estructura operativa y expansión profesional.
+      </p>
+
+      <p class="text-zinc-500 text-sm md:text-lg uppercase tracking-[0.2em] font-medium">
+        La suite definitiva de automatización e inteligencia local para negocios de élite.
+      </p>
+    </div>
+
+      <!-- CTA -->
+    <div class="mt-12 flex flex-wrap justify-center gap-5">
+
+      <a href="https://maxiqueen-os-app.vercel.app/"
+         class="hero-btn-primary">
+        👑 Activar mi Sistema
+      </a>
+
+      <a href="whatsappOS.html"
+         target="_blank"
+         rel="noopener"
+         class="hero-btn-secondary">
+        🤝 Hablar con un humano
+      </a>
+
+    </div>
+
+         <!-- FIRMA FINAL -->
+      <div class="mt-8 pt-6 border-t border-white/10">
+
+          <p class="text-sm md:text-base text-zinc-400 uppercase tracking-[0.35em]">
+        No agencia · No plantillas · No humo
+      </p>
+        <p class="text-xs md:text-sm uppercase tracking-[0.3em] text-cyan-400 font-semibold">
+          Solo sistemas digitales reales
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</footer>
+</section>
+
+<!-- ================= FOOTER OFICIAL MAXIQUEEN OS ================= -->
+<footer class="py-10 px-6 mt-20 fade-in">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="glass rounded-3xl border border-white/10 shadow-2xl px-8 py-10 text-center">
+
+      <!-- IDENTIDAD PRINCIPAL -->
+      <p class="text-lg md:text-2xl text-zinc-200 font-medium">
+        Sistema desarrollado por
+        <strong class="text-white font-bold tracking-wide">
+          César Julio Bedoya Barragán
+        </strong>
+      </p>
+
+      <!-- ORCID -->
+      <div class="mt-4">
+        <a href="https://orcid.org/0009-0004-4946-1374"
+           target="_blank"
+           rel="noopener"
+           class="inline-block text-amber-400 hover:text-rose-400 font-semibold tracking-wide transition duration-300">
+          ORCID · 0009-0004-4946-1374
+        </a>
+      </div>
+
+      <!-- FRASE DE POSICIONAMIENTO -->
+      <div class="mt-6">
+        <p class="text-sm md:text-base text-zinc-400 uppercase tracking-[0.25em]">
+          Arquitectura digital · Automatización · Expansión estratégica
+        </p>
+      </div>
+
+      <!-- NAVEGACIÓN LEGAL -->
+      <div class="mt-8 flex flex-wrap justify-center gap-6 text-sm md:text-base text-zinc-400">
+
+        <a href="privacidad.html"
+           class="footer-link">
+          Privacidad
+        </a>
+
+        <a href="cookies.html"
+           class="footer-link">
+          Cookies
+        </a>
+
+        <a href="terminos.html"
+           class="footer-link">
+          Términos
+        </a>
+
+      </div>
+
+      <!-- FIRMA FINAL -->
+      <div class="mt-8 pt-6 border-t border-white/10">
+        <p class="text-xs md:text-sm uppercase tracking-[0.3em] text-cyan-400 font-semibold">
+          MAXIQUEEN OS · Sistema digital original
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</footer>
+
+<!-- ================= MOTOR VISUAL / INTERACCIÓN 3D MAXIQUEEN OS ================= -->
+<script>
+(() => {
+  "use strict";
+
+  /* ================= ELEMENTOS DINÁMICOS ================= */
+  const floatElements = document.querySelectorAll(".float-3d");
+  const bgCircles = document.querySelectorAll(".background-circle");
+  const footer = document.querySelector("footer");
+
+  let ticking = false;
+  let lastScrollY = window.scrollY;
+
+   /* ================= SEGURIDAD BÁSICA ================= */
+window.addEventListener("load", () => {
+  const token = localStorage.getItem("token");
+
+  /* 
+  Validación temporal desactivada para depuración estructural.
+  Reactivar cuando el sistema esté estable.
+  */
+  if (!token) {
+    console.warn("Token no encontrado. Acceso permitido temporalmente para revisión.");
+  } else {
+    document.documentElement.classList.add("mq-authenticated");
+  }
+});
+  /* ================= EFECTO PARALLAX / 3D ================= */
+  const handleMouseMove = (e) => {
+    const x = (e.clientX / window.innerWidth) - 0.5;
+    const y = (e.clientY / window.innerHeight) - 0.5;
+
+    /* ELEMENTOS PRINCIPALES */
+    floatElements.forEach((el, index) => {
+      const depth = 14 + (index * 4);
+
+      el.style.transform = `
+        perspective(1200px)
+        rotateY(${x * depth}deg)
+        rotateX(${y * -depth}deg)
+        translateZ(${depth * 0.6}px)
+      `;
+    });
+
+    /* FONDO */
+    bgCircles.forEach((el, index) => {
+      const factor = (index + 1) * 22;
+
+      el.style.transform = `
+        translate(${x * factor}px, ${y * factor}px)
+        scale(${1 + Math.abs(x * y) * 0.08})
+      `;
+    });
+  };
+
+  document.addEventListener("mousemove", handleMouseMove, {
+    passive: true
+  });
+
+  /* ================= FOOTER FLOTANTE INTELIGENTE ================= */
+  const updateFooter = () => {
+    const scrollY = window.scrollY;
+    const maxScroll = Math.max(
+      document.body.scrollHeight - window.innerHeight,
+      1
+    );
+
+    const progress = scrollY / maxScroll;
+    const footerLift = progress * 30;
+
+    if (footer) {
+      footer.style.transform = `translateY(-${footerLift}px)`;
+      footer.style.boxShadow = `
+        0 ${12 + footerLift / 2}px
+        ${28 + footerLift / 1.5}px
+        rgba(0,0,0,0.45)
+      `;
+      footer.style.backdropFilter = "blur(18px)";
+    }
+
+    ticking = false;
+  };
+
+  window.addEventListener("scroll", () => {
+    const currentScroll = window.scrollY;
+
+    if (Math.abs(currentScroll - lastScrollY) < 3) return;
+
+    lastScrollY = currentScroll;
+
+    if (!ticking) {
+      window.requestAnimationFrame(updateFooter);
+      ticking = true;
+    }
+  }, {
+    passive: true
+  });
+
+  /* ================= OPTIMIZACIÓN MOBILE ================= */
+  if (window.innerWidth < 768) {
+    document.removeEventListener("mousemove", handleMouseMove);
+  }
+
+})();
+</script>
+
+   <!-- ================= PROBLEMA / SOLUCIÓN MAXIQUEEN OS ================= -->
+<section class="py-28 px-6 fade-in relative overflow-hidden bg-[linear-gradient(to_bottom,rgba(0,0,0,0.55),rgba(0,0,0,0.82))]">
+
+  <!-- FONDO VISUAL -->
+  <div class="absolute inset-0 bg-grid opacity-[0.03] pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto relative z-10">
+
+    <!-- TITULAR -->
+    <div class="text-center mb-20">
+      <h2 class="text-4xl md:text-6xl font-extrabold text-white">
+        Del caos digital
+        <span class="block mt-3 text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-400">
+          a la operación inteligente
+        </span>
+      </h2>
+
+      <p class="mt-6 text-zinc-400 text-lg md:text-xl max-w-3xl mx-auto">
+        La mayoría tiene herramientas, contenido o ideas.
+        Pocos tienen una infraestructura real que convierta eso en ingresos y expansión.
+      </p>
+    </div>
+
+    <!-- GRID PRINCIPAL -->
+    <div class="grid md:grid-cols-2 gap-10 lg:gap-16 items-stretch">
+
+      <!-- ================= PROBLEMA ================= -->
+      <div class="glass rounded-3xl border border-red-500/10 shadow-2xl p-10 md:p-14">
+
+        <div class="mb-8">
+          <p class="text-sm uppercase tracking-[0.3em] text-red-400 font-semibold mb-3">
+            El problema
+          </p>
+
+          <h3 class="text-3xl md:text-4xl font-bold text-white">
+            Sin sistema,
+            <span class="text-zinc-400">el esfuerzo se dispersa</span>
+          </h3>
+        </div>
+
+        <ul class="space-y-5 text-zinc-300 text-lg leading-relaxed">
+
+          <li class="flex items-start gap-3">
+            <span class="text-red-400 text-xl">❌</span>
+            <span>Tienes ideas, pero no una estructura que las convierta en activos.</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="text-red-400 text-xl">❌</span>
+            <span>Publicas constantemente, pero no construyes ventas reales.</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="text-red-400 text-xl">❌</span>
+            <span>Automatizas procesos aislados, pero sin operación estratégica.</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="text-red-400 text-xl">❌</span>
+            <span>Usas múltiples herramientas, pero ninguna funciona como ecosistema.</span>
+          </li>
+
+        </ul>
+
+      </div>
+
+
+      <!-- ================= SOLUCIÓN ================= -->
+      <div class="glass rounded-3xl border border-cyan-400/10 shadow-2xl p-10 md:p-14">
+
+        <div class="mb-8">
+          <p class="text-sm uppercase tracking-[0.3em] text-cyan-400 font-semibold mb-3">
+            La solución
+          </p>
+
+          <h3 class="text-3xl md:text-4xl font-bold text-white">
+            MAXIQUEEN OS
+            <span class="block text-zinc-400 mt-2">
+              convierte tu caos en infraestructura rentable
+            </span>
+          </h3>
+        </div>
+
+        <p class="text-zinc-300 text-lg mb-8 leading-relaxed">
+          Diseñado para transformar creatividad, negocio y automatización
+          en sistemas digitales capaces de operar, vender y escalar.
+        </p>
+
+        <ul class="space-y-5 text-zinc-300 text-lg leading-relaxed">
+
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 text-xl">✅</span>
+            <span>Contenido estratégico que conecta con autoridad.</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 text-xl">✅</span>
+            <span>Plataformas optimizadas para convertir tráfico en clientes.</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 text-xl">✅</span>
+            <span>Sistemas automatizados que trabajan incluso sin presencia constante.</span>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 text-xl">✅</span>
+            <span>Procesos escalables que evolucionan con tu expansión.</span>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+
+
+    <!-- CIERRE -->
+    <div class="text-center mt-20">
+      <p class="text-sm md:text-base uppercase tracking-[0.35em] text-amber-400 font-semibold">
+        No más improvisación digital
+      </p>
+
+      <p class="mt-4 text-zinc-400 text-lg">
+        Construye un sistema real. Opera con inteligencia. Escala con estructura.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ================= ESTILO GRID REUTILIZABLE ================= -->
+<style>
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+</style>
+<!-- ================= ¿QUÉ ES MAXIQUEEN OS? ================= -->
+<section id="sistema"
+         class="py-28 px-6 fade-in relative overflow-hidden">
+
+  <!-- FONDO -->
+  <div class="absolute inset-0 bg-grid opacity-[0.03] pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto relative z-10">
+
+    <!-- TITULAR -->
+    <div class="text-center mb-20">
+      <h2 class="text-4xl md:text-6xl font-extrabold text-white leading-tight">
+        ¿Qué es
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-400">
+          MAXIQUEEN OS
+        </span>?
+      </h2>
+
+      <p class="mt-6 text-zinc-400 text-lg md:text-xl max-w-4xl mx-auto">
+        Mucho más que una marca.
+        Es una infraestructura digital diseñada para transformar creatividad,
+        negocio y operación en un ecosistema rentable y escalable.
+      </p>
+    </div>
+
+
+    <!-- GRID -->
+    <div class="grid md:grid-cols-2 gap-10 lg:gap-16 items-stretch">
+
+      <!-- DEFINICIÓN -->
+      <div class="glass rounded-3xl p-10 md:p-14 border border-white/10 shadow-2xl">
+
+        <p class="text-sm uppercase tracking-[0.3em] text-amber-400 font-semibold mb-4">
+          Definición estratégica
+        </p>
+
+        <h3 class="text-3xl md:text-4xl font-bold text-white mb-8">
+          Un sistema,
+          <span class="text-zinc-400">no una solución aislada</span>
+        </h3>
+
+        <div class="space-y-6 text-zinc-300 text-lg leading-relaxed">
+
+          <p>
+            MAXIQUEEN OS no fue creado para vender páginas sueltas,
+            diseños aislados o automatizaciones desconectadas.
+          </p>
+
+          <p>
+            Fue diseñado como un sistema digital integral para personas,
+            marcas y negocios que buscan crear, vender, automatizar y expandirse
+            sin depender de herramientas fragmentadas.
+          </p>
+
+          <p class="font-semibold text-white">
+            No vendemos páginas.
+            Construimos sistemas que producen resultados reales.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- MÓDULOS -->
+      <div class="glass rounded-3xl p-10 md:p-14 border border-cyan-400/10 shadow-2xl">
+
+        <p class="text-sm uppercase tracking-[0.3em] text-cyan-400 font-semibold mb-4">
+          Módulos operativos
+        </p>
+
+        <h3 class="text-3xl md:text-4xl font-bold text-white mb-8">
+          Ecosistema funcional
+        </h3>
+
+        <ul class="space-y-5 text-zinc-300 text-lg leading-relaxed">
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">🎨</span>
+            <span>Contenido creativo estratégico: guiones, reels, caricaturas, TikTok y narrativa visual.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">📱</span>
+            <span>Crecimiento social mediante posicionamiento real, identidad y expansión orgánica.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">🌐</span>
+            <span>Webs, landing pages y tiendas optimizadas para conversión.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">🛒</span>
+            <span>Estructura comercial: funnels, productos, inventario y operación de ventas.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">⚙️</span>
+            <span>Automatización profesional: deploy, infraestructura, VPS, subdominios y escalabilidad.</span>
+          </li>
+
+          <li class="flex items-start gap-4">
+            <span class="text-2xl">🧠</span>
+            <span>Asistencia estratégica: análisis, estructura operativa y soporte profesional.</span>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+
+
+    <!-- CIERRE -->
+    <div class="text-center mt-20">
+      <p class="text-sm md:text-base uppercase tracking-[0.35em] text-cyan-400 font-semibold">
+        Crear · Operar · Automatizar · Escalar
+      </p>
+
+      <p class="mt-4 text-zinc-400 text-lg">
+        MAXIQUEEN OS convierte esfuerzo digital en infraestructura rentable.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+

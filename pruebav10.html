@@ -1,0 +1,60 @@
+dex
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaxiQueen OS - Test Móvil</title>
+<style>
+  body {
+    margin:0;
+    font-family: system-ui, sans-serif;
+    background: #0a0a0a;
+    color: #00ff88;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+  }
+  h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+  p { opacity: 0.8; }
+  button {
+    margin-top: 2rem;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    background: #00ff88;
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+  }
+  #ip { margin-top: 1rem; font-size: 0.9rem; color: #888; }
+</style>
+</head>
+<body>
+  <h1>MAXIQUEEN OS</h1>
+  <p id="status">Portátil encendido y listo</p>
+  <button onclick="activar()">Mantener pantalla activa</button>
+  <div id="ip"></div>
+
+<script>
+async function activar() {
+  try {
+    const lock = await navigator.wakeLock.request('screen');
+    document.getElementById('status').textContent = '✓ Pantalla bloqueada - no se apagará';
+    lock.addEventListener('release', () => {
+      document.getElementById('status').textContent = 'Pantalla liberada';
+    });
+  } catch(e) {
+    alert('Tu navegador no soporta Wake Lock, deja el brillo al máximo');
+  }
+}
+// Muestra la hora para saber que está vivo
+setInterval(() => {
+  document.getElementById('ip').textContent = new Date().toLocaleTimeString('es-CO');
+}, 1000);
+</script>
+</body>
+</html>

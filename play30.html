@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>QUEEN TOWERS • MAXIQUEEN OS</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg-core: #050508;
+    --gold: #fbbf24;
+    --cyan: #22d3ee;
+    --purple: #c084fc;
+    --red: #f87171;
+    --green: #34d399;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body, html {
+    width: 100%; height: 100%; overflow: hidden;
+    background-color: var(--bg-core);
+    background-image: 
+        radial-gradient(circle at 15% 30%, rgba(251, 191, 36, 0.05), transparent 25%),
+        radial-gradient(circle at 85% 70%, rgba(34, 211, 238, 0.05), transparent 25%);
+    color: white; font-family: 'JetBrains Mono', monospace;
+    touch-action: manipulation; user-select: none;
+}
+
+/* =============================
+LAYOUT & HUD
+============================= */
+.app-container { height: 100%; display: flex; flex-direction: column; }
+
+.topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 24px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--glass-border); z-index: 20;
+}
+.title { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
+.subtitle { font-size: 0.65rem; color: #888; letter-spacing: 2px; }
+
+.stats-panel { display: flex; gap: 20px; align-items: center; }
+.stat-box { text-align: right; }
+.stat-label { font-size: 0.6rem; color: #888; letter-spacing: 1px; }
+.stat-value { font-size: 1.3rem; font-weight: 800; color: #fff; }
+
+/* =============================
+GAME BOARD
+============================= */
+.game-area { flex: 1; display: flex; align-items: center; justify-content: center; padding: 15px; }
+
+#board {
+    width: min(100%, 480px); aspect-ratio: 1/1;
+    display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 12px;
+    padding: 16px; background: rgba(15, 15, 20, 0.6); backdrop-filter: blur(10px);
+    border-radius: 24px; border: 1px solid var(--glass-border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02);
+}
+
+.cell {
+    background: rgba(255, 255, 255, 0.02); border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 16px; position: relative; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease; cursor: pointer;
+}
+.cell.drag-over { border-color: var(--cyan); background: rgba(34, 211, 238, 0.15); transform: scale(1.05); }
+
+/* =============================
+TOWERS
+============================= */
+.tower {
+    width: 88%; height: 88%; border-radius: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; cursor: grab; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+}
+.tower:active { cursor: grabbing; transform: scale(0.9); }
+.tower.selected { transform: scale(1.1); box-shadow: 0 0 25px var(--cyan), inset 0 0 15px rgba(255,255,255,0.5); border: 2px solid #fff !important; z-index: 10; animation: pulse-select 1s infinite alternate; }
+
+@keyframes pulse-select { from { filter: brightness(1); } to { filter: brightness(1.3); } }
+
+.tower i { font-size: clamp(1.2rem, 5vw, 2.2rem); margin-bottom: 2px; }
+.tower .lvl-badge { font-size: 0.55rem; font-weight: 800; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 8px; position: absolute; bottom: 4px; }
+
+/* Tower Levels Colors */
+.level-1 { background: linear-gradient(135deg, #374151, #1f2937); border: 2px solid #6b7280; color: #d1d5db; }
+.level-2 { background: linear-gradient(135deg, #0891b2, #164e63); border: 2px solid var(--cyan); color: #fff; box-shadow: 0 0 15px rgba(34,211,238,0.4); }
+.level-3 { background: linear-gradient(135deg, #9333ea, #581c87); border: 2px solid var(--purple); color: #fff; box-shadow: 0 0 15px rgba(192,132,252,0.4); }
+.level-4 { background: linear-gradient(135deg, #d97706, #78350f); border: 2px solid var(--gold); color: #fff; box-shadow: 0 0 15px rgba(251,191,36,0.4); }
+.level-5 { background: linear-gradient(135deg, #dc2626, #7f1d1d); border: 2px solid var(--red); color: #fff; box-shadow: 0 0 15px rgba(248,113,113,0.4); }
+.level-6 { background: linear-gradient(135deg, #059669, #064e3b); border: 2px solid var(--green); color: #fff; box-shadow: 0 0 20px rgba(52,211,153,0.5); }
+.level-7 { background: linear-gradient(135deg, #4f46e5, #312e81); border: 2px solid #818cf8; color: #fff; box-shadow: 0 0 25px rgba(129,140,248,0.6); }
+.level-8 { background: linear-gradient(135deg, #f43f5e, #fbbf24); border: 2px solid #fff; color: #000; box-shadow: 0 0 30px rgba(251,191,36,0.8); }
+
+/* =============================
+BOTTOM UI
+============================= */
+.bottom-ui { padding: 20px 24px; background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 15px; }
+
+.buy-btn {
+    width: 100%; padding: 18px; border-radius: 16px;
+    background: linear-gradient(135deg, var(--gold), #f59e0b); color: #000;
+    font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.1rem;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: transform 0.1s, filter 0.2s; border: none; cursor: pointer;
+}
+.buy-btn:active { transform: scale(0.97); }
+.buy-btn:disabled { background: #333; color: #666; cursor: not-allowed; transform: none; }
+
+.bottom-row { display: flex; gap: 12px; }
+.secondary-btn {
+    flex: 1; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.05);
+    color: #ccc; font-weight: 700; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s;
+}
+.secondary-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
+
+.progress-container { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; position: relative; }
+.progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cyan), var(--purple)); transition: width 0.1s linear; }
+.progress-text { position: absolute; top: -20px; right: 0; font-size: 0.6rem; color: #888; }
+
+/* =============================
+ANIMATIONS & FX
+============================= */
+.floating-text {
+    position: fixed; pointer-events: none; font-weight: 900; font-size: 1.2rem;
+    z-index: 999; animation: floatUp 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+}
+@keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-80px) scale(1.5); } }
+
+/* Game Over Overlay */
+#overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+    display: none; align-items: center; justify-content: center; z-index: 9999;
+}
+.panel {
+    width: min(90vw, 400px); background: #0f0f14; border: 1px solid var(--red);
+    border-radius: 24px; padding: 30px; text-align: center; box-shadow: 0 0 50px rgba(239, 68, 68, 0.2);
+}
+.panel h2 { color: var(--red); font-family: 'Orbitron'; font-size: 1.8rem; margin-bottom: 10px; }
+.panel p { color: #aaa; margin-bottom: 25px; font-size: 0.9rem; }
+.panel button { width: 100%; padding: 16px; border-radius: 14px; background: var(--red); color: white; font-weight: 900; border: none; cursor: pointer; }
+
+@media(max-width: 640px) {
+    .topbar { padding: 12px 16px; }
+    .bottom-ui { padding: 15px 16px; }
+    #board { padding: 10px; gap: 8px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app-container">
+    <header class="topbar">
+        <div>
+            <div class="title">QUEEN TOWERS</div>
+            <div class="subtitle">MAXIQUEEN OS PROTOCOL</div>
+        </div>
+        <div class="stats-panel">
+            <div class="stat-box">
+                <div class="stat-label">DATA (CR)</div>
+                <div class="stat-value" id="credits">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">NIVEL MÁX</div>
+                <div class="stat-value" id="maxLevel" style="color: var(--cyan);">1</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="game-area" id="gameArea">
+        <div id="board"></div>
+    </main>
+
+    <footer class="bottom-ui">
+        <div style="position: relative;">
+            <div class="progress-text">MINERÍA PASIVA</div>
+            <div class="progress-container"><div class="progress-fill" id="incomeFill"></div></div>
+        </div>
+
+        <button class="buy-btn" id="buyBtn">
+            <span><i class="fa-solid fa-server mr-2"></i> DEPLOY TORRE</span>
+            <span id="buyCost">10</span>
+        </button>
+
+        <div class="bottom-row">
+            <button class="secondary-btn" id="resetBtn"><i class="fa-solid fa-power-off"></i> RESET</button>
+            <button class="secondary-btn" id="soundBtn"><i class="fa-solid fa-volume-high"></i> AUDIO</button>
+        </div>
+    </footer>
+</div>
+
+<div id="overlay">
+    <div class="panel">
+        <h2>GRID SATURADO</h2>
+        <p>No hay espacio ni fusiones posibles en la red. El sistema se ha colapsado.</p>
+        <button onclick="restartGame()">REINICIAR SISTEMA</button>
+    </div>
+</div>
+
+<script>
+/* ============================
+   SISTEMA DE AUDIO MQ (Web Audio API)
+============================ */
+const AudioSys = {
+    ctx: null, soundEnabled: true,
+    init() { if (!this.ctx) { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } },
+    play(type) {
+        if (!this.soundEnabled || !this.ctx) return;
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        const now = this.ctx.currentTime;
+        
+        if (type === 'buy') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+            gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+            osc.start(now); osc.stop(now + 0.1);
+        } else if (type === 'merge') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, now); osc.frequency.linearRampToValueAtTime(1200, now + 0.15);
+            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.001, now + 0.15);
+            osc.start(now); osc.stop(now + 0.15);
+        } else if (type === 'income') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(800, now);
+            gain.gain.setValueAtTime(0.02, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+            osc.start(now); osc.stop(now + 0.05);
+        } else if (type === 'error') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(100, now + 0.2);
+            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.001, now + 0.2);
+            osc.start(now); osc.stop(now + 0.2);
+        }
+    }
+};
+
+/* ============================
+   DATOS DEL JUEGO
+============================ */
+const CONFIG = { rows: 4, cols: 4, maxGridLevel: 8 };
+const TOWER_DATA = {
+    1: { icon: 'fa-microchip', class: 'level-1' },
+    2: { icon: 'fa-memory', class: 'level-2' },
+    3: { icon: 'fa-network-wired', class: 'level-3' },
+    4: { icon: 'fa-database', class: 'level-4' },
+    5: { icon: 'fa-shield-halved', class: 'level-5' },
+    6: { icon: 'fa-satellite-dish', class: 'level-6' },
+    7: { icon: 'fa-rocket', class: 'level-7' },
+    8: { icon: 'fa-crown', class: 'level-8' }
+};
+
+let game = {
+    credits: 50, buyCost: 10, maxLevel: 1,
+    grid: Array(16).fill(null),
+    incomeProgress: 0,
+    selectedIdx: null // Para el sistema "Tap-to-Merge"
+};
+
+// Cargar Partida
+const saved = localStorage.getItem('mq_queen_towers_v2');
+if (saved) {
+    try { 
+        let parsed = JSON.parse(saved); 
+        if (parsed.grid && parsed.grid.length === 16) game = parsed;
+    } catch(e) {}
+}
+
+const board = document.getElementById('board');
+const creditsEl = document.getElementById('credits');
+const maxLevelEl = document.getElementById('maxLevel');
+const buyCostEl = document.getElementById('buyCost');
+const buyBtn = document.getElementById('buyBtn');
+const overlay = document.getElementById('overlay');
+const incomeFill = document.getElementById('incomeFill');
+
+/* ============================
+   INICIALIZACIÓN Y RENDER
+============================ */
+function init() {
+    createBoard();
+    render();
+    passiveIncome();
+    
+    // Interacción Global para inicializar Audio
+    document.body.addEventListener('click', () => AudioSys.init(), {once: true});
+    document.body.addEventListener('touchstart', () => AudioSys.init(), {once: true});
+}
+
+function createBoard() {
+    board.innerHTML = '';
+    for(let i=0; i<16; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.dataset.index = i;
+
+        // SISTEMA HÍBRIDO: Click / Tap para seleccionar y mover (100% fiable en móviles)
+        cell.addEventListener('click', () => handleCellInteraction(i));
+
+        // SISTEMA HÍBRIDO: Drag & Drop para PC
+        cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('drag-over'); });
+        cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+        cell.addEventListener('drop', e => {
+            e.preventDefault(); cell.classList.remove('drag-over');
+            const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+            if(fromIdx !== i) executeMove(fromIdx, i);
+        });
+
+        board.appendChild(cell);
+    }
+}
+
+function render() {
+    creditsEl.textContent = Math.floor(game.credits);
+    maxLevelEl.textContent = "Lv." + game.maxLevel;
+    buyCostEl.textContent = game.buyCost;
+
+    const cells = document.querySelectorAll('.cell');
+    game.grid.forEach((tower, idx) => {
+        const cell = cells[idx];
+        cell.innerHTML = '';
+
+        if(tower) {
+            const el = document.createElement('div');
+            el.className = `tower ${TOWER_DATA[tower.level].class} ${game.selectedIdx === idx ? 'selected' : ''}`;
+            el.draggable = true;
+            el.innerHTML = `<i class="fa-solid ${TOWER_DATA[tower.level].icon}"></i><span class="lvl-badge">L${tower.level}</span>`;
+
+            // Eventos Drag PC
+            el.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', idx);
+                game.selectedIdx = idx; // También lo selecciona visualmente
+                setTimeout(() => el.style.opacity = '0.4', 0);
+                render();
+            });
+            el.addEventListener('dragend', (e) => {
+                e.target.style.opacity = '1';
+                if(game.selectedIdx === idx) { game.selectedIdx = null; render(); }
+            });
+
+            cell.appendChild(el);
+        }
+    });
+
+    buyBtn.disabled = game.credits < game.buyCost || !game.grid.includes(null);
+    save();
+}
+
+/* ============================
+   LÓGICA CORE: TAP-TO-MERGE
+============================ */
+function handleCellInteraction(idx) {
+    // Si no hay nada seleccionado
+    if (game.selectedIdx === null) {
+        if (game.grid[idx]) {
+            game.selectedIdx = idx; // Seleccionar torre
+            AudioSys.play('income');
+            render();
+        }
+    } 
+    // Si ya hay algo seleccionado
+    else {
+        if (game.selectedIdx === idx) {
+            game.selectedIdx = null; // Deseleccionar si tocas la misma
+            render();
+        } else {
+            executeMove(game.selectedIdx, idx); // Intentar mover/fusionar
+        }
+    }
+}
+
+function executeMove(from, to) {
+    const A = game.grid[from];
+    const B = game.grid[to];
+    if(!A) return;
+
+    if (B) {
+        // FUSIÓN
+        if (A.level === B.level && A.level < CONFIG.maxGridLevel) {
+            const newLevel = A.level + 1;
+            game.grid[to] = { level: newLevel };
+            game.grid[from] = null;
+            
+            const reward = newLevel * 25;
+            game.credits += reward;
+            if (newLevel > game.maxLevel) game.maxLevel = newLevel;
+
+            AudioSys.play('merge');
+            spawnFloating(`+${reward} CR`, to, 'var(--green)');
+            createParticles(to, '#34d399');
+        } else {
+            // Si no son del mismo nivel, simplemente cambia la selección (más amigable en móvil)
+            game.selectedIdx = to;
+            AudioSys.play('error');
+            render();
+            return;
+        }
+    } else {
+        // MOVER A ESPACIO VACÍO
+        game.grid[to] = A;
+        game.grid[from] = null;
+        AudioSys.play('income');
+    }
+
+    game.selectedIdx = null;
+    render();
+    checkGameOver();
+}
+
+/* ============================
+   COMPRAR TORRES Y MINERÍA
+============================ */
+buyBtn.addEventListener('click', () => {
+    const empty = game.grid.indexOf(null);
+    if(empty === -1) { checkGameOver(); return; }
+    if(game.credits < game.buyCost) return;
+
+    game.credits -= game.buyCost;
+    game.grid[empty] = { level: 1 };
+    game.buyCost = Math.floor(game.buyCost * 1.20); // Incremento de coste del 20%
+    
+    AudioSys.play('buy');
+    spawnFloating("+1 DEPLOY", empty, 'var(--gold)');
+    render();
+});
+
+function passiveIncome() {
+    setInterval(() => {
+        game.incomeProgress += 2.5; // Velocidad de barra
+        incomeFill.style.width = game.incomeProgress + '%';
+
+        if(game.incomeProgress >= 100) {
+            game.incomeProgress = 0;
+            let income = 0;
+            game.grid.forEach(t => { if(t) income += (t.level * t.level); }); // Escala exponencial suave
+            
+            if(income > 0) {
+                game.credits += income;
+                AudioSys.play('income');
+                render();
+            }
+        }
+    }, 100);
+}
+
+/* ============================
+   EFECTOS VISUALES
+============================ */
+function createParticles(idx, color) {
+    const cell = document.querySelectorAll('.cell')[idx];
+    const rect = cell.getBoundingClientRect();
+    
+    for(let i=0; i<15; i++) {
+        const p = document.createElement('div');
+        p.style.position = 'fixed'; p.style.pointerEvents = 'none'; p.style.zIndex = '9999';
+        p.style.left = (rect.left + rect.width/2) + 'px';
+        p.style.top = (rect.top + rect.height/2) + 'px';
+        p.style.width = '8px'; p.style.height = '8px';
+        p.style.borderRadius = '50%'; p.style.background = color;
+        p.style.boxShadow = `0 0 10px ${color}`;
+        document.body.appendChild(p);
+
+        const x = (Math.random() - 0.5) * 150;
+        const y = (Math.random() - 0.5) * 150;
+
+        p.animate([
+            { transform: 'translate(0,0) scale(1)', opacity: 1 },
+            { transform: `translate(${x}px, ${y}px) scale(0)`, opacity: 0 }
+        ], { duration: 600 + Math.random()*400, easing: 'cubic-bezier(0, .9, .5, 1)' })
+         .onfinish = () => p.remove();
+    }
+}
+
+function spawnFloating(text, idx, color) {
+    const cell = document.querySelectorAll('.cell')[idx];
+    const rect = cell.getBoundingClientRect();
+    const div = document.createElement('div');
+    div.className = 'floating-text';
+    div.innerText = text;
+    div.style.left = (rect.left + rect.width/2 - 20) + 'px';
+    div.style.top = (rect.top + rect.height/2) + 'px';
+    div.style.color = color;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 800);
+}
+
+/* ============================
+   SISTEMA DE JUEGO Y BOTONES
+============================ */
+function checkGameOver() {
+    if(!game.grid.includes(null)) {
+        let canMerge = false;
+        // En este juego, se puede fusionar cualquier torre de igual nivel sin importar adyacencia
+        const levelCounts = {};
+        for(let t of game.grid) {
+            if(t) {
+                levelCounts[t.level] = (levelCounts[t.level] || 0) + 1;
+                if (levelCounts[t.level] >= 2 && t.level < CONFIG.maxGridLevel) canMerge = true;
+            }
+        }
+        if(!canMerge) {
+            AudioSys.play('error');
+            overlay.style.display = 'flex';
+        }
+    }
+}
+
+function restartGame() {
+    localStorage.removeItem('mq_queen_towers_v2');
+    location.reload();
+}
+
+function save() {
+    localStorage.setItem('mq_queen_towers_v2', JSON.stringify(game));
+}
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+    if(confirm('🚨 ¿Estás seguro de resetear toda la red neuronal? Se perderán los datos.')) restartGame();
+});
+
+document.getElementById('soundBtn').addEventListener('click', (e) => {
+    AudioSys.soundEnabled = !AudioSys.soundEnabled;
+    e.target.innerHTML = AudioSys.soundEnabled ? '<i class="fa-solid fa-volume-high"></i> AUDIO' : '<i class="fa-solid fa-volume-xmark"></i> MUTE';
+});
+
+window.addEventListener('keydown', e => { if(e.key.toLowerCase() === 'b') document.getElementById('buyBtn').click(); });
+
+init();
+</script>
+</body>
+</html>

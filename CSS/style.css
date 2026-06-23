@@ -1,0 +1,131 @@
+/* ==========================================================
+   CONFIGURACIÓN BASE Y VARIABLES (MAXIQUEEN OS)
+========================================================== */
+:root {
+  --accent: #facc15;
+  --bg-main: #0b1220;
+  --text-main: #d7d87b;
+  --card-bg: #0f172a;
+  --border-soft: #172b4a;
+  --btn-bg: #facc15;
+  --btn-text: #6e3838;
+  --bg-soft: rgba(0,0,0,.45);
+  --mq-gold: #fbbf24;
+  --mq-dark: #18181b;
+  --mq-light: #f4f4f5;
+}
+
+[data-theme="light"] {
+  --accent: #0ff50b;
+  --bg-main: #0d1628;
+  --text-main: #70ad76;
+  --card-bg: #0f2727;
+  --border-soft: #398a46;
+  --btn-bg: #b86b13;
+  --btn-text: #1a0808;
+  --bg-soft: rgba(20, 20, 48, 0.75);
+}
+
+/* ==========================================================
+   BODY Y ESTRUCTURA GENERAL
+========================================================== */
+body { 
+  margin: 0; 
+  font-family: 'Poppins', sans-serif; 
+  background: radial-gradient(circle at 15% 20%, rgba(250,204,21,0.08), transparent 40%),
+              radial-gradient(circle at 85% 80%, rgba(244,63,94,0.08), transparent 40%),
+              linear-gradient(180deg, #0b1220 0%, #060a14 100%);
+  color: var(--text-main) !important;
+  transition: all 0.5s ease;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container { 
+  display: flex; flex-direction: column; align-items: center; padding: 20px; 
+}
+
+/* ==========================================================
+   MODULOS E INTERACTIVIDAD (CLOUD)
+========================================================== */
+.layer { 
+  border-radius: 15px; padding: 20px; margin: 15px 0; width: 95%; max-width: 1200px; 
+  background: linear-gradient(145deg, #2c1a4d, #3b0f65); 
+  box-shadow: 0 8px 25px rgba(0,0,0,0.9); position: relative;
+}
+
+.module { 
+  position: relative; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; 
+  flex: 1; min-width: 120px; text-align: center; cursor: pointer; transition: 0.3s; 
+}
+
+.module:hover, .module.active { 
+  transform: translateY(-5px); 
+  background: rgba(212,175,55,0.3); 
+  box-shadow: 0 0 25px rgba(212,175,55,0.6);
+}
+
+/* ==========================================================
+   WIDGET DE CHAT Y DISPARADOR
+========================================================== */
+.mq-chat {
+  position: fixed; bottom: 85px; right: 20px;
+  width: 350px; height: 500px;
+  background: var(--mq-dark);
+  border: 1px solid #3f3f46;
+  border-radius: 20px;
+  display: none; flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  z-index: 9999; overflow: hidden;
+}
+
+.mq-chat-trigger {
+  position: fixed; bottom: 20px; right: 20px;
+  width: 55px; height: 55px;
+  border-radius: 50%;
+  display: flex; justify-content: center; align-items: center;
+  cursor: pointer; z-index: 10000;
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  background: var(--mq-gold); /* Este es el círculo que quieres cambiar por tu logo */
+}
+
+.mq-chat-trigger:hover { transform: scale(1.1); }
+
+/* ==========================================================
+   REDES SOCIALES
+========================================================== */
+.mq-icon-wrapper {
+  width: 60px; height: 60px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px; padding: 12px; transition: 0.3s;
+}
+
+.mq-icon-wrapper img { width: 100%; height: auto; }
+
+.mq-social-link:hover .mq-icon-wrapper {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-5px);
+}
+
+/* ==========================================================
+   ANIMACIONES
+========================================================== */
+@keyframes floatInfinite {
+  0%, 100% { transform: translate3d(0,0,0); }
+  50% { transform: translate3d(0,6px,0); }
+}
+.hero-avatar { animation: floatInfinite 7s ease-in-out infinite; position: relative; }
+
+.fade-in { opacity: 0; transform: translateY(20px); animation: fadeIn 0.9s forwards; }
+@keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+
+/* Estilo Certificado Google */
+.cert-google {
+  display: inline-block; padding: 8px 15px;
+  background: linear-gradient(145deg, #4285f4, #34a853, #fbbc05, #ea4335);
+  background-size: 200% auto; color: white !important;
+  border-radius: 8px; font-weight: bold; transition: 0.3s;
+}
+.cert-google:hover { background-position: right center; transform: translateY(-2px); }

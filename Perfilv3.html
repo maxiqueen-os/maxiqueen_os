@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>César Julio Bedoya Barragán - Portafolio Profesional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 30px;
+        }
+
+        /* --- SIDEBAR --- */
+        aside {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 30px;
+            height: fit-content;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 40px;
+        }
+
+        .profile-box {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .profile-box h1 {
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .profile-box p {
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-list {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .info-list li {
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+        }
+
+        .info-list li i {
+            color: var(--accent);
+            width: 16px;
+        }
+
+        .info-list a {
+            color: var(--text-main);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .info-list a:hover {
+            color: var(--accent);
+        }
+
+        /* Skillshop Wallet Button */
+        .wallet-card {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .wallet-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #60a5fa;
+        }
+
+        .wallet-card h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .wallet-card p {
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .wallet-btn {
+            display: inline-block;
+            background: white;
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .wallet-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 35px;
+            box-shadow: var(--shadow);
+        }
+
+        .card h2 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--bg-main);
+            padding-bottom: 10px;
+        }
+
+        .card h2 i {
+            color: var(--accent);
+        }
+
+        .profile-desc {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Tabs Navigation */
+        .tabs-nav {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0;
+            margin-bottom: 5px;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--accent);
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Timeline Items */
+        .timeline {
+            position: relative;
+            padding-left: 20px;
+            border-left: 2px solid var(--border);
+            margin-top: 15px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -27px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2px solid var(--bg-card);
+        }
+
+        .time-meta {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .item-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .item-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        /* Grid Lists */
+        .courses-grid, .refs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .course-card, .ref-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .course-card h4 {
+            font-size: 0.95rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .course-meta, .ref-meta {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .ref-card h4 {
+            font-size: 1rem;
+            color: var(--primary);
+        }
+
+        .ref-relation {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .ref-phone {
+            font-size: 0.85rem;
+            color: var(--text-main);
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            aside {
+                position: relative;
+                top: 0;
+            }
+            .tabs-nav {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <aside>
+            <div class="profile-box">
+                <h1>César Julio Bedoya Barragán</h1>
+                <p>Gestión Administrativa y BPO</p>
+            </div>
+            
+            <ul class="info-list">
+                <li><i class="fa-solid fa-phone"></i> <a href="tel:+573016625921">301 6625921</a></li>
+                <li><i class="fa-solid fa-envelope"></i> <a href="mailto:cesar_997@outlook.es">cesar_997@outlook.es</a></li>
+                <li><i class="fa-solid fa-location-dot"></i> Calle 18 #32-59, Rudesindo Soto, Cúcuta</li>
+            </ul>
+
+            <div class="wallet-card">
+                <i class="fa-solid fa-wallet"></i>
+                <h3>Skillshop Wallet</h3>
+                <p>Verifica en tiempo real mis certificaciones oficiales de Google y plataformas digitales.</p>
+                <a href="https://skillshop.credential.net/profile/cesarbedoyabarragan/wallet" target="_blank" class="wallet-btn">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Credenciales
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <section class="card">
+                <h2><i class="fa-solid fa-user"></i> Perfil Profesional</h2>
+                <p class="profile-desc">
+                    Soy una persona proactiva, excelente compañero de equipo, organizado y responsable. Mi objetivo es desempeñarme en empleos desafiantes y dinámicos donde pueda sumar experiencia y nuevos conocimientos, generando aportes valiosos a los objetivos organizacionales desde mi visión analítica y estructurada.
+                </p>
+            </section>
+
+            <nav class="tabs-nav">
+                <button class="tab-btn active" onclick="openTab(event, 'experiencia')">Experiencia Laboral</button>
+                <button class="tab-btn" onclick="openTab(event, 'educacion')">Educación</button>
+                <button class="tab-btn" onclick="openTab(event, 'cursos')">Cursos Complementarios</button>
+                <button class="tab-btn" onclick="openTab(event, 'referencias')">Referencias</button>
+            </nav>
+
+            <div id="experiencia" class="tab-content active">
+                <section class="card">
+                    <h2><i class="fa-solid fa-briefcase"></i> Historial Laboral</h2>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="time-meta">May 2025 - Jun 2025</div>
+                            <div class="item-title">Agente BPO - Call Center</div>
+                            <div class="item-subtitle">COVISIAN Colombia S.A.S.</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Feb 2024 - Ene 2025</div>
+                            <div class="item-title">Representante de Servicio - Call Center</div>
+                            <div class="item-subtitle">KONECTA - Multienlace S.A.S.</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Oct 2023 - Oct 2023</div>
+                            <div class="item-title">Recolector de Información / Encuestador</div>
+                            <div class="item-subtitle">CNC - Centro Nacional de Consultoría S.A.</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Dic 2022 - Jun 2023</div>
+                            <div class="item-title">Coordinador de Gestión Documental</div>
+                            <div class="item-subtitle">Lexco S.A.</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">May 2018 - Oct 2022</div>
+                            <div class="item-title">Operador I - Gestión Documental</div>
+                            <div class="item-subtitle">Image Quality Outsourcing S.A.S.</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Abr 2018 - Abr 2018</div>
+                            <div class="item-title">Contador de Mercancía</div>
+                            <div class="item-subtitle">RGIS Colombia Limitada</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Dic 2017 - Ene 2018</div>
+                            <div class="item-title">Promotor Surtidor</div>
+                            <div class="item-subtitle">Manpower de Colombia Ltda. - Scribe</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Oct 2017 - Oct 2017</div>
+                            <div class="item-title">Contador de Mercancía</div>
+                            <div class="item-subtitle">RGIS Colombia Limitada</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Sep 2017 - Oct 2017</div>
+                            <div class="item-title">Promotor de Venta</div>
+                            <div class="item-subtitle">Marathon Distribuciones</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Ago 2017 - Sep 2017</div>
+                            <div class="item-title">Mercaderista de Apoyo e Inventario</div>
+                            <div class="item-subtitle">Manpower de Colombia Ltda. - Almacenes Éxito</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Mar 2017 - Ago 2017</div>
+                            <div class="item-title">Digitador Contable</div>
+                            <div class="item-subtitle">Agropecuaria Don Martín S.A.S.</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Feb 2017 - Mar 2017</div>
+                            <div class="item-title">Digitador</div>
+                            <div class="item-subtitle">Servicios y Soluciones Informáticas</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Jul 2016 - Ene 2017</div>
+                            <div class="item-title">Gestor Administrativo</div>
+                            <div class="item-subtitle">Distribuciones Luis Francisco Durán Omaña del Oriente S.A.S.</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div id="educacion" class="tab-content">
+                <section class="card">
+                    <h2><i class="fa-solid fa-graduation-cap"></i> Formación Académica</h2>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="time-meta">Graduado en 2018</div>
+                            <div class="item-title">Especialización Tecnológica en Diagnóstico y Análisis Organizacional para Unidades Productivas</div>
+                            <div class="item-subtitle">Servicio Nacional de Aprendizaje (SENA)</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Graduado en 2017</div>
+                            <div class="item-title">Tecnólogo en Gestión Administrativa</div>
+                            <div class="item-subtitle">Servicio Nacional de Aprendizaje (SENA)</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Graduado en 2013</div>
+                            <div class="item-title">Técnico en Mantenimiento de Equipos de Cómputo</div>
+                            <div class="item-subtitle">Servicio Nacional de Aprendizaje (SENA)</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time-meta">Graduado en 2013</div>
+                            <div class="item-title">Bachiller Técnico Área Sistemas</div>
+                            <div class="item-subtitle">Colegio Nuestra Señora de Belén</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div id="cursos" class="tab-content">
+                <section class="card">
+                    <h2><i class="fa-solid fa-award"></i> Cursos de Capacitación Continua (SENA)</h2>
+                    <div class="courses-grid">
+                        <div class="course-card">
+                            <h4>Desarrollo de Habilidades Digitales Para la Gestión de la Información</h4>
+                            <span class="course-meta">48 Horas | 2021</span>
+                        </div>
+                        <div class="course-card">
+                            <h4>Desarrollo de la Inteligencia Emocional en lo Personal y Laboral</h4>
+                            <span class="course-meta">40 Horas | 2019</span>
+                        </div>
+                        <div class="course-card">
+                            <h4>Administración de Recursos Humanos</h4>
+                            <span class="course-meta">40 Horas | 2019</span>
+                        </div>
+                        <div class="course-card">
+                            <h4>Servicio al Cliente: Un Reto Personal</h4>
+                            <span class="course-meta">40 Horas | 2018</span>
+                        </div>
+                        <div class="course-card">
+                            <h4>English Dot Works Beginner</h4>
+                            <span class="course-meta">60 Horas | 2016</span>
+                        </div>
+                        <div class="course-card">
+                            <h4>Digitador de Textos</h4>
+                            <span class="course-meta">40 Horas | 2016</span>
+                        </div>
+                        <div class="course-card">
+                            <h4>Aprendiz Digital</h4>
+                            <span class="course-meta">40 Horas | 2016</span>
+                        </div>
+                        <div class="course-card">
+                            <h4>Administración Documental en el Entorno Laboral</h4>
+                            <span class="course-meta">40 Horas | 2016</span>
+                        </div>
+                        <div class="course-card">
+                            <h4>Manejo De Herramientas Ofimáticas: Microsoft Excel</h4>
+                            <span class="course-meta">40 Horas | 2015</span>
+                        </div>
+                        <div class="course-card">
+                            <h4>Inglés I</h4>
+                            <span class="course-meta">60 Horas | 2015</span>
+                        </div>
+                        <div class="course-card">
+                            <h4>Salud Ocupacional: Seguridad y Salud en el Trabajo</h4>
+                            <span class="course-meta">40 Horas | 2015</span>
+                        </div>
+                        <div class="course-card">
+                            <h4>Establecer Estrategias Logísticas</h4>
+                            <span class="course-meta">40 Horas | 2014</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div id="referencias" class="tab-content">
+                <section class="card">
+                    <h2><i class="fa-solid fa-users"></i> Referencias Laborales y Personales</h2>
+                    <div class="refs-grid">
+                        <div class="ref-card">
+                            <div>
+                                <h4>Yuli Caterine Guatava Bonilla</h4>
+                                <div class="ref-relation">Jefe Inmediato — Konecta</div>
+                            </div>
+                            <div class="ref-phone"><i class="fa-solid fa-phone"></i> 322 7062791</div>
+                        </div>
+                        <div class="ref-card">
+                            <div>
+                                <h4>Yeraldin Monsalve Rodríguez</h4>
+                                <div class="ref-relation">Ingeniera de Sistemas</div>
+                            </div>
+                            <div class="ref-phone"><i class="fa-solid fa-phone"></i> 321 4113367</div>
+                        </div>
+                        <div class="ref-card">
+                            <div>
+                                <h4>Juan Carlos Cordón Leal</h4>
+                                <div class="ref-relation">Técnico de Archivo</div>
+                            </div>
+                            <div class="ref-phone"><i class="fa-solid fa-phone"></i> 314 3039697</div>
+                        </div>
+                        <div class="ref-card">
+                            <div>
+                                <h4>Yirley Alayón Mosquera</h4>
+                                <div class="ref-relation">Administradora de Proyectos GD — Lexco S.A.</div>
+                            </div>
+                            <div class="ref-phone"><i class="fa-solid fa-phone"></i> 317 5729285</div>
+                        </div>
+                        <div class="ref-card">
+                            <div>
+                                <h4>Claudia Patricia Vélez</h4>
+                                <div class="ref-relation">Recursos Humanos — Centro Nac. Consultoría</div>
+                            </div>
+                            <div class="ref-phone"><i class="fa-solid fa-phone"></i> +57 1 3394888</div>
+                        </div>
+                        <div class="ref-card">
+                            <div>
+                                <h4>Melba Morocho</h4>
+                                <div class="ref-relation">Líder de Procesos — Image Quality Outsourcing</div>
+                            </div>
+                            <div class="ref-phone"><i class="fa-solid fa-phone"></i> 5931990 / 5961880</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            
+            // Ocultar todos los contenidos de pestaña
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            
+            // Remover la clase "active" de todos los botones de navegación
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            
+            // Mostrar la pestaña actual y añadir la clase activa al botón presionado
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+</html>

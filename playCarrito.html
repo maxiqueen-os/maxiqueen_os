@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>MAXIQUEEN OS • NEON PROTOCOL X</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00f0ff;
+    --pink: #ff00ff;
+    --yellow: #ffe600;
+    --red: #ff3355;
+    --green: #00ff99;
+    --bg: #030712;
+    --glass: rgba(15, 23, 42, 0.7);
+  }
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; touch-action: none; }
+  
+  body {
+    background: radial-gradient(circle at top, #0f172a 0%, #020617 100%);
+    color: white; font-family: 'Orbitron', sans-serif;
+    height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+  }
+
+  /* HUD GLASSMORPHISM */
+  #hud {
+    position: absolute; top: 0; width: 100%; z-index: 100;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    padding: 15px; background: var(--glass); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+  }
+  .hud-box {
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px; padding: 8px; text-align: center;
+  }
+  .hud-label { display: block; font-size: 0.6rem; color: var(--cyan); margin-bottom: 2px; letter-spacing: 1px; }
+  .hud-value { font-size: 1.2rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+  .hp-warn { color: var(--red); text-shadow: 0 0 10px var(--red); animation: pulse 1s infinite; }
+
+  /* CONTENEDOR DEL JUEGO */
+  #game-container { position: relative; flex: 1; overflow: hidden; background: #000; }
+  canvas { width: 100%; height: 100%; display: block; }
+
+  /* OVERLAYS Y EFECTOS */
+  #damage-overlay {
+    position: fixed; inset: 0; pointer-events: none;
+    background: rgba(255, 51, 85, 0); transition: 0.1s; z-index: 90;
+  }
+  .damage-active { background: rgba(255, 51, 85, 0.3) !important; }
+
+  #speed-lines {
+    position: fixed; inset: 0; pointer-events: none; opacity: 0.1; z-index: 20;
+    background-image: linear-gradient(transparent 0%, rgba(0, 240, 255, 0.8) 50%, transparent 100%);
+    background-size: 100% 12px; animation: speed 0.1s linear infinite;
+  }
+  @keyframes speed { from { transform: translateY(0); } to { transform: translateY(12px); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+  /* MENÚS (INICIO Y GAME OVER) */
+  .screen-overlay {
+    position: fixed; inset: 0; background: rgba(3, 7, 18, 0.9);
+    backdrop-filter: blur(15px); display: flex; align-items: center; justify-content: center;
+    z-index: 999; flex-direction: column; padding: 20px; text-align: center; transition: 0.3s;
+  }
+  .hidden { opacity: 0; pointer-events: none; }
+  
+  .card {
+    width: min(400px, 100%); border-radius: 20px; padding: 40px;
+    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 240, 255, 0.3);
+    box-shadow: 0 0 40px rgba(0, 240, 255, 0.1);
+  }
+  
+  .title-glitch { font-size: 2.2rem; color: var(--cyan); text-shadow: 0 0 15px var(--cyan); margin-bottom: 10px; }
+  .title-error { color: var(--red); text-shadow: 0 0 15px var(--red); }
+  
+  .stats-grid { display: grid; gap: 10px; margin: 25px 0; font-family: 'JetBrains Mono', monospace; }
+  .stats-grid p { display: flex; justify-content: space-between; font-size: 1rem; color: #aaa; }
+  .stats-grid span { color: white; font-weight: bold; }
+
+  .btn {
+    width: 100%; padding: 15px; border: none; border-radius: 12px;
+    background: var(--cyan); color: #000; font-family: 'Orbitron', sans-serif;
+    font-weight: 900; font-size: 1.1rem; cursor: pointer; transition: 0.2s;
+    box-shadow: 0 0 15px var(--cyan); margin-top: 10px;
+  }
+  .btn:active { transform: scale(0.95); }
+  .btn-red { background: var(--red); box-shadow: 0 0 15px var(--red); color: white; }
+
+  /* GUÍA VISUAL MÓVIL */
+  #touch-guides {
+    position: absolute; bottom: 20px; width: 100%; display: flex; justify-content: space-between;
+    padding: 0 40px; pointer-events: none; z-index: 50; opacity: 0.3;
+  }
+  .guide-arrow { font-size: 2rem; color: white; border: 2px solid white; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; }
+
+  @media(max-width: 600px) {
+    .hud-box { padding: 5px; }
+    .hud-value { font-size: 0.9rem; }
+    .guide-arrow { width: 50px; height: 50px; font-size: 1.5rem; }
+  }
+</style>
+</head>
+
+<body>
+
+<div id="speed-lines"></div>
+<div id="damage-overlay"></div>
+
+<div id="hud">
+  <div class="hud-box"><span class="hud-label">INTEGRIDAD</span><span class="hud-value" id="hp">100%</span></div>
+  <div class="hud-box"><span class="hud-label">DATA (CR)</span><span class="hud-value" id="coins">0</span></div>
+  <div class="hud-box"><span class="hud-label">DISTANCIA</span><span class="hud-value" id="distance">0m</span></div>
+  <div class="hud-box"><span class="hud-label">SISTEMA</span><span class="hud-value" id="level">V.1</span></div>
+</div>
+
+<div id="game-container">
+  <canvas id="game"></canvas>
+  <div id="touch-guides">
+    <div class="guide-arrow">◀</div>
+    <div class="guide-arrow">▶</div>
+  </div>
+</div>
+
+<div id="startScreen" class="screen-overlay">
+  <div class="card">
+    <h1 class="title-glitch">NEON PROTOCOL X</h1>
+    <p style="color: #888; font-size: 0.8rem; margin-bottom: 20px;">MOTOR MAXIQUEEN OS</p>
+    <p style="font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5;">
+      TOCA LA MITAD IZQUIERDA O DERECHA PARA MOVERTE.<br>ESQUIVA EL CÓDIGO ROJO.
+    </p>
+    <button class="btn" onclick="Game.start()">CONECTAR RED NEURONAL</button>
+  </div>
+</div>
+
+<div id="gameOver" class="screen-overlay hidden">
+  <div class="card">
+    <h1 class="title-glitch title-error">FALLO CRÍTICO</h1>
+    <div class="stats-grid">
+      <p>DATA EXTRAÍDA: <span id="finalCoins">0</span></p>
+      <p>DISTANCIA: <span id="finalDistance">0m</span></p>
+      <p>VERSIÓN ALCANZADA: <span id="finalLevel">V.0</span></p>
+    </div>
+    <button class="btn btn-red" onclick="location.reload()">RESETEAR SISTEMA</button>
+  </div>
+</div>
+
+<script>
+/* ======================================================
+   SISTEMA DE AUDIO Y VOZ (MaxiQueen OS Engine)
+====================================================== */
+const AudioSys = {
+  ctx: null,
+  synth: window.speechSynthesis,
+  
+  init() {
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if(this.ctx.state === 'suspended') this.ctx.resume();
+  },
+
+  play(type) {
+    if(!this.ctx) return;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    
+    const now = this.ctx.currentTime;
+    if(type === 'coin') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(800, now);
+      osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+      osc.start(now); osc.stop(now + 0.1);
+    } else if (type === 'hit') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.exponentialRampToValueAtTime(40, now + 0.3);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+      osc.start(now); osc.stop(now + 0.3);
+    } else if (type === 'boost') {
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(200, now);
+      osc.frequency.linearRampToValueAtTime(800, now + 0.4);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+      osc.start(now); osc.stop(now + 0.4);
+    }
+  },
+
+  speak(text) {
+    if(!this.synth) return;
+    this.synth.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'es-ES'; utter.pitch = 0.4; utter.rate = 1.2; utter.volume = 1;
+    this.synth.speak(utter);
+  }
+};
+
+/* ======================================================
+   MOTOR DEL JUEGO
+====================================================== */
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const Game = {
+  active: false,
+  hp: 100, coins: 0, distance: 0, level: 1, speed: 12,
+  
+  // Carriles (0 = Izq, 1 = Centro, 2 = Der)
+  lane: 1, 
+  laneWidth: 0,
+  playerX: 0, // Posición real para transición suave
+  
+  entities: [], particles: [], stars: [],
+  lastSpawn: 0, frameCount: 0,
+
+  init() {
+    this.resize();
+    window.addEventListener("resize", () => this.resize());
+    this.generateStars();
+    this.setupControls();
+  },
+
+  start() {
+    AudioSys.init();
+    AudioSys.speak("Protocolo X iniciado. Evita la corrupción de datos.");
+    document.getElementById("startScreen").classList.add("hidden");
+    
+    this.active = true;
+    this.updateLaneTarget();
+    this.playerX = this.laneWidth * this.lane + this.laneWidth / 2; // Snap inicial
+    requestAnimationFrame((t) => this.loop(t));
+  },
+
+  /* ====================================================
+     CONTROLES (Prueba de fallos PC/Móvil)
+  ==================================================== */
+  setupControls() {
+    // Teclado PC
+    window.addEventListener("keydown", (e) => {
+      if(!this.active) return;
+      if(e.key === "ArrowLeft" || e.key === "a" || e.key === "A") this.move(-1);
+      if(e.key === "ArrowRight" || e.key === "d" || e.key === "D") this.move(1);
+    });
+
+    // Táctil Móvil (Absolutamente fiable)
+    window.addEventListener("touchstart", (e) => {
+      if(!this.active) return;
+      const touchX = e.touches[0].clientX;
+      if (touchX < window.innerWidth / 2) {
+        this.move(-1); // Mitad izquierda
+      } else {
+        this.move(1);  // Mitad derecha
+      }
+    });
+  },
+
+  move(dir) {
+    this.lane = Math.max(0, Math.min(2, this.lane + dir));
+    this.updateLaneTarget();
+  },
+
+  resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    this.laneWidth = canvas.width / 3;
+    this.updateLaneTarget();
+  },
+
+  updateLaneTarget() {
+    this.targetX = (this.laneWidth * this.lane) + (this.laneWidth / 2);
+  },
+
+  /* ====================================================
+     ENTORNOS Y PARTÍCULAS
+  ==================================================== */
+  generateStars() {
+    for(let i=0; i<100; i++) {
+      this.stars.push({ x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, size: Math.random()*2 + 1 });
+    }
+  },
+
+  drawEnvironment() {
+    // Estrellas / Grid vertical
+    ctx.fillStyle = "rgba(0, 240, 255, 0.8)";
+    this.stars.forEach(s => {
+      s.y += this.speed * 0.5;
+      if(s.y > canvas.height) { s.y = 0; s.x = Math.random() * canvas.width; }
+      ctx.fillRect(s.x, s.y, s.size, s.size*3);
+    });
+
+    // Líneas de Carril
+    ctx.strokeStyle = "rgba(0, 240, 255, 0.2)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([30, 30]);
+    ctx.lineDashOffset = -(this.distance % 60);
+    for(let i=1; i<3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * this.laneWidth, 0);
+      ctx.lineTo(i * this.laneWidth, canvas.height);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+  },
+
+  createParticles(x, y, color) {
+    for(let i=0; i<12; i++) {
+      this.particles.push({
+        x, y,
+        vx: (Math.random() - 0.5) * 15,
+        vy: (Math.random() - 0.5) * 15,
+        life: 1, color
+      });
+    }
+  },
+
+  updateParticles() {
+    this.particles.forEach((p, i) => {
+      p.x += p.vx; p.y += p.vy; p.life -= 0.05;
+      if(p.life <= 0) { this.particles.splice(i, 1); return; }
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.life;
+      ctx.fillRect(p.x, p.y, 6, 6);
+      ctx.globalAlpha = 1;
+    });
+  },
+
+  /* ====================================================
+     JUGADOR
+  ==================================================== */
+  drawPlayer() {
+    const y = canvas.height - 150;
+    // Interpolación suave para movimiento lateral
+    this.playerX += (this.targetX - this.playerX) * 0.2;
+
+    ctx.save();
+    ctx.translate(this.playerX, y);
+
+    // Fuego motor
+    ctx.fillStyle = `rgba(0, 240, 255, ${Math.random() * 0.5 + 0.5})`;
+    ctx.fillRect(-10, 40, 20, 30 + Math.random() * 20);
+
+    // Nave
+    ctx.shadowBlur = 15; ctx.shadowColor = "var(--cyan)";
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.moveTo(0, -40); // Punta
+    ctx.lineTo(30, 40); // Der
+    ctx.lineTo(0, 25);  // Centro abajo
+    ctx.lineTo(-30, 40); // Izq
+    ctx.closePath();
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Núcleo
+    ctx.fillStyle = "#030712";
+    ctx.beginPath(); ctx.moveTo(0, -10); ctx.lineTo(10, 25); ctx.lineTo(-10, 25); ctx.fill();
+    ctx.restore();
+  },
+
+  /* ====================================================
+     ENTIDADES Y COLISIONES
+  ==================================================== */
+  spawnEntity() {
+    const rand = Math.random();
+    let type = "enemy";
+    if(rand > 0.65) type = "coin";
+    if(rand > 0.95) type = "boost";
+
+    this.entities.push({
+      lane: Math.floor(Math.random() * 3),
+      y: -100, type,
+      speed: this.speed * (type === 'enemy' ? 0.8 : 1)
+    });
+  },
+
+  updateEntities() {
+    const py = canvas.height - 150;
+
+    this.entities.forEach((e, index) => {
+      e.x = (this.laneWidth * e.lane) + (this.laneWidth / 2);
+      e.y += e.speed;
+
+      // Dibujar según tipo
+      ctx.save();
+      if(e.type === "enemy") {
+        ctx.shadowBlur = 20; ctx.shadowColor = "#ff3355"; ctx.fillStyle = "#ff3355";
+        ctx.fillRect(e.x - 35, e.y - 20, 70, 40);
+        ctx.fillStyle = "#fff"; ctx.fillRect(e.x - 15, e.y - 5, 30, 10);
+      } else if (e.type === "coin") {
+        ctx.shadowBlur = 15; ctx.shadowColor = "#ffe600"; ctx.fillStyle = "#ffe600";
+        ctx.beginPath(); ctx.arc(e.x, e.y, 18, 0, Math.PI*2); ctx.fill();
+      } else if (e.type === "boost") {
+        ctx.shadowBlur = 15; ctx.shadowColor = "#00ff99"; ctx.fillStyle = "#00ff99";
+        ctx.beginPath(); ctx.moveTo(e.x, e.y-25); ctx.lineTo(e.x+25, e.y+15); ctx.lineTo(e.x-25, e.y+15); ctx.fill();
+      }
+      ctx.restore();
+
+      // Detección de colisión robusta
+      if (Math.abs(e.x - this.playerX) < 40 && Math.abs(e.y - py) < 50) {
+        if(e.type === "enemy") {
+          this.hp -= 20;
+          this.createParticles(e.x, e.y, '#ff3355');
+          AudioSys.play('hit');
+          this.hitEffect();
+          if(this.hp === 20) AudioSys.speak("Peligro. Integridad al 20 porciento.");
+        } 
+        else if(e.type === "coin") {
+          this.coins += 10;
+          this.createParticles(e.x, e.y, '#ffe600');
+          AudioSys.play('coin');
+        } 
+        else if(e.type === "boost") {
+          this.hp = Math.min(100, this.hp + 20);
+          this.createParticles(e.x, e.y, '#00ff99');
+          AudioSys.play('boost');
+          AudioSys.speak("Sistemas reparados.");
+        }
+        this.entities.splice(index, 1);
+      }
+
+      // Limpieza fuera de pantalla
+      if(e.y > canvas.height + 100) this.entities.splice(index, 1);
+    });
+  },
+
+  hitEffect() {
+    const dmg = document.getElementById("damage-overlay");
+    dmg.classList.add("damage-active");
+    if(navigator.vibrate) navigator.vibrate(200);
+    setTimeout(() => dmg.classList.remove("damage-active"), 150);
+  },
+
+  /* ====================================================
+     UI Y BUCLE PRINCIPAL
+  ==================================================== */
+  updateHUD() {
+    const hpUI = document.getElementById("hp");
+    hpUI.textContent = Math.max(0, this.hp) + "%";
+    
+    if(this.hp <= 30) hpUI.classList.add("hp-warn");
+    else hpUI.classList.remove("hp-warn");
+
+    document.getElementById("coins").textContent = this.coins;
+    document.getElementById("distance").textContent = Math.floor(this.distance) + "m";
+    document.getElementById("level").textContent = "V." + this.level;
+  },
+
+  endGame() {
+    this.active = false;
+    AudioSys.play('hit');
+    AudioSys.speak("Fallo crítico del sistema. Red desconectada.");
+    document.getElementById("gameOver").classList.remove("hidden");
+    document.getElementById("finalCoins").textContent = this.coins;
+    document.getElementById("finalDistance").textContent = Math.floor(this.distance) + "m";
+    document.getElementById("finalLevel").textContent = "V." + this.level;
+  },
+
+  loop(time) {
+    if(!this.active) return;
+    this.frameCount++;
+    
+    // Rastro de desenfoque (Motion blur)
+    ctx.fillStyle = "rgba(3, 7, 18, 0.4)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    this.distance += this.speed * 0.05;
+
+    // Subir nivel cada 500m
+    const newLevel = 1 + Math.floor(this.distance / 500);
+    if(newLevel > this.level) {
+      this.level = newLevel;
+      this.speed = 12 + (this.level * 1.5); // Aumentar dificultad
+      AudioSys.speak("Velocidad de procesamiento aumentada. Versión " + this.level);
+    }
+
+    this.drawEnvironment();
+    this.updateParticles();
+    this.drawPlayer();
+
+    // Lógica de aparición dinámica
+    let spawnRate = Math.max(300, 800 - (this.level * 50));
+    if(time - this.lastSpawn > spawnRate) {
+      this.spawnEntity();
+      this.lastSpawn = time;
+    }
+
+    this.updateEntities();
+    this.updateHUD();
+
+    if(this.hp <= 0) { this.endGame(); return; }
+
+    requestAnimationFrame((t) => this.loop(t));
+  }
+};
+
+// Auto-inicializar variables base al cargar
+window.onload = () => Game.init();
+</script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería Multimedia | MaxiQueen OS</title>
+    <style>
+        :root {
+            --color-primario: #007bff;
+            --color-fondo: #0a0a0a;
+            --color-texto: #ffffff;
+            --color-card: #1a1a1a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            margin: 0;
+            display: flex;
+        }
+
+        /* Menú Lateral de Categorías */
+        .sidebar {
+    width: 250px;
+    background-color: #000;
+    height: 100vh;
+    position: fixed;
+    padding: 20px;
+    border-right: 1px solid #333;
+    overflow-y: auto;
+}
+
+        .sidebar h2 { color: var(--color-primario); font-size: 1.2rem; }
+
+        .menu-categorias { list-style: none; padding: 0; }
+
+        .menu-categorias li {
+            padding: 12px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+            background: #111;
+        }
+
+        .menu-categorias li:hover { background: var(--color-primario); }
+
+        /* Contenedor Principal */
+        .contenido {
+            margin-left: 290px;
+            padding: 40px;
+            width: 100%;
+        }
+
+        .grid-galeria {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .item-galeria {
+            background: var(--color-card);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            border: 1px solid #333;
+        }
+
+        .item-galeria:hover { transform: scale(1.05); border-color: var(--color-primario); }
+
+        .item-galeria img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .info-item { padding: 10px; font-size: 0.9rem; text-align: center; }
+
+        header { margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <h2>CATEGORÍAS</h2>
+        <ul class="menu-categorias">
+            <li onclick="cargarCategoria('dibujos')">🎨 Dibujos y Cómics</li>
+            <li onclick="cargarCategoria('catalogo')">📁 Catálogo</li>
+            <li onclick="cargarCategoria('sistema')">🖥️ Sistema Operativo</li>
+            <li onclick="cargarCategoria('ropa')">👕 Ropa y Marca</li>
+            <li onclick="cargarCategoria('animaciones')">🎬 Animaciones</li>
+        </ul>
+    </nav>
+
+        <main class="contenido">
+        <header>
+            <h1 id="titulo-categoria">Selecciona una categoría</h1>
+            <p>Explora las creaciones del ecosistema MaxiQueen.</p>
+        </header>
+
+        <div class="grid-galeria" id="contenedor-imagenes">
+            <!-- Las imágenes se cargarán aquí automáticamente -->
+        </div>
+    </main>
+
+    <!-- Script de Cloudinary para cargar imágenes por etiquetas -->
+    <script>
+
+const CLOUD_NAME = 'maxiqueen-os';
+
+function cargarCategoria(tag){
+
+    const contenedor = document.getElementById('contenedor-imagenes');
+
+    const titulo = document.getElementById('titulo-categoria');
+
+    titulo.innerText = "Cargando: " + tag.toUpperCase();
+
+    contenedor.innerHTML = "<p>Cargando imágenes...</p>";
+
+    fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${tag}.json`)
+
+    .then(response => {
+
+        if(!response.ok){
+            throw new Error("Cloudinary no respondió");
+        }
+
+        return response.json();
+
+    })
+
+    .then(data => {
+
+        contenedor.innerHTML = "";
+
+        if(!data.resources || data.resources.length === 0){
+
+            contenedor.innerHTML = `
+                <p>No hay imágenes en esta categoría.</p>
+            `;
+
+            return;
+        }
+
+        data.resources.forEach(img => {
+
+            const card = document.createElement('div');
+
+            card.className = 'item-galeria';
+
+            const urlImagen =
+            `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/v${img.version}/${img.public_id}.${img.format}`;
+
+            card.innerHTML = `
+                <a href="${urlImagen}" target="_blank">
+                    <img src="${urlImagen}" alt="${img.public_id}">
+                </a>
+
+                <div class="info-item">
+                    ${img.public_id}
+                </div>
+            `;
+
+            contenedor.appendChild(card);
+
+        });
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        contenedor.innerHTML = `
+            <p>
+            Error al conectar con Cloudinary.
+            </p>
+        `;
+
+    });
+
+}
+
+        }
+
+cargarCategoria('catalogo');
+</script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MaxiQueen OS | CRM Hub 👑</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Estilos base de MaxiQueen OS */
+    body {
+      background-color: #030305;
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(250, 204, 21, 0.05), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(255, 140, 0, 0.05), transparent 25%);
+    }
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    .input-mq {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #f4f4f5;
+      transition: all 0.2s ease;
+    }
+    .input-mq:focus {
+      border-color: #fbbf24;
+      box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+      outline: none;
+    }
+    /* Notificaciones */
+    #toast {
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body class="text-zinc-200 min-h-screen flex flex-col font-sans selection:bg-amber-500/30">
+
+  <header class="border-b border-white/5 bg-black/40 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-black font-black text-xl shadow-[0_0_15px_rgba(250,204,21,0.3)]">
+          MQ
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight text-white">CRM <span class="text-amber-400">Hub</span></h1>
+          <p class="text-xs text-zinc-500 uppercase tracking-widest">Base de Datos Local</p>
+        </div>
+      </div>
+      <a href="/" class="text-sm font-medium text-zinc-400 hover:text-amber-400 transition-colors flex items-center gap-2">
+        <span>⬅</span> Volver al OS
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto p-6 w-full flex-1 grid lg:grid-cols-[350px_1fr] gap-8 mt-6">
+    
+    <aside>
+      <div class="glass-panel p-6 rounded-2xl sticky top-28">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg font-bold text-white" id="formTitle">✨ Nuevo Prospecto</h2>
+          <button id="cancelEditBtn" onclick="cancelEdit()" class="hidden text-xs bg-zinc-800 text-zinc-300 px-3 py-1 rounded-full hover:bg-zinc-700 transition">Cancelar</button>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Nombre Completo</label>
+            <input id="name" type="text" placeholder="Ej. Carlos Mendoza" class="input-mq w-full p-3 rounded-xl">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Correo Electrónico</label>
+            <input id="email" type="email" placeholder="carlos@empresa.com" class="input-mq w-full p-3 rounded-xl">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Teléfono / WhatsApp</label>
+            <input id="phone" type="text" placeholder="+57 300 000 0000" class="input-mq w-full p-3 rounded-xl">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Estado del Pipeline</label>
+            <select id="status" class="input-mq w-full p-3 rounded-xl appearance-none cursor-pointer">
+              <option value="Lead" class="bg-zinc-900">🟣 Lead (Interesado)</option>
+              <option value="Negociación" class="bg-zinc-900">🟡 Negociación</option>
+              <option value="Cliente" class="bg-zinc-900">🟢 Cliente Activo</option>
+              <option value="Perdido" class="bg-zinc-900">🔴 Perdido</option>
+            </select>
+          </div>
+
+          <button onclick="addOrUpdateClient()" id="submitBtn" class="w-full mt-4 bg-gradient-to-r from-amber-400 to-amber-500 text-black font-bold text-sm px-6 py-3.5 rounded-xl hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(250,204,21,0.3)] transition-all">
+            Guardar en Sistema
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <section>
+      <div class="glass-panel p-6 rounded-2xl min-h-[500px] flex flex-col">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-white/5">
+          <div>
+            <h2 class="text-xl font-bold text-white">Directorio de Contactos</h2>
+            <p class="text-sm text-zinc-400 mt-1">Gestiona tu flujo de ventas local.</p>
+          </div>
+          <div class="relative w-full sm:w-64">
+            <input type="text" id="searchInput" oninput="renderClients()" placeholder="🔍 Buscar cliente..." class="input-mq w-full py-2 px-4 rounded-full text-sm">
+          </div>
+        </div>
+
+        <div id="clientList" class="grid sm:grid-cols-2 gap-4 flex-1 content-start">
+          </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="toast" class="fixed bottom-6 right-6 bg-zinc-800 border border-white/10 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 z-50">
+    <div class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24]"></div>
+    <span id="toastMsg" class="font-medium text-sm">Notificación</span>
+  </div>
+
+<script>
+// Base de datos en LocalStorage (Mantiene tu filosofía de no depender de terceros pagos)
+let clients = JSON.parse(localStorage.getItem("mq_crm_clients")) || [];
+let editMode = null;
+
+function saveData() {
+  localStorage.setItem("mq_crm_clients", JSON.stringify(clients));
+}
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  document.getElementById("toastMsg").innerText = message;
+  toast.classList.add("show");
+  setTimeout(() => { toast.classList.remove("show"); }, 3000);
+}
+
+function getStatusStyles(status) {
+  switch(status) {
+    case "Lead": return "bg-purple-500/10 text-purple-400 border-purple-500/20";
+    case "Negociación": return "bg-yellow-500/10 text-yellow-400 border-yellow-500/20";
+    case "Cliente": return "bg-green-500/10 text-green-400 border-green-500/20";
+    case "Perdido": return "bg-red-500/10 text-red-400 border-red-500/20";
+    default: return "bg-zinc-500/10 text-zinc-400 border-zinc-500/20";
+  }
+}
+
+function renderClients() {
+  const list = document.getElementById("clientList");
+  const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+  list.innerHTML = "";
+
+  const filteredClients = clients.filter(c => 
+    c.name.toLowerCase().includes(searchTerm) || 
+    c.email.toLowerCase().includes(searchTerm)
+  );
+
+  if (filteredClients.length === 0) {
+    list.innerHTML = `
+      <div class="col-span-full flex flex-col items-center justify-center py-12 text-zinc-500">
+        <span class="text-4xl mb-3">📭</span>
+        <p>No hay contactos para mostrar.</p>
+      </div>`;
+    return;
+  }
+
+  // Renderizar a la inversa para ver los más nuevos primero
+  [...filteredClients].reverse().forEach((client) => {
+    // Encontrar el índice real en el array original para poder editar/eliminar correctamente
+    const originalIndex = clients.findIndex(c => c.id === client.id);
+    
+    list.innerHTML += `
+      <div class="bg-white/[0.03] border border-white/5 p-5 rounded-xl hover:bg-white/[0.05] hover:border-white/10 transition-all group flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="font-bold text-zinc-100 truncate pr-2">${client.name}</h3>
+            <span class="text-[10px] font-bold uppercase px-2.5 py-1 rounded-md border ${getStatusStyles(client.status)}">
+              ${client.status}
+            </span>
+          </div>
+          <div class="space-y-1.5 mb-4">
+            <p class="text-sm text-zinc-400 flex items-center gap-2">
+              <span class="opacity-50">✉️</span> ${client.email || 'Sin correo'}
+            </p>
+            <p class="text-sm text-zinc-400 flex items-center gap-2">
+              <span class="opacity-50">📞</span> ${client.phone || 'Sin teléfono'}
+            </p>
+          </div>
+        </div>
+        
+        <div class="flex gap-2 pt-4 border-t border-white/5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button onclick="editClient(${originalIndex})" class="flex-1 text-xs font-semibold bg-white/5 hover:bg-amber-400/20 hover:text-amber-400 text-zinc-300 py-2 rounded-lg transition-colors">
+            Editar
+          </button>
+          <button onclick="deleteClient(${originalIndex})" class="flex-1 text-xs font-semibold bg-white/5 hover:bg-red-500/20 hover:text-red-400 text-zinc-300 py-2 rounded-lg transition-colors">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function addOrUpdateClient() {
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const status = document.getElementById("status").value;
+
+  if (!name) {
+    showToast("⚠️ El nombre es obligatorio.");
+    document.getElementById("name").focus();
+    return;
+  }
+
+  if (editMode !== null) {
+    clients[editMode] = { ...clients[editMode], name, email, phone, status };
+    showToast("Contacto actualizado correctamente.");
+  } else {
+    clients.push({
+      id: Date.now(),
+      name,
+      email,
+      phone,
+      status
+    });
+    showToast("Nuevo contacto añadido al sistema.");
+  }
+
+  saveData();
+  renderClients();
+  cancelEdit(); // Limpia y resetea el formulario
+}
+
+function editClient(index) {
+  const client = clients[index];
+  document.getElementById("name").value = client.name;
+  document.getElementById("email").value = client.email;
+  document.getElementById("phone").value = client.phone;
+  document.getElementById("status").value = client.status;
+  
+  editMode = index;
+  document.getElementById("formTitle").innerHTML = "✏️ Editando Prospecto";
+  document.getElementById("submitBtn").innerText = "Actualizar Cliente";
+  document.getElementById("cancelEditBtn").classList.remove("hidden");
+  
+  // Scroll suave hacia el formulario en móviles
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteClient(index) {
+  if(confirm("🚨 ¿Estás seguro de eliminar este contacto del sistema?")) {
+    clients.splice(index, 1);
+    saveData();
+    renderClients();
+    showToast("Contacto eliminado.");
+    if(editMode === index) cancelEdit();
+  }
+}
+
+function cancelEdit() {
+  document.getElementById("name").value = "";
+  document.getElementById("email").value = "";
+  document.getElementById("phone").value = "";
+  document.getElementById("status").value = "Lead";
+  
+  editMode = null;
+  document.getElementById("formTitle").innerHTML = "✨ Nuevo Prospecto";
+  document.getElementById("submitBtn").innerText = "Guardar en Sistema";
+  document.getElementById("cancelEditBtn").classList.add("hidden");
+}
+
+// Inicializar la vista
+renderClients();
+</script>
+
+</body>
+</html>

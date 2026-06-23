@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>MaxiQueen OS v3 | IA de Voz 👑</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { 
+        background: #050505; 
+        background-image: radial-gradient(circle at 50% 0%, #1a1a24 0%, #050505 70%);
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+
+    .fade-in-up { animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes fadeInUp { 
+        from { opacity: 0; transform: translateY(10px); } 
+        to { opacity: 1; transform: translateY(0); } 
+    }
+
+    .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes typing {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    /* Animación para el micrófono cuando está escuchando */
+    .mic-listening {
+      animation: pulse-red 1.5s infinite;
+      background-color: #ef4444 !important; /* Rojo */
+      color: white !important;
+    }
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-between text-zinc-100 selection:bg-amber-500 selection:text-black">
+
+<main class="w-full max-w-2xl p-4 md:p-6 flex-1 flex flex-col">
+  
+  <header class="relative text-center mb-6 mt-4">
+    <h1 class="text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 drop-shadow-[0_0_8px_rgba(251,191,36,0.3)]">
+      👑 MaxiQueen OS
+    </h1>
+    <p class="text-sm text-zinc-400 mt-1 tracking-widest uppercase">Ecosistema de Inteligencia Estratégica</p>
+    
+    <!-- Controles Superiores -->
+    <div class="absolute top-0 right-0 flex gap-2">
+      <button id="voiceToggleBtn" onclick="toggleVoice()" class="p-2 text-zinc-500 hover:text-amber-400 transition-colors tooltip" title="Activar/Desactivar Voz de la IA">
+        <svg id="icon-vol-off" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+        <svg id="icon-vol-on" class="w-5 h-5 hidden text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+      </button>
+      <button onclick="restartChat()" class="p-2 text-zinc-500 hover:text-amber-400 transition-colors tooltip" title="Reiniciar Sistema">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="relative flex-1 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+    
+    <div id="chatLog" class="flex-1 overflow-y-auto p-5 space-y-6 scroll-smooth">
+      <!-- Los mensajes irán aquí -->
+    </div>
+
+    <div id="typingIndicator" class="hidden px-5 pb-2">
+      <div class="bg-zinc-800/80 border border-white/5 w-fit rounded-2xl px-4 py-3 flex items-center gap-1 shadow-lg">
+        <div class="w-2 h-2 bg-amber-400 rounded-full typing-dot"></div>
+        <div class="w-2 h-2 bg-amber-400 rounded-full typing-dot"></div>
+        <div class="w-2 h-2 bg-amber-400 rounded-full typing-dot"></div>
+      </div>
+    </div>
+
+    <div class="p-4 bg-zinc-900/80 backdrop-blur-md border-t border-white/5">
+      <div class="flex gap-2 sm:gap-3 items-center">
+        <!-- Botón de Micrófono -->
+        <button id="micBtn" onclick="toggleListening()" class="bg-zinc-800 text-zinc-400 border border-white/10 p-3 rounded-xl hover:text-amber-400 transition-all flex items-center justify-center disabled:opacity-50" title="Dictar por voz">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+        </button>
+
+        <input id="userInput"
+               type="text"
+               placeholder="Escribe o dicta tu respuesta..."
+               class="flex-1 bg-black/50 border border-white/10 focus:border-amber-400/50 focus:shadow-[0_0_10px_rgba(251,191,36,0.1)] rounded-xl px-4 py-3 text-white outline-none transition-all placeholder:text-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed" 
+               autocomplete="off" />
+               
+        <button id="sendBtn" onclick="handleUserSubmit()"
+                class="bg-amber-400 text-black font-bold px-5 py-3 rounded-xl hover:bg-amber-300 hover:shadow-[0_0_15px_rgba(251,191,36,0.4)] transition-all active:scale-95 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:active:scale-100">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+/* ========================= 🧠 ESTADO GLOBAL ========================= */
+let state = {
+  flujoActual: 'inicio',
+  datosRecopilados: {},
+  esperandoRespuesta: false
+};
+
+let isVoiceEnabled = false; // Por defecto apagado para no asustar al usuario
+
+/* ========================= 🎙️ MOTOR DE VOZ (IA) ========================= */
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition;
+let isListening = false;
+const micBtn = document.getElementById("micBtn");
+
+// Inicializar reconocimiento de voz si el navegador lo soporta
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.lang = 'es-CO'; // Español Colombia
+  recognition.interimResults = false;
+  
+  recognition.onstart = () => {
+    isListening = true;
+    micBtn.classList.add("mic-listening");
+    document.getElementById("userInput").placeholder = "Escuchando...";
+  };
+  
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    document.getElementById("userInput").value = transcript;
+    // Autocompletar y enviar tras dictar
+    setTimeout(() => handleUserSubmit(), 500); 
+  };
+  
+  recognition.onend = () => {
+    isListening = false;
+    micBtn.classList.remove("mic-listening");
+    document.getElementById("userInput").placeholder = "Escribe o dicta tu respuesta...";
+  };
+  
+  recognition.onerror = (event) => {
+    console.warn("Error de voz: ", event.error);
+    isListening = false;
+    micBtn.classList.remove("mic-listening");
+    document.getElementById("userInput").placeholder = "Escribe o dicta tu respuesta...";
+  };
+} else {
+  micBtn.style.display = "none"; // Ocultar si el navegador no lo soporta
+}
+
+function toggleListening() {
+  if (!recognition) return alert("Tu navegador no soporta reconocimiento de voz.");
+  if (isListening) {
+    recognition.stop();
+  } else {
+    recognition.start();
+  }
+}
+
+// Lógica de Text-to-Speech (IA Hablando)
+function toggleVoice() {
+  isVoiceEnabled = !isVoiceEnabled;
+  document.getElementById("icon-vol-off").classList.toggle("hidden");
+  document.getElementById("icon-vol-on").classList.toggle("hidden");
+  if (!isVoiceEnabled && window.speechSynthesis) {
+    window.speechSynthesis.cancel(); // Callar inmediatamente si se apaga
+  }
+}
+
+function speakText(text) {
+  if (!isVoiceEnabled || !('speechSynthesis' in window)) return;
+  
+  window.speechSynthesis.cancel(); // Cortar audio anterior si hay
+  
+  // Limpiar emojis, asteriscos y saltos de línea para la lectura
+  const cleanText = text
+    .replace(/[\u{1F600}-\u{1F6FF}|\u{2600}-\u{26FF}]/gu, '') // quitar emojis
+    .replace(/\*/g, '') // quitar negritas
+    .replace(/\n/g, '. '); // pausas en saltos de linea
+
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+  utterance.lang = 'es-CO'; // Español
+  utterance.pitch = 1.1; // Tono ligeramente alterado para que no suene tan robot genérico
+  utterance.rate = 1.05; // Velocidad un poquito más rápida
+  
+  window.speechSynthesis.speak(utterance);
+}
+
+
+/* ========================= 📦 BASE DE CONOCIMIENTO ========================= */
+const knowledgeBase = {
+  inicio: {
+    mensaje: `Hola 👑\n\nEstoy aquí contigo. No soy un bot de respuestas rápidas; soy el núcleo conversacional con Inteligencia de Voz de MaxiQueen OS.\n\nMi objetivo es entenderte. ¿En qué punto sientes que estás ahora mismo?`,
+    opciones: [
+      "1️⃣ Tengo ideas, pero me falta orden",
+      "2️⃣ Estoy bloqueado o saturado",
+      "3️⃣ Quiero crecer y vender más"
+    ],
+    procesar: (texto) => {
+      if (texto.includes("idea") || texto.includes("1")) return 'ideas';
+      if (texto.includes("bloque") || texto.includes("saturado") || texto.includes("2")) return 'bloqueo';
+      if (texto.includes("crecer") || texto.includes("vender") || texto.includes("3")) return 'crecimiento';
+      return 'incomprendido';
+    }
+  },
+  ideas: {
+    mensaje: `Entendido. Tienes la materia prima, pero te falta la arquitectura.\n\nTener ideas sin un sistema genera ruido mental y poca ejecución. ¿Qué es lo que más te cuesta actualmente?`,
+    opciones: ["No sé por dónde empezar", "Me cuesta mantener el enfoque", "No sé monetizar"],
+    procesar: (t) => 'solucion_starter'
+  },
+  bloqueo: {
+    mensaje: `Gracias por la honestidad.\n\nEl bloqueo es exceso de decisiones sin jerarquía clara. Tu mente se satura. ¿Es por falta de dirección o estás haciendo todo solo?`,
+    opciones: ["Falta dirección", "Hago todo solo", "Mezcla de ambas"],
+    procesar: (t) => 'solucion_starter'
+  },
+  crecimiento: {
+    mensaje: `Excelente. Si piensas en crecimiento, la base existe. \n\nPero necesitas dejar el esfuerzo manual y automatizar. ¿Qué parte es la más lenta para ti hoy?`,
+    opciones: ["Creación de contenido", "Cierre de ventas", "Entrega del servicio"],
+    procesar: (t) => 'solucion_pro'
+  },
+  solucion_starter: {
+    mensaje: `Necesitas **estructura base**, lo que llamamos fase 'Starter'. Limpiar el ruido y trazar la ruta de acción. \n\n¿Te explico cómo estructuramos esto paso a paso?`,
+    opciones: ["Sí, explícame", "Prefiero hablar con un humano"],
+    procesar: (t) => t.includes("humano") ? 'contacto_humano' : 'explicacion_starter'
+  },
+  solucion_pro: {
+    mensaje: `La solución es sistematizar. Esta es la arquitectura 'Pro'. Implica integrar automatización y CRMs bajo una lógica humana 24/7.\n\n¿Quieres ver cómo diseñamos estos ecosistemas?`,
+    opciones: ["Sí, muéstrame", "Necesito un asesor"],
+    procesar: (t) => (t.includes("asesor") || t.includes("humano")) ? 'contacto_humano' : 'explicacion_pro'
+  },
+  explicacion_starter: {
+    mensaje: `La ruta:\n1. Diagnóstico Profundo.\n2. Arquitectura de prioridades.\n3. Ejecución Asistida.\n\nEl objetivo es trabajar con sentido. ¿Tiene sentido para ti?`,
+    opciones: ["Tiene sentido", "Tengo dudas"],
+    procesar: () => 'contacto_humano'
+  },
+  explicacion_pro: {
+    mensaje: `Diseñamos el ecosistema así:\n1. Auditoría de flujos.\n2. Ingeniería y centralización.\n3. Delegación de tareas repetitivas al sistema.\n\n¿Cómo avanzamos?`,
+    opciones: ["Me interesa", "Quiero ver planes"],
+    procesar: () => 'contacto_humano'
+  },
+  contacto_humano: {
+    mensaje: `👑 Llegamos al punto donde la tecnología da paso a la interacción real.\n\nPara adaptar el sistema a ti, hablemos directamente. ¿Qué canal prefieres?`,
+    opciones: ["📲 Continuar por WhatsApp", "📸 Hablar por Instagram"],
+    procesar: (t) => {
+      if(t.includes("whatsapp")) { window.open("https://wa.me/573016625921", "_blank"); return 'despedida'; }
+      if(t.includes("instagram")) { window.open("https://instagram.com/maxiqueenos", "_blank"); return 'despedida'; }
+      return 'incomprendido';
+    }
+  },
+  despedida: {
+    mensaje: `Excelente. Te espero por allá para continuar construyendo. ¡Seguimos avanzando! 👑`,
+    opciones: [],
+    procesar: () => 'inicio'
+  },
+  incomprendido: {
+    mensaje: `Interesante perspectiva. Para guiarte correctamente, elige una de las opciones o usa otras palabras por favor.`,
+    opciones: [], 
+    procesar: (t) => knowledgeBase[state.flujoActual].procesar(t)
+  }
+};
+
+/* ========================= 🧩 UI CONTROLLERS ========================= */
+const chatLog = document.getElementById("chatLog");
+const input = document.getElementById("userInput");
+const typingIndicator = document.getElementById("typingIndicator");
+const sendBtn = document.getElementById("sendBtn");
+
+function getTime() {
+  return new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+}
+
+function scrollBottom() {
+  setTimeout(() => chatLog.scrollTop = chatLog.scrollHeight, 50);
+}
+
+function renderOptions(options) {
+  if (!options || options.length === 0) return '';
+  let buttonsHtml = options.map(opt => 
+    `<button onclick="handleQuickReply('${opt}')" 
+             class="block w-full text-left bg-zinc-800/80 hover:bg-amber-400 hover:text-black border border-white/5 hover:border-amber-400 transition-all rounded-xl px-4 py-3 text-sm font-medium shadow-sm">
+      ${opt}
+    </button>`
+  ).join('');
+  return `<div class="mt-4 space-y-2 fade-in-up" style="animation-delay: 0.2s">${buttonsHtml}</div>`;
+}
+
+function appendMessage(text, sender = "bot", options = []) {
+  const msgDiv = document.createElement("div");
+  msgDiv.className = `flex flex-col max-w-[85%] fade-in-up ${sender === "user" ? "ml-auto items-end" : "mr-auto items-start"}`;
+  
+  const bubble = document.createElement("div");
+  bubble.className = sender === "user"
+    ? "bg-amber-400 text-black font-semibold rounded-2xl rounded-tr-sm px-5 py-3 shadow-md"
+    : "bg-zinc-800/90 text-zinc-200 rounded-2xl rounded-tl-sm px-5 py-4 border border-white/10 leading-relaxed whitespace-pre-wrap shadow-lg";
+  
+  bubble.innerHTML = text + `<span class="block text-[10px] mt-1 ${sender === 'user' ? 'text-black/60 text-right' : 'text-zinc-500 text-left'}">${getTime()}</span>`;
+  msgDiv.appendChild(bubble);
+
+  if (sender === "bot" && options.length > 0) {
+    msgDiv.innerHTML += renderOptions(options);
+  }
+
+  chatLog.appendChild(msgDiv);
+  scrollBottom();
+  
+  // Si es el bot, lanzar motor de voz
+  if(sender === "bot") {
+    speakText(text);
+  }
+}
+
+function showTyping() {
+  typingIndicator.classList.remove("hidden");
+  input.disabled = true;
+  sendBtn.disabled = true;
+  if(micBtn) micBtn.disabled = true;
+  scrollBottom();
+}
+
+function hideTyping() {
+  typingIndicator.classList.add("hidden");
+  input.disabled = false;
+  sendBtn.disabled = false;
+  if(micBtn) micBtn.disabled = false;
+  input.focus();
+}
+
+function processInput(text) {
+  const currentStateNode = knowledgeBase[state.flujoActual];
+  let nextStateKey = currentStateNode.procesar(text.toLowerCase());
+  
+  if (nextStateKey === 'incomprendido') {
+    const fallbackNode = knowledgeBase['incomprendido'];
+    simulateBotResponse(fallbackNode.mensaje, currentStateNode.opciones);
+  } else {
+    state.flujoActual = nextStateKey;
+    const nextNode = knowledgeBase[nextStateKey];
+    simulateBotResponse(nextNode.mensaje, nextNode.opciones);
+  }
+}
+
+function simulateBotResponse(text, options) {
+  showTyping();
+  const delay = Math.max(800, text.length * 15); 
+  setTimeout(() => {
+    hideTyping();
+    appendMessage(text, "bot", options);
+  }, delay > 2500 ? 2500 : delay); 
+}
+
+function handleUserSubmit() {
+  const message = input.value.trim();
+  if (!message) return;
+  
+  // Apagar micrófono automáticamente si estaba prendido al enviar por texto
+  if(isListening && recognition) recognition.stop();
+  
+  appendMessage(message, "user");
+  input.value = "";
+  processInput(message);
+}
+
+function handleQuickReply(text) {
+  appendMessage(text, "user");
+  processInput(text);
+}
+
+function restartChat() {
+  chatLog.innerHTML = '';
+  state.flujoActual = 'inicio';
+  state.datosRecopilados = {};
+  input.value = "";
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  
+  const inicioNode = knowledgeBase['inicio'];
+  simulateBotResponse(inicioNode.mensaje, inicioNode.opciones);
+}
+
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter") handleUserSubmit();
+});
+
+window.onload = () => {
+  const inicioNode = knowledgeBase['inicio'];
+  simulateBotResponse(inicioNode.mensaje, inicioNode.opciones);
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Test Compresor MQ</title>
+<style>
+body{background:#0a0a0a;color:#eee;font-family:system-ui;padding:24px}
+.mq-card{max-width:720px;margin:auto;background:#111;border:1px solid #333;border-radius:12px;padding:16px}
+.btn-neon{display:inline-block;padding:8px 14px;background:#00ffc8;color:#000;border-radius:8px;text-decoration:none}
+.hidden{display:none}
+.opacity-80{opacity:.8}.mb-3{margin-bottom:12px}.mb-4{margin-bottom:16px}.mt-8{margin-top:32px}
+.w-full{width:100%}.rounded-xl{border-radius:12px}
+</style>
+</head>
+<body>
+
+<!-- COMPRESOR MQ -->
+<div class="mq-card mt-8">
+  <h3>🎬 Compresor de Video MaxiQueen</h3>
+  <p class="opacity-80 mb-4">Sube tu video, se comprime en tu navegador sin subir a servidores.</p>
+  <input type="file" id="mq-compressor-input" accept="video/*" class="w-full p-2 bg-black/30 border border-cyan-500/30 rounded mb-3">
+  <div id="mq-compressor-status" class="text-sm text-cyan-400 mb-3">Esperando archivo...</div>
+  <video id="mq-compressor-preview" controls class="w-full rounded-xl border border-green-500/20 mb-3" style="max-height:400px"></video>
+  <a id="mq-compressor-download" class="btn-neon green hidden" download>⬇ Descargar comprimido</a>
+</div>
+
+<script src="/js/compressor.js" defer></script>
+</body>
+</html>

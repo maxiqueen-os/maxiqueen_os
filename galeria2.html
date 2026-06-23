@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxiQueen OS | Panel de Gestión de Activos</title>
+    <style>
+        /* Estética inspirada en la Suite Black & Gold de MaxiQueen OS */
+        :root {
+            --color-fondo: #0a0a0a;
+            --color-dorado: #d4af37;
+            --color-texto: #ffffff;
+            --color-sidebar: #1a1a1a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar Estructural */
+        .sidebar {
+            width: 250px;
+            background-color: var(--color-sidebar);
+            padding: 20px;
+            border-right: 2px solid var(--color-dorado);
+        }
+
+        .sidebar h2 {
+            color: var(--color-dorado);
+            font-size: 1.2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--color-dorado);
+            padding-bottom: 10px;
+        }
+
+        .menu-categorias {
+            list-style: none;
+            padding: 0;
+        }
+
+        .menu-categorias li {
+            padding: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .menu-categorias li:hover {
+            background-color: var(--color-dorado);
+            color: black;
+        }
+
+        /* Contenido Principal */
+        .contenido {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        /* Módulo de Carga (Upload) */
+        .upload-section {
+            background: #222;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px dashed var(--color-dorado);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .upload-section h3 { color: var(--color-dorado); }
+
+        .btn-upload {
+            background-color: var(--color-dorado);
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Galería Dinámica */
+        .galeria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .asset-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .asset-card img {
+            width: 100%;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <h2>👑 MAXIQUEEN OS</h2>
+        <ul class="menu-categorias">
+            <li onclick="cargarCategoria('dibujos')">🎨 Dibujos y Cómics</li>
+            <li onclick="cargarCategoria('catalogo')">📁 Catálogo</li>
+            <li onclick="cargarCategoria('sistema')">🖥️ Sistema Operativo</li>
+            <li onclick="cargarCategoria('ropa')">👕 Ropa y Marca</li>
+            <li onclick="cargarCategoria('animaciones')">🎬 Animaciones</li>
+        </ul>
+    </nav>
+
+    <main class="contenido">
+        <header>
+            <h1 id="titulo-seccion">Bienvenido al Sistema Integral</h1>
+            <p>Transforma tu caos digital en infraestructura rentable [3].</p>
+        </header>
+
+        <!-- Zona de Carga de Archivos -->
+        <section class="upload-section">
+            <h3>Subir Archivo MaxiQueen OS [4]</h3>
+            <p>Selecciona tus imágenes para convertirlas en activos automatizados.</p>
+            <input type="file" id="file-input" style="display: none;" accept="image/*" multiple>
+            <button class="btn-upload" onclick="document.getElementById('file-input').click()">
+                SELECCIONAR IMÁGENES
+            </button>
+            <div id="status"></div>
+        </section>
+
+        <!-- Contenedor para mostrar lo que traes de Cloudinary -->
+        <div id="galeria" class="galeria-grid">
+            <!-- Aquí se cargarán las imágenes dinámicamente -->
+        </div>
+    </main>
+
+    <script>
+        // Función para cambiar de categoría y filtrar activos
+        function cargarCategoria(tipo) {
+            document.getElementById('titulo-seccion').innerText = "Sección: " + tipo.toUpperCase();
+            console.log("Cargando activos desde la API para:", tipo);
+            // Aquí llamarías a tu "Mapa Visual API" [5]
+        }
+
+        // Lógica de carga (Simulación de integración con Cloudinary)
+        const fileInput = document.getElementById('file-input');
+        fileInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            document.getElementById('status').innerText = `Procesando ${files.length} archivos...`;
+            
+            // Aquí integrarías el SDK de Cloudinary
+            // Recordando que MaxiQueen OS utiliza sistemas automatizados [6]
+            Array.from(files).forEach(file => {
+                renderizarMiniatura(file);
+            });
+        });
+
+        function renderizarMiniatura(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const div = document.createElement('div');
+                div.className = 'asset-card';
+                div.innerHTML = `
+                    <img src="${e.target.result}" alt="Activo MQ">
+                    <p style="font-size: 10px;">Activo Listo para Operar</p>
+                `;
+                document.getElementById('galeria').appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+</body>
+</html>

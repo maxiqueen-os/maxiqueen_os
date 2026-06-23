@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sudoku MaxiQueen 👑</title>
+<style>
+body {
+  font-family: Arial;
+  background: #0b0f1a;
+  color: white;
+  text-align: center;
+}
+
+h1 {
+  margin-top: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(9, 40px);
+  gap: 2px;
+  justify-content: center;
+  margin: 20px auto;
+}
+
+input {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #444;
+  background: #111;
+  color: white;
+}
+
+input.fixed {
+  background: #333;
+  font-weight: bold;
+}
+
+.controls {
+  margin-top: 20px;
+}
+
+button {
+  margin: 5px;
+  padding: 10px 15px;
+  border: none;
+  background: #7c3aed;
+  color: white;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<h1>Sudoku MaxiQueen 👑</h1>
+
+<div class="controls">
+  <button onclick="newGame('easy')">Fácil</button>
+  <button onclick="newGame('medium')">Medio</button>
+  <button onclick="newGame('hard')">Difícil</button>
+  <button onclick="checkSolution()">Verificar</button>
+  <button onclick="solve()">Resolver</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+let solution = [];
+
+function createGrid() {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  for (let i = 0; i < 81; i++) {
+    const input = document.createElement("input");
+    input.maxLength = 1;
+    input.dataset.index = i;
+    grid.appendChild(input);
+  }
+}
+
+function generateSolvedBoard() {
+  let board = Array(81).fill(0);
+
+  function isValid(board, row, col, num) {
+    for (let i = 0; i < 9; i++) {
+      if (board[row*9+i] === num) return false;
+      if (board[i*9+col] === num) return false;
+    }
+    let boxRow = Math.floor(row/3)*3;
+    let boxCol = Math.floor(col/3)*3;
+    for (let r=0; r<3; r++) {
+      for (let c=0; c<3; c++) {
+        if (board[(boxRow+r)*9+(boxCol+c)] === num) return false;
+      }
+    }
+    return true;
+  }
+
+  function fill(board, index=0) {
+    if (index >= 81) return true;
+    if (board[index] !== 0) return fill(board, index+1);
+
+    let nums = [1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-0.5);
+
+    for (let num of nums) {
+      let row = Math.floor(index/9);
+      let col = index % 9;
+
+      if (isValid(board, row, col, num)) {
+        board[index] = num;
+        if (fill(board, index+1)) return true;
+        board[index] = 0;
+      }
+    }
+    return false;
+  }
+
+  fill(board);
+  return board;
+}
+
+function removeCells(board, level) {
+  let difficulty = {
+    easy: 30,
+    medium: 45,
+    hard: 60
+  };
+
+  let removeCount = difficulty[level];
+  let newBoard = [...board];
+
+  while (removeCount > 0) {
+    let index = Math.floor(Math.random()*81);
+    if (newBoard[index] !== 0) {
+      newBoard[index] = 0;
+      removeCount--;
+    }
+  }
+
+  return newBoard;
+}
+
+function newGame(level) {
+  createGrid();
+  solution = generateSolvedBoard();
+  let puzzle = removeCells(solution, level);
+
+  document.querySelectorAll("input").forEach((input, i) => {
+    if (puzzle[i] !== 0) {
+      input.value = puzzle[i];
+      input.classList.add("fixed");
+      input.disabled = true;
+    } else {
+      input.value = "";
+      input.classList.remove("fixed");
+      input.disabled = false;
+    }
+  });
+}
+
+function checkSolution() {
+  let correct = true;
+
+  document.querySelectorAll("input").forEach((input, i) => {
+    if (parseInt(input.value) !== solution[i]) {
+      input.style.background = "#8b0000";
+      correct = false;
+    } else {
+      input.style.background = input.classList.contains("fixed") ? "#333" : "#111";
+    }
+  });
+
+  alert(correct ? "✅ Correcto!" : "❌ Hay errores");
+}
+
+function solve() {
+  document.querySelectorAll("input").forEach((input, i) => {
+    input.value = solution[i];
+  });
+}
+
+createGrid();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MAXIQUEEN OS - Núcleo Activo</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/components/chat.css">
+    <link rel="stylesheet" href="css/components/crm.css">
+
+</head>
+
+<body class="bg-black text-white selection:bg-cyan-500 selection:text-black">
+
+<div id="app" class="min-h-screen flex flex-col">
+
+    <header id="navbar-container" class="mq-navbar"></header>
+    <aside id="sidebar-container" class="mq-sidebar"></aside>
+
+    <main id="main-content" class="flex-grow">
+        <section id="hero-container" class="p-6">
+            <section class="mq-core-premium" id="mqCoreSection">
+                <div class="mq-visual-engine">
+                    <div class="mq-core-reactor">
+                        <div class="mq-ring mq-ring-outer"></div>
+                        <div class="mq-ring mq-ring-middle"></div>
+                        <div class="mq-ring mq-ring-inner"></div>
+                        
+                        <button class="mq-core-center-btn" id="mqCoreBtn" title="Iniciar Sistema de Voz">
+                            <div class="mq-voice-wave">
+                                <span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                            <span class="mq-core-text">READY</span>
+                        </button>
+                    </div>
+                    <div class="mq-scanline"></div>
+                </div>
+
+                <div class="mq-terminal-data">
+                    <h1 class="mq-glitch-title" data-text="MAXIQUEEN OS">MAXIQUEEN OS</h1>
+                    <div class="mq-typing-container">
+                        <p class="mq-subtitle-type">Núcleo Inteligente Activo <span class="mq-cursor">_</span></p>
+                    </div>
+                    
+                    <div class="mq-metrics-grid">
+                        <div class="mq-status-badge">
+                            <div class="mq-pulse-dot"></div>
+                            <span>SYSTEM ONLINE</span>
+                        </div>
+                        <div class="mq-live-metrics">
+                            <span id="mqLatency">LATENCY: 42ms</span>
+                            <span class="mq-separator">|</span>
+                            <span id="mqSync">SYNC: 100%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <section id="crm-container"></section>
+        <section id="gallery-container"></section>
+    </main>
+
+    <div id="whatsapp-container"></div>
+    <div id="modals-container"></div>
+    <footer id="footer-container"></footer>
+
+</div>
+
+<button type="button" class="mq-burbuja-v2" id="mqBubbleBtn" title="Abrir MaxiQueen AI" style="position: fixed; bottom: 20px; right: 20px; z-index: 9998; border-radius: 50%; overflow: hidden; width: 60px; height: 60px; border: 2px solid var(--mq-neon);">
+    <video
+        src="https://res.cloudinary.com/maxiqueen-os/video/upload/v1777666946/animate-with-subtle-elegant-motion-soft-golden-shi_2_bk8qxt.mp4"
+        autoplay
+        loop
+        muted
+        playsinline
+        class="mq-video-avatar"
+        style="width: 100%; height: 100%; object-fit: cover;">
+    </video>
+</button>
+
+<div class="mq-chat minimized" id="mqChat" aria-live="polite">
+    <div class="mq-chat-header">
+        <div class="mq-agent">
+            <div class="mq-avatar" id="mqAvatar" aria-hidden="true">
+                <span class="mq-antenna"></span>
+                <span class="mq-eye mq-eye-left"></span>
+                <span class="mq-eye mq-eye-right"></span>
+                <span class="mq-mouth"></span>
+            </div>
+            <div>
+                <div class="chat-title">MAXI<span>QUEEN</span> AI</div>
+                <div class="mq-status" id="mqChatStatus">Modo automatico</div>
+            </div>
+        </div>
+
+        <div class="mq-chat-controls">
+            <button type="button" id="mqVoiceToggle" title="Activar o silenciar voz">Voz</button>
+            <button type="button" id="mqMinimizeBtn" title="Minimizar chat">-</button>
+        </div>
+    </div>
+
+    <div class="mq-signal-bar">
+        <span>Voz</span>
+        <span>Archivos</span>
+        <span>Vision</span>
+        <span>IA</span>
+    </div>
+
+    <div class="mq-chat-body" id="mqChatBody">
+        <div class="mq-message bot">
+            <div class="mq-bubble">
+                Hola. Sistema MaxiQueen conectado en modo automatico. Puedes escribir, hablar o adjuntar imagenes y archivos para analizarlos.
+            </div>
+        </div>
+    </div>
+
+    <div class="mq-attachment-tray is-empty" id="mqAttachmentTray"></div>
+
+    <div class="mq-voice-panel">
+        <button type="button" id="mqMicBtn" class="mq-chip-btn" title="Dictar mensaje">Mic</button>
+        <button type="button" id="mqPauseVoiceBtn" class="mq-chip-btn" title="Pausar voz">Pausa</button>
+        <button type="button" id="mqResumeVoiceBtn" class="mq-chip-btn" title="Continuar voz">Seguir</button>
+        <button type="button" id="mqStopVoiceBtn" class="mq-chip-btn" title="Detener voz">Stop</button>
+    </div>
+
+    <div class="mq-chat-input">
+        <label class="mq-file-btn" title="Subir archivo o foto">
+            <input type="file" id="mqFileInput" multiple accept="image/*,application/pdf,text/*,.txt,.md,.csv,.json,.html,.css,.js,.py">
+            +
+        </label>
+
+        <input type="text" id="mqInput" placeholder="Escribe, habla o adjunta un archivo..." autocomplete="off">
+        
+        <button type="button" id="mqSendBtn">Enviar</button>
+    </div>
+</div>
+
+<script src="https://widget.cloudinary.com/v2.0/global/all.js" async></script>
+<script src="js/systemPrompt.js" defer></script>
+<script src="js/api-keys.local.js" defer></script>
+<script src="js/backend-core.js" defer></script>
+<script src="js/api.js" defer></script>
+<script src="js/auth.js" defer></script>
+<script src="js/theme-toggle.js" defer></script>
+<script src="js/ui.js" defer></script>
+<script src="js/effects.js" defer></script>
+<script src="js/particles.js" defer></script>
+<script src="js/scroll.js" defer></script>
+<script src="js/modals.js" defer></script>
+<script src="js/gallery.js" defer></script>
+<script src="js/voice.js" defer></script>
+<script src="js/cloudinary.js" defer></script>
+<script src="js/chat.js" defer></script>
+<script src="js/ia-center.js" defer></script>
+<script src="js/dashboard.js" defer></script>
+<script src="js/app.js" defer></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- 1. LÓGICA DEL NÚCLEO PREMIUM (Latencia y Voz) ---
+    const latencyEl = document.getElementById('mqLatency');
+    setInterval(() => {
+        const randomLatency = Math.floor(Math.random() * (48 - 35 + 1)) + 35;
+        if(latencyEl) latencyEl.innerText = `LATENCY: ${randomLatency}ms`;
+    }, 2500);
+
+    const coreBtn = document.getElementById('mqCoreBtn');
+    const coreLabel = document.querySelector('.mq-core-text');
+    
+    if(coreBtn) {
+        coreBtn.addEventListener('click', () => {
+            if ('speechSynthesis' in window) {
+                coreLabel.innerText = "ACTIVO";
+                coreBtn.style.background = "rgba(0, 255, 102, 0.4)";
+                
+                const msg = new SpeechSynthesisUtterance();
+                msg.text = "Sistemas en línea. Núcleo operativo.";
+                msg.lang = 'es-ES'; 
+                msg.rate = 1.0; 
+                msg.pitch = 0.9; 
+                
+                msg.onend = () => {
+                    coreLabel.innerText = "READY";
+                    coreBtn.style.background = "rgba(0, 255, 102, 0.1)";
+                };
+                window.speechSynthesis.speak(msg);
+            } else {
+                console.warn("Navegador no soporta síntesis de voz.");
+            }
+        });
+    }
+
+    // --- 2. LÓGICA DE INTERFAZ DEL CHAT (Abrir / Cerrar) ---
+    const chatContainer = document.getElementById('mqChat');
+    const bubbleBtn = document.getElementById('mqBubbleBtn');
+    const minimizeBtn = document.getElementById('mqMinimizeBtn');
+
+    // Abrir chat desde la burbuja de video
+    if(bubbleBtn && chatContainer) {
+        bubbleBtn.addEventListener('click', () => {
+            chatContainer.classList.remove('minimized');
+            bubbleBtn.classList.add('hidden-bubble'); // Oculta la burbuja suavemente
+        });
+    }
+
+    // Minimizar el chat y regresar la burbuja
+    if(minimizeBtn && chatContainer) {
+        minimizeBtn.addEventListener('click', () => {
+            chatContainer.classList.add('minimized');
+            bubbleBtn.classList.remove('hidden-bubble'); // Muestra la burbuja de nuevo
+        });
+    }
+
+    // --- 3. LÓGICA DE ENVÍO AL BACKEND (Vercel) ---
+    const mqInput = document.getElementById('mqInput');
+    const mqSendBtn = document.getElementById('mqSendBtn');
+    const mqChatBody = document.getElementById('mqChatBody');
+    const mqChatStatus = document.getElementById('mqChatStatus');
+
+    // Función para renderizar mensajes
+    function appendMessage(text, senderClass) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `mq-message ${senderClass}`;
+        const bubble = document.createElement('div');
+        bubble.className = 'mq-bubble';
+        bubble.textContent = text;
+        msgDiv.appendChild(bubble);
+        mqChatBody.appendChild(msgDiv);
+        mqChatBody.scrollTop = mqChatBody.scrollHeight; // Auto-scroll
+    }
+
+    // Función principal de envío
+    async function sendMessageToAPI() {
+        if (!mqInput || !mqInput.value.trim()) return;
+        const text = mqInput.value.trim();
+        
+        appendMessage(text, 'user');
+        mqInput.value = '';
+        
+        const originalStatus = mqChatStatus.innerText;
+        mqChatStatus.innerText = "Procesando...";
+        mqChatStatus.style.color = "var(--mq-neon)";
+
+        try {
+            // AQUÍ CONECTA CON TU VERCEL
+            const response = await fetch('https://backend-maxi-queen-os.vercel.app/chat-widget', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+
+            if (!response.ok) throw new Error('Error HTTP');
+            
+            const data = await response.json();
+            appendMessage(data.response || data.reply || "Mensaje recibido correctamente.", 'bot');
+
+        } catch (error) {
+            console.error("Fallo de conexión backend:", error);
+            appendMessage("Error de conexión local. Verificando red...", 'bot');
+        } finally {
+            mqChatStatus.innerText = originalStatus;
+            mqChatStatus.style.color = "inherit";
+        }
+    }
+
+    // Escuchadores de envío (Clic y Enter)
+    if(mqSendBtn) {
+        mqSendBtn.addEventListener('click', sendMessageToAPI);
+    }
+    if(mqInput) {
+        mqInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessageToAPI();
+        });
+    }
+    });
+</script>
+</body>
+</html>

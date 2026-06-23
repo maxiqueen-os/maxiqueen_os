@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Queen Towers - Tactical Merge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
+
+        :root {
+            --bg-deep: #050507;
+            --mq-gold: #facc15;
+            --mq-cyan: #06b6d4;
+            --mq-purple: #a855f7;
+            --mq-red: #ef4444;
+            --panel: rgba(20, 20, 25, 0.8);
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            user-select: none;
+            -webkit-user-select: none; /* Prevenir selección de texto en móviles */
+        }
+
+        /* Fondo de malla tecnológica */
+        .tech-grid {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(250, 204, 21, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(250, 204, 21, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+        }
+
+        /* Animación del Título */
+        @keyframes glitch {
+            0% { opacity: 1; }
+            95% { opacity: 1; text-shadow: none; }
+            96% { opacity: 0.8; text-shadow: 2px 0 var(--mq-cyan); }
+            97% { opacity: 1; }
+            99% { opacity: 0.9; text-shadow: -2px 0 var(--mq-red); }
+            100% { opacity: 1; }
+        }
+        h1 { animation: glitch 4s infinite; }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1 / 1;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 16px;
+            border: 2px solid rgba(250, 204, 21, 0.2);
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            position: relative;
+            touch-action: none; /* Fundamental para evitar scroll al arrastrar en móvil */
+        }
+
+        .cell {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .cell.drag-over {
+            background: rgba(250, 204, 21, 0.1);
+            border-color: var(--mq-gold);
+        }
+
+        .tower {
+            width: 80%;
+            height: 80%;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            position: absolute;
+            z-index: 10;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            touch-action: none;
+        }
+
+        .tower:active { cursor: grabbing; transform: scale(1.1); }
+
+        .tower-level-1 { background: linear-gradient(135deg, #444, #222); border: 2px solid #666; color: #aaa; }
+        .tower-level-2 { background: linear-gradient(135deg, #0369a1, #075985); border: 2px solid var(--mq-cyan); color: #fff; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }
+        .tower-level-3 { background: linear-gradient(135deg, #7e22ce, #6b21a8); border: 2px solid var(--mq-purple); color: #fff; box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+        .tower-level-4 { background: linear-gradient(135deg, #a16207, #854d0e); border: 2px solid var(--mq-gold); color: #000; box-shadow: 0 0 20px rgba(250, 204, 21, 0.5); }
+        .tower-level-5 { background: linear-gradient(135deg, #be123c, #9f1239); border: 2px solid var(--mq-red); color: #fff; box-shadow: 0 0 25px rgba(239, 68, 68, 0.6); }
+
+        .tower i { font-size: 1.5rem; pointer-events: none; } /* Prevenir interferencia en el drag móvil */
+
+        /* Animaciones */
+        @keyframes spawn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-spawn { animation: spawn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        @keyframes merge-pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+        .animate-merge { animation: merge-pop 0.4s ease-out forwards; }
+
+        /* UI */
+        .status-bar {
+            background: var(--panel);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(250, 204, 21, 0.2);
+        }
+
+        .btn-action {
+            background: var(--mq-gold);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .btn-action:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(250, 204, 21, 0.4);
+        }
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Floating Particles for Merge */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            background: var(--mq-gold);
+            border-radius: 50%;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tech-grid"></div>
+
+    <!-- Header / Status -->
+    <header class="status-bar p-4 flex justify-between items-center z-20">
+        <div>
+            <h1 class="text-xl font-black italic text-yellow-400 leading-none">QUEEN <span class="text-white">TOWERS</span></h1>
+            <p class="text-[10px] text-zinc-400 tracking-widest uppercase">Protocolo de Evolución</p>
+        </div>
+        <div class="text-right">
+            <div class="text-[10px] text-zinc-500 font-bold uppercase">Créditos</div>
+            <div id="currency" class="text-xl font-bold text-white font-mono">0</div>
+        </div>
+    </header>
+
+    <!-- Game Area -->
+    <main class="flex-grow flex flex-col items-center justify-center p-4">
+        <div id="board">
+            <!-- 16 celdas generadas por JS -->
+        </div>
+
+        <div class="mt-8 flex flex-col items-center w-full max-w-[400px]">
+            <button id="buyBtn" class="btn-action w-full mb-4 flex justify-between items-center">
+                <span>COMPRAR UNIDAD T1</span>
+                <span id="cost-label" class="bg-black/20 px-2 py-1 rounded">10</span>
+            </button>
+            <p class="text-[10px] text-zinc-500 text-center px-4 uppercase tracking-tighter">
+                Arrastra una torre sobre otra del mismo nivel para evolucionarla.
+            </p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="p-6 flex justify-between items-center bg-black/40 border-t border-white/5">
+        <button id="reset" class="text-zinc-500 hover:text-red-400 text-xs font-bold uppercase tracking-widest transition-colors">
+            <i class="fas fa-undo mr-1"></i> Reiniciar Sector
+        </button>
+        <div id="highscore" class="text-xs text-zinc-400">
+            MAX NIVEL: <span class="text-yellow-400">1</span>
+        </div>
+    </footer>
+
+    <script>
+        // Configuración de las torres
+        const TOWER_DATA = {
+            1: { icon: 'fa-microchip', class: 'tower-level-1', name: 'Nódulo' },
+            2: { icon: 'fa-bolt', class: 'tower-level-2', name: 'Relé' },
+            3: { icon: 'fa-shield-halved', class: 'tower-level-3', name: 'Centinela' },
+            4: { icon: 'fa-gun', class: 'tower-level-4', name: 'Cañón' },
+            5: { icon: 'fa-crown', class: 'tower-level-5', name: 'Emperatriz' }
+        };
+
+        const state = {
+            credits: 50,
+            buyCost: 10,
+            grid: Array(16).fill(null), // null o {level: 1..5}
+            highLevel: 1,
+            draggedIdx: null
+        };
+
+        // Cargar partida guardada de forma segura
+        const saved = localStorage.getItem('queen_towers_state');
+        if (saved) {
+            try {
+                Object.assign(state, JSON.parse(saved));
+            } catch (e) {
+                console.error("Error cargando el guardado", e);
+            }
+        }
+
+        const boardEl = document.getElementById('board');
+        const currencyEl = document.getElementById('currency');
+        const buyBtn = document.getElementById('buyBtn');
+        const costLabel = document.getElementById('cost-label');
+        const resetBtn = document.getElementById('reset');
+        const highscoreEl = document.getElementById('highscore');
+
+        // Función de autoguardado
+        function saveState() {
+            localStorage.setItem('queen_towers_state', JSON.stringify(state));
+        }
+
+        // Inicializar Tablero
+        function initBoard() {
+            boardEl.innerHTML = '';
+            for (let i = 0; i < 16; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.dataset.index = i;
+                
+                // --- Eventos Desktop (Ratón) ---
+                cell.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    if (state.draggedIdx !== null) cell.classList.add('drag-over');
+                });
+                
+                cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+                
+                cell.addEventListener('drop', e => {
+                    e.preventDefault();
+                    cell.classList.remove('drag-over');
+                    const targetIdx = parseInt(cell.dataset.index);
+                    handleMerge(state.draggedIdx, targetIdx);
+                });
+
+                boardEl.appendChild(cell);
+            }
+            render();
+            saveState();
+        }
+
+        function render() {
+            currencyEl.textContent = state.credits;
+            costLabel.textContent = state.buyCost;
+            highscoreEl.innerHTML = `MAX NIVEL: <span class="text-yellow-400">${state.highLevel}</span>`;
+            
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach((cell, idx) => {
+                const data = state.grid[idx];
+                const existingTower = cell.querySelector('.tower');
+                
+                if (data) {
+                    if (!existingTower || existingTower.dataset.level != data.level) {
+                        cell.innerHTML = '';
+                        const tower = createTowerElement(data.level, idx);
+                        cell.appendChild(tower);
+                    } else {
+                        // Actualizar index por si se movió
+                        existingTower.dataset.index = idx;
+                    }
+                } else {
+                    cell.innerHTML = '';
+                }
+            });
+
+            buyBtn.disabled = state.credits < state.buyCost || state.grid.every(c => c !== null);
+            saveState();
+        }
+
+        function createTowerElement(level, index) {
+            const tower = document.createElement('div');
+            tower.className = `tower ${TOWER_DATA[level].class} animate-spawn`;
+            tower.draggable = true;
+            tower.dataset.level = level;
+            tower.dataset.index = index;
+            tower.innerHTML = `<i class="fas ${TOWER_DATA[level].icon}"></i>`;
+
+            // --- Lógica Drag & Drop (Desktop) ---
+            tower.addEventListener('dragstart', (e) => {
+                state.draggedIdx = parseInt(tower.dataset.index);
+                setTimeout(() => tower.style.opacity = '0.5', 0); // Ocultar visual original
+            });
+
+            tower.addEventListener('dragend', () => {
+                state.draggedIdx = null;
+                tower.style.opacity = '1';
+                document.querySelectorAll('.cell').forEach(c => c.classList.remove('drag-over'));
+            });
+
+            // --- Lógica Táctil (Móviles) ---
+            tower.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Evita scroll de pantalla
+                state.draggedIdx = parseInt(tower.dataset.index);
+                tower.style.opacity = '0.7';
+                tower.style.transform = 'scale(1.1)';
+                tower.style.zIndex = '50';
+            }, {passive: false});
+
+            tower.addEventListener('touchmove', (e) => {
+                e.preventDefault(); 
+                // En una versión más avanzada aquí se movería visualmente la torre siguiendo el dedo.
+            }, {passive: false});
+
+            tower.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                tower.style.opacity = '1';
+                tower.style.transform = '';
+                tower.style.zIndex = '10';
+
+                // Calcular en qué celda soltó el dedo
+                const touch = e.changedTouches[0];
+                const dropElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                
+                if (dropElement) {
+                    const targetCell = dropElement.closest('.cell');
+                    if (targetCell) {
+                        const targetIdx = parseInt(targetCell.dataset.index);
+                        handleMerge(state.draggedIdx, targetIdx);
+                    }
+                }
+                state.draggedIdx = null;
+            });
+
+            return tower;
+        }
+
+        function handleMerge(fromIdx, toIdx) {
+            if (fromIdx === null || fromIdx === toIdx || isNaN(fromIdx) || isNaN(toIdx)) return;
+            
+            const fromTower = state.grid[fromIdx];
+            const toTower = state.grid[toIdx];
+
+            if (!fromTower) return;
+
+            // Lógica de Fusión
+            if (toTower && toTower.level === fromTower.level && fromTower.level < 5) {
+                state.grid[toIdx] = { level: fromTower.level + 1 };
+                state.grid[fromIdx] = null;
+                
+                if (fromTower.level + 1 > state.highLevel) state.highLevel = fromTower.level + 1;
+                createParticles(toIdx);
+                
+                const bonus = fromTower.level * 5;
+                state.credits += bonus;
+                showFloatingText(toIdx, `+${bonus}`, 'text-cyan-400');
+            } 
+            // Lógica de Mover a espacio vacío
+            else if (!toTower) {
+                state.grid[toIdx] = fromTower;
+                state.grid[fromIdx] = null;
+            }
+
+            render();
+        }
+
+        function buyTower() {
+            if (state.credits >= state.buyCost) {
+                const emptyIdx = state.grid.findIndex(c => c === null);
+                if (emptyIdx !== -1) {
+                    state.credits -= state.buyCost;
+                    state.grid[emptyIdx] = { level: 1 };
+                    state.buyCost = Math.floor(state.buyCost * 1.1);
+                    render();
+                }
+            }
+        }
+
+        // --- Utilidades Visuales ---
+        function createParticles(cellIdx) {
+            const cells = document.querySelectorAll('.cell');
+            if(!cells[cellIdx]) return;
+            
+            const rect = cells[cellIdx].getBoundingClientRect();
+            
+            for (let i = 0; i < 12; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.width = Math.random() * 6 + 2 + 'px';
+                p.style.height = p.style.width;
+                p.style.left = rect.left + rect.width / 2 + 'px';
+                p.style.top = rect.top + rect.height / 2 + 'px';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * 50 + 20;
+                const tx = Math.cos(angle) * dist;
+                const ty = Math.sin(angle) * dist;
+
+                document.body.appendChild(p);
+
+                p.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
+                ], {
+                    duration: 600,
+                    easing: 'ease-out'
+                }).onfinish = () => p.remove();
+            }
+
+            setTimeout(() => {
+                const tower = cells[cellIdx].querySelector('.tower');
+                if (tower) {
+                    tower.classList.remove('animate-spawn');
+                    void tower.offsetWidth; // Trigger reflow
+                    tower.classList.add('animate-merge');
+                }
+            }, 50);
+        }
+
+        function showFloatingText(cellIdx, text, colorClass) {
+            const cells = document.querySelectorAll('.cell');
+            if(!cells[cellIdx]) return;
+
+            const rect = cells[cellIdx].getBoundingClientRect();
+            const el = document.createElement('div');
+            el.className = `fixed z-[100] font-bold pointer-events-none ${colorClass}`;
+            el.style.left = rect.left + rect.width/2 + 'px';
+            el.style.top = rect.top + 'px';
+            el.textContent = text;
+            document.body.appendChild(el);
+
+            el.animate([
+                { transform: 'translate(-50%, 0)', opacity: 1 },
+                { transform: 'translate(-50%, -40px)', opacity: 0 }
+            ], { duration: 800, easing: 'ease-out' }).onfinish = () => el.remove();
+        }
+
+        // Ingresos pasivos
+        setInterval(() => {
+            let passive = 0;
+            state.grid.forEach(t => {
+                if (t) passive += t.level;
+            });
+            if (passive > 0) {
+                state.credits += passive;
+                render();
+            }
+        }, 3000);
+
+        // Listeners
+        buyBtn.addEventListener('click', buyTower);
+        resetBtn.addEventListener('click', () => {
+            if (confirm('¿Reiniciar sector? Se perderán todos los créditos y torres.')) {
+                state.credits = 50;
+                state.buyCost = 10;
+                state.grid = Array(16).fill(null);
+                state.highLevel = 1;
+                initBoard();
+            }
+        });
+
+        // Inicio
+        initBoard();
+
+    </script>
+</body>
+</html>

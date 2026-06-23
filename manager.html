@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>MAXIQUEEN OS — Page Manager 👑</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+/* ================= VARIABLES ================= */
+:root {
+  --mq-amarillo: #FFD700;
+  --mq-azul: #00E5FF;
+  --mq-rojo: #FF3366;
+  
+  --bg-dark: #05070f;
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --text-main: #f4f6ff;
+  --text-muted: #8a94b5;
+}
+
+/* ================= RESET & BASICS ================= */
+* { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  background: radial-gradient(circle at top left, #0b0f1a, var(--bg-dark));
+  color: var(--text-main);
+  overflow: hidden;
+}
+
+/* ================= SCROLLBARS ================= */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--mq-azul); }
+
+/* ================= SIDEBAR (GLASSMORPHISM) ================= */
+#sidebar {
+  width: 300px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid var(--glass-border);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 100;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#sidebar h2 {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  color: var(--mq-amarillo);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Botón cerrar sidebar en móvil */
+#closeMobileBtn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Lista de páginas */
+#pages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.page {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.page:hover {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+  transform: translateY(-2px);
+}
+
+.page.active {
+  border-color: var(--mq-amarillo);
+  background: rgba(255, 215, 0, 0.05);
+  box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.05);
+}
+
+.page-info strong { display: block; font-size: 0.9rem; margin-bottom: 2px; }
+.page-info span { font-size: 0.75rem; color: var(--text-muted); }
+
+.page .actions button {
+  background: var(--glass-bg);
+  color: var(--text-main);
+  border: 1px solid var(--glass-border);
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.page .actions button:hover {
+  background: var(--mq-azul);
+  border-color: var(--mq-azul);
+  color: #000;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+}
+
+/* ================= BOTONES GLOBALES ================= */
+.btn-primary, .btn-secondary, .btn-danger {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-primary {
+  background: var(--mq-amarillo);
+  color: #000;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+}
+.btn-primary:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+
+.btn-secondary {
+  background: var(--glass-bg);
+  color: var(--text-main);
+  border: 1px solid var(--glass-border);
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: var(--mq-azul); }
+
+.btn-danger {
+  background: rgba(255, 51, 102, 0.1);
+  color: var(--mq-rojo);
+  border: 1px solid rgba(255, 51, 102, 0.3);
+}
+.btn-danger:hover { background: var(--mq-rojo); color: #fff; box-shadow: 0 0 15px rgba(255, 51, 102, 0.4); }
+
+/* ================= MAIN AREA ================= */
+#main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+#topbar {
+  height: 64px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 10;
+}
+
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+
+#mobileMenuBtn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--mq-amarillo);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+#currentTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--mq-azul);
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+}
+
+#viewer {
+  flex: 1;
+  border: none;
+  background: #ffffff;
+  width: 100%;
+  height: 100%;
+}
+
+/* ================= TOAST NOTIFICATIONS ================= */
+#toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+.toast {
+  background: rgba(10, 12, 24, 0.9);
+  backdrop-filter: blur(10px);
+  border-left: 4px solid var(--mq-azul);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  animation: slideIn 0.3s ease-out forwards;
+}
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.hidden { display: none !important; }
+hr.glass-divider { border: 0; height: 1px; background: var(--glass-border); margin: 4px 0; }
+.help-text { font-size: 0.7rem; color: var(--text-muted); text-align: center; }
+
+/* ================= RESPONSIVE DESIGN ================= */
+@media (max-width: 768px) {
+  #sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+  }
+  #sidebar.open { transform: translateX(0); }
+  #closeMobileBtn, #mobileMenuBtn { display: block; }
+  
+  .topbar-right {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .topbar-right button { white-space: nowrap; }
+}
+</style>
+</head>
+
+<body>
+
+<aside id="sidebar">
+  <h2>
+    <span>📄 Páginas</span>
+    <button id="closeMobileBtn" onclick="toggleMobileMenu()">×</button>
+  </h2>
+  <button class="btn-primary" onclick="createPage()">➕ Nueva página</button>
+  <div id="pages"></div>
+  
+  <hr class="glass-divider">
+  
+  <button class="btn-secondary" onclick="exportProject()">📤 Exportar JSON</button>
+  <button class="btn-secondary" onclick="importProject()">📥 Importar JSON</button>
+  <input type="file" id="fileInput" class="hidden" accept=".json">
+  <div class="help-text">Storage local activo 👑</div>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <div class="topbar-left">
+      <button id="mobileMenuBtn" onclick="toggleMobileMenu()">☰</button>
+      <strong id="currentTitle">MAXIQUEEN OS</strong>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-secondary" onclick="openBuilder()">🛠 Builder</button>
+      <button class="btn-secondary" onclick="preview()">👁 Preview</button>
+      <button class="btn-secondary" onclick="renamePage()">✏ Renombrar</button>
+      <button class="btn-danger" onclick="deletePage()">🗑 Eliminar</button>
+    </div>
+  </div>
+
+  <iframe id="viewer" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+/* ================= STATE ================= */
+let project = {
+  name: "Proyecto MAXIQUEEN",
+  pages: []
+};
+let currentIndex = null;
+
+/* ================= INIT ================= */
+load();
+render();
+
+/* ================= UI & RESPONSIVE ================= */
+function toggleMobileMenu() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function showToast(msg, color = "var(--mq-azul)") {
+  const container = document.getElementById("toast-container");
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.style.borderLeftColor = color;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+/* ================= STORAGE ================= */
+function save() {
+  localStorage.setItem("maxiqueen-project", JSON.stringify(project));
+}
+
+function load() {
+  const data = localStorage.getItem("maxiqueen-project");
+  if(data) project = JSON.parse(data);
+  if(project.pages.length === 0){
+    project.pages.push({
+      id: crypto.randomUUID(),
+      name: "Inicio",
+      html: defaultTemplate("Inicio")
+    });
+  }
+}
+
+/* ================= RENDER ================= */
+function render() {
+  const list = document.getElementById("pages");
+  list.innerHTML = "";
+  project.pages.forEach((p, i) => {
+    const div = document.createElement("div");
+    div.className = `page ${i === currentIndex ? 'active' : ''}`;
+    div.onclick = () => {
+      openPage(i);
+      if(window.innerWidth <= 768) toggleMobileMenu();
+    };
+    div.innerHTML = `
+      <div class="page-info">
+        <strong>${p.name}</strong>
+        <span>ID: ${p.id.slice(0,6)}</span>
+      </div>
+      <div class="actions">
+        <button onclick="event.stopPropagation(); duplicatePage(${i})" title="Duplicar">⧉</button>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+  
+  if(currentIndex === null && project.pages.length > 0) openPage(0);
+}
+
+function openPage(i) {
+  currentIndex = i;
+  const page = project.pages[i];
+  document.getElementById("currentTitle").textContent = "📄 " + page.name;
+  document.getElementById("viewer").srcdoc = page.html;
+  render(); // Update active class
+}
+
+/* ================= CRUD ACTIONS ================= */
+function createPage() {
+  const name = prompt("Nombre de la nueva página:");
+  if(!name) return;
+  project.pages.push({
+    id: crypto.randomUUID(),
+    name,
+    html: defaultTemplate(name)
+  });
+  save();
+  showToast(`Página '${name}' creada con éxito`, "var(--mq-amarillo)");
+  openPage(project.pages.length - 1);
+}
+
+function renamePage() {
+  if(currentIndex === null) return;
+  const oldName = project.pages[currentIndex].name;
+  const name = prompt("Nuevo nombre:", oldName);
+  if(!name || name === oldName) return;
+  project.pages[currentIndex].name = name;
+  save();
+  render();
+  document.getElementById("currentTitle").textContent = "📄 " + name;
+  showToast("Nombre actualizado");
+}
+
+function deletePage() {
+  if(currentIndex === null) return;
+  if(!confirm(`¿Eliminar definitivamente la página '${project.pages[currentIndex].name}'?`)) return;
+  project.pages.splice(currentIndex, 1);
+  currentIndex = null;
+  save();
+  showToast("Página eliminada", "var(--mq-rojo)");
+  if (project.pages.length > 0) openPage(0);
+  else {
+    document.getElementById("viewer").srcdoc = "";
+    document.getElementById("currentTitle").textContent = "MAXIQUEEN OS";
+    render();
+  }
+}
+
+function duplicatePage(i) {
+  const p = project.pages[i];
+  const newName = p.name + " (Copia)";
+  project.pages.splice(i + 1, 0, {
+    id: crypto.randomUUID(),
+    name: newName,
+    html: p.html
+  });
+  save();
+  showToast(`Página duplicada`, "var(--mq-azul)");
+  render();
+}
+
+/* ================= BUILDER INTEGRATION ================= */
+function openBuilder() {
+  if(currentIndex === null) return;
+  const page = project.pages[currentIndex];
+  const win = window.open("builder.html", "builder");
+  
+  showToast("Abriendo entorno de desarrollo...", "var(--mq-amarillo)");
+  
+  setTimeout(() => {
+    win.postMessage({
+      type: "LOAD_PAGE",
+      html: page.html,
+      index: currentIndex
+    }, "*");
+  }, 800);
+}
+
+window.addEventListener("message", e => {
+  if(e.data?.type === "SAVE_PAGE"){
+    const { html, index } = e.data;
+    project.pages[index].html = html;
+    save();
+    openPage(index);
+    showToast("Cambios guardados desde el Builder", "var(--mq-amarillo)");
+  }
+});
+
+/* ================= IMPORT / EXPORT ================= */
+function exportProject() {
+  const blob = new Blob([JSON.stringify(project, null, 2)], {type: "application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = project.name.replace(/\s+/g,"_").toLowerCase() + "_backup.json";
+  a.click();
+  showToast("Proyecto exportado correctamente");
+}
+
+function importProject() {
+  document.getElementById("fileInput").click();
+}
+
+document.getElementById("fileInput").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      project = JSON.parse(ev.target.result);
+      save();
+      currentIndex = null;
+      render();
+      showToast("Proyecto importado con éxito", "var(--mq-amarillo)");
+    } catch(err) {
+      showToast("Error al leer el archivo JSON", "var(--mq-rojo)");
+    }
+  };
+  reader.readAsText(file);
+});
+
+/* ================= PREVIEW ================= */
+function preview() {
+  if(currentIndex === null) return;
+  const win = window.open();
+  win.document.write(project.pages[currentIndex].html);
+  win.document.close();
+}
+
+/* ================= DEFAULT TEMPLATE (GLASSMORPHISM VIBE) ================= */
+function defaultTemplate(pageName) {
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>${pageName} — MAXIQUEEN OS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at top, #0b0f1a, #05070f);
+    color: #e5e7eb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 16px;
+    padding: 3rem 2rem;
+    text-align: center;
+    max-width: 600px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+  h1 { color: #FFD700; margin-bottom: 0.5rem; }
+  p { color: #9aa0c3; line-height: 1.6; margin-bottom: 2rem; }
+  .badge {
+    display: inline-block;
+    background: rgba(0, 229, 255, 0.1);
+    color: #00E5FF;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <span class="badge">Nuevo Módulo</span>
+  <h1>👑 ${pageName}</h1>
+  <p>Página generada con éxito. Abre esta vista en el <strong>Builder OS</strong> para inyectar tus componentes y lógica de negocio real.</p>
+</div>
+
+</body>
+</html>`;
+}
+</script>
+
+</body>
+</html>

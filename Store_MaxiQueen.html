@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MaxiQueen OS Ventas — El sistema operativo comercial que factura en piloto automático</title>
+  <meta name="description" content="Instala en 30 días el sistema que prospecta, nutre y cierra clientes premium por WhatsApp. Sin perseguir, sin improvisar. Creado por Cesar Bedoya." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#0a0a0f">
+  <style>
+    :root{
+      --bg:#050507; --bg-2:#0b0b12; --card:#10111a; --glass:rgba(255,255,255,.04);
+      --text:#eef0f6; --muted:#9aa0b4; --line:rgba(255,255,255,.08);
+      --accent:#00ffc6; --accent2:#7b61ff; --warn:#ffd166;
+      --radius:20px; --radius-sm:14px; --shadow:0 30px 80px rgba(0,0,0,.45);
+      --grid:1100px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto; color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 80% -10%, rgba(123,97,255,.25), transparent 60%),
+        radial-gradient(900px 600px at 10% 0%, rgba(0,255,198,.18), transparent 55%),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+      line-height:1.6; overflow-x:hidden;
+    }
+    a{color:inherit; text-decoration:none}
+    img{max-width:100%}
+    .container{max-width:var(--grid); margin:0 auto; padding:0 24px}
+    /* NAV */
+    .nav{
+      position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(12px);
+      background:linear-gradient(180deg, rgba(5,5,7,.85), rgba(5,5,7,.55)); border-bottom:1px solid var(--line);
+    }
+    .nav-inner{display:flex; align-items:center; justify-content:space-between; height:68px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.3px}
+    .brand .logo{
+      width:32px; height:32px; border-radius:10px;
+      background:conic-gradient(from 210deg, var(--accent), var(--accent2), var(--accent));
+      box-shadow:0 0 30px rgba(0,255,198,.35), inset 0 0 12px rgba(255,255,255,.15);
+    }
+    .brand span{font-family:"Space Grotesk"; font-size:18px}
+    .brand span b{color:var(--accent)}
+    .nav-cta{display:flex; gap:10px; align-items:center}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:13px 20px; border-radius:999px; font-weight:700; font-size:14px; border:1px solid transparent;
+      transition:.2s ease; white-space:nowrap; cursor:pointer;
+    }
+    .btn-primary{background:linear-gradient(135deg, var(--accent), var(--accent2)); color:#050507; box-shadow:0 10px 30px rgba(0,255,198,.25)}
+    .btn-primary:hover{transform:translateY(-1px); box-shadow:0 16px 40px rgba(123,97,255,.35)}
+    .btn-ghost{border:1px solid var(--line); background:rgba(255,255,255,.02)}
+    .btn-ghost:hover{background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.18)}
+    .progress{position:absolute; left:0; bottom:-1px; height:2px; width:0; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .1s linear}
+    /* HERO */
+    .hero{padding:84px 0 40px; position:relative}
+    .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:48px; align-items:center}
+    @media(max-width:980px){.hero-grid{grid-template-columns:1fr; gap:32px}}
+    .eyebrow{display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; font-size:12px; font-weight:700; letter-spacing:.4px; color:#0b0f0e; background:linear-gradient(135deg,var(--accent),#b7ffe9); margin-bottom:14px}
+    h1{font-family:"Space Grotesk"; font-size:clamp(36px,5.2vw,62px); line-height:1.02; margin:0 0 14px; letter-spacing:-.6px}
+    h1 .grad{background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent}
+    .sub{font-size:18px; color:var(--muted); max-width:560px; margin:0 0 26px}
+    .hero-actions{display:flex; gap:12px; flex-wrap:wrap}
+    .trust-mini{display:flex; gap:18px; align-items:center; margin-top:22px; color:var(--muted); font-size:13px}
+    .trust-mini .dot{width:6px; height:6px; border-radius:50%; background:var(--accent)}
+    /* HERO CARD / PIPELINE DEMO */
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+      border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
+    }
+    .demo{padding:22px; position:relative; overflow:hidden}
+    .demo::before{content:""; position:absolute; inset:-40%; background:radial-gradient(600px 300px at 70% 0%, rgba(0,255,198,.18), transparent 60%); pointer-events:none}
+    .demo-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
+    .demo-head h3{margin:0; font-size:16px; font-weight:700}
+    .pill{font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid var(--line); color:var(--muted)}
+    .pipeline{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
+    @media(max-width:560px){.pipeline{grid-template-columns:repeat(2,1fr)}}
+    .stage{background:rgba(255,255,255,.02); border:1px solid var(--line); border-radius:14px; padding:12px}
+    .stage h4{margin:0 0 8px; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px}
+    .lead{display:flex; align-items:center; gap:8px; padding:8px; border-radius:10px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); margin-bottom:8px; font-size:13px}
+    .lead .avatar{width:22px; height:22px; border-radius:50%; background:linear-gradient(135deg,var(--accent2),var(--accent))}
+    .lead .tag{margin-left:auto; font-size:10px; padding:2px 6px; border-radius:6px; background:rgba(0,255,198,.15); color:var(--accent); border:1px solid rgba(0,255,198,.3)}
+    .demo-foot{display:flex; justify-content:space-between; align-items:center; margin-top:12px; color:var(--muted); font-size:12px}
+    /* SOCIAL PROOF BAR */
+    .proof{padding:28px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:rgba(255,255,255,.01)}
+    .proof-inner{display:flex; gap:28px; flex-wrap:wrap; align-items:center; justify-content:space-between; opacity:.9}
+    .proof .item{display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13px}
+    .proof .item b{color:var(--text)}
+    /* SECTIONS */
+    section{padding:72px 0}
+    .section-title{font-family:"Space Grotesk"; font-size:clamp(26px,3.6vw,40px); text-align:center; margin:0 0 10px; letter-spacing:-.3px}
+    .section-sub{max-width:720px; margin:0 auto 38px; text-align:center; color:var(--muted)}
+    .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:20px}
+    @media(max-width:900px){.grid-3{grid-template-columns:1fr}}
+    .feature{padding:22px; border-radius:var(--radius); background:var(--glass); border:1px solid var(--line)}
+    .feature h4{margin:6px 0 6px; font-size:18px}
+    .feature p{margin:0; color:var(--muted); font-size:14px}
+    .icon{width:36px; height:36px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(0,255,198,.2), rgba(123,97,255,.2)); border:1px solid rgba(255,255,255,.12)}
+    /* METRICS */
+    .metrics{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:900px; margin:0 auto}
+    @media(max-width:800px){.metrics{grid-template-columns:repeat(2,1fr)}}
+    .metric{padding:20px; text-align:center; border-radius:16px; background:rgba(255,255,255,.02); border:1px solid var(--line)}
+    .metric .num{font-family:"Space Grotesk"; font-size:34px; font-weight:700}
+    .metric .lbl{color:var(--muted); font-size:12px}
+    /* OFFERS */
+    .offers{display:grid; grid-template-columns:repeat(2,1fr); gap:26px; max-width:980px; margin:0 auto}
+    @media(max-width:900px){.offers{grid-template-columns:1fr}}
+    .offer{position:relative; padding:30px; border-radius:var(--radius); background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015)); border:1px solid var(--line); display:flex; flex-direction:column; gap:12px}
+    .offer.highlight{border-color:rgba(0,255,198,.5); box-shadow:0 30px 80px rgba(0,255,198,.18); transform:translateY(-2px)}
+    .badge{position:absolute; top:-12px; left:22px; padding:6px 10px; border-radius:999px; font-size:11px; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#050507}
+    .offer h3{margin:4px 0 0; font-size:22px; font-family:"Space Grotesk"}
+    .price{font-size:36px; font-weight:800; letter-spacing:-.4px}
+    .price small{font-size:13px; color:var(--muted); font-weight:600}
+    .offer ul{margin:8px 0 10px; padding-left:18px; color:var(--muted); font-size:14px}
+    .offer li{margin:7px 0}
+    .offer .btn{width:100%; margin-top:auto}
+    .guarantee{display:flex; gap:10px; align-items:center; font-size:12px; color:var(--muted); margin-top:6px}
+    /* COMPARISON */
+    .compare{overflow:auto; border:1px solid var(--line); border-radius:16px}
+    table{width:100%; border-collapse:collapse; min-width:720px}
+    th,td{padding:14px 16px; border-bottom:1px solid var(--line); text-align:left; font-size:14px}
+    th{background:rgba(255,255,255,.03); font-weight:700}
+    td.muted{color:var(--muted)}
+    /* TESTIMONIALS */
+    .testis{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+    @media(max-width:900px){.testis{grid-template-columns:1fr}}
+    .testi{padding:20px; border-radius:16px; background:rgba(255,255,255,.02); border:1px solid var(--line)}
+    .testi p{margin:0 0 10px; font-size:14px; color:var(--text)}
+    .testi .who{display:flex; align-items:center; gap:10px; color:var(--muted); font-size:12px}
+    .who .av{width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,var(--accent2),var(--accent))}
+    /* ROI */
+    .roi{display:grid; grid-template-columns:1.1fr .9fr; gap:22px; align-items:center}
+    @media(max-width:900px){.roi{grid-template-columns:1fr}}
+    .roi .panel{padding:22px; border-radius:16px; background:rgba(255,255,255,.02); border:1px solid var(--line)}
+    .roi label{display:block; font-size:12px; color:var(--muted); margin:10px 0 6px}
+    .roi input{width:100%; padding:12px 14px; border-radius:10px; background:#0a0b12; border:1px solid var(--line); color:var(--text); outline:none}
+    .roi .out{font-family:"Space Grotesk"; font-size:28px; margin-top:8px}
+    /* FAQ */
+    .faq{max-width:860px; margin:0 auto}
+    .qa{border:1px solid var(--line); border-radius:14px; margin-bottom:10px; background:rgba(255,255,255,.015); overflow:hidden}
+    .qa button{width:100%; text-align:left; padding:16px 18px; background:transparent; border:0; color:var(--text); font-weight:600; cursor:pointer; display:flex; justify-content:space-between; align-items:center}
+    .qa .a{padding:0 18px 16px; color:var(--muted); display:none; font-size:14px}
+    .qa.open .a{display:block}
+    /* CTA */
+    .cta{padding:46px 26px; text-align:center; border-radius:var(--radius); background:
+      radial-gradient(600px 200px at 50% 0%, rgba(0,255,198,.18), transparent 60%),
+      linear-gradient(135deg, rgba(0,255,198,.12), rgba(123,97,255,.12));
+      border:1px solid rgba(255,255,255,.14)
+    }
+    .cta h2{font-family:"Space Grotesk"; font-size:clamp(26px,4vw,40px); margin:0 0 8px}
+    .cta p{color:var(--muted); margin:0 auto 18px; max-width:620px}
+    /* FOOTER */
+    footer{padding:36px 0 60px; color:var(--muted); font-size:13px; text-align:center; border-top:1px solid var(--line)}
+    /* FLOAT WA */
+    .wa{position:fixed; right:18px; bottom:18px; z-index:60; width:56px; height:56px; border-radius:50%; display:grid; place-items:center; background:linear-gradient(135deg,#25D366,#1ebe5d); color:#fff; font-size:24px; box-shadow:0 14px 36px rgba(37,211,102,.4); transition:.15s}
+    .wa:hover{transform:translateY(-2px)}
+    /* REVEAL */
+    .reveal{opacity:0; transform:translateY(12px); transition:.6s ease}
+    .reveal.show{opacity:1; transform:none}
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Product",
+    "name":"MaxiQueen OS Ventas",
+    "description":"Sistema operativo comercial para prospectar, nutrir y cerrar clientes premium por WhatsApp.",
+    "brand":{"@type":"Brand","name":"MaxiQueen"},
+    "offers":[
+      {"@type":"Offer","name":"Sales Quick Deploy","price":"147000","priceCurrency":"COP","url":"https://wa.me/573016625921"},
+      {"@type":"Offer","name":"Sales OS Core","price":"897000","priceCurrency":"COP","url":"https://wa.me/573016625921"}
+    ]
+  }
+  </script>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="brand"><div class="logo"></div><span>MaxiQueen <b>OS Ventas</b></span></div>
+      <div class="nav-cta">
+        <a href="#ofertas" class="btn btn-ghost">Ver sistemas</a>
+        <a href="https://wa.me/573016625921?text=Hola%20Cesar%2C%20quiero%20instalar%20MaxiQueen%20OS%20Ventas" class="btn btn-primary">Hablar por WhatsApp</a>
+      </div>
+    </div>
+    <div class="progress" id="progress"></div>
+  </nav>
+
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">Nuevo: sistema 2026 para creadores y agencias</div>
+        <h1>Tu negocio no necesita más seguidores. <span class="grad">Necesita un sistema que facture.</span></h1>
+        <p class="sub">MaxiQueen OS Ventas instala en 30 días tu máquina de prospección, pipeline y cierres por WhatsApp. Dejas de perseguir. Empiezas a cobrar premium en piloto automático.</p>
+        <div class="hero-actions">
+          <a href="#ofertas" class="btn btn-primary">Quiero mi sistema</a>
+          <a href="#demo" class="btn btn-ghost">Ver demo del pipeline</a>
+        </div>
+        <div class="trust-mini"><span class="dot"></span> Implementación hecha contigo <span class="dot"></span> Sin humo, solo procesos <span class="dot"></span> ROI en 1-2 clientes</div>
+      </div>
+
+      <div class="card demo reveal" id="demo">
+        <div class="demo-head">
+          <h3>Pipeline en vivo</h3>
+          <span class="pill">WhatsApp + CRM</span>
+        </div>
+        <div class="pipeline">
+          <div class="stage"><h4>Nuevos</h4>
+            <div class="lead"><div class="avatar"></div> Laura M. <span class="tag">IG</span></div>
+            <div class="lead"><div class="avatar"></div> Agencia Nova <span class="tag">Referido</span></div>
+          </div>
+          <div class="stage"><h4>Calificados</h4>
+            <div class="lead"><div class="avatar"></div> Carlos P. <span class="tag">WA</span></div>
+            <div class="lead"><div class="avatar"></div> Studio 7 <span class="tag">Form</span></div>
+          </div>
+          <div class="stage"><h4>Propuesta</h4>
+            <div class="lead"><div class="avatar"></div> Dra. Sofía <span class="tag">$2.5M</span></div>
+          </div>
+          <div class="stage"><h4>Cierre</h4>
+            <div class="lead"><div class="avatar"></div> Marca K <span class="tag">Pagado</span></div>
+          </div>
+        </div>
+        <div class="demo-foot">
+          <span>Seguimiento automático cada 48h</span>
+          <span>Plantillas listas</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="proof">
+    <div class="container proof-inner">
+      <div class="item">Implementado en <b>Cúcuta, Bogotá y Medellín</b></div>
+      <div class="item">Tiempo medio a primer cierre: <b>11 días</b></div>
+      <div class="item">Ticket promedio activado: <b>$1.8M - $4.5M COP</b></div>
+      <div class="item">Canales: <b>WhatsApp, IG DM, Formularios</b></div>
+    </div>
+  </div>
+
+  <section>
+    <div class="container">
+      <h2 class="section-title">El problema no es tu talento. Es la fuga.</h2>
+      <p class="section-sub">Sin sistema, cada lead es una moneda al aire. Con sistema, cada conversación tiene un siguiente paso medible.</p>
+      <div class="grid-3">
+        <div class="feature reveal"><div class="icon">🧲</div><h4>Atracción sin control</h4><p>Publicas, te escriben, pero no hay imán ni filtro. Pierdes horas con curiosos.</p></div>
+        <div class="feature reveal"><div class="icon">🕳️</div><h4>Pipeline fantasma</h4><p>No recuerdas a quién seguir, cuándo ni qué decir. Se enfrían y compran a otro.</p></div>
+        <div class="feature reveal"><div class="icon">💸</div><h4>Precio por miedo</h4><p>Sin oferta estructurada, bajas precio para cerrar. Facturas menos trabajando más.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2 class="section-title">El Motor de 3 Fases</h2>
+      <p class="section-sub">No es un curso. Es instalación. Te dejamos operando.</p>
+      <div class="grid-3">
+        <div class="feature reveal"><div class="icon">1</div><h4>Atracción e Inbound</h4><p>Imán de valor, formulario inteligente y entrada directa a WhatsApp con etiqueta automática.</p></div>
+        <div class="feature reveal"><div class="icon">2</div><h4>Control de Pipeline</h4><p>Tablero en Notion/Airtable con etapas, recordatorios y scripts por estado. Cero leads perdidos.</p></div>
+        <div class="feature reveal"><div class="icon">3</div><h4>Cierre premium</h4><p>Guiones de calificación, manejo de objeciones y propuesta de alto valor que se vende sola.</p></div>
+      </div>
+      <div class="metrics" style="margin-top:28px">
+        <div class="metric"><div class="num" data-count="48">0</div><div class="lbl">horas ahorradas / mes</div></div>
+        <div class="metric"><div class="num" data-count="3.2">0</div><div class="lbl">x tasa de respuesta</div></div>
+        <div class="metric"><div class="num" data-count="67">0</div><div class="lbl">% menos no-shows</div></div>
+        <div class="metric"><div class="num" data-count="11">0</div><div class="lbl">días a primer cierre</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ofertas">
+    <div class="container">
+      <h2 class="section-title">Elige tu nivel de instalación</h2>
+      <p class="section-sub">Recuperas la inversión con 1 a 2 clientes. Diseñado para creadores, coaches, agencias y servicios B2B.</p>
+      <div class="offers">
+        <div class="offer reveal">
+          <h3>⚡ Sales Quick Deploy</h3>
+          <div class="price">$147.000 <small>COP</small></div>
+          <p>Activa tu embudo mínimo viable en 7 días.</p>
+          <ul>
+            <li>Diagnóstico 1:1 de oferta (30 min)</li>
+            <li>Script de prospección y cierre por WhatsApp</li>
+            <li>CRM básico + recordatorios</li>
+            <li>Plan de acción 7 días</li>
+            <li>Soporte WhatsApp 3 días</li>
+          </ul>
+          <a class="btn btn-ghost" target="_blank" href="https://wa.me/573016625921?text=Quiero%20Sales%20Quick%20Deploy%20%24147.000%20COP">Activar Quick Deploy</a>
+          <div class="guarantee">✔️ Ideal si ya vendes y quieres orden ya</div>
+        </div>
+
+        <div class="offer highlight reveal">
+          <div class="badge">RECOMENDADO</div>
+          <h3>👑 Sales OS Core</h3>
+          <div class="price">$897.000 <small>COP</small></div>
+          <p>Tu máquina comercial completa en 30 días.</p>
+          <ul>
+            <li>Ingeniería de Oferta Irresistible high ticket</li>
+            <li>CRM avanzado automatizado (etapas, tareas, SLA)</li>
+            <li>Flujo inbound: imán + formulario + WhatsApp</li>
+            <li>Manual de objeciones + guiones de llamada</li>
+            <li>Automatización no-code básica (Make/Zapier)</li>
+            <li>Co-piloto directo 30 días por WhatsApp</li>
+          </ul>
+          <a class="btn btn-primary" target="_blank" href="https://wa.me/573016625921?text=Quiero%20Sales%20OS%20Core%20%24897.000%20COP">Activar OS Core</a>
+          <div class="guarantee">✔️ Garantía de implementación: si no queda operando, trabajamos gratis hasta que quede</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2 class="section-title">¿Qué cambia en tu día a día?</h2>
+      <p class="section-sub">Comparado con hacerlo solo y a pulso.</p>
+      <div class="compare reveal">
+        <table>
+          <thead><tr><th>Actividad</th><th>Sin sistema</th><th>Con MaxiQueen OS</th></tr></thead>
+          <tbody>
+            <tr><td>Captar leads</td><td class="muted">Postear y esperar</td><td>Imán + DM + formulario con etiqueta</td></tr>
+            <tr><td>Seguimiento</td><td class="muted">Memoria y notas sueltas</td><td>Pipeline con recordatorios automáticos</td></tr>
+            <tr><td>Calificación</td><td class="muted">Charla larga sin filtro</td><td>Script de 5 preguntas + score</td></tr>
+            <tr><td>Propuesta</td><td class="muted">PDF genérico</td><td>Oferta de valor + anclaje + opciones</td></tr>
+            <tr><td>Cierre</td><td class="muted">Descuento por miedo</td><td>Guion de objeciones + cierre por elección</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container roi">
+      <div>
+        <h2 class="section-title" style="text-align:left">Calcula tu ROI en 30 segundos</h2>
+        <p class="section-sub" style="text-align:left; margin:0 0 18px">Pon tus números reales. El sistema se paga solo.</p>
+        <div class="panel">
+          <label>Precio promedio de tu servicio (COP)</label>
+          <input id="precio" type="number" value="2500000">
+          <label>Leads nuevos por mes</label>
+          <input id="leads" type="number" value="40">
+          <label>Tasa de cierre actual (%)</label>
+          <input id="tasa" type="number" value="12">
+          <div style="margin-top:14px; color:var(--muted); font-size:13px">Con OS Core proyectamos +40% de cierre por mejor seguimiento</div>
+          <div class="out" id="out">$0</div>
+          <div style="color:var(--muted); font-size:12px">Ingreso extra estimado mensual</div>
+        </div>
+      </div>
+      <div class="panel reveal">
+        <h4 style="margin:0 0 8px">Qué incluye la instalación</h4>
+        <ul style="margin:0; padding-left:18px; color:var(--muted); font-size:14px">
+          <li>Arquitectura de oferta y promesa</li>
+          <li>Flujo WhatsApp con respuestas rápidas</li>
+          <li>CRM en Notion con vistas Kanban y calendario</li>
+          <li>Secuencias de seguimiento 48h/7d/21d</li>
+          <li>Dashboard de métricas: respuesta, show, cierre</li>
+        </ul>
+        <div style="margin-top:14px" class="trust-mini"><span class="dot"></span> Entrega en 30 días <span class="dot"></span> Soporte real <span class="dot"></span> Hecho en Colombia</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2 class="section-title">Resultados reales, sin humo</h2>
+      <p class="section-sub">Casos de creadores y servicios que instalaron el sistema.</p>
+      <div class="testis">
+        <div class="testi reveal"><p>“Pasé de perseguir por DM a tener 18 conversaciones calificadas por semana. Cerré 3 clientes de $2.9M en 19 días.”</p><div class="who"><div class="av"></div> Daniela R. · Coach</div></div>
+        <div class="testi reveal"><p>“El pipeline me salvó. Antes perdía seguimientos. Ahora cierro con el guion de objeciones sin bajar precio.”</p><div class="who"><div class="av"></div> Andrés M. · Agencia</div></div>
+        <div class="testi reveal"><p>“En 11 días recuperé la inversión. El CRM me dice exactamente a quién escribir hoy.”</p><div class="who"><div class="av"></div> Laura V. · Consultora</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container faq">
+      <h2 class="section-title">Preguntas frecuentes</h2>
+      <div class="qa"><button>¿Necesito herramientas pagas? <span>+</span></button><div class="a">No. Usamos WhatsApp Business, Notion gratis y automatizaciones simples. Si ya usas Make o Zapier, las integramos.</div></div>
+      <div class="qa"><button>¿Funciona si vendo servicios de alto valor? <span>+</span></button><div class="a">Sí. El sistema está diseñado para tickets de $1.5M a $8M COP. Ajustamos la oferta y el guion a tu nicho.</div></div>
+      <div class="qa"><button>¿Cuánto tiempo me toma al día? <span>+</span></button><div class="a">30 a 45 minutos para procesar el pipeline. El sistema te dice qué hacer, no improvisas.</div></div>
+      <div class="qa"><button>¿Hay garantía? <span>+</span></button><div class="a">Garantía de implementación: si en 30 días no queda operando, seguimos contigo sin costo hasta dejarlo listo.</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="cta reveal">
+        <h2>Instala tu sistema esta semana</h2>
+        <p>Cada día sin pipeline es dinero que se enfría. Elige Quick Deploy para arrancar ya, o OS Core para la máquina completa.</p>
+        <div class="hero-actions" style="justify-content:center">
+          <a class="btn btn-ghost" target="_blank" href="https://wa.me/573016625921?text=Quiero%20Quick%20Deploy">⚡ Empezar con $147.000</a>
+          <a class="btn btn-primary" target="_blank" href="https://wa.me/573016625921?text=Quiero%20OS%20Core%20completo">👑 Instalar OS Core</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © 2026 MaxiQueen OS Ventas — Hecho por Cesar Bedoya en Cúcuta, Colombia. Infraestructura comercial para humanos ambiciosos.
+  </footer>
+
+  <a class="wa" href="https://wa.me/573016625921?text=Hola%20Cesar%2C%20quiero%20ver%20mi%20sistema" aria-label="WhatsApp">💬</a>
+
+  <script>
+    // progress bar
+    const progress = document.getElementById('progress');
+    addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const sc = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+      progress.style.width = sc + '%';
+    });
+    // reveal
+    const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('show')), {threshold:.15});
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    // counters
+    document.querySelectorAll('[data-count]').forEach(el=>{
+      const end = parseFloat(el.dataset.count); let cur=0;
+      const inc = end/60; const t = setInterval(()=>{cur+=inc; if(cur>=end){cur=end; clearInterval(t)} el.textContent = end%1?cur.toFixed(1):Math.round(cur)}, 20);
+    });
+    // FAQ
+    document.querySelectorAll('.qa button').forEach(b=>b.addEventListener('click',()=>b.parentElement.classList.toggle('open')));
+    // ROI calc
+    const precio=document.getElementById('precio'), leads=document.getElementById('leads'), tasa=document.getElementById('tasa'), out=document.getElementById('out');
+    function calc(){ const p=+precio.value||0, l=+leads.value||0, t=+tasa.value||0; const base=l*(t/100)*p; const mejor=l*((t*1.4)/100)*p; out.textContent = new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(Math.max(0,mejor-base)); }
+    [precio,leads,tasa].forEach(i=>i.addEventListener('input',calc)); calc();
+  </script>
+</body>
+</html>

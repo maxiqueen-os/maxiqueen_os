@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MaxiQueen OS - Módulo de Gamificación</title>
+    <style>
+        :root {
+            --mq-yellow: #FFD700;
+            --mq-blue: #0052FF;
+            --mq-red: #FF2B2B;
+            --bg-dark: #0f172a;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            touch-action: none; /* Previene scroll en móviles al jugar */
+        }
+
+        /* Contenedor principal Flex para incluir Anuncios y Juego */
+        .os-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 500px;
+            height: 100vh;
+            justify-content: space-between;
+        }
+
+        /* Espacios para AdSense H5 */
+        .adsense-slot {
+            width: 100%;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #888;
+            flex-shrink: 0;
+        }
+
+        /* Cabecera del Juego */
+        .game-header {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .game-header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--mq-yellow);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 5px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .stat-score { color: var(--mq-blue); }
+        .stat-orbs { color: var(--mq-yellow); }
+
+        /* Contenedor del Canvas */
+        .canvas-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            width: 100%;
+        }
+
+        canvas {
+            background-color: #1e293b;
+            border-bottom: 4px solid var(--mq-red);
+            border-top: 4px solid var(--mq-blue);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* Controles Táctiles */
+        .mobile-controls {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .control-btn {
+            background-color: var(--mq-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            flex-grow: 1;
+            user-select: none;
+            cursor: pointer;
+            box-shadow: 0 4px 0px #003bb5;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .control-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px #003bb5;
+        }
+
+        #btnJump {
+            background-color: var(--mq-red);
+            box-shadow: 0 4px 0px #cc0000;
+            flex-grow: 2;
+        }
+        
+        #btnJump:active {
+            box-shadow: 0 0px 0px #cc0000;
+        }
+
+        /* Pantalla de Fin de Juego */
+        #gameOverScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.95);
+            padding: 30px;
+            border: 2px solid var(--mq-yellow);
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        #btnRestart {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: var(--mq-yellow);
+            color: #000;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="os-container">
+    <!-- Slot para AdSense Top -->
+    <div class="adsense-slot">
+        Espacio para Bloque de Anuncios (H5 Games Top)
+    </div>
+
+    <div class="game-header">
+        <h1>MaxiQueen Run</h1>
+        <div class="stats">
+            <div class="stat-score">Distancia: <span id="scoreVal">0</span>m</div>
+            <div class="stat-orbs">Orbes Dorados: <span id="orbVal">0</span></div>
+        </div>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="gameCanvas" width="400" height="500"></canvas>
+        
+        <div id="gameOverScreen">
+            <h2 style="color: var(--mq-red); margin-top:0;">¡SISTEMA CAÍDO!</h2>
+            <p>Distancia: <span id="finalScore">0</span>m</p>
+            <p>Orbes: <span id="finalOrbs">0</span></p>
+            <button id="btnRestart" onclick="resetGame()">REINICIAR MÓDULO</button>
+        </div>
+    </div>
+
+    <!-- Controles Táctiles -->
+    <div class="mobile-controls">
+        <button class="control-btn" id="btnLeft">◀</button>
+        <button class="control-btn" id="btnJump">SALTAR</button>
+        <button class="control-btn" id="btnRight">▶</button>
+    </div>
+
+    <!-- Slot para AdSense Bottom -->
+    <div class="adsense-slot">
+        Espacio para Bloque de Anuncios (H5 Games Bottom)
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Variables UI
+    const scoreDisplay = document.getElementById('scoreVal');
+    const orbDisplay = document.getElementById('orbVal');
+    const gameOverScreen = document.getElementById('gameOverScreen');
+
+    // Constantes del juego
+    const GRAVITY = 0.6;
+    const GAME_SPEED_BASE = 3;
+    let gameSpeed = GAME_SPEED_BASE;
+    let score = 0;
+    let orbsCollected = 0;
+    let isGameOver = false;
+    let animationId;
+
+    // Colores corporativos (variables CSS leídas en JS o directas)
+    const COLOR_YELLOW = '#FFD700';
+    const COLOR_BLUE = '#0052FF';
+    const COLOR_RED = '#FF2B2B';
+
+    // Objeto Jugador (Arquitectura Modular)
+    const player = {
+        x: 50,
+        y: 200,
+        width: 30,
+        height: 30,
+        vy: 0,
+        vx: 0,
+        speed: 5,
+        jumpPower: -10,
+        isGrounded: false
+    };
+
+    // Arrays para entidades
+    let platforms = [];
+    let orbs = [];
+
+    // Controles
+    const keys = {
+        left: false,
+        right: false,
+        jump: false
+    };
+
+    // --- LÓGICA DE INICIALIZACIÓN ---
+    function initPlatforms() {
+        platforms = [];
+        // Plataforma inicial (suelo)
+        platforms.push({ x: 0, y: canvas.height - 40, width: canvas.width * 1.5, height: 40 });
+    }
+
+    function resetGame() {
+        player.x = 50;
+        player.y = 100;
+        player.vy = 0;
+        score = 0;
+        orbsCollected = 0;
+        gameSpeed = GAME_SPEED_BASE;
+        isGameOver = false;
+        orbs = [];
+        
+        initPlatforms();
+        gameOverScreen.style.display = 'none';
+        
+        cancelAnimationFrame(animationId);
+        gameLoop();
+    }
+
+    // --- GENERADORES ---
+    function spawnPlatform() {
+        const minGap = 80;
+        const maxGap = 200;
+        const gap = Math.random() * (maxGap - minGap) + minGap;
+        
+        const lastPlatform = platforms[platforms.length - 1];
+        const newX = lastPlatform.x + lastPlatform.width + gap;
+        
+        const minHeight = canvas.height - 150;
+        const maxHeight = canvas.height - 40;
+        const newY = Math.random() * (maxHeight - minHeight) + minHeight;
+        
+        const newWidth = Math.random() * 150 + 100;
+
+        platforms.push({ x: newX, y: newY, width: newWidth, height: 20 });
+
+        // Probabilidad de generar un Orbe Dorado sobre la nueva plataforma
+        if (Math.random() > 0.4) {
+            orbs.push({
+                x: newX + newWidth / 2,
+                y: newY - 40,
+                radius: 10,
+                active: true
+            });
+        }
+    }
+
+    // --- FÍSICAS Y ACTUALIZACIÓN ---
+    function update() {
+        if (isGameOver) return;
+
+        // Movimiento horizontal del jugador
+        if (keys.left) player.x -= player.speed;
+        if (keys.right) player.x += player.speed;
+
+        // Limitar jugador a la pantalla
+        if (player.x < 0) player.x = 0;
+        if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+        // Gravedad y salto
+        player.vy += GRAVITY;
+        player.y += player.vy;
+        player.isGrounded = false;
+
+        // Mover plataformas (Efecto Runner) y colisiones
+        platforms.forEach(p => {
+            p.x -= gameSpeed;
+
+            // Detección de colisión AABB (solo desde arriba hacia abajo)
+            if (player.vy > 0 && 
+                player.x < p.x + p.width && 
+                player.x + player.width > p.x && 
+                player.y + player.height > p.y && 
+                player.y + player.height < p.y + p.height + player.vy) {
+                
+                player.isGrounded = true;
+                player.vy = 0;
+                player.y = p.y - player.height;
+            }
+        });
+
+        // Limpiar plataformas viejas y crear nuevas
+        if (platforms[0].x + platforms[0].width < 0) {
+            platforms.shift();
+        }
+        if (platforms[platforms.length - 1].x < canvas.width) {
+            spawnPlatform();
+        }
+
+        // Actualizar y recolectar Orbes
+        orbs.forEach(orb => {
+            orb.x -= gameSpeed;
+            if (orb.active) {
+                // Colisión circular simple con el cuadrado del jugador
+                const distX = Math.abs(orb.x - (player.x + player.width/2));
+                const distY = Math.abs(orb.y - (player.y + player.height/2));
+
+                if (distX <= (player.width/2 + orb.radius) && distY <= (player.height/2 + orb.radius)) {
+                    orb.active = false;
+                    orbsCollected++;
+                    score += 50; // Bonus por orbe
+                }
+            }
+        });
+
+        // Limpiar orbes viejos
+        orbs = orbs.filter(orb => orb.x + orb.radius > 0 && orb.active !== false);
+
+        // Actualizar Puntuación
+        score += 0.1;
+        gameSpeed += 0.001; // Aumentar dificultad progresivamente
+        
+        scoreDisplay.innerText = Math.floor(score);
+        orbDisplay.innerText = orbsCollected;
+
+        // Condición de Game Over (Caer al vacío)
+        if (player.y > canvas.height) {
+            triggerGameOver();
+        }
+    }
+
+    function triggerGameOver() {
+        isGameOver = true;
+        document.getElementById('finalScore').innerText = Math.floor(score);
+        document.getElementById('finalOrbs').innerText = orbsCollected;
+        gameOverScreen.style.display = 'block';
+    }
+
+    function jump() {
+        if (player.isGrounded && !isGameOver) {
+            player.vy = player.jumpPower;
+            player.isGrounded = false;
+        }
+    }
+
+    // --- RENDERIZADO VISUAL ---
+    function draw() {
+        // Limpiar Canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Dibujar Plataformas (Azules con borde)
+        ctx.fillStyle = COLOR_BLUE;
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.lineWidth = 2;
+        platforms.forEach(p => {
+            ctx.fillRect(p.x, p.y, p.width, p.height);
+            ctx.strokeRect(p.x, p.y, p.width, p.height);
+        });
+
+        // Dibujar Orbes (Amarillos con brillo)
+        orbs.forEach(orb => {
+            if (orb.active) {
+                ctx.beginPath();
+                ctx.arc(orb.x, orb.y, orb.radius, 0, Math.PI * 2);
+                ctx.fillStyle = COLOR_YELLOW;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.stroke();
+                ctx.closePath();
+            }
+        });
+
+        // Dibujar Jugador (Rojo)
+        ctx.fillStyle = COLOR_RED;
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+        
+        // Detalle cibernético en el jugador
+        ctx.fillStyle = COLOR_YELLOW;
+        ctx.fillRect(player.x + 5, player.y + 5, 8, 8);
+    }
+
+    function gameLoop() {
+        update();
+        draw();
+        if (!isGameOver) {
+            animationId = requestAnimationFrame(gameLoop);
+        }
+    }
+
+    // --- LISTENERS DE EVENTOS ---
+
+    // Teclado (PC)
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
+        if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
+        if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') jump();
+    });
+
+    window.addEventListener('keyup', (e) => {
+        if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
+        if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
+    });
+
+    // Controles Táctiles / Mouse (Móvil)
+    const btnLeft = document.getElementById('btnLeft');
+    const btnRight = document.getElementById('btnRight');
+    const btnJump = document.getElementById('btnJump');
+
+    // Función auxiliar para manejar touch y mouse
+    const addHoldEvent = (element, keyName) => {
+        element.addEventListener('mousedown', (e) => { e.preventDefault(); keys[keyName] = true; });
+        element.addEventListener('mouseup', (e) => { e.preventDefault(); keys[keyName] = false; });
+        element.addEventListener('mouseleave', (e) => { e.preventDefault(); keys[keyName] = false; });
+        element.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyName] = true; });
+        element.addEventListener('touchend', (e) => { e.preventDefault(); keys[keyName] = false; });
+    };
+
+    addHoldEvent(btnLeft, 'left');
+    addHoldEvent(btnRight, 'right');
+
+    // Salto manual en botón central
+    btnJump.addEventListener('mousedown', (e) => { e.preventDefault(); jump(); });
+    btnJump.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
+
+    // Iniciar el juego
+    resetGame();
+</script>
+</body>
+</html>

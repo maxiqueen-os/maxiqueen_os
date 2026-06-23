@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+
+<html lang="es" data-theme="dark">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+
+  <title>MAXIQUEEN OS — Builder OS IA 👑</title>
+
+
+
+  <!-- ================= META ================= -->
+
+  <meta name="description" content="MaxiQueen OS — Sistema operativo cognitivo para crear, vender y escalar sin fragmentación." />
+
+  
+
+  <!-- ================= ESTILOS ================= -->
+
+  <style>
+
+    :root {
+
+      --primary-glow: rgba(124, 58, 237, 0.5);
+
+      --accent: #7c3aed;
+
+      --accent-hover: #5b21b6;
+
+      --bg-dark: #05070f;
+
+      --glass-bg: rgba(255, 255, 255, 0.04);
+
+      --glass-border: rgba(255, 255, 255, 0.08);
+
+      --text-main: #e5e7eb;
+
+      --text-muted: #9ca3af;
+
+    }
+
+
+
+    * { box-sizing: border-box; }
+
+
+
+    body {
+
+      margin: 0;
+
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+      background: radial-gradient(circle at top, #0b0f1a, var(--bg-dark));
+
+      color: var(--text-main);
+
+      min-height: 100vh;
+
+      overflow-x: hidden;
+
+      display: flex;
+
+      flex-direction: column;
+
+    }
+
+
+
+    /* Tipografía y Encabezados */
+
+    .header-container {
+
+      text-align: center;
+
+      padding: 2rem 1rem 1rem 1rem;
+
+    }
+
+    
+
+    .title-gradient {
+
+      font-size: clamp(1.8rem, 5vw, 2.5rem);
+
+      margin: 0.5rem 0;
+
+      background: linear-gradient(to right, #ffffff, #a78bfa, #7c3aed);
+
+      -webkit-background-clip: text;
+
+      -webkit-text-fill-color: transparent;
+
+      letter-spacing: 1px;
+
+    }
+
+
+
+    .badge {
+
+      background: rgba(124,58,237,0.2);
+
+      color: #c4b5fd;
+
+      padding: 4px 12px;
+
+      border-radius: 99px;
+
+      font-size: 0.75rem;
+
+      font-weight: bold;
+
+      text-transform: uppercase;
+
+      border: 1px solid rgba(124,58,237,0.3);
+
+    }
+
+
+
+    /* Interfaz Principal Glassmorphism */
+
+    .chat-wrapper {
+
+      width: 100%;
+
+      max-width: 900px;
+
+      margin: 0 auto;
+
+      padding: 0 1rem;
+
+      flex-grow: 1;
+
+      display: flex;
+
+      flex-direction: column;
+
+    }
+
+
+
+    .card {
+
+      background: var(--glass-bg);
+
+      border-radius: 20px;
+
+      border: 1px solid var(--glass-border);
+
+      backdrop-filter: blur(12px);
+
+      -webkit-backdrop-filter: blur(12px);
+
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+
+      display: flex;
+
+      flex-direction: column;
+
+      height: 70vh; /* Altura adaptable */
+
+      min-height: 500px;
+
+      position: relative;
+
+      overflow: hidden;
+
+    }
+
+    
+
+    .glow { box-shadow: 0 0 40px var(--primary-glow); }
+
+
+
+    /* Barra de Estado Superior */
+
+    .status-bar {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      padding: 1rem 1.5rem;
+
+      font-size: 0.75rem;
+
+      color: var(--text-muted);
+
+      border-bottom: 1px solid var(--glass-border);
+
+      background: rgba(0,0,0,0.2);
+
+    }
+
+
+
+    .status-bar .controls { display: flex; gap: 15px; align-items: center;}
+
+    
+
+    .toggle-btn {
+
+      background: none; border: none; color: var(--accent); cursor: pointer;
+
+      font-size: 1rem; padding: 0; transition: transform 0.2s;
+
+    }
+
+    .toggle-btn:hover { transform: scale(1.1); color: #fff;}
+
+
+
+    /* Contenedor de Mensajes */
+
+    .messages {
+
+      flex-grow: 1;
+
+      overflow-y: auto;
+
+      padding: 1.5rem;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 1.2rem;
+
+      scroll-behavior: smooth;
+
+    }
+
+
+
+    .msg {
+
+      padding: 0.9rem 1.2rem;
+
+      border-radius: 18px;
+
+      max-width: 85%;
+
+      font-size: 0.95rem;
+
+      line-height: 1.5;
+
+      animation: msgSlide 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+
+      word-wrap: break-word;
+
+    }
+
+
+
+    @keyframes msgSlide {
+
+      from { opacity: 0; transform: translateY(15px); }
+
+      to { opacity: 1; transform: translateY(0); }
+
+    }
+
+
+
+    .msg.user {
+
+      align-self: flex-end;
+
+      background: var(--accent);
+
+      color: white;
+
+      border-bottom-right-radius: 4px;
+
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+
+    }
+
+
+
+    .msg.bot {
+
+      align-self: flex-start;
+
+      background: rgba(255,255,255,0.05);
+
+      color: var(--text-main);
+
+      border-bottom-left-radius: 4px;
+
+      border: 1px solid rgba(255,255,255,0.05);
+
+    }
+
+
+
+    /* Typing Indicator */
+
+    .typing { display: flex; gap: 4px; padding: 10px 15px; align-items: center; width: fit-content;}
+
+    .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: blink 1.4s infinite both; }
+
+    .dot:nth-child(1) { animation-delay: 0.2s; }
+
+    .dot:nth-child(2) { animation-delay: 0.4s; }
+
+    .dot:nth-child(3) { animation-delay: 0.6s; }
+
+    @keyframes blink { 0% {opacity: 0.2;} 20% {opacity: 1;} 100% {opacity: 0.2;} }
+
+
+
+    /* Controles Inferiores (Botones y Input) */
+
+    .interaction-area {
+
+      padding: 1rem;
+
+      border-top: 1px solid var(--glass-border);
+
+      background: rgba(0,0,0,0.3);
+
+    }
+
+
+
+    .quick-actions {
+
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;
+
+    }
+
+
+
+    button {
+
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
+
+      border: none; border-radius: 12px; padding: 0.7rem 1.2rem;
+
+      color: white; font-weight: 600; cursor: pointer;
+
+      transition: all 0.2s ease; font-size: 0.9rem;
+
+    }
+
+
+
+    button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--primary-glow); }
+
+    button:active { transform: translateY(0); }
+
+    
+
+    button.secondary {
+
+      background: var(--glass-bg);
+
+      border: 1px solid var(--glass-border);
+
+      color: var(--text-main);
+
+    }
+
+    button.secondary:hover { background: rgba(124, 58, 237, 0.2); border-color: var(--accent); }
+
+
+
+    .input-container {
+
+      display: flex; gap: 10px;
+
+      background: rgba(0,0,0,0.4);
+
+      border-radius: 15px; padding: 0.5rem;
+
+      border: 1px solid var(--glass-border);
+
+    }
+
+
+
+    input {
+
+      flex: 1; background: transparent; border: none; color: white;
+
+      outline: none; font-size: 1rem; padding: 0.5rem 1rem; width: 100%;
+
+    }
+
+
+
+    /* Bandeja de Juegos (Slots) */
+
+    .game-tray {
+
+      display: grid;
+
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+
+      gap: 1rem; padding: 1.5rem 0; display: none;
+
+    }
+
+
+
+    .game-slot {
+
+      aspect-ratio: 1; background: var(--glass-bg);
+
+      border: 1px dashed var(--glass-border); border-radius: 15px;
+
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+
+      cursor: pointer; transition: 0.3s; text-align: center; padding: 10px;
+
+    }
+
+    .game-slot:hover { background: rgba(124,58,237,0.1); border-color: var(--accent); transform: scale(1.03); }
+
+    .game-slot.active { border: 1px solid var(--accent); background: linear-gradient(135deg, rgba(124,58,237,0.2), transparent); }
+
+
+
+    /* Simulación de Contenedor Iframe */
+
+    #game-container {
+
+      display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+
+      background: rgba(5, 7, 15, 0.95); z-index: 100; backdrop-filter: blur(10px);
+
+      flex-direction: column; align-items: center; justify-content: center;
+
+    }
+
+
+
+    ::-webkit-scrollbar { width: 6px; }
+
+    ::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.5); border-radius: 10px; }
+
+
+
+    footer { text-align: center; padding: 2rem; opacity: 0.5; font-size: 0.8rem; }
+
+
+
+    @media (max-width: 600px) {
+
+      .card { height: 75vh; border-radius: 15px; border-left: none; border-right: none;}
+
+      .msg { max-width: 90%; }
+
+      .title-gradient { font-size: 1.8rem; }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+
+
+  <div class="header-container">
+
+    <div style="margin-bottom: 0.5rem;"><span class="badge" id="os-level">Núcleo IA v3.0 | Lvl 1</span></div>
+
+    <h1 class="title-gradient">MAXIQUEEN OS</h1>
+
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0;">Ecosistema Digital Cognitivo</p>
+
+  </div>
+
+
+
+  <div class="chat-wrapper">
+
+    <div class="card glow" id="main-card">
+
+      <div class="status-bar">
+
+        <span id="sys-msg" style="color: #10b981; font-weight: bold;">● EN LÍNEA</span>
+
+        <div class="controls">
+
+          <span id="user-xp">XP: 0</span>
+
+          <button class="toggle-btn" id="voice-toggle" onclick="toggleVoice()" title="Activar/Desactivar Voz">🔊</button>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- Contenedor Virtual (Juegos/Apps) -->
+
+      <div id="game-container">
+
+          <h3 style="color: var(--accent);">Slot Activo: MQ-07</h3>
+
+          <div style="background: #000; width: 90%; height: 60%; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--accent); box-shadow: 0 0 30px rgba(124,58,237,0.2);">
+
+              <p style="text-align:center; color: var(--text-muted);">Iniciando Motor Físico 3D...<br><br>[ Espacio reservado para inyección de WebGL / Canvas ]</p>
+
+          </div>
+
+          <button style="margin-top: 20px; background: #ef4444;" onclick="closeGame()">Terminar Proceso</button>
+
+      </div>
+
+
+
+      <div class="messages" id="chat-messages">
+
+        <!-- Historial dinámico -->
+
+      </div>
+
+
+
+      <div class="interaction-area">
+
+        <div id="quick-actions" class="quick-actions"></div>
+
+        <div class="input-container">
+
+          <input type="text" id="user-input" placeholder="Escribe un comando o petición..." autocomplete="off">
+
+          <button id="send-btn" onclick="processUserInput()">Ejecutar</button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Bandeja de Aplicaciones / Juegos -->
+
+    <div id="game-tray" class="game-tray">
+
+        <div class="game-slot active" onclick="loadGame('neon_runner')">
+
+            <span style="font-size: 2rem;">🏎️</span>
+
+            <span style="font-size: 0.7rem; margin-top: 5px; color: var(--accent);">MQ-07</span>
+
+            <small>Simulador 3D</small>
+
+        </div>
+
+        <div class="game-slot" onclick="handleInput('automatizacion')">
+
+            <span style="font-size: 2rem;">⚙️</span>
+
+            <span style="font-size: 0.7rem; margin-top: 5px;">SYS-01</span>
+
+            <small>Ventas Auto</small>
+
+        </div>
+
+        <div class="game-slot" onclick="handleInput('tienda')">
+
+            <span style="font-size: 2rem;">🛍️</span>
+
+            <span style="font-size: 0.7rem; margin-top: 5px;">APP-02</span>
+
+            <small>MaxiQueen Store</small>
+
+        </div>
+
+        <div class="game-slot" onclick="toggleGames()">
+
+            <span style="font-size: 1.5rem; color: #ef4444;">✕</span>
+
+            <small style="margin-top:5px;">Ocultar</small>
+
+        </div>
+
+    </div>
+
+  </div>
+
+
+
+  <footer>
+
+    © 2026 MAXIQUEEN OS. Arquitectura de Alta Frecuencia.
+
+  </footer>
+
+
+
+  <script>
+
+    // --- VARIABLES Y ESTADO ---
+
+    const chatBox = document.getElementById('chat-messages');
+
+    const userInput = document.getElementById('user-input');
+
+    const quickActions = document.getElementById('quick-actions');
+
+    const gameTray = document.getElementById('game-tray');
+
+    const gameContainer = document.getElementById('game-container');
+
+    const voiceToggleBtn = document.getElementById('voice-toggle');
+
+    
+
+    let isVoiceEnabled = true;
+
+    let audioCtx = null;
+
+    let isThinking = false;
+
+
+
+    const SystemState = {
+
+        level: 1,
+
+        xp: 0,
+
+        history: []
+
+    };
+
+
+
+    // --- BASE DE CONOCIMIENTO (Motor Cognitivo Básico) ---
+
+    const knowledgeBase = [
+
+        {
+
+            keywords: ["ordenar", "empezar", "estrategia", "plan"],
+
+            response: "Para estructurar el ecosistema digital, recomiendo iniciar con el **Módulo de Automatización**. Podemos integrar la pasarela de pagos, gestionar inventario o crear un embudo de ventas. ¿Por dónde empezamos?",
+
+            actions: [{label: "Embudo de Ventas", val: "ventas"}, {label: "Ver Aplicaciones", val: "slots"}]
+
+        },
+
+        {
+
+            keywords: ["venta", "ventas", "automatizar", "automatizacion", "marketing", "tiktok"],
+
+            response: "La automatización de procesos es el núcleo de MaxiQueen OS. Puedo conectar APIs (como Gemini u Ollama) para clasificar leads de redes sociales y redirigirlos automáticamente a tu catálogo web. ¿Quieres revisar el código de integración?",
+
+            actions: [{label: "Integrar IA", val: "ia"}, {label: "Gestión de Tienda", val: "tienda"}]
+
+        },
+
+        {
+
+            keywords: ["tienda", "store", "ropa", "catalogo", "hermanas"],
+
+            response: "Conectando con la base de datos de **MaxiQueen Store**. El sistema está optimizado para cargar catálogos visuales rápidos y procesar pedidos. Podemos mejorar el diseño UI o aplicar marketing de contenidos en TikTok para dirigir tráfico.",
+
+            actions: [{label: "Estrategia TikTok", val: "tiktok"}, {label: "Volver a Inicio", val: "inicio"}]
+
+        },
+
+        {
+
+            keywords: ["juego", "juegos", "slots", "entretener", "simulador", "jugar"],
+
+            response: "Activando sub-red **MQ-GAMES**. Desplegando bandeja de entornos virtuales y simuladores 3D desarrollados en el OS.",
+
+            actions: [],
+
+            triggerFunc: () => toggleGames(true)
+
+        },
+
+        {
+
+            keywords: ["ia", "gemini", "ollama", "python", "javascript", "codigo"],
+
+            response: "Como tu copiloto, hablo fluido Node.js, Python (FastAPI) y JavaScript (Three.js/Matter.js). Si tienes un bloque de código para revisar o quieres desplegar un nuevo endpoint, pégalo aquí.",
+
+            actions: [{label: "Abrir Simulador 3D", val: "slots"}]
+
+        }
+
+    ];
+
+
+
+    // --- MOTOR DE AUDIO Y VOZ ---
+
+    function initAudio() {
+
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    }
+
+
+
+    function playUISound(type) {
+
+        if (!audioCtx) return;
+
+        const osc = audioCtx.createOscillator();
+
+        const gain = audioCtx.createGain();
+
+        osc.connect(gain); gain.connect(audioCtx.destination);
+
+        
+
+        if (type === 'send') {
+
+            osc.type = 'sine';
+
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+
+        } else if (type === 'receive') {
+
+            osc.type = 'triangle';
+
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+
+            osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.15);
+
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+
+            osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+
+        } else if (type === 'levelUp') {
+
+            osc.type = 'square';
+
+            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+
+            osc.frequency.setValueAtTime(450, audioCtx.currentTime + 0.1);
+
+            osc.frequency.setValueAtTime(650, audioCtx.currentTime + 0.2);
+
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+
+            osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+
+        }
+
+    }
+
+
+
+    function toggleVoice() {
+
+        isVoiceEnabled = !isVoiceEnabled;
+
+        voiceToggleBtn.innerText = isVoiceEnabled ? "🔊" : "🔇";
+
+        voiceToggleBtn.style.color = isVoiceEnabled ? "var(--accent)" : "var(--text-muted)";
+
+        if(!isVoiceEnabled) window.speechSynthesis.cancel();
+
+    }
+
+
+
+    function speakText(htmlText) {
+
+        if (!isVoiceEnabled || !('speechSynthesis' in window)) return;
+
+        window.speechSynthesis.cancel();
+
+        
+
+        // Limpiar HTML para que el lector de voz no lea "br", "asteriscos", etc.
+
+        let cleanText = htmlText.replace(/<[^>]*>?/gm, ''); // Quita etiquetas HTML
+
+        cleanText = cleanText.replace(/[*_]/g, ''); // Quita markdown basico
+
+        
+
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+
+        utterance.lang = 'es-MX'; // Español latino
+
+        utterance.rate = 1.05;
+
+        utterance.pitch = 1.1; // Tono ligeramente digital
+
+        window.speechSynthesis.speak(utterance);
+
+    }
+
+
+
+    // --- MANEJO DE INTERFAZ ---
+
+    function updateXP() {
+
+        SystemState.xp += 25;
+
+        if(SystemState.xp >= 100) {
+
+            SystemState.level++;
+
+            SystemState.xp = 0;
+
+            document.getElementById('os-level').innerText = `Núcleo IA v3.0 | Lvl ${SystemState.level}`;
+
+            playUISound('levelUp');
+
+        }
+
+        document.getElementById('user-xp').innerText = `XP: ${SystemState.xp}`;
+
+    }
+
+
+
+    function renderButtons(actions) {
+
+        quickActions.innerHTML = '';
+
+        actions.forEach(act => {
+
+            const btn = document.createElement('button');
+
+            btn.className = 'secondary';
+
+            btn.innerText = act.label;
+
+            btn.onclick = () => { initAudio(); handleInput(act.val); };
+
+            quickActions.appendChild(btn);
+
+        });
+
+    }
+
+
+
+    function showTypingIndicator() {
+
+        const id = 'typing-' + Date.now();
+
+        const div = document.createElement('div');
+
+        div.className = 'msg bot typing';
+
+        div.id = id;
+
+        div.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+
+        chatBox.appendChild(div);
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        return id;
+
+    }
+
+
+
+    function removeTypingIndicator(id) {
+
+        const el = document.getElementById(id);
+
+        if (el) el.remove();
+
+    }
+
+
+
+    function appendMessage(role, text) {
+
+        const div = document.createElement('div');
+
+        div.className = `msg ${role}`;
+
+        div.innerHTML = text;
+
+        chatBox.appendChild(div);
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        
+
+        if (role === 'bot') {
+
+            playUISound('receive');
+
+            speakText(text);
+
+        } else {
+
+            playUISound('send');
+
+        }
+
+    }
+
+
+
+    // --- LÓGICA PRINCIPAL ---
+
+    function findCognitiveResponse(input) {
+
+        input = input.toLowerCase();
+
+        // Buscar coincidencia en base de conocimiento
+
+        for (let entry of knowledgeBase) {
+
+            if (entry.keywords.some(kw => input.includes(kw))) {
+
+                return entry;
+
+            }
+
+        }
+
+        // Respuesta por defecto si no entiende el comando
+
+        return {
+
+            response: "Datos recibidos. Como tu sistema operativo principal, puedo ayudarte a gestionar despliegues de código, estrategias de ventas o abrir el entorno de simulación. ¿Qué necesitas?",
+
+            actions: [{label: "Sistema de Ventas", val: "ventas"}, {label: "Simulador Web", val: "slots"}]
+
+        };
+
+    }
+
+
+
+    function handleInput(text) {
+
+        if(isThinking || !text.trim()) return;
+
+        isThinking = true;
+
+        quickActions.innerHTML = ''; // Ocultar botones mientras piensa
+
+        
+
+        appendMessage('user', text);
+
+        updateXP();
+
+        
+
+        const typingId = showTypingIndicator();
+
+
+
+        // Simular tiempo de procesamiento cognitivo (IA)
+
+        setTimeout(() => {
+
+            removeTypingIndicator(typingId);
+
+            
+
+            // Lógica Especiales Hardcodeadas
+
+            if (text.toLowerCase() === 'inicio') {
+
+                sendWelcomeMessage();
+
+                isThinking = false;
+
+                return;
+
+            }
+
+
+
+            const data = findCognitiveResponse(text);
+
+            appendMessage('bot', data.response);
+
+            renderButtons(data.actions);
+
+            
+
+            if (data.triggerFunc) data.triggerFunc();
+
+            
+
+            isThinking = false;
+
+        }, 1200 + Math.random() * 800);
+
+    }
+
+
+
+    function processUserInput() {
+
+        initAudio();
+
+        const text = userInput.value;
+
+        if(text) {
+
+            handleInput(text);
+
+            userInput.value = '';
+
+        }
+
+    }
+
+    
+
+    userInput.addEventListener("keypress", function(event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            processUserInput();
+
+        }
+
+    });
+
+
+
+    // --- GESTIÓN DE APLICACIONES (Slots) ---
+
+    function toggleGames(forceShow = false) {
+
+        initAudio();
+
+        const isVisible = gameTray.style.display === 'grid';
+
+        if (forceShow) {
+
+            gameTray.style.display = 'grid';
+
+        } else {
+
+            gameTray.style.display = isVisible ? 'none' : 'grid';
+
+        }
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+    }
+
+
+
+    function loadGame(gameId) {
+
+        initAudio();
+
+        gameTray.style.display = 'none';
+
+        appendMessage('bot', `Inicializando protocolo <b>${gameId.toUpperCase()}</b>. Transfiriendo recursos del navegador...`);
+
+        
+
+        setTimeout(() => {
+
+            gameContainer.style.display = 'flex';
+
+        }, 1500);
+
+    }
+
+
+
+    function closeGame() {
+
+        initAudio();
+
+        gameContainer.style.display = 'none';
+
+        appendMessage('bot', "Proceso de simulación terminado de forma segura. Recursos de memoria liberados.");
+
+        renderButtons([{label: "Volver a Inicio", val: "inicio"}, {label: "Reabrir Slots", val: "slots"}]);
+
+    }
+
+
+
+    function sendWelcomeMessage() {
+
+        appendMessage('bot', "Bienvenido al <b>MaxiQueen OS</b>. Tu entorno digital unificado.<br><br>He optimizado los protocolos para integraciones web y automatización de ventas. ¿En qué módulo nos enfocaremos hoy?");
+
+        renderButtons([
+
+            {label: "Automatización", val: "ventas"},
+
+            {label: "MaxiQueen Store", val: "tienda"},
+
+            {label: "Slots (Juegos/3D)", val: "slots"}
+
+        ]);
+
+    }
+
+
+
+    // Arranque Inicial (Requiere clic humano para habilitar Audio/Voz)
+
+    window.onload = () => {
+
+        const startDiv = document.createElement('div');
+
+        startDiv.style.textAlign = 'center';
+
+        startDiv.style.padding = '2rem';
+
+        startDiv.innerHTML = `<button onclick="this.parentElement.remove(); initAudio(); sendWelcomeMessage();" style="font-size: 1.1rem; padding: 15px 30px; box-shadow: 0 0 20px var(--primary-glow);">Iniciar Secuencia OS</button>`;
+
+        chatBox.appendChild(startDiv);
+
+    };
+
+  </script>
+
+</body>
+
+</html>--------------------- puedes ahora subirlo de nivel en cuanto a conocimiento y respuestas mas extensas y excelnte como esta no le quites nada solo agrega y aumenta los benedificos y servicios

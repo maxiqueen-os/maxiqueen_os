@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MAXIQUEEN OS • PROTOCOLO V6</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;500;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ffcc;
+            --secondary: #b366ff;
+            --warning: #ff3366;
+            --bg-gradient: linear-gradient(135deg, #0a0a1a 0%, #05050a 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(12px);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background: var(--bg-gradient);
+            color: #e0e0e0;
+            font-family: 'Exo 2', sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100dvh; 
+            overflow: hidden;
+        }
+
+        /* DISEÑO GLASSMORPHISM (Efecto Vidrio) */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* HUD ORGÁNICO Y LIMPIO */
+        #header {
+            margin: 10px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            transition: all 0.4s ease;
+        }
+
+        .stat { text-align: center; }
+        .stat-label { font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 2px; }
+        .stat-value { font-size: 1.2rem; font-family: 'Orbitron', sans-serif; color: var(--primary); font-weight: 700; }
+
+        /* ALERTA DEL BOSS */
+        #boss-ui {
+            display: none;
+            margin: 0 10px;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--warning);
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: rgba(255, 51, 102, 0.1);
+            border-radius: 8px;
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 51, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
+        }
+
+        /* SELECTOR DE AVATARS HUMANOIDES */
+        #avatar-selector {
+            display: flex;
+            gap: 12px;
+            margin: 0 10px;
+            padding: 10px;
+            overflow-x: auto;
+            flex-shrink: 0;
+            scrollbar-width: none; 
+        }
+        #avatar-selector::-webkit-scrollbar { display: none; }
+
+        .avatar-card {
+            min-width: 100px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0.6;
+        }
+
+        .avatar-card.active {
+            opacity: 1;
+            border-color: var(--primary);
+            background: rgba(0, 255, 204, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .avatar-icon { font-size: 1.5rem; margin-bottom: 4px; }
+        .avatar-name { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px; }
+        .avatar-desc { font-size: 0.6rem; color: #aaa; margin-top: 2px; }
+
+        /* ÁREA DE JUEGO */
+        #game-area {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            min-height: 0;
+            position: relative;
+        }
+
+        canvas {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px; /* Bordes redondeados más humanos */
+            aspect-ratio: 1 / 1;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: box-shadow 0.4s, border-color 0.4s;
+        }
+
+        /* CONTROLES MÓVILES (Minimalistas) */
+        #controls-container {
+            flex-shrink: 0;
+            padding: 10px 15px 25px 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #controls {
+            display: grid;
+            grid-template-columns: repeat(3, 65px);
+            grid-template-rows: repeat(2, 55px);
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-ctrl {
+            color: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.1s;
+        }
+
+        .btn-ctrl:active { background: var(--primary); color: #000; transform: scale(0.92); }
+        .btn-up { grid-column: 2; grid-row: 1; }
+        .btn-left { grid-column: 1; grid-row: 2; }
+        .btn-down { grid-column: 2; grid-row: 2; }
+        .btn-right { grid-column: 3; grid-row: 2; }
+
+        /* OVERLAY CINEMATOGRÁFICO */
+        #overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(5, 5, 10, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+        }
+
+        .btn-start {
+            padding: 15px 40px;
+            margin-top: 20px;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            border-radius: 30px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.4);
+            transition: transform 0.2s;
+        }
+        .btn-start:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+<div id="boss-ui" class="glass-panel">ANOMALÍA DETECTADA: ELIMINA <span id="boss-hp">5</span> NODOS INFECCIOSOS</div>
+
+<div id="header" class="glass-panel">
+    <div class="stat"><span class="stat-label">OPERADOR</span><span id="current-name" class="stat-value" style="font-family:'Exo 2';">CYBORG</span></div>
+    <div class="stat"><span class="stat-label">EFICIENCIA</span><span id="score-val" class="stat-value">0</span></div>
+    <div class="stat"><span class="stat-label">ESTRATO</span><span id="lv-val" class="stat-value">1</span></div>
+</div>
+
+<div id="avatar-selector">
+    <div class="avatar-card glass-panel active" onpointerdown="selectAvatar('CYBORG', '#00ffcc', 110)" id="av-cyborg">
+        <div class="avatar-icon">🤖</div>
+        <div class="avatar-name" style="color:#00ffcc;">CYBORG</div>
+        <div class="avatar-desc">Equilibrado</div>
+    </div>
+    <div class="avatar-card glass-panel" onpointerdown="selectAvatar('NINJA', '#b366ff', 85)" id="av-ninja">
+        <div class="avatar-icon">🥷</div>
+        <div class="avatar-name" style="color:#b366ff;">NINJA</div>
+        <div class="avatar-desc">Alta Velocidad</div>
+    </div>
+    <div class="avatar-card glass-panel" onpointerdown="selectAvatar('PILOTO', '#ffdb58', 140)" id="av-piloto">
+        <div class="avatar-icon">👩‍🚀</div>
+        <div class="avatar-name" style="color:#ffdb58;">PILOTO</div>
+        <div class="avatar-desc">Doble Extracción</div>
+    </div>
+</div>
+
+<div id="game-area">
+    <canvas id="gameCanvas" width="400" height="400" class="glass-panel"></canvas>
+    
+    <div id="overlay">
+        <div style="text-align: center;">
+            <h1 id="overlay-title" style="color: #fff; font-family: 'Orbitron'; font-size: 1.8rem; margin-bottom: 5px;">MAXIQUEEN OS</h1>
+            <p id="overlay-subtitle" style="color: var(--primary); font-size: 0.9rem; letter-spacing: 2px;">PROTOCOLO V6 EN LÍNEA</p>
+        </div>
+        <button class="btn-start" onpointerdown="startGame()">INICIAR ENLACE</button>
+    </div>
+</div>
+
+<div id="controls-container">
+    <div id="controls">
+        <div class="btn-ctrl glass-panel btn-up" onpointerdown="setDir('UP')">▲</div>
+        <div class="btn-ctrl glass-panel btn-left" onpointerdown="setDir('LEFT')">◀</div>
+        <div class="btn-ctrl glass-panel btn-down" onpointerdown="setDir('DOWN')">▼</div>
+        <div class="btn-ctrl glass-panel btn-right" onpointerdown="setDir('RIGHT')">▶</div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const TILE_SIZE = 20;
+    const TILES_X = canvas.width / TILE_SIZE; 
+    const TILES_Y = canvas.height / TILE_SIZE; 
+    
+    let snake = [];
+    let food = {x: 0, y: 0};
+    let dir = 'RIGHT';
+    let nextDir = 'RIGHT';
+    let score = 0;
+    let level = 1;
+    let gameInterval;
+    let currentAvatar = { name: 'CYBORG', color: '#00ffcc', baseSpeed: 110 };
+
+    let boss = { active: false, x: 0, y: 0, hp: 5, moveDelay: 0, maxDelay: 2 };
+
+    // SÍNTESIS DE VOZ IA HUMANA (Voz más orgánica pero formal)
+    function speak(text, priority = false) {
+        if (!('speechSynthesis' in window)) return;
+        if (priority) window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-ES'; 
+        utterance.pitch = 0.9; // Tono ligeramente más natural
+        utterance.rate = 1.1; // Velocidad fluida
+        
+        const voices = window.speechSynthesis.getVoices();
+        // Buscar voz femenina de alta calidad
+        const femaleVoice = voices.find(v => v.lang.includes('es') && (v.name.includes('Natural') || v.name.includes('Mujer') || v.name.includes('Google español')));
+        if(femaleVoice) utterance.voice = femaleVoice;
+
+        window.speechSynthesis.speak(utterance);
+    }
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+
+    function selectAvatar(name, color, speed) {
+        currentAvatar = { name, color, baseSpeed: speed };
+        document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('active'));
+        document.getElementById('av-' + name.toLowerCase()).classList.add('active');
+        document.getElementById('current-name').innerText = name;
+        document.getElementById('current-name').style.color = color;
+    }
+
+    function startGame() {
+        speak("Enlace establecido. Sistema biométrico en línea. Demuestra tu capacidad, humano.", true);
+
+        snake = [{x: 5, y: 10}, {x: 4, y: 10}, {x: 3, y: 10}];
+        dir = 'RIGHT';
+        nextDir = 'RIGHT';
+        score = 0;
+        level = 1;
+        boss.active = false;
+        
+        resetUIColors();
+        updateHUD();
+        document.getElementById('overlay').style.display = 'none';
+        
+        spawnFood();
+        
+        if(gameInterval) clearInterval(gameInterval);
+        gameInterval = setInterval(update, currentAvatar.baseSpeed);
+    }
+
+    function spawnFood() {
+        let isSafe = false;
+        while(!isSafe) {
+            food = {
+                x: Math.floor(Math.random() * TILES_X),
+                y: Math.floor(Math.random() * TILES_Y)
+            };
+            isSafe = !snake.some(s => s.x === food.x && s.y === food.y);
+            if (boss.active && food.x === boss.x && food.y === boss.y) isSafe = false;
+        }
+    }
+
+    function triggerBoss() {
+        boss.active = true;
+        boss.hp = 5;
+        boss.x = TILES_X - 2;
+        boss.y = TILES_Y - 2;
+        
+        document.getElementById('boss-ui').style.display = 'block';
+        document.getElementById('boss-hp').innerText = boss.hp;
+        
+        document.getElementById('header').style.borderColor = 'var(--warning)';
+        canvas.style.borderColor = 'var(--warning)';
+        
+        speak("Atención. Entidad hostil detectada en el ecosistema. Evasión táctica requerida.", true);
+    }
+
+    function defeatBoss() {
+        boss.active = false;
+        score += 200;
+        document.getElementById('boss-ui').style.display = 'none';
+        resetUIColors();
+        speak("Anomalía purgada. Tu rendimiento es aceptable, operador.", true);
+        levelUp();
+    }
+
+    function resetUIColors() {
+        document.getElementById('header').style.borderColor = 'var(--glass-border)';
+        canvas.style.borderColor = 'var(--glass-border)';
+        document.getElementById('boss-ui').style.display = 'none';
+    }
+
+    function updateHUD() {
+        document.getElementById('score-val').innerText = score;
+        document.getElementById('lv-val').innerText = level;
+    }
+
+    function levelUp() {
+        level++;
+        updateHUD();
+        
+        if (level % 5 === 0) {
+            triggerBoss();
+        } else {
+            speak(`Estrato ${level} alcanzado. Optimizando sinapsis.`, false);
+        }
+
+        clearInterval(gameInterval);
+        const newSpeed = Math.max(45, currentAvatar.baseSpeed - (level * 4));
+        gameInterval = setInterval(update, newSpeed);
+    }
+
+    function setDir(newDir) {
+        const opposites = { 'UP': 'DOWN', 'DOWN': 'UP', 'LEFT': 'RIGHT', 'RIGHT': 'LEFT' };
+        if (newDir !== opposites[dir]) nextDir = newDir;
+    }
+
+    // SOPORTE UNIVERSAL: Teclado
+    window.addEventListener('keydown', e => {
+        if(['ArrowUp', 'w', 'W'].includes(e.key)) setDir('UP');
+        if(['ArrowDown', 's', 'S'].includes(e.key)) setDir('DOWN');
+        if(['ArrowLeft', 'a', 'A'].includes(e.key)) setDir('LEFT');
+        if(['ArrowRight', 'd', 'D'].includes(e.key)) setDir('RIGHT');
+    });
+
+    // SOPORTE UNIVERSAL: Táctil (Gestos)
+    let touchStartX = 0; let touchStartY = 0;
+    document.getElementById('game-area').addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, {passive: true});
+
+    document.getElementById('game-area').addEventListener('touchend', e => {
+        let dx = e.changedTouches[0].screenX - touchStartX;
+        let dy = e.changedTouches[0].screenY - touchStartY;
+        if(Math.abs(dx) > 30 || Math.abs(dy) > 30) {
+            if(Math.abs(dx) > Math.abs(dy)) setDir(dx > 0 ? 'RIGHT' : 'LEFT');
+            else setDir(dy > 0 ? 'DOWN' : 'UP');
+        }
+    }, {passive: true});
+
+    function update() {
+        dir = nextDir;
+        const head = { x: snake[0].x, y: snake[0].y };
+
+        if(dir === 'UP') head.y--;
+        if(dir === 'DOWN') head.y++;
+        if(dir === 'LEFT') head.x--;
+        if(dir === 'RIGHT') head.x++;
+
+        if(head.x < 0 || head.x >= TILES_X || head.y < 0 || head.y >= TILES_Y) return gameOver();
+        if(snake.some(s => s.x === head.x && s.y === head.y)) return gameOver();
+
+        snake.unshift(head);
+
+        if(head.x === food.x && head.y === food.y) {
+            score += (currentAvatar.name === 'PILOTO') ? 20 : 10;
+            
+            if (boss.active) {
+                boss.hp--;
+                document.getElementById('boss-hp').innerText = boss.hp;
+                if (boss.hp <= 0) defeatBoss();
+                else spawnFood();
+            } else {
+                if(score > 0 && (score % 100 === 0 || (currentAvatar.name === 'PILOTO' && score % 200 === 0))) {
+                    levelUp();
+                }
+                spawnFood();
+            }
+            updateHUD();
+        } else {
+            snake.pop(); 
+        }
+
+        if (boss.active) {
+            boss.moveDelay++;
+            if (boss.moveDelay >= boss.maxDelay) {
+                boss.moveDelay = 0;
+                if (boss.x < snake[0].x) boss.x++;
+                else if (boss.x > snake[0].x) boss.x--;
+                else if (boss.y < snake[0].y) boss.y++;
+                else if (boss.y > snake[0].y) boss.y--;
+            }
+            if (snake.some(s => s.x === boss.x && s.y === boss.y)) return gameOver();
+        }
+
+        draw();
+    }
+
+    // DIBUJO ESTILO ORGÁNICO
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Cuadrícula sutil
+        ctx.strokeStyle = boss.active ? 'rgba(255, 51, 102, 0.05)' : 'rgba(255, 255, 255, 0.02)';
+        ctx.lineWidth = 1;
+        for(let i=0; i<=canvas.width; i+=TILE_SIZE) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+        }
+
+        // Nodo de Datos (Comida) - Círculo en lugar de cuadrado
+        ctx.fillStyle = '#ff3366';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#ff3366';
+        ctx.beginPath();
+        ctx.arc(food.x * TILE_SIZE + TILE_SIZE/2, food.y * TILE_SIZE + TILE_SIZE/2, TILE_SIZE/2 - 3, 0, Math.PI*2);
+        ctx.fill();
+
+        // Anomalía (Boss) - Forma irregular pulsante
+        if (boss.active) {
+            ctx.fillStyle = 'var(--warning)';
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = 'var(--warning)';
+            ctx.beginPath();
+            ctx.roundRect(boss.x * TILE_SIZE, boss.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, 5);
+            ctx.fill();
+            
+            ctx.fillStyle = '#fff';
+            ctx.shadowBlur = 0;
+            ctx.fillRect(boss.x * TILE_SIZE + 4, boss.y * TILE_SIZE + 6, 4, 2);
+            ctx.fillRect(boss.x * TILE_SIZE + 12, boss.y * TILE_SIZE + 6, 4, 2);
+        }
+
+        // Entidad Cibernética (Serpiente) - Nodos orgánicos redondos
+        ctx.shadowColor = currentAvatar.color;
+        snake.forEach((s, index) => {
+            ctx.fillStyle = index === 0 ? '#ffffff' : currentAvatar.color;
+            ctx.shadowBlur = index === 0 ? 15 : 5;
+            ctx.globalAlpha = (currentAvatar.name === 'NINJA' && index !== 0) ? 0.6 : 1.0;
+            
+            // Usar círculos en lugar de cuadrados para simular células orgánicas conectadas
+            ctx.beginPath();
+            ctx.arc(s.x * TILE_SIZE + TILE_SIZE/2, s.y * TILE_SIZE + TILE_SIZE/2, TILE_SIZE/2 - 1, 0, Math.PI*2);
+            ctx.fill();
+        });
+        
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1.0;
+    }
+
+    function gameOver() {
+        clearInterval(gameInterval);
+        document.getElementById('overlay-title').innerText = "SISTEMA COMPROMETIDO";
+        document.getElementById('overlay-title').style.color = "var(--warning)";
+        document.getElementById('overlay-subtitle').innerText = "VITALES CAÍDOS. REINICIA EL ENLACE.";
+        document.getElementById('overlay-subtitle').style.color = "#fff";
+        document.getElementById('overlay').style.display = 'flex';
+        
+        speak("Fallo crítico. Signos vitales del sistema caídos. Despierta, humano, y reinicia el protocolo.", true);
+        
+        if (typeof navigator.vibrate === "function") navigator.vibrate([300, 150, 300, 150, 500]);
+    }
+</script>
+</body>
+</html>

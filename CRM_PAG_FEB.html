@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>MaxiQueen OS Core | Central de Ecosistemas Vivos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* --- VARIABLES DE DISEÑO --- */
+    :root {
+      --bg-cyber: radial-gradient(circle at top right, #0b1528, #020617);
+      --card-bg: rgba(15, 23, 42, 0.65);
+      --border-glow: rgba(255, 255, 255, 0.08);
+      
+      /* Tricolor Neón AAA */
+      --neon-yellow: #facc15;
+      --neon-blue: #38bdf8;
+      --neon-red: #ef4444;
+      
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-cyber);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 2rem;
+      overflow-x: hidden;
+    }
+
+    .identity-bar {
+      height: 4px;
+      width: 100%;
+      background: linear-gradient(to right, var(--neon-yellow) 50%, var(--neon-blue) 25%, var(--neon-blue) 75%, var(--neon-red) 75%);
+      box-shadow: 0 2px 20px rgba(250, 204, 21, 0.3);
+      margin-bottom: 2rem;
+    }
+
+    .lab-container {
+      width: 100%;
+      max-width: 1100px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 850px) {
+      .lab-container { grid-template-columns: 1fr; }
+    }
+
+    /* --- CABECERA --- */
+    .header-labs {
+      text-align: center;
+      margin-bottom: 2rem;
+      width: 100%;
+      padding: 0 20px;
+    }
+    .header-labs h1 {
+      font-weight: 800;
+      font-size: 2.2rem;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #ffffff, var(--neon-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .header-labs p {
+      color: var(--text-muted);
+      font-weight: 300;
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* --- TARJETAS --- */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glow);
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover { border-color: rgba(56, 189, 248, 0.3); transform: translateY(-4px); }
+    .card h2 { margin-top: 0; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+    .card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-top: 10px; flex-grow: 1; }
+
+    .link-group { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
+    .btn-link {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+      text-decoration: none;
+      padding: 0.8rem 1.2rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s;
+      flex-grow: 1;
+      text-align: center;
+    }
+    .btn-link.yellow:hover { background: rgba(250, 204, 21, 0.1); color: var(--neon-yellow); border-color: var(--neon-yellow); }
+    .btn-link.blue:hover { background: rgba(56, 189, 248, 0.1); color: var(--neon-blue); border-color: var(--neon-blue); }
+
+    /* --- JUEGO --- */
+    .game-module { align-items: center; text-align: center; }
+    
+    .game-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    canvas {
+      background: #020617;
+      border: 2px solid rgba(56, 189, 248, 0.2);
+      border-radius: 12px;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+      margin-top: 1.5rem;
+      image-rendering: pixelated;
+      max-width: 100%;
+      /* Previene el scroll o refresco táctil al deslizar sobre el canvas */
+      touch-action: none; 
+    }
+
+    .game-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      background: var(--neon-blue);
+      color: #020617;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s;
+      flex-grow: 1;
+    }
+    .btn-action:hover { box-shadow: 0 0 20px rgba(56, 189, 248, 0.5); transform: scale(1.02); }
+
+    .score-display {
+      font-family: monospace;
+      font-size: 1rem;
+      background: rgba(0,0,0,0.5);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      flex-grow: 1;
+    }
+    .score-val { color: var(--neon-yellow); font-weight: bold; font-size: 1.2rem; }
+
+    /* --- CONTROLES MÓVILES (D-PAD) --- */
+    .mobile-dpad {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-top: 1.5rem;
+    }
+    .dpad-row { display: flex; gap: 40px; }
+    .btn-dpad {
+      width: 50px;
+      height: 50px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--neon-blue);
+      border-radius: 12px;
+      font-size: 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      /* Prevenir selección de texto y zoom táctil */
+      user-select: none;
+      touch-action: manipulation; 
+    }
+    .btn-dpad:active {
+      background: var(--neon-blue);
+      color: #020617;
+      transform: scale(0.9);
+    }
+
+    /* Mostrar controles solo en pantallas pequeñas */
+    @media (max-width: 768px) {
+      .mobile-dpad { display: flex; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="identity-bar"></div>
+
+<div class="header-labs">
+  <h1>⚡ MaxiQueen OS | HUB</h1>
+  <p>Vitrina tecnológica interactiva. Explora ecosistemas vivos y soluciones empresariales en tiempo real.</p>
+</div>
+
+<div class="lab-container">
+
+  <div class="card">
+    <h2><span style="color: var(--neon-yellow);">●</span> Ecosistema CRM B2B</h2>
+    <p>Estos módulos no son maquetas; son <strong>ejemplos vivos</strong> de cómo estructuramos paneles de control y flujos de ventas para negocios de alto impacto. Los datos se procesan dinámicamente.</p>
+    
+    <div class="link-group">
+      <a href="Clientes.html" class="btn-link blue">👥 Módulo Clientes</a>
+      <a href="Ventas.html" class="btn-link yellow">📈 Pipeline Ventas</a>
+    </div>
+  </div>
+
+  <div class="card game-module">
+    <h2><span style="color: var(--neon-blue);">●</span> Algoritmo de Rastreo</h2>
+    <p>Demostración de renderizado responsivo y control táctil/swipe nativo.</p>
+
+    <div class="game-controls">
+      <button id="startBtn" class="btn-action">▶ Iniciar Secuencia</button>
+      <div class="score-display">DATA: <span id="scoreVal" class="score-val">0</span></div>
+    </div>
+
+    <div class="game-container">
+      <canvas id="gameCanvas" width="300" height="300"></canvas>
+      
+      <div class="mobile-dpad">
+        <div class="btn-dpad" id="btnUp">▲</div>
+        <div class="dpad-row">
+          <div class="btn-dpad" id="btnLeft">◀</div>
+          <div class="btn-dpad" id="btnRight">▶</div>
+        </div>
+        <div class="btn-dpad" id="btnDown">▼</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  const speak = (text) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); 
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = 'es-CO';
+      msg.rate = 1.2;
+      window.speechSynthesis.speak(msg);
+    }
+  };
+
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const startBtn = document.getElementById('startBtn');
+  const scoreEl = document.getElementById('scoreVal');
+
+  // Ajuste del tamaño del grid para móviles
+  const gridSize = 15; 
+  let snake = [];
+  let food = {};
+  let dx = 0;
+  let dy = 0;
+  let score = 0;
+  let gameInterval;
+  let isGameRunning = false;
+
+  const dataColors = ['#facc15', '#38bdf8', '#ef4444']; 
+
+  function resetGame() {
+    snake = [
+      { x: 150, y: 150 },
+      { x: 135, y: 150 },
+      { x: 120, y: 150 }
+    ];
+    dx = gridSize; 
+    dy = 0;
+    score = 0;
+    scoreEl.innerText = score;
+    spawnFood();
+  }
+
+  function spawnFood() {
+    food.x = Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize;
+    food.y = Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize;
+    food.color = dataColors[Math.floor(Math.random() * dataColors.length)];
+  }
+
+  function drawRect(x, y, color, glow = false) {
+    ctx.fillStyle = color;
+    if (glow) {
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = color;
+    } else {
+      ctx.shadowBlur = 0;
+    }
+    ctx.fillRect(x + 1, y + 1, gridSize - 2, gridSize - 2);
+    ctx.shadowBlur = 0; 
+  }
+
+  function update() {
+    const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+    if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+      return gameOver();
+    }
+
+    for (let i = 0; i < snake.length; i++) {
+      if (head.x === snake[i].x && head.y === snake[i].y) {
+        return gameOver();
+      }
+    }
+
+    snake.unshift(head);
+
+    if (head.x === food.x && head.y === food.y) {
+      score += 10;
+      scoreEl.innerText = score;
+      spawnFood();
+    } else {
+      snake.pop(); 
+    }
+
+    draw();
+  }
+
+  function draw() {
+    ctx.fillStyle = '#020617';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    drawRect(food.x, food.y, food.color, true);
+    snake.forEach((part, index) => {
+      const color = index === 0 ? '#38bdf8' : 'rgba(255, 255, 255, 0.7)'; 
+      drawRect(part.x, part.y, color, index === 0);
+    });
+  }
+
+  function gameOver() {
+    clearInterval(gameInterval);
+    isGameRunning = false;
+    startBtn.innerText = "↻ Reiniciar Sistema";
+    startBtn.style.background = "var(--neon-red)"; 
+    startBtn.style.color = "#fff";
+    speak(`Secuencia interrumpida. Datos capturados: ${score} megabytes.`);
+  }
+
+  // --- CONTROLES DE TECLADO ---
+  document.addEventListener('keydown', (e) => {
+    if (!isGameRunning) return;
+    if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+        e.preventDefault();
+    }
+    if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -gridSize; }
+    if (e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = gridSize; }
+    if (e.key === 'ArrowLeft' && dx === 0) { dx = -gridSize; dy = 0; }
+    if (e.key === 'ArrowRight' && dx === 0) { dx = gridSize; dy = 0; }
+  });
+
+  // --- CONTROLES TÁCTILES: SWIPE ---
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  canvas.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  canvas.addEventListener('touchend', (e) => {
+    if (!isGameRunning) return;
+    let touchEndX = e.changedTouches[0].screenX;
+    let touchEndY = e.changedTouches[0].screenY;
+    
+    let diffX = touchEndX - touchStartX;
+    let diffY = touchEndY - touchStartY;
+
+    // Umbral mínimo para considerar que fue un "deslizamiento" y no un toque
+    if (Math.abs(diffX) > 20 || Math.abs(diffY) > 20) {
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        // Horizontal
+        if (diffX > 0 && dx === 0) { dx = gridSize; dy = 0; } // Derecha
+        else if (diffX < 0 && dx === 0) { dx = -gridSize; dy = 0; } // Izquierda
+      } else {
+        // Vertical
+        if (diffY > 0 && dy === 0) { dx = 0; dy = gridSize; } // Abajo
+        else if (diffY < 0 && dy === 0) { dx = 0; dy = -gridSize; } // Arriba
+      }
+    }
+  });
+
+  // --- CONTROLES TÁCTILES: D-PAD ---
+  const bindDpad = (id, newDx, newDy) => {
+    const btn = document.getElementById(id);
+    const trigger = (e) => {
+      e.preventDefault();
+      if (!isGameRunning) return;
+      if (newDx !== 0 && dx === 0) { dx = newDx; dy = newDy; }
+      if (newDy !== 0 && dy === 0) { dx = newDx; dy = newDy; }
+    };
+    btn.addEventListener('touchstart', trigger, { passive: false });
+    btn.addEventListener('mousedown', trigger);
+  };
+
+  bindDpad('btnUp', 0, -gridSize);
+  bindDpad('btnDown', 0, gridSize);
+  bindDpad('btnLeft', -gridSize, 0);
+  bindDpad('btnRight', gridSize, 0);
+
+  // --- INICIO ---
+  startBtn.addEventListener('click', () => {
+    if (isGameRunning) return;
+    speak("Iniciando algoritmo de rastreo visual.");
+    startBtn.innerText = "■ Ejecutando...";
+    startBtn.style.background = "var(--neon-blue)";
+    startBtn.style.color = "#020617";
+    resetGame();
+    isGameRunning = true;
+    clearInterval(gameInterval);
+    gameInterval = setInterval(update, 120); // Velocidad ajustada para móviles
+  });
+
+  resetGame();
+  draw();
+});
+</script>
+
+</body>
+</html>

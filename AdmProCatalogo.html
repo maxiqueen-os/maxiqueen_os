@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAXIQUEEN OS — Editor de Catálogo Avanzado</title>
+  <style>
+    :root {
+      --bg-color: #080808;
+      --surface-color: #121212;
+      --surface-hover: #1a1a1a;
+      --border-color: #222;
+      --accent-color: #FFD700;
+      --accent-hover: #e6c200;
+      --text-main: #f0f0f0;
+      --text-muted: #888;
+      --danger: #ff453a;
+      --success: #32d74b;
+      --radius: 12px;
+      --transition: all 0.2s ease;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    h1 { margin: 0; font-size: 1.8rem; font-weight: 600; letter-spacing: -0.5px; }
+    h1 span { color: var(--accent-color); }
+
+    /* Controles Superiores */
+    .toolbar { display: flex; gap: 12px; }
+    
+    button {
+      background: var(--surface-color);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    button:hover { background: var(--surface-hover); border-color: #444; }
+    button.primary { background: var(--accent-color); color: #000; border: none; font-weight: 600; }
+    button.primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    button.danger { color: var(--danger); border-color: transparent; background: transparent; padding: 6px 12px; }
+    button.danger:hover { background: rgba(255, 69, 58, 0.1); border-color: rgba(255, 69, 58, 0.2); }
+
+    /* Grid de Productos */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .product-card {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: var(--transition);
+      position: relative;
+    }
+    .product-card:hover { border-color: #333; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+
+    /* Formularios */
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-row { display: flex; gap: 12px; }
+    .form-row .form-group { flex: 1; }
+
+    label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    input[type="text"], input[type="number"], textarea {
+      width: 100%;
+      background: var(--bg-color);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+    input:focus, textarea:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.1); }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-color);
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent-color); cursor: pointer; }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Output Section */
+    .output-section {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+    .output-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .output-header h3 { margin: 0; font-size: 1.2rem; }
+    
+    pre {
+      background: var(--bg-color);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+      color: #a8c7fa;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    /* Notificaciones */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--success);
+      color: #000;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: var(--transition);
+      pointer-events: none;
+      z-index: 1000;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>👑 <span>MAXIQUEEN</span> Admin</h1>
+    <div class="toolbar">
+      <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="importJSON(event)">
+      <button onclick="document.getElementById('fileInput').click()">📂 Cargar JSON</button>
+      <button onclick="downloadJSON()">💾 Descargar productos.json</button>
+      <button onclick="goBack()">⬅ Volver a Apps</button>
+    </div>
+  </header>
+
+  <div class="toolbar" style="margin-bottom: 24px;">
+    <button class="primary" onclick="addProduct()">➕ Agregar Nuevo Producto</button>
+  </div>
+
+  <div id="productsGrid" class="products-grid">
+    </div>
+
+  <div class="output-section">
+    <div class="output-header">
+      <h3>📄 Código JSON en Vivo</h3>
+      <button onclick="copyToClipboard()">📋 Copiar al Portapapeles</button>
+    </div>
+    <pre id="output"></pre>
+  </div>
+</div>
+
+<div id="toast">¡Acción completada!</div>
+
+<script>
+// Estado Inicial (Tu base de datos en memoria)
+let productos = [
+  {
+    id: "mq-os-inicial",
+    nombre: "Acceso MAXIQUEEN OS Inicial",
+    precio: 49000,
+    moneda: "COP",
+    descripcion: "Entrada al sistema MAXIQUEEN OS. Incluye onboarding, recursos base y acceso inicial.",
+    link_pago: "https://link.mercadopago.com.co/maxiqueenos",
+    activo: true
+  },
+  {
+    id: "mq-auditoria",
+    nombre: "Auditoría Digital",
+    precio: 99000,
+    moneda: "COP",
+    descripcion: "Revisión completa de tu presencia digital, marca, funnels y oportunidades.",
+    link_pago: "https://link.mercadopago.com.co/maxiqueenos",
+    activo: true
+  }
+];
+
+// Motor de Renderizado (Seguro y Dinámico)
+function render() {
+  const container = document.getElementById('productsGrid');
+  container.innerHTML = '';
+  
+  productos.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    
+    card.innerHTML = `
+      <div class="form-row">
+        <div class="form-group">
+          <label>ID Único</label>
+          <input type="text" value="${p.id}" data-index="${i}" data-field="id" class="dynamic-input">
+        </div>
+        <div class="form-group">
+          <label>Precio</label>
+          <input type="number" value="${p.precio}" data-index="${i}" data-field="precio" class="dynamic-input">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre del Producto</label>
+        <input type="text" value="${p.nombre}" data-index="${i}" data-field="nombre" class="dynamic-input">
+      </div>
+
+      <div class="form-group">
+        <label>Descripción</label>
+        <textarea data-index="${i}" data-field="descripcion" class="dynamic-input">${p.descripcion}</textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Moneda</label>
+          <input type="text" value="${p.moneda}" data-index="${i}" data-field="moneda" class="dynamic-input">
+        </div>
+        <div class="form-group" style="flex: 2;">
+          <label>Link de Pago</label>
+          <input type="text" value="${p.link_pago}" data-index="${i}" data-field="link_pago" class="dynamic-input">
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <label class="toggle-group">
+          <input type="checkbox" ${p.activo ? 'checked' : ''} data-index="${i}" data-field="activo" class="dynamic-checkbox">
+          Activo en tienda
+        </label>
+        <button class="danger" onclick="removeProduct(${i})">🗑 Eliminar</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  attachListeners();
+  updateOutput();
+}
+
+// Vinculación de Eventos (Evita inyectar JS directo en el HTML)
+function attachListeners() {
+  document.querySelectorAll('.dynamic-input').forEach(input => {
+    input.addEventListener('input', (e) => {
+      const index = e.target.getAttribute('data-index');
+      const field = e.target.getAttribute('data-field');
+      let value = e.target.value;
+      
+      // Convertir a número si es el campo precio
+      if (field === 'precio') value = Number(value);
+      
+      productos[index][field] = value;
+      updateOutput();
+    });
+  });
+
+  document.querySelectorAll('.dynamic-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', (e) => {
+      const index = e.target.getAttribute('data-index');
+      productos[index].activo = e.target.checked;
+      updateOutput();
+    });
+  });
+}
+
+function updateOutput() {
+  document.getElementById('output').textContent = JSON.stringify(productos, null, 2);
+}
+
+function addProduct() {
+  productos.push({
+    id: "nuevo-producto-" + Date.now().toString().slice(-4),
+    nombre: "Nuevo producto",
+    precio: 0,
+    moneda: "COP",
+    descripcion: "",
+    link_pago: "",
+    activo: true
+  });
+  render();
+  showToast("Producto agregado");
+}
+
+function removeProduct(index) {
+  if(confirm("¿Estás seguro de eliminar este producto?")) {
+    productos.splice(index, 1);
+    render();
+    showToast("Producto eliminado");
+  }
+}
+
+// Utilidades Avanzadas
+function copyToClipboard() {
+  const jsonText = document.getElementById('output').textContent;
+  navigator.clipboard.writeText(jsonText).then(() => {
+    showToast("¡JSON copiado al portapapeles!");
+  });
+}
+
+function downloadJSON() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(productos, null, 2));
+  const downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href", dataStr);
+  downloadAnchorNode.setAttribute("download", "productos.json");
+  document.body.appendChild(downloadAnchorNode);
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+  showToast("Archivo descargado");
+}
+
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        if (Array.isArray(importedData)) {
+          productos = importedData;
+          render();
+          showToast("JSON cargado exitosamente");
+        } else {
+          alert("El archivo no tiene el formato de array esperado.");
+        }
+      } catch (error) {
+        alert("Error al leer el archivo JSON.");
+      }
+    };
+    reader.readAsText(file);
+  }
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function goBack() {
+  window.location.href = "/apps.html";
+}
+
+// Inicialización
+render();
+</script>
+
+</body>
+</html>

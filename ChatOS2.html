@@ -1,0 +1,2315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>MaxiQueen OS 👑</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body { 
+      background: radial-gradient(circle at top, #1e293b 0%, #0b0f1a 100%);
+      font-family: 'Inter', sans-serif;
+    }
+    .os-title { font-family: 'Orbitron', sans-serif; }
+    
+    #chatLog::-webkit-scrollbar { width: 4px; }
+    #chatLog::-webkit-scrollbar-track { background: transparent; }
+    #chatLog::-webkit-scrollbar-thumb { background: rgba(251, 191, 36, 0.3); border-radius: 10px; }
+
+    .message-pop { animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+    @keyframes pop { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    
+    .typing-dots span {
+      animation: blink 1.4s infinite both;
+      height: 6px; width: 6px; background: #fbbf24;
+      display: inline-block; border-radius: 50%; margin: 0 1px;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center text-white">
+
+<main class="w-full max-w-2xl p-4 md:p-8 flex flex-col h-screen max-h-[900px]">
+  <header class="text-center mb-6">
+    <h1 class="os-title text-3xl font-bold tracking-widest text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.4)]">
+      MAXIQUEEN OS
+    </h1>
+    <p class="text-xs text-zinc-500 mt-1 uppercase tracking-widest">Neural Structure v2.6</p>
+  </header>
+
+  <div class="flex-1 bg-black/40 backdrop-blur-xl border border-white/5 rounded-3xl p-4 md:p-6 overflow-hidden flex flex-col shadow-2xl">
+    <div id="chatLog" class="flex-1 overflow-y-auto space-y-4 pr-2">
+      </div>
+
+    <div id="typingIndicator" class="hidden h-6 ml-4 mt-2">
+      <div class="typing-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="mt-4 flex gap-2 items-center bg-white/5 p-2 rounded-2xl border border-white/10 focus-within:border-amber-400/50 transition-all">
+
+  <!-- INPUT TEXTO -->
+  <input id="userInput"
+         type="text"
+         placeholder="Escribe tu intención..."
+         class="flex-1 bg-transparent px-4 py-2 text-sm outline-none placeholder:text-zinc-600" />
+
+
+
+  <!-- 👑 BOTÓN SUBIR ARCHIVO -->
+  <label class="cursor-pointer flex items-center justify-center px-2">
+
+    <input
+      type="file"
+      id="fileInput"
+      class="hidden"
+      multiple
+    />
+
+    <svg xmlns="http://www.w3.org/2000/svg"
+         class="w-5 h-5 text-amber-400"
+         fill="none"
+         viewBox="0 0 24 24"
+         stroke="currentColor">
+
+      <path stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828L18 9.828a4 4 0 10-5.656-5.656L5.757 10.757a6 6 0 108.486 8.486L20.5 13"/>
+    </svg>
+
+  </label>
+
+
+
+  <!-- BOTÓN ENVIAR -->
+  <button
+    id="sendBtn"
+    onclick="sendMessage()"
+    class="bg-amber-400 hover:bg-amber-300 text-black p-2.5 rounded-xl transition-all active:scale-95 shadow-lg shadow-amber-400/20">
+
+    <svg xmlns="http://www.w3.org/2000/svg"
+         class="h-5 w-5"
+         viewBox="0 0 20 20"
+         fill="currentColor">
+
+      <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
+    </svg>
+
+  </button>
+
+</div>
+  </div>
+</main>
+
+<footer class="w-full max-w-xl pb-8 px-6 text-center text-zinc-500">
+  <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6"></div>
+  <p class="text-sm">Sistema desarrollado por <span class="text-zinc-300 font-semibold">César Julio Bedoya Barragán</span></p>
+  <div class="mt-3 flex justify-center gap-6 text-xs uppercase tracking-tighter">
+    <button onclick="openLegal('privacy')" class="hover:text-amber-400 transition">Privacidad</button>
+    <button onclick="openLegal('cookies')" class="hover:text-amber-400 transition">Cookies</button>
+    <button onclick="openLegal('terms')" class="hover:text-amber-400 transition">Términos</button>
+  </div>
+</footer>
+
+<div id="legalModal" class="fixed inset-0 hidden bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+  <div class="bg-zinc-900 border border-white/10 rounded-3xl max-w-lg w-full p-8 relative">
+    <button onclick="closeLegal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-xl">✕</button>
+    <h2 id="legalTitle" class="text-2xl font-bold mb-4 text-amber-400"></h2>
+    <div id="legalContent" class="text-sm text-zinc-300 leading-relaxed space-y-4 max-h-[50vh] overflow-y-auto pr-2"></div>
+  </div>
+</div>
+
+<script>
+/* =========================
+🧠 MAXIQUEEN OS — MOTOR COGNITIVO EXPANDIDO 2026
+Sistema conversacional estructural
+========================= */
+
+let state = {
+  flujo: null,
+  etapa: null,
+  nivelDetectado: null,
+  tema: null,
+  ultimaPregunta: null,
+  energiaUsuario: null,
+  perfil: null
+};
+
+const triggers = {
+
+  /* =========================================================
+     👑 IDENTIDAD DEL SISTEMA
+  ========================================================= */
+
+  sistema: {
+
+    quienSoy: `👑 ¿Quién soy?
+
+Soy MaxiQueen OS.
+
+No fui diseñado como un chatbot tradicional ni como una automatización vacía de respuestas rápidas.
+
+Soy un sistema conversacional estratégico creado para ayudarte a ordenar ideas, estructurar decisiones y transformar confusión en dirección clara.
+
+Mi propósito no es simplemente responder preguntas.
+Mi función es ayudarte a comprender:
+• dónde estás,
+• qué está frenando tu avance,
+• qué estructura necesitas,
+• y cómo convertir intención en movimiento real.
+
+MaxiQueen OS combina:
+🧠 pensamiento estructural,
+⚡ claridad estratégica,
+🤖 automatización inteligente,
+👑 acompañamiento humano.
+
+Cada conversación busca detectar patrones, simplificar complejidad y ayudarte a construir sistemas más sostenibles para tu vida o proyecto.
+
+👉 Cuéntame…
+¿Estás aquí buscando claridad personal, crecimiento profesional o construir algo más grande?`,
+
+
+
+    queEs: `👑 ¿Qué es MaxiQueen OS?
+
+MaxiQueen OS es una infraestructura digital diseñada para organizar procesos humanos, creativos y comerciales desde una lógica más clara, estratégica y funcional.
+
+No es solamente una herramienta.
+No es solo contenido.
+No es solo automatización.
+
+Es un ecosistema que integra:
+
+⚡ estructura mental,
+📊 organización operativa,
+🤖 inteligencia artificial,
+🧠 acompañamiento estratégico,
+🚀 sistemas digitales,
+👑 visión de crecimiento.
+
+La idea principal es simple:
+
+Muchas personas tienen potencial, ideas o capacidad…
+pero viven atrapadas en:
+• ruido mental,
+• desorden,
+• exceso de información,
+• falta de dirección,
+• procesos mal estructurados.
+
+MaxiQueen OS existe para transformar eso en:
+✔ claridad,
+✔ estructura,
+✔ enfoque,
+✔ ejecución,
+✔ crecimiento sostenible.
+
+👉 ¿Te interesa más aplicarlo a tu vida personal, a tu negocio o a un proyecto digital?`,
+
+
+
+    comoFunciona: `👑 ¿Cómo funciona MaxiQueen OS?
+
+El sistema trabaja en diferentes capas para evitar soluciones superficiales.
+
+La metodología se basa en 5 fases principales:
+
+━━━━━━━━━━━━━━━
+1️⃣ ESCUCHA Y CONTEXTO
+━━━━━━━━━━━━━━━
+
+Primero entendemos tu situación real.
+No partimos de respuestas genéricas.
+Buscamos identificar:
+• tu nivel actual,
+• tu etapa,
+• tu saturación,
+• tus objetivos,
+• y tus bloqueos principales.
+
+━━━━━━━━━━━━━━━
+2️⃣ DIAGNÓSTICO ESTRUCTURAL
+━━━━━━━━━━━━━━━
+
+Aquí detectamos:
+• dónde está el desorden,
+• qué procesos están fallando,
+• qué necesitas simplificar,
+• y qué tipo de estructura sería más útil para ti.
+
+━━━━━━━━━━━━━━━
+3️⃣ ORGANIZACIÓN Y CLARIDAD
+━━━━━━━━━━━━━━━
+
+Convertimos ideas dispersas en:
+✔ prioridades,
+✔ sistemas,
+✔ rutas,
+✔ procesos claros.
+
+━━━━━━━━━━━━━━━
+4️⃣ IMPLEMENTACIÓN
+━━━━━━━━━━━━━━━
+
+Dependiendo del caso:
+• construimos sistemas,
+• automatizaciones,
+• estrategias,
+• dashboards,
+• estructuras digitales,
+• contenido,
+• o flujos operativos.
+
+━━━━━━━━━━━━━━━
+5️⃣ ACOMPAÑAMIENTO
+━━━━━━━━━━━━━━━
+
+No buscamos dejarte solo con información.
+La idea es ayudarte a sostener estructura y evolución.
+
+👉 ¿Quieres entender el sistema desde lo técnico, desde lo humano o desde lo empresarial?`,
+
+
+
+    diagnostico: `👑 ¿Qué significa el diagnóstico en MaxiQueen OS?
+
+El diagnóstico no es una etiqueta.
+Es una lectura estratégica de tu situación actual.
+
+La mayoría de personas intentan avanzar consumiendo más información…
+cuando en realidad lo que necesitan es:
+⚡ claridad,
+⚡ orden,
+⚡ dirección,
+⚡ estructura.
+
+El diagnóstico busca identificar:
+
+🧠 Tu nivel de claridad actual.
+⚡ Tu capacidad operativa.
+📊 Tu nivel de organización.
+🚧 Tus bloqueos reales.
+🚀 Tu etapa de crecimiento.
+
+Porque no todos necesitan lo mismo.
+
+Algunas personas necesitan:
+• simplificar,
+• descansar mentalmente,
+• ordenar ideas.
+
+Otras necesitan:
+• construir sistemas,
+• vender,
+• automatizar,
+• expandirse.
+
+El objetivo es evitar soluciones innecesarias y enfocarnos en lo que realmente puede ayudarte a avanzar.
+
+👉 Si quieres, puedo comenzar un pequeño diagnóstico contigo ahora mismo.`,
+
+
+
+    claridad: `👑 ¿Qué significa claridad?
+
+La claridad no es “tener motivación”.
+La claridad es tener estructura mental funcional.
+
+Cuando una persona pierde claridad normalmente aparecen:
+
+• saturación,
+• procrastinación,
+• ruido mental,
+• exceso de ideas,
+• cansancio,
+• desorden operativo,
+• sensación de no avanzar.
+
+Muchas veces el problema no es falta de capacidad.
+Es exceso de carga sin estructura.
+
+Por eso MaxiQueen OS trabaja sobre:
+🧠 organización mental,
+⚡ simplificación,
+📊 prioridades,
+🚀 dirección práctica.
+
+Porque una mente organizada ejecuta mejor que una mente saturada.
+
+👉 ¿Qué sientes más ahora mismo?
+• confusión,
+• bloqueo,
+• cansancio,
+• exceso de ideas,
+• o desorden?`,
+
+
+
+    servicio: `👑 ¿Qué tipo de acompañamiento ofrece MaxiQueen OS?
+
+Aquí no trabajamos desde fórmulas vacías ni discursos motivacionales.
+
+El enfoque es estratégico y humano.
+
+El acompañamiento busca ayudarte a:
+• entender tu situación real,
+• ordenar procesos,
+• construir estructura,
+• recuperar claridad,
+• y crear sistemas sostenibles.
+
+Dependiendo de tu etapa, podemos ayudarte con:
+
+⚡ organización personal,
+📊 estructura empresarial,
+🤖 automatización,
+🧠 claridad estratégica,
+🚀 crecimiento digital,
+👑 arquitectura operativa.
+
+El objetivo no es depender eternamente del sistema.
+El objetivo es ayudarte a desarrollar más claridad, criterio y dirección.
+
+👉 ¿Qué necesitas más ahora mismo?
+• orden,
+• crecimiento,
+• ventas,
+• automatización,
+• claridad mental,
+• o estrategia?`,
+
+
+
+    asesoria: `👑 ¿Cómo son las asesorías?
+
+Las asesorías dentro de MaxiQueen OS no funcionan como sesiones tradicionales llenas de teoría superficial.
+
+La idea es trabajar sobre situaciones reales:
+• proyectos,
+• bloqueos,
+• estructuras,
+• decisiones,
+• sistemas,
+• crecimiento.
+
+Durante las sesiones buscamos:
+🧠 detectar problemas estructurales,
+⚡ simplificar procesos,
+📊 organizar prioridades,
+🚀 construir rutas claras.
+
+Dependiendo de tu caso, trabajamos áreas como:
+• ventas,
+• sistemas digitales,
+• automatización,
+• enfoque estratégico,
+• estructura operativa,
+• posicionamiento,
+• productividad funcional.
+
+Cada sesión intenta generar:
+✔ claridad,
+✔ dirección,
+✔ acciones concretas,
+✔ estructura aplicable.
+
+👉 ¿Estás comenzando algo nuevo o ya tienes un proyecto funcionando?`,
+
+
+
+    soporte: `👑 Soporte humano MaxiQueen OS
+
+Además del sistema conversacional, también existe acompañamiento humano directo para procesos más específicos.
+
+Canales disponibles:
+
+📲 WhatsApp
+📸 Instagram
+🧠 sesiones estratégicas
+⚡ seguimiento operativo
+
+La idea es combinar:
+🤖 velocidad tecnológica
+con
+👑 criterio humano real.
+
+👉 ¿Prefieres continuar por WhatsApp o Instagram?`,
+
+
+
+    comunidad: `👑 Comunidad MaxiQueen OS
+
+La comunidad está pensada como un espacio para personas que quieren construir con más criterio, claridad y estructura.
+
+No buscamos cantidad.
+Buscamos calidad de visión.
+
+Dentro de la comunidad se trabajan temas como:
+🧠 mentalidad estructural,
+⚡ organización,
+📊 sistemas,
+🚀 crecimiento digital,
+🤖 automatización,
+👑 desarrollo estratégico.
+
+La idea es compartir herramientas, procesos y perspectivas útiles para evolucionar de manera más sostenible.
+
+👉 ¿Te interesa más aprender, construir o conectar con otros proyectos?`,
+
+
+
+    sesiones: `👑 Sesiones Estratégicas MaxiQueen OS
+
+Las sesiones están diseñadas para ayudarte a desbloquear procesos y reorganizar dirección.
+
+No se trata solo de hablar.
+Se trata de detectar:
+• qué está fallando,
+• qué está consumiendo energía,
+• qué necesita estructura,
+• y cómo simplificar el avance.
+
+Las sesiones pueden enfocarse en:
+⚡ claridad,
+📊 negocio,
+🤖 automatización,
+🧠 organización mental,
+🚀 crecimiento digital,
+👑 arquitectura operativa.
+
+Cada sesión busca terminar con:
+✔ más claridad,
+✔ más orden,
+✔ menos ruido,
+✔ acciones concretas.
+
+👉 ¿Qué área quieres trabajar primero?`
+  },
+
+
+
+  /* =========================================================
+     🧠 RESPUESTAS EMOCIONALES
+  ========================================================= */
+
+  emociones: {
+
+    pereza: `👑 La pereza muchas veces no es flojera.
+
+En muchos casos es saturación mental.
+
+Cuando una persona tiene demasiadas decisiones abiertas, demasiadas ideas o demasiada presión interna, el cerebro comienza a bloquearse para proteger energía.
+
+Por eso empujarte más no siempre funciona.
+
+Lo que normalmente ayuda es:
+⚡ reducir ruido,
+📊 simplificar,
+🧠 ordenar prioridades,
+🚀 recuperar claridad.
+
+No necesitas hacerlo todo hoy.
+Necesitas estructura suficiente para volver a moverte sin agotarte.
+
+👉 ¿Sientes más cansancio mental o exceso de cosas pendientes?`,
+
+
+
+    cansancio: `👑 El cansancio mental suele aparecer cuando sostienes demasiados procesos al mismo tiempo.
+
+Muchas personas no están cansadas físicamente…
+están saturadas cognitivamente.
+
+Pensamientos abiertos,
+decisiones acumuladas,
+presión,
+incertidumbre,
+desorden operativo…
+
+Todo eso consume energía silenciosamente.
+
+La solución normalmente no es “motivarte más”.
+La solución es:
+🧠 simplificar,
+⚡ priorizar,
+📊 estructurar,
+🚀 liberar carga innecesaria.
+
+👉 ¿Qué es lo que más está drenando tu energía ahora mismo?`,
+
+
+
+    frustracion: `👑 La frustración aparece cuando existe intención pero no existe estructura suficiente para avanzar.
+
+Quieres hacer cosas.
+Tienes ideas.
+Quieres crecer.
+
+Pero el sistema interno o externo todavía no está organizado.
+
+Eso genera:
+• sensación de estancamiento,
+• ruido mental,
+• comparación,
+• agotamiento,
+• bloqueo operativo.
+
+La buena noticia es que la frustración muchas veces no significa incapacidad.
+Significa que necesitas reorganizar el proceso.
+
+👉 ¿Qué sientes que está más desordenado ahora?
+• tus ideas,
+• tu tiempo,
+• tu proyecto,
+• tus prioridades,
+• o tu dirección?`
+  },
+
+
+
+  /* =========================================================
+     💰 VENTAS
+  ========================================================= */
+
+  ventas: {
+
+    planes: `👑 PLANES MAXIQUEEN OS 2026
+
+━━━━━━━━━━━━━━━
+🌱 STARTER
+━━━━━━━━━━━━━━━
+Ideal para personas que necesitan:
+• claridad,
+• organización,
+• dirección inicial,
+• orden mental,
+• estructura básica.
+
+Incluye:
+✔ acompañamiento inicial
+✔ organización estratégica
+✔ estructura base
+✔ guía operativa
+
+━━━━━━━━━━━━━━━
+🚀 PRO
+━━━━━━━━━━━━━━━
+Pensado para proyectos en crecimiento.
+
+Incluye:
+✔ sistemas de ventas
+✔ automatización
+✔ estructura digital
+✔ optimización operativa
+✔ estrategia de crecimiento
+
+━━━━━━━━━━━━━━━
+🏰 ELITE
+━━━━━━━━━━━━━━━
+Arquitectura integral de expansión.
+
+Incluye:
+✔ diseño completo de ecosistema
+✔ automatizaciones avanzadas
+✔ dashboards
+✔ IA integrada
+✔ infraestructura estratégica
+✔ acompañamiento premium
+
+━━━━━━━━━━━━━━━
+
+La idea no es venderte más.
+La idea es ayudarte a identificar qué estructura realmente necesitas.
+
+👉 ¿En qué etapa sientes que estás ahora?
+• orden,
+• crecimiento,
+• o expansión seria?`,
+
+
+
+    valor: `👑 El verdadero valor no está en la herramienta.
+
+Está en la claridad que obtienes cuando entiendes:
+• qué hacer,
+• por dónde empezar,
+• qué simplificar,
+• qué construir,
+• y qué dejar de cargar.
+
+Muchas personas tienen recursos…
+pero no estructura.
+
+Y sin estructura:
+⚡ se pierde energía,
+⚡ se pierde tiempo,
+⚡ se pierde dirección.
+
+MaxiQueen OS busca ayudarte a convertir complejidad en claridad funcional.
+
+👉 ¿Qué sería más valioso para ti ahora mismo?
+• claridad,
+• ventas,
+• automatización,
+• enfoque,
+• o crecimiento?`
+  },
+  ventas: {
+
+    planes: `...`,
+
+    valor: `...`
+  },
+
+  onboarding: {
+    inicio: `Hola 👑
+Soy parte del sistema MaxiQueen OS.
+
+¿En qué punto estás ahora?
+
+1️⃣ Ideas
+2️⃣ Bloqueo
+3️⃣ Crecimiento
+
+👉 También puedes escribir:
+• cansancio
+o
+• frustración`
+  },
+
+  guia: {
+
+    flujo1: `👑 ORDENAR IDEAS
+
+Ideal si sientes:
+• ruido mental,
+• exceso de ideas,
+• bloqueo,
+• desorganización,
+• dificultad para empezar.
+
+El objetivo es ayudarte a transformar confusión en dirección práctica.
+
+👉 ¿Qué sientes más ahora mismo?
+• confusión
+• bloqueo
+• exceso de ideas`,
+
+
+
+    flujo2: `👑 CREAR ALGO VENDIBLE
+
+Este flujo está diseñado para personas que quieren convertir ideas en:
+⚡ ofertas,
+⚡ productos,
+⚡ sistemas,
+⚡ contenido,
+⚡ ventas reales.
+
+La idea es ayudarte a estructurar algo funcional y sostenible.
+
+👉 ¿Ya tienes algo comenzado o estás empezando desde cero?`,
+
+
+
+    flujo3: `👑 CONTACTO HUMANO
+
+Si prefieres acompañamiento directo podemos continuar por:
+
+📲 WhatsApp
+📸 Instagram
+✅ Tiktok
+📖 Facebook
+
+👉 ¿Cuál prefieres?`
+  },
+
+
+
+  diagnostico: {
+
+    starter: `👑 DIAGNÓSTICO: STARTER
+
+Ahora mismo parece que tu prioridad principal es:
+🧠 recuperar claridad,
+⚡ ordenar ideas,
+📊 simplificar procesos,
+🚀 construir estructura básica.
+
+Por eso el nivel STARTER probablemente sea el más adecuado para ti en esta etapa.
+
+No necesitas cargar más complejidad.
+Necesitas dirección clara y estructura sostenible.`,
+
+
+
+    pro: `👑 DIAGNÓSTICO: PRO
+
+Detecto que ya existe movimiento real en tu proyecto o intención de crecimiento.
+
+Tu siguiente nivel probablemente requiere:
+⚡ optimización,
+📊 estructura operativa,
+🤖 automatización,
+🚀 sistemas de crecimiento.
+
+El enfoque PRO está pensado para ayudarte a escalar con más claridad y menos caos.`,
+
+
+
+    elite: `👑 DIAGNÓSTICO: ELITE
+
+Tu perfil parece estar entrando en una etapa de expansión más seria.
+
+Aquí normalmente el reto ya no es comenzar…
+el reto es:
+🧠 sostener,
+📊 organizar,
+⚡ escalar,
+🚀 integrar sistemas complejos.
+
+El enfoque ELITE busca construir infraestructura estratégica más sólida y automatizada.`
+  }
+
+};
+
+/* =========================================================
+🧠 MAXIQUEEN OS — INTENT ENGINE EXPANDIDO 2026
+Sistema avanzado de detección conversacional
+========================================================= */
+
+const intents = [
+
+  /* =========================================================
+     👋 SALUDOS / INICIO
+  ========================================================= */
+
+  {
+    keywords: [
+      "hola",
+      "holi",
+      "buenas",
+      "hey",
+      "inicio",
+      "empezar",
+      "comenzar",
+      "ayuda",
+      "necesito ayuda",
+      "quiero empezar",
+      "hay alguien",
+      "alguien",
+      "hello"
+    ],
+
+    response: () => {
+
+      state.tema = "inicio";
+      state.etapa = "bienvenida";
+
+      return triggers.onboarding.inicio;
+    }
+  },
+
+
+
+  /* =========================================================
+     👑 IDENTIDAD DEL SISTEMA
+  ========================================================= */
+
+  {
+    keywords: [
+      "quien eres",
+      "quién eres",
+      "que eres",
+      "qué eres",
+      "eres un bot",
+      "eres ia",
+      "eres humano",
+      "que haces",
+      "qué haces",
+      "como te llamas",
+      "cómo te llamas",
+      "maxiqueen",
+      "maxiqueen os"
+    ],
+
+    response: () => {
+
+      state.tema = "identidad";
+
+      return triggers.sistema.quienSoy;
+    }
+  },
+
+
+
+  {
+    keywords: [
+      "que es",
+      "qué es",
+      "que es esto",
+      "qué es esto",
+      "para que sirve",
+      "para qué sirve",
+      "de que trata",
+      "de qué trata",
+      "como funciona maxiqueen",
+      "qué hace maxiqueen"
+    ],
+
+    response: () => {
+
+      state.tema = "sistema";
+
+      return triggers.sistema.queEs;
+    }
+  },
+
+
+
+  {
+    keywords: [
+      "como funciona",
+      "cómo funciona",
+      "explicame",
+      "explícame",
+      "como trabajas",
+      "cómo trabajas",
+      "metodologia",
+      "metodología",
+      "proceso",
+      "estructura",
+      "sistema"
+    ],
+
+    response: () => {
+
+      state.tema = "funcionamiento";
+
+      return triggers.sistema.comoFunciona;
+    }
+  },
+
+
+
+  {
+    keywords: [
+      "diagnostico",
+      "diagnóstico",
+      "evaluacion",
+      "evaluación",
+      "analiza",
+      "analizar",
+      "puedes analizarme",
+      "quiero diagnostico",
+      "quiero claridad"
+    ],
+
+    response: () => {
+
+      state.tema = "diagnostico";
+      state.etapa = "evaluacion";
+
+      return triggers.sistema.diagnostico;
+    }
+  },
+
+
+
+  /* =========================================================
+     🧠 CLARIDAD / BLOQUEOS
+  ========================================================= */
+
+  {
+    keywords: [
+      "bloqueo",
+      "confusion",
+      "confusión",
+      "no se que hacer",
+      "no sé qué hacer",
+      "me siento perdido",
+      "estoy perdido",
+      "tengo demasiadas ideas",
+      "ruido mental",
+      "desorden",
+      "saturado",
+      "saturacion",
+      "saturación"
+    ],
+
+    response: () => {
+
+      state.tema = "claridad";
+      state.nivelDetectado = "starter";
+
+      return triggers.sistema.claridad;
+    }
+  },
+
+
+
+  /* =========================================================
+     😔 EMOCIONES
+  ========================================================= */
+
+  {
+    keywords: [
+      "pereza",
+      "sin ganas",
+      "no quiero hacer nada",
+      "desmotivado",
+      "desanimado",
+      "sin energia",
+      "sin energía"
+    ],
+
+    response: () => {
+
+      state.tema = "emocion";
+      state.energiaUsuario = "baja";
+
+      return triggers.emociones.pereza;
+    }
+  },
+
+
+
+  {
+    keywords: [
+      "cansado",
+      "agotado",
+      "estresado",
+      "estrés",
+      "estres",
+      "quemado",
+      "burnout",
+      "mentalmente cansado"
+    ],
+
+    response: () => {
+
+      state.tema = "emocion";
+      state.energiaUsuario = "agotamiento";
+
+      return triggers.emociones.cansancio;
+    }
+  },
+
+
+
+  {
+    keywords: [
+      "frustrado",
+      "frustracion",
+      "frustración",
+      "no avanzo",
+      "no progreso",
+      "me siento estancado",
+      "estancado"
+    ],
+
+    response: () => {
+
+      state.tema = "emocion";
+      state.energiaUsuario = "frustracion";
+
+      return triggers.emociones.frustracion;
+    }
+  },
+
+
+
+  /* =========================================================
+     💰 PLANES / PRECIOS
+  ========================================================= */
+
+  {
+    keywords: [
+      "precio",
+      "precios",
+      "planes",
+      "cuanto cuesta",
+      "cuánto cuesta",
+      "costos",
+      "coste",
+      "valor",
+      "pago",
+      "pagos",
+      "suscripcion",
+      "suscripción",
+      "membresia",
+      "membresía"
+    ],
+
+    response: () => {
+
+      state.tema = "ventas";
+
+      return triggers.ventas.planes;
+    }
+  },
+
+
+
+  {
+    keywords: [
+      "vale la pena",
+      "porque pagar",
+      "por que pagar",
+      "qué incluye",
+      "que incluye",
+      "beneficios",
+      "valor real"
+    ],
+
+    response: () => {
+
+      state.tema = "valor";
+
+      return triggers.ventas.valor;
+    }
+  },
+
+
+
+  /* =========================================================
+     🚀 CRECIMIENTO / NEGOCIOS
+  ========================================================= */
+
+  {
+    keywords: [
+      "quiero vender",
+      "vender",
+      "clientes",
+      "negocio",
+      "empresa",
+      "proyecto",
+      "emprender",
+      "marca",
+      "automatizacion",
+      "automatización",
+      "marketing",
+      "contenido"
+    ],
+
+    response: () => {
+
+      state.flujo = "flujo2";
+      state.etapa = "crecimiento";
+      state.perfil = "negocio";
+
+      return triggers.guia.flujo2;
+    }
+  },
+
+
+
+  /* =========================================================
+     🧠 ORDEN / IDEAS
+  ========================================================= */
+
+  {
+    keywords: [
+      "ideas",
+      "ordenar",
+      "organizar",
+      "claridad mental",
+      "enfoque",
+      "prioridades",
+      "quiero orden",
+      "me siento confundido",
+      "quiero claridad"
+    ],
+
+    response: () => {
+
+      state.flujo = "flujo1";
+      state.etapa = "diagnostico";
+      state.perfil = "claridad";
+
+      return triggers.guia.flujo1;
+    }
+  },
+
+
+
+  /* =========================================================
+     👑 CONTACTO HUMANO
+  ========================================================= */
+
+  {
+    keywords: [
+      "humano",
+      "hablar",
+      "persona real",
+      "asesor",
+      "soporte",
+      "contacto",
+      "whatsapp",
+      "instagram",
+      "sesion",
+      "sesión",
+      "acompañamiento"
+    ],
+
+    response: () => {
+
+      state.flujo = "flujo3";
+      state.etapa = "contacto";
+
+      return triggers.guia.flujo3;
+    }
+  },
+
+
+
+  /* =========================================================
+     🤖 IA / TECNOLOGÍA
+  ========================================================= */
+
+  {
+    keywords: [
+      "ia",
+      "inteligencia artificial",
+      "automatizar",
+      "sistemas",
+      "fastapi",
+      "mongodb",
+      "atlas",
+      "vercel",
+      "api",
+      "backend",
+      "frontend",
+      "codigo",
+      "programacion",
+      "programación"
+    ],
+
+    response: () => {
+
+      state.tema = "tecnologia";
+      state.perfil = "tecnico";
+
+      return `👑 MAXIQUEEN OS también funciona como una infraestructura tecnológica.
+
+El ecosistema puede integrar:
+⚡ automatización,
+🤖 inteligencia artificial,
+📊 dashboards,
+🧠 sistemas conversacionales,
+🚀 APIs,
+💾 bases de datos,
+🌐 arquitectura web moderna.
+
+Stack principal:
+• FastAPI
+• MongoDB Atlas
+• Vercel
+• Tailwind
+• JavaScript
+• Sistemas IA
+
+👉 ¿Quieres ayuda más técnica o más estratégica?`;
+    }
+  },
+
+
+
+  /* =========================================================
+     🎯 FALLBACK INTELIGENTE
+  ========================================================= */
+
+  {
+    keywords: ["default_fallback"],
+
+    response: () => {
+
+      const fallbacks = [
+
+`👀 MaxiQueen OS sigue activo.
+
+Quiero entender mejor tu situación para darte una respuesta más útil.
+
+👉 Cuéntame un poco más sobre lo que estás buscando ahora mismo.`,
+
+
+
+`👑 Puedo ayudarte en diferentes áreas:
+• claridad mental,
+• organización,
+• crecimiento,
+• automatización,
+• estructura digital,
+• sistemas de ventas.
+
+👉 ¿Qué sientes que necesitas más ahora mismo?`,
+
+
+
+`🧠 A veces el problema no es falta de capacidad…
+sino exceso de ruido y falta de estructura.
+
+👉 ¿Qué está siendo más difícil para ti actualmente?`
+
+      ];
+
+      return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    }
+  }
+
+];
+/* =========================================================
+🧠 MAXIQUEEN OS — MOTOR CONTEXTUAL AVANZADO 2026
+Sistema de interpretación conversacional
+========================================================= */
+
+
+/* =========================================================
+🧩 DETECTOR DE PALABRAS
+========================================================= */
+
+function hasKeyword(text, keywords = []) {
+  return keywords.some(keyword => text.includes(keyword));
+}
+
+
+
+/* =========================================================
+🧠 RESPUESTA CONTEXTUAL
+========================================================= */
+
+function contextualResponse(text) {
+
+  /* =====================================================
+     🧠 FLUJO 1 — ORDEN Y CLARIDAD
+  ===================================================== */
+
+  if (state.flujo === "flujo1") {
+
+    /* -----------------------------
+       ETAPA: DIAGNÓSTICO
+    ----------------------------- */
+
+    if (state.etapa === "diagnostico") {
+
+      if (
+        hasKeyword(text, [
+          "confusion",
+          "confusión",
+          "bloqueo",
+          "exceso",
+          "ruido mental",
+          "saturacion",
+          "saturación",
+          "desorden",
+          "muchas ideas",
+          "perdido"
+        ])
+      ) {
+
+        state.etapa = "recomendacion";
+        state.nivelDetectado = "starter";
+
+        return triggers.diagnostico.starter;
+      }
+
+
+
+      if (
+        hasKeyword(text, [
+          "agotado",
+          "cansado",
+          "estresado",
+          "sin energia",
+          "sin energía"
+        ])
+      ) {
+
+        state.etapa = "emocional";
+        state.energiaUsuario = "baja";
+
+        return triggers.emociones.cansancio;
+      }
+    }
+  }
+
+
+
+  /* =====================================================
+     🚀 FLUJO 2 — CRECIMIENTO / NEGOCIO
+  ===================================================== */
+
+  if (state.flujo === "flujo2") {
+
+    /* -----------------------------
+       ETAPA: DIAGNÓSTICO
+    ----------------------------- */
+
+    if (state.etapa === "diagnostico" || state.etapa === "crecimiento") {
+
+      /* =========================
+         PRO
+      ========================= */
+
+      if (
+        hasKeyword(text, [
+          "ya",
+          "tengo",
+          "estoy vendiendo",
+          "clientes",
+          "negocio",
+          "empresa",
+          "marca",
+          "proyecto",
+          "vendo",
+          "empece",
+          "empecé"
+        ])
+      ) {
+
+        state.etapa = "recomendacion";
+        state.nivelDetectado = "pro";
+
+        return triggers.diagnostico.pro;
+      }
+
+
+
+      /* =========================
+         STARTER
+      ========================= */
+
+      if (
+        hasKeyword(text, [
+          "todavia no",
+          "todavía no",
+          "no tengo",
+          "quiero empezar",
+          "desde cero",
+          "no he comenzado",
+          "aun no",
+          "aún no"
+        ])
+      ) {
+
+        state.etapa = "recomendacion";
+        state.nivelDetectado = "starter";
+
+        return triggers.diagnostico.starter;
+      }
+
+
+
+      /* =========================
+         ELITE
+      ========================= */
+
+      if (
+        hasKeyword(text, [
+          "equipo",
+          "escalar",
+          "automatizacion",
+          "automatización",
+          "muchos clientes",
+          "infraestructura",
+          "expansion",
+          "expansión",
+          "lidero",
+          "operacion",
+          "operación"
+        ])
+      ) {
+
+        state.etapa = "recomendacion";
+        state.nivelDetectado = "elite";
+
+        return triggers.diagnostico.elite;
+      }
+    }
+  }
+
+
+
+  /* =====================================================
+     👑 FLUJO 3 — CONTACTO HUMANO
+  ===================================================== */
+
+  if (state.flujo === "flujo3") {
+
+    if (
+      hasKeyword(text, [
+        "whatsapp",
+        "wpp",
+        "wa"
+      ])
+    ) {
+
+      return `👑 Perfecto.
+
+Puedes continuar el proceso directamente por WhatsApp:
+
+📲 WhatsApp Oficial MaxiQueen OS
+https://wa.me/573016625921
+
+Ahí podrás:
+• recibir acompañamiento,
+• resolver dudas,
+• explorar procesos,
+• y continuar el diagnóstico de forma más personalizada.`;
+    }
+
+
+
+    if (
+      hasKeyword(text, [
+        "instagram",
+        "ig",
+        "insta"
+      ])
+    ) {
+
+      return `👑 Perfecto.
+
+Puedes continuar por Instagram:
+
+📸 Instagram Oficial
+@maxiqueenos
+
+Ahí compartimos:
+⚡ ideas,
+🧠 estructura,
+🚀 crecimiento,
+🤖 automatización,
+👑 evolución del ecosistema MaxiQueen OS.`;
+    }
+  }
+
+
+
+  /* =====================================================
+     😔 RESPUESTAS EMOCIONALES DINÁMICAS
+  ===================================================== */
+
+  if (
+    hasKeyword(text, [
+      "me siento mal",
+      "agotado",
+      "colapsado",
+      "estresado",
+      "abrumado",
+      "sobrepensando"
+    ])
+  ) {
+
+    state.tema = "emocional";
+    state.energiaUsuario = "colapso";
+
+    return `👑 Parece que llevas demasiada carga mental acumulada.
+
+Cuando una persona sostiene:
+• demasiadas decisiones,
+• presión constante,
+• exceso de ideas,
+• incertidumbre,
+• o desorden operativo,
+
+el sistema mental empieza a saturarse.
+
+No siempre necesitas hacer más.
+Muchas veces necesitas:
+🧠 simplificar,
+⚡ reorganizar,
+📊 reducir ruido,
+🚀 recuperar dirección.
+
+👉 ¿Qué sientes que está consumiendo más energía ahora mismo?`;
+  }
+
+
+
+  /* =====================================================
+     🚀 DETECCIÓN DE CRECIMIENTO
+  ===================================================== */
+
+  if (
+    hasKeyword(text, [
+      "quiero crecer",
+      "quiero vender",
+      "quiero automatizar",
+      "quiero clientes",
+      "quiero escalar"
+    ])
+  ) {
+
+    state.tema = "crecimiento";
+    state.perfil = "expansion";
+
+    return `👑 Detecto intención de crecimiento real.
+
+Eso normalmente significa que ya no necesitas solo motivación…
+necesitas:
+⚡ estructura,
+📊 sistemas,
+🤖 automatización,
+🚀 claridad operativa.
+
+MaxiQueen OS puede ayudarte a transformar ideas dispersas en procesos más sostenibles y escalables.
+
+👉 ¿Qué área quieres fortalecer primero?
+• ventas,
+• automatización,
+• contenido,
+• estructura,
+• o claridad estratégica?`;
+  }
+
+
+
+  /* =====================================================
+     🧠 DETECCIÓN DE CLARIDAD
+  ===================================================== */
+
+  if (
+    hasKeyword(text, [
+      "quiero claridad",
+      "quiero orden",
+      "no se que hacer",
+      "me siento perdido",
+      "tengo demasiadas ideas"
+    ])
+  ) {
+
+    state.tema = "claridad";
+
+    return `👑 Lo que describes suele aparecer cuando existe exceso de información sin estructura clara.
+
+La mente empieza a abrir demasiados procesos al mismo tiempo:
+• ideas,
+• pendientes,
+• decisiones,
+• presión,
+• expectativas.
+
+Y poco a poco aparece:
+⚡ ruido mental,
+⚡ bloqueo,
+⚡ cansancio,
+⚡ sensación de desorden.
+
+La prioridad ahora no es hacer más.
+La prioridad es recuperar claridad funcional.
+
+👉 Si quieres, puedo ayudarte a ordenar tu situación paso a paso.`;
+  }
+
+
+
+  /* =====================================================
+     ❌ SIN CONTEXTO
+  ===================================================== */
+
+  return null;
+}
+
+
+
+/* =========================================================
+🧠 MOTOR PRINCIPAL DE RESPUESTAS
+========================================================= */
+
+function getResponse(message) {
+
+  const text = message.toLowerCase().trim();
+
+  state.ultimaPregunta = text;
+
+
+
+  /* =====================================================
+     1️⃣ RESPUESTA CONTEXTUAL
+  ===================================================== */
+
+  const contextual = contextualResponse(text);
+
+  if (contextual) {
+    return contextual;
+  }
+
+
+
+  /* =====================================================
+     2️⃣ DETECCIÓN DE INTENCIONES
+  ===================================================== */
+
+  for (const intent of intents) {
+
+    if (
+      intent.keywords.some(keyword =>
+        text.includes(keyword)
+      )
+    ) {
+
+      return intent.response();
+    }
+  }
+
+
+
+  /* =====================================================
+     3️⃣ FALLBACK INTELIGENTE
+  ===================================================== */
+
+  const intelligentFallbacks = [
+
+`👀 Te estoy leyendo.
+
+Quiero entender mejor tu situación antes de responderte algo genérico.
+
+👉 Cuéntame un poco más sobre lo que estás viviendo o construyendo ahora mismo.`,
+
+
+
+`👑 MaxiQueen OS puede ayudarte en diferentes áreas:
+
+🧠 claridad mental
+📊 organización
+🚀 crecimiento
+🤖 automatización
+⚡ estructura estratégica
+
+👉 ¿Qué sientes que necesitas más ahora mismo?`,
+
+
+
+`🧠 A veces el problema no es falta de capacidad.
+
+Muchas veces es:
+• exceso de carga,
+• demasiadas ideas,
+• presión acumulada,
+• o falta de estructura.
+
+👉 ¿Qué sientes que está más desordenado ahora mismo?`,
+
+
+
+`👑 Estoy analizando lo que dices para entender mejor tu contexto.
+
+👉 ¿Tu prioridad actual es más:
+• personal,
+• emocional,
+• profesional,
+• o empresarial?`
+
+  ];
+
+
+
+  return intelligentFallbacks[
+    Math.floor(Math.random() * intelligentFallbacks.length)
+  ];
+}
+/* =========================================================
+👑 MAXIQUEEN OS — UI ENGINE 2026
+Interfaz conversacional adaptativa futurista
+Responsive • Mobile First • Cognitive UI
+========================================================= */
+
+
+/* =========================================================
+🧩 ELEMENTOS UI
+========================================================= */
+
+const chatLog = document.getElementById("chatLog");
+const input = document.getElementById("userInput");
+const typingIndicator = document.getElementById("typingIndicator");
+const sendButton = document.getElementById("sendBtn");
+const fileInput = document.getElementById("fileInput");
+
+/* =========================================================
+🧠 CONFIGURACIÓN GLOBAL
+========================================================= */
+
+const UI_CONFIG = {
+
+  typingSpeed: 16,
+  botDelay: 900,
+  maxMessageWidth: "85%",
+  mobileBreakpoint: 768
+
+};
+
+
+
+/* =========================================================
+📱 DETECTAR MOBILE
+========================================================= */
+
+function isMobile() {
+  return window.innerWidth <= UI_CONFIG.mobileBreakpoint;
+}
+
+
+
+/* =========================================================
+🧠 AUTO SCROLL INTELIGENTE
+========================================================= */
+
+function scrollToBottom(smooth = true) {
+
+  requestAnimationFrame(() => {
+
+    chatLog.scrollTo({
+      top: chatLog.scrollHeight,
+      behavior: smooth ? "smooth" : "auto"
+    });
+
+  });
+}
+
+
+
+/* =========================================================
+✨ CREAR MENSAJE
+========================================================= */
+
+function createMessageElement(sender = "bot") {
+
+  const wrapper = document.createElement("div");
+
+  wrapper.className = `
+    flex
+    w-full
+    mb-4
+    px-2
+    ${sender === "user" ? "justify-end" : "justify-start"}
+    message-pop
+  `;
+
+
+
+  const message = document.createElement("div");
+
+  message.style.whiteSpace = "pre-line";
+
+
+
+  /* =====================================================
+     🎨 ESTILO USER
+  ===================================================== */
+
+  if (sender === "user") {
+
+    message.className = `
+      relative
+      max-w-[92%]
+      sm:max-w-[85%]
+      bg-amber-400
+      text-black
+      px-4
+      py-3
+      rounded-3xl
+      rounded-br-md
+      text-[14px]
+      sm:text-[15px]
+      font-medium
+      leading-relaxed
+      shadow-lg
+      break-words
+    `;
+
+  }
+
+
+
+  /* =====================================================
+     🎨 ESTILO BOT
+  ===================================================== */
+
+  else {
+
+    message.className = `
+      relative
+      max-w-[92%]
+      sm:max-w-[85%]
+      bg-zinc-900/90
+      backdrop-blur-xl
+      text-zinc-100
+      px-4
+      py-3
+      rounded-3xl
+      rounded-bl-md
+      text-[14px]
+      sm:text-[15px]
+      border
+      border-cyan-500/10
+      shadow-[0_0_20px_rgba(0,255,255,0.05)]
+      leading-relaxed
+      break-words
+      overflow-hidden
+    `;
+
+
+
+    /* =================================================
+       ✨ GLOW EFFECT
+    ================================================= */
+
+    const glow = document.createElement("div");
+
+    glow.className = `
+      absolute
+      inset-0
+      opacity-20
+      pointer-events-none
+      bg-gradient-to-r
+      from-cyan-500/5
+      via-fuchsia-500/5
+      to-cyan-500/5
+    `;
+
+    message.appendChild(glow);
+  }
+
+
+
+  wrapper.appendChild(message);
+
+  return {
+    wrapper,
+    message
+  };
+}
+
+
+
+/* =========================================================
+⌨️ EFECTO TYPEWRITER
+========================================================= */
+
+async function typeWriterEffect(element, text, speed = 14) {
+
+  element.textContent = "";
+
+  let i = 0;
+
+  return new Promise(resolve => {
+
+    function typing() {
+
+      if (i < text.length) {
+
+        element.textContent += text.charAt(i);
+
+        i++;
+
+        scrollToBottom();
+
+        setTimeout(typing, speed);
+
+      } else {
+
+        resolve();
+      }
+    }
+
+    typing();
+
+  });
+}
+
+
+
+/* =========================================================
+🧠 AGREGAR MENSAJE
+========================================================= */
+
+async function appendMessage(
+  text,
+  sender = "bot",
+  animated = true
+) {
+
+  const { wrapper, message } =
+    createMessageElement(sender);
+
+
+
+  /* =====================================================
+     👤 MENSAJE USER
+  ===================================================== */
+
+  if (sender === "user") {
+
+    message.textContent = text;
+
+  }
+
+
+
+  chatLog.appendChild(wrapper);
+
+  scrollToBottom();
+
+
+
+  /* =====================================================
+     🤖 MENSAJE BOT
+  ===================================================== */
+
+  if (sender === "bot") {
+
+    if (animated) {
+
+      await typeWriterEffect(
+        message,
+        text,
+        UI_CONFIG.typingSpeed
+      );
+
+    } else {
+
+      message.textContent = text;
+    }
+  }
+
+
+
+  /* =====================================================
+     📱 AJUSTE MOBILE
+  ===================================================== */
+
+  if (isMobile()) {
+
+    setTimeout(() => {
+
+      scrollToBottom();
+
+    }, 120);
+  }
+}
+
+
+
+/* =========================================================
+🤖 INDICADOR DE ESCRITURA
+========================================================= */
+
+function showTyping() {
+
+  typingIndicator.classList.remove("hidden");
+
+  scrollToBottom();
+}
+
+
+
+function hideTyping() {
+
+  typingIndicator.classList.add("hidden");
+}
+
+
+
+/* =========================================================
+🧠 PROCESAR MENSAJE
+========================================================= */
+
+async function processMessage(message) {
+
+  try {
+
+    showTyping();
+
+
+
+    /* =================================================
+       ⏳ DELAY NATURAL
+    ================================================= */
+
+    await new Promise(resolve =>
+      setTimeout(resolve, UI_CONFIG.botDelay)
+    );
+
+
+
+    hideTyping();
+
+
+
+    const response = getResponse(message);
+
+
+
+    await appendMessage(
+      response,
+      "bot",
+      true
+    );
+
+
+
+  } catch (error) {
+
+    console.error("MaxiQueen UI Error:", error);
+
+    hideTyping();
+
+    appendMessage(
+`⚠️ Ocurrió una interrupción temporal en el sistema.
+
+Por favor intenta nuevamente en unos segundos.`,
+      "bot",
+      false
+    );
+  }
+}
+
+
+
+/* =========================================================
+📨 ENVIAR MENSAJE
+========================================================= */
+
+async function sendMessage() {
+
+  const message = input.value.trim();
+
+  if (!message) return;
+
+
+
+  /* =====================================================
+     🧹 LIMPIAR INPUT
+  ===================================================== */
+
+  input.value = "";
+
+
+
+  /* =====================================================
+     👤 AGREGAR USER
+  ===================================================== */
+
+  await appendMessage(
+    message,
+    "user",
+    false
+  );
+
+
+
+  /* =====================================================
+     🤖 RESPUESTA BOT
+  ===================================================== */
+
+  await processMessage(message);
+}
+
+
+
+/* =========================================================
+⌨️ ENTER / MOBILE SAFE
+========================================================= */
+
+input.addEventListener("keydown", async (e) => {
+
+  if (
+    e.key === "Enter" &&
+    !e.shiftKey
+  ) {
+
+    e.preventDefault();
+
+    await sendMessage();
+  }
+});
+
+
+
+/* =========================================================
+🖱️ BOTÓN ENVIAR
+========================================================= */
+
+if (sendButton) {
+
+  sendButton.addEventListener("click", async () => {
+
+    await sendMessage();
+
+  });
+}
+
+
+
+/* =========================================================
+📱 AUTO RESIZE INPUT
+========================================================= */
+
+input.addEventListener("input", () => {
+
+  input.style.height = "auto";
+
+  input.style.height =
+    Math.min(input.scrollHeight, 140) + "px";
+
+});
+
+
+
+/* =========================================================
+📱 FIX MOBILE KEYBOARD
+========================================================= */
+
+window.addEventListener("resize", () => {
+
+  scrollToBottom(false);
+
+});
+
+/* =========================================================
+📂 FILE UPLOAD SYSTEM
+========================================================= */
+
+fileInput.addEventListener("change", async (e) => {
+
+  const files = e.target.files;
+
+  if (!files.length) return;
+
+  for (const file of files) {
+
+    await appendMessage(
+      `📂 Archivo detectado:\n${file.name}`,
+      "user",
+      false
+    );
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    try {
+
+      showTyping();
+
+      const response = await fetch(
+        "http://localhost:8000/upload",
+        {
+          method: "POST",
+          body: formData
+        }
+      );
+
+      const data = await response.json();
+
+      hideTyping();
+
+      await appendMessage(
+        `🧠 Archivo procesado:\n\n${data.summary}`,
+        "bot",
+        true
+      );
+
+    } catch (error) {
+
+      hideTyping();
+
+      await appendMessage(
+        `⚠️ Error procesando archivo.`,
+        "bot",
+        false
+      );
+
+      console.error(error);
+    }
+  }
+});
+
+/* =========================================================
+🚀 MENSAJE INICIAL
+========================================================= */
+
+window.addEventListener("load", async () => {
+
+  setTimeout(async () => {
+
+    await appendMessage(
+`👑 Bienvenido a MaxiQueen OS 2026
+
+Sistema conversacional estratégico diseñado para ayudarte a transformar:
+🧠 confusión en claridad,
+⚡ ideas en estructura,
+🚀 intención en movimiento real.
+
+Puedes hablar conmigo sobre:
+• claridad mental,
+• crecimiento,
+• automatización,
+• sistemas,
+• proyectos,
+• negocio,
+• organización,
+• o dirección estratégica.
+
+👉 ¿Qué está pasando en tu mundo ahora mismo?`,
+      "bot",
+      true
+    );
+
+  }, 600);
+
+});
+
+/* Mejora: Añadimos un motor de búsqueda de intención más inteligente */
+const brain = {
+    // Definimos los pilares del sistema para categorizar respuestas
+    pilares: {
+        claridad: "Enfocado en ordenar el caos mental y definir rutas.",
+        operativo: "Enfocado en la construcción, automatización y despliegue.",
+        estrategia: "Enfocado en el crecimiento, ventas y visión de negocio."
+    },
+    
+    // Función para detectar la intención más allá de la palabra exacta
+    detectarIntencion: (texto) => {
+        const t = texto.toLowerCase();
+        if (t.includes('caos') || t.includes('desorden')) return 'diagnostico_caos';
+        if (t.includes('vender') || t.includes('negocio')) return 'estrategia_ventas';
+        if (t.includes('automatizar') || t.includes('codigo')) return 'operativo_tecnico';
+        return 'general';
+    }
+};
+
+// Amplía tus triggers para que respondan basado en el contexto detectado
+const respuestasEstructurales = {
+    diagnostico_caos: "Entiendo que sientes caos. El primer paso de MaxiQueen OS es el 'Aterrizaje'. Vamos a listar tus 3 prioridades actuales para reducir la carga cognitiva. ¿Cuáles son?",
+    estrategia_ventas: "Para vender con estructura, necesitamos definir tu propuesta de valor. ¿Ya tienes un producto digital o estamos diseñando la oferta desde cero?",
+    operativo_tecnico: "Entendido. Si buscas automatizar, mi recomendación es empezar por la integración de tu API (FastAPI) con Cloud Run para tener despliegue continuo. ¿Necesitas ayuda con el archivo de configuración?"
+};
+
+
+/* ========================= 🧾 LEGAL & MODALS ========================= */
+const legalTexts = {
+  privacy: `<h3>Privacidad</h3><p>Tus datos son procesados solo para el diagnóstico de MaxiQueen OS.</p>`,
+  cookies: `<h3>Cookies</h3><p>Usamos solo cookies técnicas esenciales.</p>`,
+  terms: `<h3>Términos</h3><p>El uso del sistema implica aceptación de nuestra metodología.</p>`
+};
+
+function openLegal(type) {
+  const modal = document.getElementById("legalModal");
+  document.getElementById("legalTitle").textContent = type.toUpperCase();
+  document.getElementById("legalContent").innerHTML = legalTexts[type];
+  modal.classList.remove("hidden");
+}
+
+function closeLegal() { document.getElementById("legalModal").classList.add("hidden"); }
+
+window.onload = () => setTimeout(() => appendMessage(triggers.onboarding.inicio), 500);
+</script>
+</body>
+</html>

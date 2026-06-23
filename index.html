@@ -1,0 +1,4463 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaxiQueen OS | Sistema Digital Integral</title>
+<meta name="description" content="Sistema digital integral...">
+<meta property="og:image" content="https://maxiqueen-os.vercel.app/assets/MAXIQUEEN_LOGO.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="./css/style.css">
+<link rel="icon" href="/maxiqueen-os/favicon.ico" type="image/x-icon">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+<style>
+
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+
+/* =====================
+   VARIABLES / TEMAS
+===================== */
+:root {
+  --accent:#facc15;
+  --bg-main:#0b1220;
+  --text-main:#f4ff23;
+  --card-bg:#151517;
+  --border-soft:#34ff19;
+  --btn-bg:#facc15;
+  --btn-text:#6e3838;
+  --bg-soft:rgba(4, 9, 19, 0.45);
+}
+
+[data-theme="light"] {
+  --accent:#22e670;
+  --bg-main:#0c2f76;
+  --text-main:#0cff07;
+  --card-bg:#000000;
+  --border-soft:#a7ff03;
+  --btn-bg:#ef8300;
+  --btn-text:#690707;
+  --bg-soft:rgb(9, 9, 67);
+}
+
+html,body{
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 251, 16, 0.174), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(8, 43, 117, 0.08), transparent 40%),
+    linear-gradient(180deg, #282f3dc2 15%, #020a2b85 100%);
+  color:var(--text-main)!important;
+  font-family:'Poppins',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  overflow-x:hidden;
+  transition:background .35s,color .35s;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ESTO FUERZA AL BOTÓN AMARILLO A SER AMPLIO Y BONITO */
+    .mp-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Seleccionamos el botón que genera el script automáticamente */
+    .mercadopago-button {
+      width: 100% !important;    /* Lo hace ancho total */
+      max-width: 350px;          /* O la medida que prefieras */
+      height: 48px !important;    /* Lo hace más robusto */
+      font-size: 16px !important;
+      font-weight: 600 !important;
+      border-radius: 12px !important; /* Para que combine con tus bordes 3xl */
+      transition: transform 0.2s ease;
+    }
+
+    .mercadopago-button:hover {
+      transform: scale(1.02); /* Efecto visual al pasar el mouse */
+    }
+
+    /* Asegúrate de tener este CSS básico para que se vean */
+    .mq-icon-wrapper {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 12px;
+      transition: 0.3s;
+    }
+    .mq-icon-wrapper img {
+      width: 100%;
+      height: auto;
+    }
+    .mq-social-link:hover .mq-icon-wrapper {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-5px);
+    }
+
+/* =====================
+   ANIMACIONES
+===================== */
+@keyframes floatInfinite{
+  0%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+  25%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  50%{transform:translate3d(0,-4px,0) rotateX(-1deg) rotateY(1deg);}
+  75%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+}
+
+@keyframes bounce-slow{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-14px);}
+}
+.animate-bounce-slow{animation:bounce-slow 3.2s ease-in-out infinite;}
+
+
+.animate-pulse-slow{animation:pulse-slow 6s ease-in-out infinite;}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
+}
+
+/* =====================
+   ANIMACIONES
+===================== */
+
+
+
+.animate-bounce-slow{animation:bounce-slow 3.2s ease-in-out infinite;}
+
+
+.animate-pulse-slow{animation:pulse-slow 6s ease-in-out infinite;}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
+}
+
+/* =====================
+   HERO / LOGO
+===================== */
+.hero-avatar{
+  position:relative;
+  animation:floatInfinite 7s ease-in-out infinite;
+}
+.hero-avatar::after{
+  content:'';
+  position:absolute;
+  inset:-14px;
+  border-radius:9999px;
+  background:conic-gradient(from 0deg,#f43f5e,#f59e0b,#facc15,#22c55e,#38bdf8,#a855f7,#f43f5e);
+  filter:blur(20px);
+  opacity:.75;
+  z-index:-1;
+}
+
+/* =====================
+   GALERÍA
+===================== */
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:1.5rem;
+}
+.gallery img{
+  width:100%;
+  border-radius:1.5rem;
+  object-fit:cover;
+  transition:.35s cubic-bezier(.4,0,.2,1);
+}
+.gallery img:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 40px rgba(250,204,21,.35);
+}
+
+/* =====================
+   WHATSAPP FLOAT
+===================== */
+.whatsapp-float{
+  position:fixed;
+  bottom:22px;
+  left:22px;
+  background:#25D366;
+  color:white;
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 10px 28px rgba(0,0,0,.35);
+  z-index:1000;
+  transition:.25s cubic-bezier(.4,0,.2,1);
+}
+.whatsapp-float:hover{transform:scale(1.12);}
+
+/* =====================
+   TOGGLE TEMA
+===================== */
+.toggle-theme{
+  position:fixed;
+  top:18px;
+  right:18px;
+  background:var(--bg-soft);
+  border:1px solid rgba(64,255,255,.12);
+  padding:7px 16px;
+  border-radius:999px;
+  font-size:.8rem;
+  cursor:pointer;
+  z-index:1000;
+  backdrop-filter:blur(10px);
+  transition:.25s;
+}
+.toggle-theme:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+/* ===================== CHAT ====================== */
+.mq-chat{
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  width:360px;
+  max-height:520px;
+  display:flex;
+  flex-direction:column;
+  border-radius:22px;
+  overflow:hidden;
+  backdrop-filter:blur(25px);
+  background:linear-gradient(
+    145deg,
+    rgba(28, 28, 42, 0.9),
+    rgba(15,15,20,0.8)
+  );
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.6),
+    0 0 40px rgba(250,204,21,.15);
+  z-index:9999;
+}
+
+.mq-chat-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 16px;
+  font-weight:600;
+  background:rgba(255,255,255,0.03);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.mq-chat-controls button{
+  background:none;
+  border:none;
+  color:#ccc;
+  font-size:14px;
+  margin-left:8px;
+  cursor:pointer;
+}
+
+.mq-chat-controls button:hover{
+  color:#41c0eb;
+}
+
+.mq-chat-body{
+  flex:1;
+  padding:14px;
+  overflow-y:auto;
+  font-size:14px;
+}
+
+.mq-chat-input{
+  display:flex;
+  padding:12px;
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+
+.mq-chat-input input{
+  flex:1;
+  padding:8px 10px;
+  border-radius:8px;
+  border:none;
+  background:rgba(255,255,255,0.05);
+  color:#fff;
+}
+
+.mq-chat-input button{
+  margin-left:8px;
+  padding:8px 14px;
+  border-radius:8px;
+  border:none;
+  background:#4afa15;
+  color:#000;
+  font-weight:600;
+  cursor:pointer;
+}
+.chat-input button:hover{filter:brightness(1.1);}
+
+.social-icon{width:20px;height:20px;object-fit:contain;display:inline-block}
+/* =====================
+   LICENCIA BOX
+===================== */
+.mq-license-box{
+  max-width:820px;
+  margin:5rem auto 6rem;
+  padding:2.5rem 2.2rem;
+  border-radius:1.75rem;
+  background:var(--bg-soft);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.08);
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.mq-license-box h3{
+  font-size:1.6rem;
+  font-weight:800;
+  margin-bottom:1rem;
+}
+.mq-license-box p{margin-bottom:1rem;color:#d1d5db}
+.mq-license-box ul{
+  text-align:left;
+  max-width:420px;
+  margin:1.25rem auto 1.5rem;
+  color:#e5e7eb;
+}
+.mq-license-box li{margin-bottom:.4rem;}
+.mq-license-check{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  margin-bottom:1rem;
+}
+.mq-license-box button{
+  padding:.7rem 1.6rem;
+  border-radius:999px;
+  background:var(--accent);
+  color:#120834;
+  font-weight:700;
+  transition:.2s;
+}
+.mq-license-box button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+.mq-license-box button:not(:disabled):hover{
+  transform:translateY(-1px);
+  filter:brightness(1.05);
+  box-shadow:0 10px 24px rgba(250,204,21,.35);
+}
+
+   /* Estilo del Certificado Google MaxiQueen OS */
+.cert-google {
+  display: inline-block;
+  padding: 12px 20px;
+  margin: 15px 0;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  color: white !important;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  
+  /* Gradiente oficial de Google con tu toque MQ_OS */
+  background: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
+  background-size: 200% auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cert-google:hover {
+  background-position: right center;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(66, 133, 244, 0.4);
+}
+
+.cert-google::before {
+  content: '🏆'; /* Icono de trofeo antes del texto */
+  margin-right: 8px;
+}
+
+   /* Estilo dinámico para el Chat */
+.mq-chat {
+  /* ... otros estilos ... */
+  border: 2px solid var(--accent); /* El borde cambiará de amarillo a verde */
+  box-shadow: 0 0 20px var(--bg-soft);
+}
+
+.mq-chat-header {
+  background: var(--accent);
+  color: var(--btn-text); /* El texto del header se adapta para ser legible */
+}
+
+.msg-user {
+  color: var(--accent); /* Tus mensajes resaltan con el color activo */
+}
+
+.mq-scope{ --mq-gold:#f59e0b; --mq-bg:#050507; --mq-card:#0f0f14; color:#e5e5e5; font-family:'Space Grotesk',system-ui,sans-serif }
+.mq-inner{ max-width:80rem; margin:0 auto; padding:6rem 1.5rem; text-align:center; position:relative }
+.mq-kicker{ color:var(--mq-gold); font-weight:700; letter-spacing:.08em }
+.mq-feed-title{ font-size:clamp(1.8rem,4vw,3rem); font-weight:800; margin:.5rem 0 2rem }
+.mq-feed{ min-height:120px; border:1px solid rgba(245,158,11,.25); background:rgba(0,0,0,.4); border-radius:1rem; margin-bottom:2rem }
+.mq-cards{ display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)) }
+.mq-card{ display:block; padding:1.2rem; border-radius:1rem; background:var(--mq-card); border:1px solid #27272a; text-decoration:none; color:inherit; transition:.2s }
+.mq-card:hover{ border-color:var(--mq-gold); transform:translateY(-2px); box-shadow:0 0 24px rgba(245,158,11,.15) }
+
+.mq-license-box{ max-width:42rem; margin:3rem auto; padding:2rem; border-radius:1.25rem; background:#0b0b10; border:1px solid #27272a }
+.mq-rules{ text-align:left; color:#a1a1aa; margin:1rem 0; list-style:disc; padding-left:1.5rem }
+.mq-license-check{ display:flex; gap:.6rem; align-items:center; justify-content:center; margin:1.5rem 0; cursor:pointer }
+.mq-license-check a{ color:var(--mq-gold); text-decoration:underline }
+#continueMQ{ width:100%; padding:.9rem; border-radius:.8rem; font-weight:700; background:var(--mq-gold); color:#000; border:0; cursor:pointer; transition:.2s }
+#continueMQ:disabled{ opacity:.4; cursor:not-allowed; filter:grayscale(1) }
+
+.mq-legal{ text-align:center; padding:3rem 1.5rem; border-top:1px solid #18181b; color:#a1a1aa }
+.mq-chip{ font-size:.7rem; letter-spacing:.15em; text-transform:uppercase; color:#71717a; border:1px solid #27272a; padding:.3rem .8rem; border-radius:999px }
+.mq-note{ margin-top:1rem; font-style:italic; color:#71717a; border-left:2px solid var(--mq-gold); padding-left:1rem; display:inline-block; text-align:left }
+
+   /* =========================
+   MAXIQUEEN ACCESS MODULE
+========================= */
+
+.mq-access-module{
+    padding:5rem 2rem;
+    text-align:center;
+    background:#050505;
+}
+
+.mq-title{
+    color:white;
+    margin-bottom:2rem;
+    font-size:2.2rem;
+}
+
+.mq-container-btn{
+    margin-bottom:4rem;
+}
+
+/* BOTON PRINCIPAL */
+
+.mq-boton-maestro{
+    position:relative;
+    display:inline-block;
+    background:linear-gradient(45deg,#1cf918,#f9e29d);
+    color:#000;
+    padding:20px 40px;
+    font-size:1.1rem;
+    font-weight:bold;
+    text-transform:uppercase;
+    text-decoration:none;
+    border-radius:50px;
+    letter-spacing:2px;
+    transition:.3s;
+    box-shadow:0 10px 20px rgba(212,175,55,.3);
+}
+
+.mq-boton-maestro:hover{
+    transform:translateY(-5px);
+    box-shadow:0 15px 30px rgba(212,175,55,.6);
+}
+
+.mq-boton-maestro::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:50px;
+    border:2px solid #3cd437;
+    animation:mqPulse 2s infinite;
+}
+
+@keyframes mqPulse{
+    0%{
+        transform:scale(1);
+        opacity:.8;
+    }
+
+    100%{
+        transform:scale(1.4);
+        opacity:0;
+    }
+}
+
+.mq-texto-ayuda{
+    display:block;
+    color:#888;
+    margin-top:1rem;
+}
+
+/* GRID */
+
+.mq-access-grid{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:1rem;
+}
+
+/* BOTONES */
+
+.mq-btn-access{
+    display:inline-flex;
+    align-items:center;
+    padding:15px 25px;
+    text-decoration:none;
+    font-weight:bold;
+    border-radius:12px;
+    transition:.4s;
+    border:2px solid transparent;
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+/* GOOGLE */
+
+.mq-btn-google{
+    color:#4285F4;
+    border-color:rgba(66,133,244,.3);
+    background:rgba(66,133,244,.05);
+}
+
+.mq-btn-google:hover{
+    background:#4285F4;
+    color:white;
+    box-shadow:0 0 25px #4285F4;
+}
+
+/* MODULES */
+
+.mq-btn-modules{
+    color:#39ff14;
+    border-color:rgba(57,255,20,.3);
+    background:rgba(57,255,20,.05);
+}
+
+.mq-btn-modules:hover{
+    background:#39ff14;
+    color:black;
+    box-shadow:0 0 25px #39ff14;
+}
+
+/* GAMES */
+
+.mq-btn-games{
+    color:#00d4ff;
+    border-color:rgba(0,212,255,.3);
+    background:rgba(0,212,255,.05);
+}
+
+.mq-btn-games:hover{
+    background:#00d4ff;
+    color:white;
+    box-shadow:0 0 25px #00d4ff;
+}
+
+/* PROFILE */
+
+.mq-btn-profile{
+    color:#00ff1e;
+    border-color:rgba(255,215,0,.3);
+    background:rgba(255,215,0,.05);
+}
+
+.mq-btn-profile:hover{
+    background:#09ff00;
+    color:black;
+    box-shadow:0 0 25px #3faf5b;
+}
+
+.mq-icon{
+    margin-right:10px;
+}
+
+/* =========================
+🌌 INFRAMUNDO MAXIQUEEN
+========================= */
+
+.mq-underworld-section{
+    position: relative;
+    padding: 5rem 1.5rem;
+    z-index: 2;
+}
+
+.mq-underworld-header{
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.mq-underworld-header h2{
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: .8rem;
+
+    text-shadow:
+    0 0 15px rgba(255,255,255,.15),
+    0 0 35px rgba(0,140,255,.25);
+}
+
+.mq-underworld-header p{
+    color: rgba(255,255,255,.65);
+    font-size: 1rem;
+    max-width: 700px;
+    margin: auto;
+    line-height: 1.6;
+}
+
+/* GRID */
+
+.mq-underworld-grid{
+    display: grid;
+
+    grid-template-columns:
+    repeat(auto-fit, minmax(170px, 1fr));
+
+    gap: 1.2rem;
+
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* CARD */
+
+.mq-mini-card{
+    position: relative;
+
+    overflow: hidden;
+
+    height: 170px;
+
+    border-radius: 1.4rem;
+
+    padding: 1.4rem;
+
+    text-decoration: none;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    background:
+    rgba(10,10,10,.72);
+
+    border:
+    1px solid rgba(255,255,255,.08);
+
+    backdrop-filter: blur(14px);
+
+    transition: .35s ease;
+
+    box-shadow:
+    0 10px 35px rgba(0,0,0,.45);
+}
+
+.mq-mini-card:hover{
+    transform:
+    translateY(-8px)
+    scale(1.03);
+
+    box-shadow:
+    0 15px 45px rgba(0,0,0,.6);
+}
+
+/* EFECTO */
+
+.mq-card-glow{
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    border-radius: 50%;
+
+    top: -70px;
+    right: -60px;
+
+    filter: blur(45px);
+
+    opacity: .18;
+}
+
+/* ICONO */
+
+.mq-icon-box{
+    width: 58px;
+    height: 58px;
+
+    border-radius: 1rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1.5rem;
+
+    background:
+    rgba(255,255,255,.05);
+
+    border:
+    1px solid rgba(255,255,255,.08);
+
+    color: white;
+
+    box-shadow:
+    inset 0 0 20px rgba(255,255,255,.05);
+}
+
+/* TEXTO */
+
+.mq-mini-card h3{
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.mq-mini-card span{
+    font-size: .82rem;
+    color: rgba(255,255,255,.55);
+}
+
+/* =========================
+🇨🇴 COLORES COLOMBIA
+========================= */
+
+.card-yellow{
+    border-color: rgba(255,215,0,.35);
+}
+
+.card-yellow .mq-card-glow{
+    background: #ffd000;
+}
+
+.card-yellow:hover{
+    box-shadow:
+    0 0 30px rgba(255,208,0,.2);
+}
+
+.card-blue{
+    border-color: rgba(0,140,255,.35);
+}
+
+.card-blue .mq-card-glow{
+    background: #007bff;
+}
+
+.card-blue:hover{
+    box-shadow:
+    0 0 30px rgba(0,123,255,.25);
+}
+
+.card-red{
+    border-color: rgba(255,0,60,.35);
+}
+
+.card-red .mq-card-glow{
+    background: #ff003c;
+}
+
+.card-red:hover{
+    box-shadow:
+    0 0 30px rgba(255,0,60,.25);
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .mq-underworld-grid{
+        grid-template-columns:
+        repeat(2,1fr);
+    }
+
+    .mq-mini-card{
+        height: 150px;
+    }
+
+}
+
+   
+
+
+.card-link {
+  display: block;
+  padding: 1rem 1.2rem;
+  border-radius: 1rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #f4f4f5;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.card-link:hover {
+  transform: translateY(-4px);
+  border-color: rgba(57, 251, 36, 0.5);
+  background: rgba(255,255,255,0.06);
+}
+
+      
+
+
+    :root {
+        --tech-gold: #15fa19;
+        --tech-glow: rgba(56, 148, 40, 0.4);
+        --tech-bg: #050507;
+    }
+
+    /* Contenedor Principal del Avatar */
+    .avatar-quantum-core {
+        position: relative;
+        width: 320px;
+        height: 320px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        perspective: 1000px;
+        margin-bottom: 4rem;
+    }
+
+    /* Anillo de Datos Externo (Hexagonal / Tecnológico) */
+    .data-ring-outer {
+        position: absolute;
+        inset: 0;
+        border: 1px solid var(--tech-glow);
+        border-radius: 50%;
+        animation: rotate-reverse 20s linear infinite;
+    }
+
+    .data-ring-outer::after {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: 50%;
+        width: 40px;
+        height: 4px;
+        background: var(--tech-gold);
+        box-shadow: 0 0 15px var(--tech-gold);
+    }
+
+    /* Escáner Perimetral */
+    .perimeter-scanner {
+        position: absolute;
+        width: 85%;
+        height: 85%;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        animation: pulse-ring 4s ease-in-out infinite;
+    }
+
+    /* Núcleo de Imagen/Video con Efecto Glitch */
+    .media-portal {
+        position: relative;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        padding: 8px;
+        background: conic-gradient(from 180deg at 50% 50%, var(--tech-gold) 0deg, transparent 90deg, var(--tech-gold) 180deg, transparent 270deg);
+        z-index: 10;
+        box-shadow: 0 0 40px rgba(0,0,0,0.8);
+    }
+
+    .media-portal-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        overflow: hidden;
+        background: #000;
+        border: 2px solid rgba(0,0,0,0.5);
+    }
+
+    .media-portal-inner video, 
+    .media-portal-inner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.3);
+        filter: contrast(1.1) brightness(1.1);
+        transition: transform 0.5s ease;
+    }
+
+    /* Capa de Información HUD */
+    .hud-layer {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 15;
+        background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, transparent 1px, transparent 2px);
+    }
+
+    /* Partículas de Datos */
+    .data-particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--tech-gold);
+        border-radius: 50%;
+        opacity: 0;
+        animation: float-particle 3s infinite linear;
+    }
+
+    /* Etiquetas de Estado */
+    .status-tag {
+        position: absolute;
+        background: rgba(0,0,0,0.9);
+        border: 1px solid var(--tech-gold);
+        color: var(--tech-gold);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 8px;
+        padding: 2px 8px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        white-space: nowrap;
+        z-index: 20;
+    }
+
+    .tag-top { top: 10%; right: -10%; }
+    .tag-bottom { bottom: 15%; left: -15%; }
+
+    /* Animaciones Clave */
+    @keyframes rotate-reverse {
+        from { transform: rotate(360deg); }
+        to { transform: rotate(0deg); }
+    }
+
+    
+
+    @keyframes float-particle {
+        0% { transform: translateY(0) scale(1); opacity: 0; }
+        50% { opacity: 1; }
+        100% { transform: translateY(-100px) scale(0); opacity: 0; }
+    }
+
+
+/* ===== ANIMACIONES QUANTUM ÚNICAS ===== */
+
+
+
+@keyframes scan-vertical { 0% { transform:translateY(-100%); } 100% { transform:translateY(200%); } }
+
+/* ===== AVATAR QUANTUM CORE ===== */
+.avatar-quantum-core {
+    position:relative; width:320px; height:320px; display:flex; align-items:center; justify-content:center;
+    perspective:1000px; margin-bottom:4rem;
+}
+.data-ring-outer {
+    position:absolute; inset:0; border:1px solid var(--tech-glow); border-radius:50%;
+    animation:rotate-reverse 20s linear infinite;
+}
+.data-ring-outer::after {
+    content:''; position:absolute; top:-2px; left:50%; width:40px; height:4px;
+    background:var(--tech-gold); box-shadow:0 0 15px var(--tech-gold);
+}
+.perimeter-scanner {
+    position:absolute; width:85%; height:85%; border:1px solid rgba(255,255,255,0.05);
+    border-radius:50%; animation:pulse-ring 4s ease-in-out infinite;
+}
+.media-portal {
+    position:relative; width:220px; height:220px; border-radius:50%; padding:8px;
+    background:conic-gradient(from 180deg at 50% 50%, var(--tech-gold) 0deg, transparent 90deg, var(--tech-gold) 180deg, transparent 270deg);
+    z-index:10; box-shadow:0 0 40px rgba(0,0,0,0.8);
+}
+.media-portal-inner {
+    position:relative; width:100%; height:100%; border-radius:50%; overflow:hidden;
+    background:#000; border:2px solid rgba(0,0,0,0.5);
+}
+.media-portal-inner video,.media-portal-inner img {
+    width:100%; height:100%; object-fit:cover; transform:scale(1.3);
+    filter:contrast(1.1) brightness(1.1); transition:transform 0.5s ease;
+}
+.hud-layer {
+    position:absolute; inset:0; pointer-events:none; z-index:15;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, transparent 1px, transparent 2px);
+}
+.data-particle {
+    position:absolute; width:4px; height:4px; background:var(--tech-gold);
+    border-radius:50%; opacity:0; animation:float-particle 3s infinite linear;
+}
+.status-tag {
+    position:absolute; background:rgba(0,0,0,0.9); border:1px solid var(--tech-gold);
+    color:var(--tech-gold); font-family:'JetBrains Mono', monospace; font-size:8px;
+    padding:2px 8px; text-transform:uppercase; letter-spacing:2px; white-space:nowrap; z-index:20;
+}
+.tag-top { top:10%; right:-10%; }
+.tag-bottom { bottom:15%; left:-15%; }
+
+/* ===== TITULAR ===== */
+.text-glow-premium { filter:drop-shadow(0 0 15px rgba(251,191,36,0.3)); letter-spacing:-0.05em; }
+.tracking-elite { letter-spacing:0.5em; text-shadow:0 0 10px rgba(255,255,255,0.1); }
+
+/* ===== COMMAND CENTER ===== */
+:root {
+    --mq-gold:#15fa19; --mq-cyan:#00d4ff; --mq-green:#39ff14;
+    --mq-google:#4285F4; --mq-glass:rgba(15,15,20,0.85);
+}
+.mq-access-section {
+    min-height:100vh; background:#000; padding:60px 20px; position:relative;
+    overflow:hidden; font-family:'Poppins',sans-serif; display:flex; align-items:center; justify-content:center;
+}
+.hero-video-bg { position:absolute; inset:0; z-index:0; pointer-events:none; }
+.hero-video-bg video { width:100%; height:100%; object-fit:cover; opacity:0.25; filter:saturate(1.2); }
+.hero-video-bg::after { content:''; position:absolute; inset:0; background:radial-gradient(circle at center, transparent 20%, black 90%); }
+
+.command-center {
+    position:relative; z-index:10; max-width:1000px; width:100%; margin:0 auto;
+    backdrop-filter:blur(25px); background:rgba(15,15,20,0.6);
+    border:1px solid rgba(255,255,255,0.08); border-radius:50px; padding:60px 40px;
+    box-shadow:0 50px 100px rgba(0,0,0,0.9);
+}
+.hero-avatar { position:relative; margin-bottom:40px; display:inline-block; animation:floatInfinite 7s ease-in-out infinite; }
+.hero-avatar::after {
+    content:''; position:absolute; inset:-14px; border-radius:9999px;
+    background:conic-gradient(from 0deg,#f43f5e,#f59e0b,#facc15,#22c55e,#38bdf8,#a855f7,#f43f5e);
+    filter:blur(20px); opacity:.75; z-index:-1;
+}
+.avatar-video-wrapper {
+    width:160px; height:160px; border-radius:999px; background:#000; padding:3px;
+    border:1px solid rgba(250,204,21,0.4); overflow:hidden; box-shadow:0 0 40px rgba(250,204,21,0.3);
+}
+.avatar-video-wrapper video { width:100%; height:100%; object-fit:cover; border-radius:999px; transform:scale(1.25); }
+
+.command-header h1 {
+    font-size:clamp(2.5rem,8vw,4.5rem); font-weight:900; letter-spacing:-2px; line-height:1.1;
+    margin-bottom:10px; background:linear-gradient(to right,#2f821e,#11da11,#62da3b);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.system-subtitle { font-size:clamp(1rem,3vw,1.3rem); color:#e4e4e7; margin-bottom:30px; opacity:0.9; }
+
+.tech-tags { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:40px; }
+.tech-badge {
+    padding:5px 14px; border-radius:999px; background:rgba(24,24,27,0.8);
+    border:1px solid rgba(250,204,21,0.2); color:#37fa15; font-size:0.75rem; font-weight:600;
+}
+
+.impact-description {
+    max-width:800px; margin:0 auto 50px; padding:30px; border-left:2px solid var(--mq-gold);
+    background:linear-gradient(90deg, rgba(250,204,21,0.05) 0%, transparent 100%); text-align:left;
+}
+.impact-description p { color:#d4d4d8; font-size:1.15rem; line-height:1.6; margin-bottom:15px; }
+.highlight-gold { color:var(--mq-gold); font-weight:700; text-shadow:0 0 10px rgba(250,204,21,0.3); }
+
+.master-btn {
+    position:relative; padding:22px 50px; font-size:1.1rem; font-weight:800; color:#000;
+    background:var(--mq-gold); border-radius:20px; display:inline-block; text-decoration:none;
+    text-transform:uppercase; letter-spacing:2px; transition:0.4s;
+}
+.master-btn:hover { transform:translateY(-5px); box-shadow:0 20px 40px rgba(250,204,21,0.4); background:#fff; }
+
+.command-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px; margin-top:50px;
+}
+.module-card {
+    background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
+    padding:20px; border-radius:20px; text-decoration:none; color:#fff; transition:0.3s; text-align:center;
+}
+.module-card:hover { background:rgba(255,255,255,0.07); transform:translateY(-5px); }
+.module-card i { font-size:20px; margin-bottom:10px; display:block; }
+.module-card span { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+.c-google { color:var(--mq-google); }.c-mod { color:var(--mq-green); }
+.c-game { color:var(--mq-cyan); }.c-prof { color:var(--mq-gold); }
+
+@media (max-width:768px){
+   .command-center { padding:40px 20px; border-radius:30px; }
+   .avatar-video-wrapper { width:120px; height:120px; }
+   .impact-description { padding:20px; }
+}
+
+/* ===== VERSIONES BOX ===== */
+.mq-version-control-box {
+    background:linear-gradient(145deg, rgba(15,20,30,0.85) 0%, rgba(5,8,15,0.95) 100%);
+    border:1px solid rgba(255,170,0,0.2); border-radius:12px; padding:20px; margin:30px auto;
+    width:90%; max-width:600px; box-shadow:0 8px 32px rgba(0,0,0,0.6), inset 0 0 15px rgba(255,170,0,0.05);
+    backdrop-filter:blur(8px);
+}
+.mq-box-header { text-align:center; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:15px; }
+.mq-box-header h3 { color:#ffaa00; font-size:1.1rem; margin:0 0 5px 0; text-transform:uppercase; letter-spacing:2px; display:flex; align-items:center; justify-content:center; gap:8px; }
+.amber-dot { width:8px; height:8px; background-color:#ffaa00; border-radius:50%; box-shadow:0 0 8px #ffaa00; }
+.mq-box-header p { color:#7a8b9f; font-size:0.8rem; margin:0; letter-spacing:1px; }
+.mq-versions-grid { display:grid; grid-template-columns:1fr; gap:12px; }
+.btn-portal-galeria {
+    display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.08); padding:12px 18px; border-radius:8px; text-decoration:none;
+    color:#e0e6ed; transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.btn-portal-galeria:hover {
+    background:rgba(255,170,0,0.05); border-color:rgba(255,170,0,0.5);
+    transform:translateX(5px); box-shadow:-4px 0 15px rgba(255,170,0,0.1);
+}
+.portal-text { font-size:0.9rem; font-weight:500; }
+.portal-badge { font-size:0.75rem; background:rgba(255,255,255,0.1); color:#a0aabf; padding:4px 10px; border-radius:6px; letter-spacing:0.5px; }
+.portal-badge.badge-backend { background:rgba(0,210,255,0.15); color:#00d2ff; border:1px solid rgba(0,210,255,0.3); }
+.portal-badge.badge-latest { background:rgba(255,85,85,0.15); color:#ff5555; border:1px solid rgba(255,85,85,0.3); }
+
+
+/* ===== AVATAR AI HYPER-FUTURISTA ===== */
+.mq-character {
+    position:relative; width:100px; height:100px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; margin-bottom:40px;
+    animation:float-glitch 4s ease-in-out infinite;
+    filter:drop-shadow(0 0 15px rgba(0,212,255,0.4)) drop-shadow(0 0 5px rgba(250,204,21,0.2));
+    z-index:10;
+}
+@keyframes float-glitch {
+    0%,100%{transform:translateY(0) rotate(0);opacity:1;}
+    45%{transform:translateY(-8px) rotate(2deg);opacity:1;}
+    48%{transform:translateY(-8px) rotate(-1deg);opacity:0.8;}
+    50%{transform:translateY(-8px) rotate(0.5deg);opacity:1;}
+    90%{transform:translateY(2px) rotate(-1deg);opacity:1;}
+}
+.mq-ears{position:absolute;top:2px;width:60px;display:flex;justify-content:space-between;z-index:4;}
+.ear{width:18px;height:20px;background:linear-gradient(135deg,var(--mq-metal-dark),#0d0d10);border:1.5px solid rgba(250,204,21,0.5);clip-path:polygon(0% 100%,50% 0%,100% 100%);box-shadow:0 0 10px rgba(250,204,21,0.3);}
+.ear.left{transform:rotate(-15deg);}.ear.right{transform:rotate(15deg);}
+.mq-head{width:56px;height:46px;border-radius:8px;background:radial-gradient(circle at center,var(--mq-gold),var(--mq-gold-dim) 70%,#806000);position:relative;z-index:3;border:2px solid rgba(250,204,21,0.2);clip-path:polygon(10% 0%,90% 0%,100% 70%,80% 100%,20% 100%,0% 70%);box-shadow:inset 0 0 15px rgba(0,0,0,0.5),0 0 20px rgba(250,204,21,0.5);}
+.mq-visor{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:46px;height:16px;background:var(--mq-cyan-dark);border-radius:2px;border:2px solid var(--mq-cyan);box-shadow:0 0 15px var(--mq-cyan),inset 0 0 5px rgba(0,212,255,0.5);overflow:hidden;}
+.mq-visor::before{content:"101011001010110";position:absolute;font-family:'Orbitron',monospace;font-size:8px;color:var(--mq-cyan);white-space:nowrap;opacity:0.7;animation:dataFlow 5s linear infinite;}
+@keyframes dataFlow{0%{transform:translateX(100%);}100%{transform:translateX(-100%);}}
+.mq-mouth{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:16px;height:12px;background:#111116;border:1.5px solid var(--mq-cyan);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);box-shadow:inset 0 0 5px var(--mq-cyan);}
+.mq-whiskers{position:absolute;display:flex;flex-direction:column;gap:5px;top:18px;}
+.mq-whiskers.left{left:-12px;align-items:flex-end;}.mq-whiskers.right{right:-12px;align-items:flex-start;}
+.mq-whiskers span{display:block;height:2px;background:var(--mq-cyan);border-radius:1px;box-shadow:0 0 8px var(--mq-cyan);animation:whiskerFlicker 3s infinite;}
+@keyframes whiskerFlicker{0%,100%{opacity:1;}4%{opacity:0.6;}8%{opacity:1;}12%{opacity:0.8;}16%{opacity:1;}}
+.mq-body{width:44px;height:30px;margin-top:-4px;background:linear-gradient(145deg,rgba(0,162,255,0.2),rgba(0,212,255,0.5));z-index:2;border:1.5px solid var(--mq-cyan);box-shadow:0 0 20px rgba(0,242,255,0.4),inset 0 0 10px rgba(0,242,255,0.3);clip-path:polygon(20% 0%,80% 0%,100% 100%,0% 100%);position:relative;overflow:hidden;}
+.mq-feet{display:flex;gap:10px;margin-top:-4px;z-index:1;}
+.foot{width:18px;height:12px;background:linear-gradient(135deg,var(--mq-red),var(--mq-red-dark));border:1.5px solid rgba(255,0,85,0.5);border-radius:1px 1px 4px 4px;clip-path:polygon(0% 0%,100% 0%,80% 100%,20% 100%);box-shadow:0 0 15px rgba(255,0,85,0.4);position:relative;}
+
+
+/* ===== BOTONES COLOMBIA PREMIUM ===== */
+.mb-12 {
+    width:100%;
+    max-width:600px;
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+    padding:2rem;
+    z-index:3;
+}
+.mq-title-colombia {
+    font-family:'Orbitron',sans-serif;
+    font-size:1.5rem;
+    font-weight:700;
+    margin-bottom:1rem;
+    color:#fff;
+    text-align:center;
+    text-shadow:0 0 10px #ffd700, 0 0 25px rgba(255,215,0,.4);
+}
+.mq-btn-access {
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:18px 26px;
+    border-radius:18px;
+    text-decoration:none;
+    font-weight:700;
+    letter-spacing:1px;
+    overflow:hidden;
+    backdrop-filter:blur(10px);
+    transition:.35s ease;
+    transform-style:preserve-3d;
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 10px 25px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);
+    font-family:'Orbitron',sans-serif;
+    font-size:0.9rem;
+}
+.mq-btn-access::before {
+    content:"";
+    position:absolute;
+    top:0;
+    left:-120%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,.25), transparent);
+    transition:.7s;
+}
+.mq-btn-access:hover::before { left:120%; }
+.mq-btn-access:hover { transform:translateY(-6px) scale(1.02); }
+.mq-icon { font-size:1.2rem; width:20px; text-align:center; }
+
+.mq-btn-yellow {
+    color:#ffd700;
+    background:linear-gradient(145deg, rgba(255,215,0,.15), rgba(255,193,7,.05));
+    border-color:rgba(255,215,0,.4);
+    box-shadow:0 0 25px rgba(255,215,0,.18), inset 0 0 20px rgba(255,215,0,.05);
+}
+.mq-btn-yellow:hover { box-shadow:0 0 40px rgba(255,215,0,.45); }
+
+.mq-btn-blue {
+    color:#3ea6ff;
+    background:linear-gradient(145deg, rgba(0,123,255,.18), rgba(0,80,200,.05));
+    border-color:rgba(0,123,255,.4);
+    box-shadow:0 0 25px rgba(0,123,255,.18), inset 0 0 20px rgba(0,123,255,.05);
+}
+.mq-btn-blue:hover { box-shadow:0 0 40px rgba(0,123,255,.45); }
+
+.mq-btn-red {
+    color:#ff4d4d;
+    background:linear-gradient(145deg, rgba(255,0,0,.18), rgba(180,0,0,.05));
+    border-color:rgba(255,0,0,.4);
+    box-shadow:0 0 25px rgba(255,0,0,.18), inset 0 0 20px rgba(255,0,0,.05);
+}
+.mq-btn-red:hover { box-shadow:0 0 40px rgba(255,0,0,.45); }
+
+.mq-btn-colombia {
+    color:#fff;
+    background:linear-gradient(135deg, rgba(255,215,0,.22), rgba(0,123,255,.18), rgba(255,0,0,.18));
+    border-color:rgba(255,255,255,.15);
+    box-shadow:0 0 35px rgba(255,255,255,.12), inset 0 0 25px rgba(255,255,255,.05);
+}
+.mq-btn-colombia:hover { box-shadow:0 0 50px rgba(255,255,255,.28); }
+
+@media (max-width:768px){
+    .command-center{padding:30px 20px;border-radius:25px;}
+    .command-header h2{font-size:1.6rem;}
+    .mq-character{width:80px;height:80px;margin-bottom:30px;}
+    .mq-ears{width:48px;top:2px;}.ear{width:14px;height:16px;}
+    .mq-head{width:46px;height:38px;}.mq-visor{width:38px;height:14px;}
+    .mq-mouth{width:14px;height:10px;}.mq-whiskers{top:14px;gap:4px;}
+    .mq-whiskers.left{left:-9px;}.mq-whiskers.right{right:-9px;}
+    .mq-body{width:36px;height:26px;}.mq-feet{gap:8px;}.foot{width:16px;height:10px;}
+    .mq-title-colombia{font-size:1.2rem;}
+    .mq-btn-access{padding:15px 20px;font-size:0.8rem;}
+}
+
+
+.c-box { color:#f43f5e; }
+
+
+:root{
+  --accent:#facc15; --bg-main:#0b1220; --text-main:#f4ff23;
+  --mq-gold:#facc15; --mq-cyan:#00d4ff; --mq-red:#ff4d4d;
+  --tech-gold:#facc15; --tech-glow:rgba(250,204,21,.4);
+}
+html,body{background:#000;color:var(--text-main);font-family:'Poppins',system-ui,sans-serif;overflow-x:hidden}
+
+/* Chat */
+.mq-chat-trigger{position:fixed;bottom:20px;right:20px;cursor:pointer;z-index:1000;transition:transform.3s}
+.mq-chat-trigger:hover{transform:scale(1.1)}
+.avatar-glow{width:60px;height:60px;border-radius:50%;border:2px solid #eab308;box-shadow:0 0 15px rgba(234,179,8,.4);object-fit:cover}
+.mq-chat-trigger::after{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid #eab308;animation:pulse 2s infinite}
+
+
+.mq-chat{display:none;position:fixed;bottom:90px;right:20px;width:320px;max-height:450px;background:#09090b;border:1px solid #27272a;border-radius:15px;flex-direction:column;z-index:1000;box-shadow:0 10px 25px rgba(0,0,0,.5)}
+.mq-chat-header{padding:12px 16px;border-bottom:1px solid #27272a;display:flex;justify-content:space-between;align-items:center}
+.mq-chat-body{flex:1;overflow-y:auto;padding:12px;font-size:.9rem}
+.mq-chat-input{display:flex;gap:8px;padding:12px;border-top:1px solid #27272a}
+.mq-chat-input input{flex:1;background:#151517;border:1px solid #27272a;border-radius:8px;padding:8px 10px;color:#fff}
+.mq-chat-input button{background:var(--mq-gold);border:none;padding:8px 15px;border-radius:10px;font-weight:bold;cursor:pointer}
+.msg-user{text-align:right;color:#facc15;margin:5px 0;font-weight:600;white-space:pre-line}
+.msg-bot{text-align:left;color:#e4e4e7;margin:5px 0;white-space:pre-line}
+
+/* Lightbox */
+#lightbox.hidden{display:none}
+#lightbox.flex{display:flex}
+
+</style>
+<script>
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  document.body.style.background = document.documentElement.classList.contains('light') ? '#f5f5f5' : '#000';
+  document.body.style.color = document.documentElement.classList.contains('light') ? '#000' : '#fff';
+}
+</script>
+</head>
+<body class="bg-black text-white">
+<button class="toggle-theme" onclick="toggleTheme()" style="position:fixed; top:20px; right:20px; z-index:9999; background:rgba(0,255,102,.1); border:1px solid rgba(0,255,102,.3); padding:10px 16px; border-radius:12px; font-weight:700; backdrop-filter:blur(6px);">🧪 MaxiTema</button>
+
+<!-- HERO / CONTENIDO... pega aquí todas tus secciones -->
+
+<style>
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+</style>
+
+<script>
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  document.body.style.background = document.documentElement.classList.contains('light') ? '#f5f5f5' : '#000';
+  document.body.style.color = document.documentElement.classList.contains('light') ? '#000' : '#fff';
+}
+</script>
+
+<style>
+/* =====================
+   VARIABLES / TEMAS
+===================== */
+:root {
+  --accent:#facc15;
+  --bg-main:#0b1220;
+  --text-main:#f4ff23;
+  --card-bg:#151517;
+  --border-soft:#34ff19;
+  --btn-bg:#facc15;
+  --btn-text:#6e3838;
+  --bg-soft:rgba(4, 9, 19, 0.45);
+}
+
+[data-theme="light"] {
+  --accent:#22e670;
+  --bg-main:#0c2f76;
+  --text-main:#0cff07;
+  --card-bg:#000000;
+  --border-soft:#a7ff03;
+  --btn-bg:#ef8300;
+  --btn-text:#690707;
+  --bg-soft:rgb(9, 9, 67);
+}
+
+html,body{
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 251, 16, 0.174), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(8, 43, 117, 0.08), transparent 40%),
+    linear-gradient(180deg, #282f3dc2 15%, #020a2b85 100%);
+  color:var(--text-main)!important;
+  font-family:'Poppins',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  overflow-x:hidden;
+  transition:background .35s,color .35s;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ESTO FUERZA AL BOTÓN AMARILLO A SER AMPLIO Y BONITO */
+    .mp-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Seleccionamos el botón que genera el script automáticamente */
+    .mercadopago-button {
+      width: 100% !important;    /* Lo hace ancho total */
+      max-width: 350px;          /* O la medida que prefieras */
+      height: 48px !important;    /* Lo hace más robusto */
+      font-size: 16px !important;
+      font-weight: 600 !important;
+      border-radius: 12px !important; /* Para que combine con tus bordes 3xl */
+      transition: transform 0.2s ease;
+    }
+
+    .mercadopago-button:hover {
+      transform: scale(1.02); /* Efecto visual al pasar el mouse */
+    }
+
+    /* Asegúrate de tener este CSS básico para que se vean */
+    .mq-icon-wrapper {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 12px;
+      transition: 0.3s;
+    }
+    .mq-icon-wrapper img {
+      width: 100%;
+      height: auto;
+    }
+    .mq-social-link:hover .mq-icon-wrapper {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-5px);
+    }
+
+/* =====================
+   ANIMACIONES
+===================== */
+@keyframes floatInfinite{
+  0%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+  25%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  50%{transform:translate3d(0,-4px,0) rotateX(-1deg) rotateY(1deg);}
+  75%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+}
+
+@keyframes bounce-slow{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-14px);}
+}
+.animate-bounce-slow{animation:bounce-slow 3.2s ease-in-out infinite;}
+
+@keyframes pulse-slow{
+  0%,100%{opacity:.18;}
+  50%{opacity:.35;}
+}
+.animate-pulse-slow{animation:pulse-slow 6s ease-in-out infinite;}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
+}
+
+/* =====================
+   ANIMACIONES
+===================== */
+@keyframes floatInfinite{
+  0%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+  25%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  50%{transform:translate3d(0,-4px,0) rotateX(-1deg) rotateY(1deg);}
+  75%{transform:translate3d(0,6px,0) rotateX(1deg) rotateY(-1deg);}
+  100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(0deg);}
+}
+
+@keyframes bounce-slow{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-14px);}
+}
+.animate-bounce-slow{animation:bounce-slow 3.2s ease-in-out infinite;}
+
+@keyframes pulse-slow{
+  0%,100%{opacity:.18;}
+  50%{opacity:.35;}
+}
+.animate-pulse-slow{animation:pulse-slow 6s ease-in-out infinite;}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
+}
+
+/* =====================
+   HERO / LOGO
+===================== */
+.hero-avatar{
+  position:relative;
+  animation:floatInfinite 7s ease-in-out infinite;
+}
+.hero-avatar::after{
+  content:'';
+  position:absolute;
+  inset:-14px;
+  border-radius:9999px;
+  background:conic-gradient(from 0deg,#f43f5e,#f59e0b,#facc15,#22c55e,#38bdf8,#a855f7,#f43f5e);
+  filter:blur(20px);
+  opacity:.75;
+  z-index:-1;
+}
+
+/* =====================
+   GALERÍA
+===================== */
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:1.5rem;
+}
+.gallery img{
+  width:100%;
+  border-radius:1.5rem;
+  object-fit:cover;
+  transition:.35s cubic-bezier(.4,0,.2,1);
+}
+.gallery img:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 40px rgba(250,204,21,.35);
+}
+
+/* =====================
+   WHATSAPP FLOAT
+===================== */
+.whatsapp-float{
+  position:fixed;
+  bottom:22px;
+  left:22px;
+  background:#25D366;
+  color:white;
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 10px 28px rgba(0,0,0,.35);
+  z-index:1000;
+  transition:.25s cubic-bezier(.4,0,.2,1);
+}
+.whatsapp-float:hover{transform:scale(1.12);}
+
+/* =====================
+   TOGGLE TEMA
+===================== */
+.toggle-theme{
+  position:fixed;
+  top:18px;
+  right:18px;
+  background:var(--bg-soft);
+  border:1px solid rgba(64,255,255,.12);
+  padding:7px 16px;
+  border-radius:999px;
+  font-size:.8rem;
+  cursor:pointer;
+  z-index:1000;
+  backdrop-filter:blur(10px);
+  transition:.25s;
+}
+.toggle-theme:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+/* ===================== CHAT ====================== */
+.mq-chat{
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  width:360px;
+  max-height:520px;
+  display:flex;
+  flex-direction:column;
+  border-radius:22px;
+  overflow:hidden;
+  backdrop-filter:blur(25px);
+  background:linear-gradient(
+    145deg,
+    rgba(28, 28, 42, 0.9),
+    rgba(15,15,20,0.8)
+  );
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.6),
+    0 0 40px rgba(250,204,21,.15);
+  z-index:9999;
+}
+
+.mq-chat-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 16px;
+  font-weight:600;
+  background:rgba(255,255,255,0.03);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.mq-chat-controls button{
+  background:none;
+  border:none;
+  color:#ccc;
+  font-size:14px;
+  margin-left:8px;
+  cursor:pointer;
+}
+
+.mq-chat-controls button:hover{
+  color:#41c0eb;
+}
+
+.mq-chat-body{
+  flex:1;
+  padding:14px;
+  overflow-y:auto;
+  font-size:14px;
+}
+
+.mq-chat-input{
+  display:flex;
+  padding:12px;
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+
+.mq-chat-input input{
+  flex:1;
+  padding:8px 10px;
+  border-radius:8px;
+  border:none;
+  background:rgba(255,255,255,0.05);
+  color:#fff;
+}
+
+.mq-chat-input button{
+  margin-left:8px;
+  padding:8px 14px;
+  border-radius:8px;
+  border:none;
+  background:#4afa15;
+  color:#000;
+  font-weight:600;
+  cursor:pointer;
+}
+.chat-input button:hover{filter:brightness(1.1);}
+
+.social-icon{width:20px;height:20px;object-fit:contain;display:inline-block}
+/* =====================
+   LICENCIA BOX
+===================== */
+.mq-license-box{
+  max-width:820px;
+  margin:5rem auto 6rem;
+  padding:2.5rem 2.2rem;
+  border-radius:1.75rem;
+  background:var(--bg-soft);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.08);
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.mq-license-box h3{
+  font-size:1.6rem;
+  font-weight:800;
+  margin-bottom:1rem;
+}
+.mq-license-box p{margin-bottom:1rem;color:#d1d5db}
+.mq-license-box ul{
+  text-align:left;
+  max-width:420px;
+  margin:1.25rem auto 1.5rem;
+  color:#e5e7eb;
+}
+.mq-license-box li{margin-bottom:.4rem;}
+.mq-license-check{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  margin-bottom:1rem;
+}
+.mq-license-box button{
+  padding:.7rem 1.6rem;
+  border-radius:999px;
+  background:var(--accent);
+  color:#120834;
+  font-weight:700;
+  transition:.2s;
+}
+.mq-license-box button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+.mq-license-box button:not(:disabled):hover{
+  transform:translateY(-1px);
+  filter:brightness(1.05);
+  box-shadow:0 10px 24px rgba(250,204,21,.35);
+}
+
+   /* Estilo del Certificado Google MaxiQueen OS */
+.cert-google {
+  display: inline-block;
+  padding: 12px 20px;
+  margin: 15px 0;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  color: white !important;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  
+  /* Gradiente oficial de Google con tu toque MQ_OS */
+  background: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
+  background-size: 200% auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cert-google:hover {
+  background-position: right center;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(66, 133, 244, 0.4);
+}
+
+.cert-google::before {
+  content: '🏆'; /* Icono de trofeo antes del texto */
+  margin-right: 8px;
+}
+
+   /* Estilo dinámico para el Chat */
+.mq-chat {
+  /* ... otros estilos ... */
+  border: 2px solid var(--accent); /* El borde cambiará de amarillo a verde */
+  box-shadow: 0 0 20px var(--bg-soft);
+}
+
+.mq-chat-header {
+  background: var(--accent);
+  color: var(--btn-text); /* El texto del header se adapta para ser legible */
+}
+
+.msg-user {
+  color: var(--accent); /* Tus mensajes resaltan con el color activo */
+}
+
+   /* =========================
+   MAXIQUEEN ACCESS MODULE
+========================= */
+
+.mq-access-module{
+    padding:5rem 2rem;
+    text-align:center;
+    background:#050505;
+}
+
+.mq-title{
+    color:white;
+    margin-bottom:2rem;
+    font-size:2.2rem;
+}
+
+.mq-container-btn{
+    margin-bottom:4rem;
+}
+
+/* BOTON PRINCIPAL */
+
+.mq-boton-maestro{
+    position:relative;
+    display:inline-block;
+    background:linear-gradient(45deg,#1cf918,#f9e29d);
+    color:#000;
+    padding:20px 40px;
+    font-size:1.1rem;
+    font-weight:bold;
+    text-transform:uppercase;
+    text-decoration:none;
+    border-radius:50px;
+    letter-spacing:2px;
+    transition:.3s;
+    box-shadow:0 10px 20px rgba(212,175,55,.3);
+}
+
+.mq-boton-maestro:hover{
+    transform:translateY(-5px);
+    box-shadow:0 15px 30px rgba(212,175,55,.6);
+}
+
+.mq-boton-maestro::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:50px;
+    border:2px solid #3cd437;
+    animation:mqPulse 2s infinite;
+}
+
+@keyframes mqPulse{
+    0%{
+        transform:scale(1);
+        opacity:.8;
+    }
+
+    100%{
+        transform:scale(1.4);
+        opacity:0;
+    }
+}
+
+.mq-texto-ayuda{
+    display:block;
+    color:#888;
+    margin-top:1rem;
+}
+
+/* GRID */
+
+.mq-access-grid{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:1rem;
+}
+
+/* BOTONES */
+
+.mq-btn-access{
+    display:inline-flex;
+    align-items:center;
+    padding:15px 25px;
+    text-decoration:none;
+    font-weight:bold;
+    border-radius:12px;
+    transition:.4s;
+    border:2px solid transparent;
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+/* GOOGLE */
+
+.mq-btn-google{
+    color:#4285F4;
+    border-color:rgba(66,133,244,.3);
+    background:rgba(66,133,244,.05);
+}
+
+.mq-btn-google:hover{
+    background:#4285F4;
+    color:white;
+    box-shadow:0 0 25px #4285F4;
+}
+
+/* MODULES */
+
+.mq-btn-modules{
+    color:#39ff14;
+    border-color:rgba(57,255,20,.3);
+    background:rgba(57,255,20,.05);
+}
+
+.mq-btn-modules:hover{
+    background:#39ff14;
+    color:black;
+    box-shadow:0 0 25px #39ff14;
+}
+
+/* GAMES */
+
+.mq-btn-games{
+    color:#00d4ff;
+    border-color:rgba(0,212,255,.3);
+    background:rgba(0,212,255,.05);
+}
+
+.mq-btn-games:hover{
+    background:#00d4ff;
+    color:white;
+    box-shadow:0 0 25px #00d4ff;
+}
+
+/* PROFILE */
+
+.mq-btn-profile{
+    color:#00ff1e;
+    border-color:rgba(255,215,0,.3);
+    background:rgba(255,215,0,.05);
+}
+
+.mq-btn-profile:hover{
+    background:#09ff00;
+    color:black;
+    box-shadow:0 0 25px #3faf5b;
+}
+
+.mq-icon{
+    margin-right:10px;
+}
+
+/* =========================
+🌌 INFRAMUNDO MAXIQUEEN
+========================= */
+
+.mq-underworld-section{
+    position: relative;
+    padding: 5rem 1.5rem;
+    z-index: 2;
+}
+
+.mq-underworld-header{
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.mq-underworld-header h2{
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: .8rem;
+
+    text-shadow:
+    0 0 15px rgba(255,255,255,.15),
+    0 0 35px rgba(0,140,255,.25);
+}
+
+.mq-underworld-header p{
+    color: rgba(255,255,255,.65);
+    font-size: 1rem;
+    max-width: 700px;
+    margin: auto;
+    line-height: 1.6;
+}
+
+/* GRID */
+
+.mq-underworld-grid{
+    display: grid;
+
+    grid-template-columns:
+    repeat(auto-fit, minmax(170px, 1fr));
+
+    gap: 1.2rem;
+
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* CARD */
+
+.mq-mini-card{
+    position: relative;
+
+    overflow: hidden;
+
+    height: 170px;
+
+    border-radius: 1.4rem;
+
+    padding: 1.4rem;
+
+    text-decoration: none;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    background:
+    rgba(10,10,10,.72);
+
+    border:
+    1px solid rgba(255,255,255,.08);
+
+    backdrop-filter: blur(14px);
+
+    transition: .35s ease;
+
+    box-shadow:
+    0 10px 35px rgba(0,0,0,.45);
+}
+
+.mq-mini-card:hover{
+    transform:
+    translateY(-8px)
+    scale(1.03);
+
+    box-shadow:
+    0 15px 45px rgba(0,0,0,.6);
+}
+
+/* EFECTO */
+
+.mq-card-glow{
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    border-radius: 50%;
+
+    top: -70px;
+    right: -60px;
+
+    filter: blur(45px);
+
+    opacity: .18;
+}
+
+/* ICONO */
+
+.mq-icon-box{
+    width: 58px;
+    height: 58px;
+
+    border-radius: 1rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1.5rem;
+
+    background:
+    rgba(255,255,255,.05);
+
+    border:
+    1px solid rgba(255,255,255,.08);
+
+    color: white;
+
+    box-shadow:
+    inset 0 0 20px rgba(255,255,255,.05);
+}
+
+/* TEXTO */
+
+.mq-mini-card h3{
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.mq-mini-card span{
+    font-size: .82rem;
+    color: rgba(255,255,255,.55);
+}
+
+/* =========================
+🇨🇴 COLORES COLOMBIA
+========================= */
+
+.card-yellow{
+    border-color: rgba(255,215,0,.35);
+}
+
+.card-yellow .mq-card-glow{
+    background: #ffd000;
+}
+
+.card-yellow:hover{
+    box-shadow:
+    0 0 30px rgba(255,208,0,.2);
+}
+
+.card-blue{
+    border-color: rgba(0,140,255,.35);
+}
+
+.card-blue .mq-card-glow{
+    background: #007bff;
+}
+
+.card-blue:hover{
+    box-shadow:
+    0 0 30px rgba(0,123,255,.25);
+}
+
+.card-red{
+    border-color: rgba(255,0,60,.35);
+}
+
+.card-red .mq-card-glow{
+    background: #ff003c;
+}
+
+.card-red:hover{
+    box-shadow:
+    0 0 30px rgba(255,0,60,.25);
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .mq-underworld-grid{
+        grid-template-columns:
+        repeat(2,1fr);
+    }
+
+    .mq-mini-card{
+        height: 150px;
+    }
+
+}
+
+   
+</style>
+
+
+
+
+  
+<div class="container">
+
+
+<!-- ================= ESTILO REUTILIZABLE ================= -->
+<style>
+.card-link {
+  display: block;
+  padding: 1rem 1.2rem;
+  border-radius: 1rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #f4f4f5;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.card-link:hover {
+  transform: translateY(-4px);
+  border-color: rgba(57, 251, 36, 0.5);
+  background: rgba(255,255,255,0.06);
+}
+
+      
+</style>
+<!-- ================= TOGGLE DARK/LIGHT ================= -->
+
+
+
+   
+<!-- ================= HERO ULTRA-PRO MAXIQUEEN OS ================= -->
+<section class="relative min-h-screen flex items-center justify-center text-center px-6 overflow-hidden bg-black">
+
+  <!-- ================= FONDO DINÁMICO (VIDEO ANIMADO) ================= -->
+  <div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
+    <video src="https://res.cloudinary.com/maxiqueen-os1/video/upload/q_auto,f_auto/v1775273402/AQNVWIeLg7Gd6USeIi-k67wrV8SJm8fIhbwvcxrCyldnTQFv9n8OINm9quJpOcaI1KkuiMUwm6opl-vc4myPaI69RWdF9O3OcpZkEjj6Y3xvPgcOp7rNN1k3NI-GMdBq_dpqor9.mp4" 
+           autoplay loop muted playsinline 
+           class="w-full h-full object-cover opacity-20 scale-110" preload="none">
+    </video>
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,black_90%)]"></div>
+  </div>
+
+  <!-- Capa de Grilla Estética -->
+  <div class="absolute inset-0 bg-grid opacity-[0.05] pointer-events-none"></div>
+
+  <!-- ================= CONTENIDO INTEGRADO ================= -->
+  <div class="relative z-10 max-w-5xl flex flex-col items-center">
+
+    <!-- ============================================================
+     MAXIQUEEN CORE AVATAR - QUANTUM IDENTITY INTERFACE
+     ============================================================ -->
+<style>
+    :root {
+        --tech-gold: #15fa19;
+        --tech-glow: rgba(56, 148, 40, 0.4);
+        --tech-bg: #050507;
+    }
+
+    /* Contenedor Principal del Avatar */
+    .avatar-quantum-core {
+        position: relative;
+        width: 320px;
+        height: 320px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        perspective: 1000px;
+        margin-bottom: 4rem;
+    }
+
+    /* Anillo de Datos Externo (Hexagonal / Tecnológico) */
+    .data-ring-outer {
+        position: absolute;
+        inset: 0;
+        border: 1px solid var(--tech-glow);
+        border-radius: 50%;
+        animation: rotate-reverse 20s linear infinite;
+    }
+
+    .data-ring-outer::after {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: 50%;
+        width: 40px;
+        height: 4px;
+        background: var(--tech-gold);
+        box-shadow: 0 0 15px var(--tech-gold);
+    }
+
+    /* Escáner Perimetral */
+    .perimeter-scanner {
+        position: absolute;
+        width: 85%;
+        height: 85%;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        animation: pulse-ring 4s ease-in-out infinite;
+    }
+
+    /* Núcleo de Imagen/Video con Efecto Glitch */
+    .media-portal {
+        position: relative;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        padding: 8px;
+        background: conic-gradient(from 180deg at 50% 50%, var(--tech-gold) 0deg, transparent 90deg, var(--tech-gold) 180deg, transparent 270deg);
+        z-index: 10;
+        box-shadow: 0 0 40px rgba(0,0,0,0.8);
+    }
+
+    .media-portal-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        overflow: hidden;
+        background: #000;
+        border: 2px solid rgba(0,0,0,0.5);
+    }
+
+    .media-portal-inner video, 
+    .media-portal-inner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.3);
+        filter: contrast(1.1) brightness(1.1);
+        transition: transform 0.5s ease;
+    }
+
+    /* Capa de Información HUD */
+    .hud-layer {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 15;
+        background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, transparent 1px, transparent 2px);
+    }
+
+    /* Partículas de Datos */
+    .data-particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--tech-gold);
+        border-radius: 50%;
+        opacity: 0;
+        animation: float-particle 3s infinite linear;
+    }
+
+    /* Etiquetas de Estado */
+    .status-tag {
+        position: absolute;
+        background: rgba(0,0,0,0.9);
+        border: 1px solid var(--tech-gold);
+        color: var(--tech-gold);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 8px;
+        padding: 2px 8px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        white-space: nowrap;
+        z-index: 20;
+    }
+
+    .tag-top { top: 10%; right: -10%; }
+    .tag-bottom { bottom: 15%; left: -15%; }
+
+    /* Animaciones Clave */
+    @keyframes rotate-reverse {
+        from { transform: rotate(360deg); }
+        to { transform: rotate(0deg); }
+    }
+
+    @keyframes pulse-ring {
+        0%, 100% { transform: scale(1); opacity: 0.3; }
+        50% { transform: scale(1.1); opacity: 0.6; }
+    }
+
+    @keyframes float-particle {
+        0% { transform: translateY(0) scale(1); opacity: 0; }
+        50% { opacity: 1; }
+        100% { transform: translateY(-100px) scale(0); opacity: 0; }
+    }
+</style>
+
+
+<style>
+/* ===== ANIMACIONES QUANTUM ÚNICAS ===== */
+@keyframes rotate-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+@keyframes pulse-ring { 0%,100% { transform:scale(1); opacity:0.3; } 50% { transform:scale(1.1); opacity:0.6; } }
+@keyframes float-particle { 0% { transform:translateY(0) scale(1); opacity:0; } 50% { opacity:1; } 100% { transform:translateY(-100px) scale(0); opacity:0; } }
+@keyframes scan-vertical { 0% { transform:translateY(-100%); } 100% { transform:translateY(200%); } }
+
+/* ===== AVATAR QUANTUM CORE ===== */
+.avatar-quantum-core {
+    position:relative; width:320px; height:320px; display:flex; align-items:center; justify-content:center;
+    perspective:1000px; margin-bottom:4rem;
+}
+.data-ring-outer {
+    position:absolute; inset:0; border:1px solid var(--tech-glow); border-radius:50%;
+    animation:rotate-reverse 20s linear infinite;
+}
+.data-ring-outer::after {
+    content:''; position:absolute; top:-2px; left:50%; width:40px; height:4px;
+    background:var(--tech-gold); box-shadow:0 0 15px var(--tech-gold);
+}
+.perimeter-scanner {
+    position:absolute; width:85%; height:85%; border:1px solid rgba(255,255,255,0.05);
+    border-radius:50%; animation:pulse-ring 4s ease-in-out infinite;
+}
+.media-portal {
+    position:relative; width:220px; height:220px; border-radius:50%; padding:8px;
+    background:conic-gradient(from 180deg at 50% 50%, var(--tech-gold) 0deg, transparent 90deg, var(--tech-gold) 180deg, transparent 270deg);
+    z-index:10; box-shadow:0 0 40px rgba(0,0,0,0.8);
+}
+.media-portal-inner {
+    position:relative; width:100%; height:100%; border-radius:50%; overflow:hidden;
+    background:#000; border:2px solid rgba(0,0,0,0.5);
+}
+.media-portal-inner video,.media-portal-inner img {
+    width:100%; height:100%; object-fit:cover; transform:scale(1.3);
+    filter:contrast(1.1) brightness(1.1); transition:transform 0.5s ease;
+}
+.hud-layer {
+    position:absolute; inset:0; pointer-events:none; z-index:15;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, transparent 1px, transparent 2px);
+}
+.data-particle {
+    position:absolute; width:4px; height:4px; background:var(--tech-gold);
+    border-radius:50%; opacity:0; animation:float-particle 3s infinite linear;
+}
+.status-tag {
+    position:absolute; background:rgba(0,0,0,0.9); border:1px solid var(--tech-gold);
+    color:var(--tech-gold); font-family:'JetBrains Mono', monospace; font-size:8px;
+    padding:2px 8px; text-transform:uppercase; letter-spacing:2px; white-space:nowrap; z-index:20;
+}
+.tag-top { top:10%; right:-10%; }
+.tag-bottom { bottom:15%; left:-15%; }
+
+/* ===== TITULAR ===== */
+.text-glow-premium { filter:drop-shadow(0 0 15px rgba(251,191,36,0.3)); letter-spacing:-0.05em; }
+.tracking-elite { letter-spacing:0.5em; text-shadow:0 0 10px rgba(255,255,255,0.1); }
+
+/* ===== COMMAND CENTER ===== */
+:root {
+    --mq-gold:#15fa19; --mq-cyan:#00d4ff; --mq-green:#39ff14;
+    --mq-google:#4285F4; --mq-glass:rgba(15,15,20,0.85);
+}
+.mq-access-section {
+    min-height:100vh; background:#000; padding:60px 20px; position:relative;
+    overflow:hidden; font-family:'Poppins',sans-serif; display:flex; align-items:center; justify-content:center;
+}
+.hero-video-bg { position:absolute; inset:0; z-index:0; pointer-events:none; }
+.hero-video-bg video { width:100%; height:100%; object-fit:cover; opacity:0.25; filter:saturate(1.2); }
+.hero-video-bg::after { content:''; position:absolute; inset:0; background:radial-gradient(circle at center, transparent 20%, black 90%); }
+
+.command-center {
+    position:relative; z-index:10; max-width:1000px; width:100%; margin:0 auto;
+    backdrop-filter:blur(25px); background:rgba(15,15,20,0.6);
+    border:1px solid rgba(255,255,255,0.08); border-radius:50px; padding:60px 40px;
+    box-shadow:0 50px 100px rgba(0,0,0,0.9);
+}
+.hero-avatar { position:relative; margin-bottom:40px; display:inline-block; animation:floatInfinite 7s ease-in-out infinite; }
+.hero-avatar::after {
+    content:''; position:absolute; inset:-14px; border-radius:9999px;
+    background:conic-gradient(from 0deg,#f43f5e,#f59e0b,#facc15,#22c55e,#38bdf8,#a855f7,#f43f5e);
+    filter:blur(20px); opacity:.75; z-index:-1;
+}
+.avatar-video-wrapper {
+    width:160px; height:160px; border-radius:999px; background:#000; padding:3px;
+    border:1px solid rgba(250,204,21,0.4); overflow:hidden; box-shadow:0 0 40px rgba(250,204,21,0.3);
+}
+.avatar-video-wrapper video { width:100%; height:100%; object-fit:cover; border-radius:999px; transform:scale(1.25); }
+
+.command-header h1 {
+    font-size:clamp(2.5rem,8vw,4.5rem); font-weight:900; letter-spacing:-2px; line-height:1.1;
+    margin-bottom:10px; background:linear-gradient(to right,#2f821e,#11da11,#62da3b);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.system-subtitle { font-size:clamp(1rem,3vw,1.3rem); color:#e4e4e7; margin-bottom:30px; opacity:0.9; }
+
+.tech-tags { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:40px; }
+.tech-badge {
+    padding:5px 14px; border-radius:999px; background:rgba(24,24,27,0.8);
+    border:1px solid rgba(250,204,21,0.2); color:#37fa15; font-size:0.75rem; font-weight:600;
+}
+
+.impact-description {
+    max-width:800px; margin:0 auto 50px; padding:30px; border-left:2px solid var(--mq-gold);
+    background:linear-gradient(90deg, rgba(250,204,21,0.05) 0%, transparent 100%); text-align:left;
+}
+.impact-description p { color:#d4d4d8; font-size:1.15rem; line-height:1.6; margin-bottom:15px; }
+.highlight-gold { color:var(--mq-gold); font-weight:700; text-shadow:0 0 10px rgba(250,204,21,0.3); }
+
+.master-btn {
+    position:relative; padding:22px 50px; font-size:1.1rem; font-weight:800; color:#000;
+    background:var(--mq-gold); border-radius:20px; display:inline-block; text-decoration:none;
+    text-transform:uppercase; letter-spacing:2px; transition:0.4s;
+}
+.master-btn:hover { transform:translateY(-5px); box-shadow:0 20px 40px rgba(250,204,21,0.4); background:#fff; }
+
+.command-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px; margin-top:50px;
+}
+.module-card {
+    background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
+    padding:20px; border-radius:20px; text-decoration:none; color:#fff; transition:0.3s; text-align:center;
+}
+.module-card:hover { background:rgba(255,255,255,0.07); transform:translateY(-5px); }
+.module-card i { font-size:20px; margin-bottom:10px; display:block; }
+.module-card span { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+.c-google { color:var(--mq-google); }.c-mod { color:var(--mq-green); }
+.c-game { color:var(--mq-cyan); }.c-prof { color:var(--mq-gold); }
+
+@media (max-width:768px){
+   .command-center { padding:40px 20px; border-radius:30px; }
+   .avatar-video-wrapper { width:120px; height:120px; }
+   .impact-description { padding:20px; }
+}
+
+/* ===== VERSIONES BOX ===== */
+.mq-version-control-box {
+    background:linear-gradient(145deg, rgba(15,20,30,0.85) 0%, rgba(5,8,15,0.95) 100%);
+    border:1px solid rgba(255,170,0,0.2); border-radius:12px; padding:20px; margin:30px auto;
+    width:90%; max-width:600px; box-shadow:0 8px 32px rgba(0,0,0,0.6), inset 0 0 15px rgba(255,170,0,0.05);
+    backdrop-filter:blur(8px);
+}
+.mq-box-header { text-align:center; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:15px; }
+.mq-box-header h3 { color:#ffaa00; font-size:1.1rem; margin:0 0 5px 0; text-transform:uppercase; letter-spacing:2px; display:flex; align-items:center; justify-content:center; gap:8px; }
+.amber-dot { width:8px; height:8px; background-color:#ffaa00; border-radius:50%; box-shadow:0 0 8px #ffaa00; }
+.mq-box-header p { color:#7a8b9f; font-size:0.8rem; margin:0; letter-spacing:1px; }
+.mq-versions-grid { display:grid; grid-template-columns:1fr; gap:12px; }
+.btn-portal-galeria {
+    display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.08); padding:12px 18px; border-radius:8px; text-decoration:none;
+    color:#e0e6ed; transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.btn-portal-galeria:hover {
+    background:rgba(255,170,0,0.05); border-color:rgba(255,170,0,0.5);
+    transform:translateX(5px); box-shadow:-4px 0 15px rgba(255,170,0,0.1);
+}
+.portal-text { font-size:0.9rem; font-weight:500; }
+.portal-badge { font-size:0.75rem; background:rgba(255,255,255,0.1); color:#a0aabf; padding:4px 10px; border-radius:6px; letter-spacing:0.5px; }
+.portal-badge.badge-backend { background:rgba(0,210,255,0.15); color:#00d2ff; border:1px solid rgba(0,210,255,0.3); }
+.portal-badge.badge-latest { background:rgba(255,85,85,0.15); color:#ff5555; border:1px solid rgba(255,85,85,0.3); }
+</style>
+
+<div class="avatar-quantum-core">
+    <div class="data-ring-outer"></div>
+    <div class="perimeter-scanner"></div>
+    <div class="status-tag tag-top animate-pulse">Auth: Verified</div>
+    <div class="status-tag tag-bottom">Syncing_Nodes...</div>
+    <div class="data-particle" style="left:20%;animation-delay:0s;"></div>
+    <div class="data-particle" style="left:50%;animation-delay:1.5s;"></div>
+    <div class="data-particle" style="left:80%;animation-delay:0.7s;"></div>
+    <div class="media-portal">
+        <div class="media-portal-inner">
+            <div class="absolute inset-0 z-20 bg-gradient-to-b from-transparent via-yellow-500/10 to-transparent h-1/2 w-full animate-[scan-vertical_2s_linear_infinite]"></div>
+            <video src="https://res.cloudinary.com/maxiqueen-os1/video/upload/q_auto,f_auto/v1775273402/AQNVWIeLg7Gd6USeIi-k67wrV8SJm8fIhbwvcxrCyldnTQFv9n8OINm9quJpOcaI1KkuiMUwm6opl-vc4myPaI69RWdF9O3OcpZkEjj6Y3xvPgcOp7rNN1k3NI-GMdBq_dpqor9.mp4" autoplay loop muted playsinline preload="none"></video>
+            <div class="hud-layer"></div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center">
+  <h1 class="text-6xl md:text-9xl font-black leading-[0.85] mb-8 filter drop-shadow-[0_0_20px_rgba(34,197,94,0.4)]">
+     <span class="text-transparent bg-clip-text bg-gradient-to-b from-emerald-600 via-green-200 to-emerald-900 animate-pulse-slow">MAXIQUEEN</span>
+     <span class="text-transparent bg-clip-text bg-gradient-to-t from-green-900 via-emerald-500 to-white/90 animate-bounce-slow">OS</span>
+  </h1>
+</div>
+
+<div class="space-y-8 max-w-4xl text-center mx-auto">
+  <p class="text-emerald-50/80 text-xl md:text-3xl font-light leading-snug tracking-wide">
+    Arquitectura Digital <span class="text-green-400 font-bold drop-shadow-[0_0_10px_rgba(74,222,128,0.6)]">Incorruptible</span>.
+  </p>
+  <div class="flex items-center justify-center gap-4">
+    <div class="h- w-8 md:w-24 bg-gradient-to-r from-transparent via-green-900 to-transparent"></div>
+    <p class="text-green-500/60 text- md:text-xs uppercase tracking-[0.6em] font-black">Inteligencia Local • Élite Estratégica</p>
+    <div class="h- w-8 md:w-24 bg-gradient-to-l from-transparent via-green-900 to-transparent"></div>
+  </div>
+</div>
+
+<div class="media-portal-inner">
+  <video 
+    src="https://backend-maxi-queen-os.vercel.app/assets/logo_avatar2.mp4"
+    autoplay 
+    loop 
+    muted 
+    playsinline
+    preload="auto"
+    crossorigin="anonymous"
+    style="width:100%;height:100%;object-fit:cover;transform:scale(1.3)">
+  </video>
+  <div class="hud-layer"></div>
+</div>
+<!-- HERO / CONTENIDO... pega aquí todas tus secciones -->
+<div class="command-header">
+    <p class="text-green-400 font-mono text- tracking- mb-4 opacity-70">
+        [ SYSTEM STATUS ] MAXIQUEEN OS CORE ACTIVE
+    </p>
+    <p class="system-subtitle">Tu infraestructura digital de alto rendimiento</p>
+</div>
+
+<div class="tech-tags">
+    <span class="tech-badge">🐍 Python Core</span>
+    <span class="tech-badge">⚡ JavaScript Runtime</span>
+    <span class="tech-badge">🧠 AI Modules</span>
+    <span class="tech-badge">☁ Cloud Systems</span>
+    <span class="tech-badge">🔥 Interactive UI</span>
+</div>
+
+<div class="impact-description">
+    <p>
+        No es un software, es tu <span class="highlight-gold">Arquitectura de Poder</span>. MaxiQueen OS despliega una capa de inteligencia sobre tu caos operativo, transformando cada idea en un <span class="highlight-gold">activo autónomo</span> que factura mientras duermes.
+    </p>
+    <p class="text-sm opacity-60 italic">
+        Automatización de élite para humanos que lideran el futuro digital.
+    </p>
+</div>
+
+<div style="text-align:center; margin:20px 0;">
+    <a href="https://skillshop.credential.net/profile/cesarbedoyabarragan/wallet"
+       class="cert-google fade-in"
+       target="_blank"
+       rel="noopener noreferrer">
+       🎓 Ver mis certificaciones Google 💻
+    </a>
+
+</div>
+
+<div class="mt-8 pt-6 border-t border-white/10">
+    <p class="text-sm md:text-base text-zinc-400 uppercase tracking-[0.35em]">No agencia · No plantillas · No humo</p>
+    <p class="text-xs md:text-sm uppercase tracking-[0.3em] text-cyan-400 font-semibold">Solo sistemas digitales reales</p>
+</div>
+
+<div class="max-w-6xl mx-auto">
+    <div class="glass rounded-3xl border border-white/10 shadow-2xl px-8 py-10 text-center">
+        <p class="text-lg md:text-2xl text-zinc-200 font-medium">
+            Sistema desarrollado por
+            <strong class="text-white font-bold tracking-wide">César Julio Bedoya Barragán</strong>
+        </p>
+        <div class="mt-4">
+            <a href="https://orcid.org/0009-0004-4946-1374" target="_blank" rel="noopener"
+               class="inline-block text-amber-400 hover:text-rose-400 font-semibold tracking-wide transition duration-300">
+              ORCID · 0009-0004-4946-1374
+            </a>
+        </div>
+        <div class="mt-6">
+            <p class="text-sm md:text-base text-zinc-400 uppercase tracking-[0.25em]">
+              Arquitectura digital · Automatización · Expansión estratégica
+            </p>
+        </div>
+        <div class="mt-8 flex flex-wrap justify-center gap-6 text-sm md:text-base text-zinc-400">
+            <a href="privacidad.html" class="footer-link">Privacidad</a>
+            <a href="cookies.html" class="footer-link">Cookies</a>
+            <a href="terminos.html" class="footer-link">Términos</a>
+        </div>
+        <div class="mt-8 pt-6 border-t border-white/10">
+            <p class="text-xs md:text-sm uppercase tracking-[0.3em] text-cyan-400 font-semibold">
+              MAXIQUEEN OS · Sistema digital original
+            </p>
+
+        </div>
+    </div>
+</div>
+
+<!-- MASTER LINK -->
+
+
+
+    <div class="master-status">
+        <p>Status: <span class="live">Live & Operational</span></p>
+        <p class="muted">Encrypted connection to Cloud Nodes... Deployment ready</p>
+    </div>
+
+
+
+
+
+<!-- ARCHIVO DE VERSIONES -->
+<div class="mq-version-control-box">
+  <div class="command-center">
+ 
+    
+   <!-- AVATAR del Sistema -->
+
+   <div class="mq-character" aria-hidden="true">
+      <div class="mq-ears"><div class="ear left"></div><div class="ear right"></div></div>
+      <div class="mq-head">
+        <div class="mq-visor"></div>
+        <div class="mq-mouth"></div>
+        <div class="mq-whiskers left"><span></span><span></span></div>
+        <div class="mq-whiskers right"><span></span><span></span></div>
+      </div>
+      <div class="mq-body"></div>
+      <div class="mq-feet"><div class="foot"></div><div class="foot"></div></div>
+    </div>
+    <div class="scanline"></div>
+
+     <a href="https://maxiqueen-os-app.vercel.app" class="master-btn">
+        <span>⚡ PERFIL SUBAGENTES MAXIQUEEN_OS 🔥</span>
+        <div class="master-btn-shine"></div>
+    </a>
+  </div>
+
+  <div class="mq-box-header">
+    <h3><span class="amber-dot"></span> ARCHIVO DE VERSIONES</h3>
+    <p>Panel de módulos MAXIQUEEN OS</p>
+  </div>
+
+  <!-- GALERÍAS -->
+  <div class="mq-galerias">
+    <p class="mq-section-label">Galerías</p>
+    
+    <!-- HERO v5 ACTUAL -->
+
+    
+    <a href="galeriav5.html" class="mq-hero">
+      <div class="mq-hero-glow"></div>
+
+         <!-- AVATAR del Sistema -->
+
+   <div class="mq-character" aria-hidden="true">
+      <div class="mq-ears"><div class="ear left"></div><div class="ear right"></div></div>
+      <div class="mq-head">
+        <div class="mq-visor"></div>
+        <div class="mq-mouth"></div>
+        <div class="mq-whiskers left"><span></span><span></span></div>
+        <div class="mq-whiskers right"><span></span><span></span></div>
+      </div>
+      <div class="mq-body"></div>
+      <div class="mq-feet"><div class="foot"></div><div class="foot"></div></div>
+    </div>
+      <span class="mq-hero-badge">ACTUAL • v5</span>
+      <div class="mq-hero-content">
+        <span class="mq-hero-icon">◈</span>
+        <div>
+          <h4>MQ Galería – Activos Pro</h4>
+          <p>Catálogo completo con contadores</p>
+        </div>
+      </div>
+      <span class="mq-hero-cta">Abrir →</span>
+    </a>
+
+    <!-- LEGACY -->
+    <details class="mq-legacy">
+      <summary>Versiones anteriores <span>v2</span></summary>
+      <div class="mq-legacy-grid">
+        <a href="galeriav2.html" class="mq-legacy-card">
+          <strong>v2</strong>
+          <span>Cloudinary</span>
+          <small>CDN optimizado</small>
+        </a>
+        <a href="galeriav3.html" class="mq-legacy-card">
+          <strong>v3</strong>
+          <span>Backend</span>
+          <small>Gestión dinámica</small>
+        </a>
+      </div>
+    </details>
+  </div>
+
+  <!-- PLAY -->
+  <p class="mq-section-label">MQ Play</p>
+  <div class="mq-versions-grid">
+    <a href="PlayTorres2.html" class="btn-portal-galeria">
+      <span class="portal-icon">1▶</span>
+      <span class="portal-main">
+        <span class="portal-text">Avatar Neon Snake</span>
+        <span class="portal-sub">Juego estratégico</span>
+      </span>
+      <span class="portal-badge badge-play">Play</span>
+    </a>
+    <a href="PlayTorres3.html" class="btn-portal-galeria">
+      <span class="portal-icon">2▶</span>
+      <span class="portal-main">
+        <span class="portal-text">Snake v3</span>
+        <span class="portal-sub">Arcade clásico</span>
+      </span>
+      <span class="portal-badge badge-play">Play</span>
+    </a>
+    <a href="PlayTorres4.html" class="btn-portal-galeria">
+      <span class="portal-icon">3▶</span>
+      <span class="portal-main">
+        <span class="portal-text">Snake v4</span>
+        <span class="portal-sub">Arcade clásico</span>
+      </span>
+      <span class="portal-badge badge-play">Play</span>
+    </a>
+    <a href="PlayTorres5.html" class="btn-portal-galeria">
+      <span class="portal-icon">4▶</span>
+      <span class="portal-main">
+        <span class="portal-text">Snake v5</span>
+        <span class="portal-sub">Arcade clásico</span>
+      </span>
+      <span class="portal-badge badge-play">Play</span>
+    </a>
+  </div>
+
+  <!-- SISTEMAS -->
+  <p class="mq-section-label">Sistemas</p>
+  <div class="mq-versions-grid">
+    <a href="mqcore.html" class="btn-portal-galeria">
+      <span class="portal-icon">1◆</span>
+      <span class="portal-main">
+        <span class="portal-text">MQ Core</span>
+        <span class="portal-sub">Credenciales MAXIQUEEN OS</span>
+      </span>
+      <span class="portal-badge badge-core">v1</span>
+    </a>
+    <a href="ChatNeutral.html" class="btn-portal-galeria">
+      <span class="portal-icon">2◆</span>
+      <span class="portal-main">
+        <span class="portal-text">MQ Chat – Neutral</span>
+        <span class="portal-sub">Módulo conversacional Evolución</span>
+      </span>
+      <span class="portal-badge badge-core">Chat</span>
+    </a>
+  </div>
+</div>
+
+<style>
+:root {
+    --mq-gold: #facc15; 
+    --mq-gold-dim: #ca8a04;
+    --mq-cyan: #00d4ff; 
+    --mq-cyan-dark: #0369a1;
+    --mq-bg: #0b0b12; 
+    --mq-panel: rgba(11, 29, 171, 0.795);
+    --mq-border: rgba(255,255,255,0.1);
+    --mq-text: #e5e5e5; 
+    --mq-muted: #9ca3af;
+    --mq-metal-dark: #1414b7; 
+}
+
+/* MASTER LINK */
+.master-link-container{text-align:center;padding:3rem 1rem;background:#0a0a0a;color:#fff}
+.master-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;padding:1.25rem 2.5rem;font-weight:700;color:#fff;background:transparent;border:2px solid #fff;border-radius:9999px;overflow:hidden;text-decoration:none;box-shadow:0 0 30px rgba(255,255,255,.15);transition:.3s}
+.master-btn:hover{background:#fff;color:#000}
+.master-btn-shine{position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);transform:translateX(-100%);transition:transform 1s}
+.master-btn:hover .master-btn-shine{transform:translateX(100%)}
+.master-status{margin-top:2rem;font-family:ui-monospace,monospace;text-transform:uppercase;letter-spacing:.2em;font-size:.8rem;color:#a1a1aa}
+.master-status .live{color:#10b981}
+.master-status .muted{opacity:.6;letter-spacing:.15em;margin-top:.3rem}
+
+/* ===== CONTENEDOR CENTRAL ===== */
+.mq-version-control-box {
+    max-width: 960px; 
+    margin: 2rem auto; 
+    padding: 2rem;
+    background: var(--mq-bg);
+    color: var(--mq-text);
+    font-family: 'Inter', system-ui, sans-serif;
+    border-radius: 24px;
+    border: 1px solid var(--mq-border);
+}
+.mq-box-header h3{margin:.5rem 0;font-size:1.1rem;letter-spacing:.08em}
+.amber-dot{display:inline-block;width:8px;height:8px;background:var(--mq-gold);border-radius:50%;margin-right:6px;box-shadow:0 0 8px rgba(250,204,21,.4)}
+.mq-section-label{margin:2rem 0 .8rem;color:var(--mq-muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.15em}
+
+.command-center {
+    position: relative; 
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; 
+    padding: 2.5rem 1.5rem; 
+    overflow: hidden;
+}
+.scanline {
+    position: absolute; 
+    left: 0; right: 0; top: 50%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--mq-cyan), transparent);
+    opacity: .25;
+}
+
+/* ===== AVATAR ===== */
+.mq-character {
+    position: relative; width: 100px; height: 100px; 
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; 
+    margin-bottom: 30px;
+    animation: float-glitch 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 15px rgba(0,212,255,0.4)) drop-shadow(0 0 5px rgba(250,204,21,0.2));
+    z-index: 10;
+}
+@keyframes float-glitch {
+    0%, 100% { transform: translateY(0) rotate(0); opacity: 1; }
+    45% { transform: translateY(-8px) rotate(2deg); }
+    48% { transform: translateY(-8px) rotate(-1deg); opacity: 0.8; }
+    50% { transform: translateY(-8px) rotate(0.5deg); opacity: 1; }
+}
+.mq-ears { position: absolute; top: 2px; width: 60px; display: flex; justify-content: space-between; z-index: 4; }
+.ear { width: 18px; height: 20px; background: linear-gradient(135deg, var(--mq-metal-dark), #0d0d10); border: 1.5px solid rgba(250,204,21,0.5); clip-path: polygon(0% 100%, 50% 0%, 100% 100%); box-shadow: 0 0 10px rgba(250,204,21,0.3); }
+.ear.left { transform: rotate(-15deg); } .ear.right { transform: rotate(15deg); }
+.mq-head { width: 56px; height: 46px; border-radius: 8px; background: radial-gradient(circle at center, var(--mq-gold), var(--mq-gold-dim) 70%, #806000); position: relative; z-index: 3; border: 2px solid rgba(250,204,21,0.2); clip-path: polygon(10% 0%, 90% 0%, 100% 70%, 80% 100%, 20% 100%, 0% 70%); box-shadow: inset 0 0 15px rgba(0,0,0,0.5), 0 0 20px rgba(250,204,21,0.5); }
+.mq-visor { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 46px; height: 16px; background: var(--mq-cyan-dark); border-radius: 2px; border: 2px solid var(--mq-cyan); box-shadow: 0 0 15px var(--mq-cyan), inset 0 0 5px rgba(0,212,255,0.5); overflow: hidden; }
+.mq-visor::before { content: "101011001010110"; position: absolute; font-family: 'Orbitron', monospace; font-size: 8px; color: var(--mq-cyan); white-space: nowrap; opacity: 0.7; animation: dataFlow 5s linear infinite; }
+@keyframes dataFlow { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+.mq-mouth { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 16px; height: 12px; background: #111116; border: 1.5px solid var(--mq-cyan); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); box-shadow: inset 0 0 5px var(--mq-cyan); }
+.mq-whiskers { position: absolute; display: flex; flex-direction: column; gap: 5px; top: 18px; }
+.mq-whiskers.left { left: -12px; align-items: flex-end; } .mq-whiskers.right { right: -12px; align-items: flex-start; }
+.mq-whiskers span { display: block; height: 2px; background: var(--mq-cyan); border-radius: 1px; box-shadow: 0 0 8px var(--mq-cyan); animation: whiskerFlicker 3s infinite; }
+@keyframes whiskerFlicker { 0%,100%{opacity:1} 4%{opacity:.6} 8%{opacity:1} 12%{opacity:.8} 16%{opacity:1} }
+.mq-body { width: 44px; height: 30px; margin-top: -4px; background: linear-gradient(145deg, rgba(0,162,255,0.2), rgba(0,212,255,0.5)); z-index: 2; border: 1.5px solid var(--mq-cyan); box-shadow: 0 0 20px rgba(0,242,255,0.4), inset 0 0 10px rgba(0,242,255,0.3); clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); position: relative; overflow: hidden; }
+.mq-feet { display: flex; gap: 10px; margin-top: -4px; z-index: 1; }
+.foot { width: 18px; height: 12px; background: linear-gradient(135deg, #ff0055, #9f1239); border: 1.5px solid rgba(255,0,85,0.5); border-radius: 1px 1px 4px 4px; clip-path: polygon(0% 0%, 100% 0%, 80% 100%, 20% 100%); box-shadow: 0 0 15px rgba(255,0,85,0.4); }
+
+/* HERO GALERÍA */
+.mq-hero{position:relative;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 1.5rem;background:linear-gradient(135deg,#1a1a2a,#141420);border:1px solid rgba(250,204,21,.35);border-radius:18px;text-decoration:none;color:var(--mq-text);overflow:hidden;transition:.2s}
+.mq-hero:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.mq-hero-glow{position:absolute;top:-40%;right:-20%;width:200px;height:200px;background:radial-gradient(circle,rgba(250,204,21,.15),transparent 70%);pointer-events:none}
+.mq-hero-badge{position:absolute;top:12px;right:14px;font-size:.65rem;color:var(--mq-gold);letter-spacing:.1em}
+.mq-hero-content{display:flex;gap:1rem;align-items:center}
+.mq-hero-icon{font-size:1.8rem;color:var(--mq-gold)}
+.mq-hero-content h4{margin:0;font-size:1.05rem}
+.mq-hero-content p{margin:.2rem 0 0;color:var(--mq-muted);font-size:.85rem}
+.mq-hero-cta{color:var(--mq-gold);font-weight:600;white-space:nowrap}
+
+/* LEGACY */
+.mq-legacy{margin-top:.8rem;background:rgba(255,255,255,.03);border:1px solid var(--mq-border);border-radius:14px}
+.mq-legacy summary{padding:.8rem 1rem;cursor:pointer;color:var(--mq-muted);list-style:none}
+.mq-legacy summary span{float:right;opacity:.7}
+.mq-legacy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.7rem;padding:0 1rem 1rem}
+.mq-legacy-card{display:block;padding:.8rem;background:#0f0f1a;border:1px solid #222236;border-radius:12px;text-decoration:none;color:var(--mq-text)}
+.mq-legacy-card:hover{border-color:var(--mq-gold)}
+.mq-legacy-card strong{display:block;color:var(--mq-gold)}
+.mq-legacy-card span{font-size:.85rem}
+.mq-legacy-card small{display:block;color:var(--mq-muted);font-size:.75rem}
+
+/* GRID PLAY / SISTEMAS */
+.mq-versions-grid{display:grid;gap:.7rem}
+.btn-portal-galeria{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;background:rgba(255,255,255,.03);border:1px solid var(--mq-border);border-radius:14px;text-decoration:none;color:var(--mq-text);transition:.15s}
+.btn-portal-galeria:hover{border-color:#3a3a50}
+.portal-main{display:flex;flex-direction:column;flex:1;margin:0 .8rem}
+.portal-text{font-weight:600}
+.portal-sub{font-size:.8rem;color:var(--mq-muted)}
+.portal-badge{font-size:.7rem;padding:.25rem .5rem;background:#222236;border-radius:999px;color:var(--mq-muted)}
+
+@media (max-width: 768px) {
+  .mq-hero{flex-direction:column;align-items:flex-start;gap:.6rem}
+  .mq-hero-cta{align-self:flex-end}
+}
+</style>
+
+        <!-- AVATAR del Sistema -->
+
+   <div class="mq-character" aria-hidden="true">
+      <div class="mq-ears"><div class="ear left"></div><div class="ear right"></div></div>
+      <div class="mq-head">
+        <div class="mq-visor"></div>
+        <div class="mq-mouth"></div>
+        <div class="mq-whiskers left"><span></span><span></span></div>
+        <div class="mq-whiskers right"><span></span><span></span></div>
+      </div>
+      <div class="mq-body"></div>
+      <div class="mq-feet"><div class="foot"></div><div class="foot"></div></div>
+    </div>
+
+<a href="https://maxiqueen-os.vercel.app/galeriav5.html" class="mq-btn-access mq-btn-google"><span class="mq-icon">G</span>Soy tu Galeria Actual MAXIQUEEN OS</a>
+
+<div class="mb-12">
+    <h4 class="text-xl font-semibold text-white mb-4">🎮 Plays y Experiencias</h4>
+    <a href="play25.html" class="mq-btn-access mq-btn-google"><span class="mq-icon">G</span>Nave 1</a>
+    <a href="inspector MQ.html" class="mq-btn-access mq-btn-modules"><span class="mq-icon">💻</span>Inspector MQ 1</a>
+    <a href="play30.html" class="mq-btn-access mq-btn-games"><span class="mq-icon">🎮</span>Antenas de conexion 1</a>
+    <a href="playCarrito.html" class="mq-btn-access mq-btn-profile"><span class="mq-icon">👑</span>Play Carrito 1</a>
+    <a href="ventas2026.html" class="mq-btn-access mq-btn-profile"><span class="mq-icon">👑</span>Ventas 2026 1</a>
+</div>
+
+
+        <!-- Encabezados del Sistema -->
+        <div class="command-header">
+            <h2>MAXIQUEEN ACCESS COMMAND CENTER</h2>
+        </div>
+
+        <!-- Panel de Acceso Premium -->
+        <div class="mb-12">
+            <h3 class="mq-title-colombia">ACCESO PREMIUM COLOMBIA</h3>
+            <a href="ChatOS.html" class="mq-btn-access mq-btn-yellow"><i class="fas fa-key mq-icon"></i>SOLICITAR LLAVE ORO (AMARILLO)</a>
+            <a href="modulo.html" class="mq-btn-access mq-btn-blue"><i class="fas fa-server mq-icon"></i>CONEXIÓN NÚCLEO AZUL</a>
+            <a href="sudoku-play1.0.html" class="mq-btn-access mq-btn-red"><i class="fas fa-fire mq-icon"></i>PROTOCOLO EMERGENCIA ROJO</a>
+            <a href="ChatOS2.html" class="mq-btn-access mq-btn-colombia"><i class="fas fa-star mq-icon"></i>MAXIQUEEN COLOMBIA FULL ACCESS</a>
+            <a href="ventas2026.html" class="mq-btn-access mq-btn-colombia"><i class="fas fa-star mq-icon"></i>MAXIQUEEN COLOMBIA ADQUIERE TUS BENEFICIOS EXCLUSIVOS</a>
+        </div>
+
+<button id="upload_widget" class="cloudinary-button">Subir archivo Maxiqueen OS</button>
+<script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+<script type="text/javascript">
+  var myWidget = cloudinary.createUploadWidget({
+    cloudName: 'tu_cloud_name',
+    uploadPreset: 'tu_upload_preset',
+    singleUploadAutoClose: false
+  }, (error, result) => {
+    if (result && result.event === "success") {
+      console.log(result.info);
+    }
+  });
+  document.getElementById("upload_widget").addEventListener("click", function() {
+    myWidget.open();
+  });
+</script>
+</footer>
+
+
+<script>
+function openArcade(){
+    document.querySelector('.mq-arcade-button')?.style.setProperty('transform','scale(0.95)');
+    setTimeout(() => {
+        window.location.href = "https://play-maxi-queen-os.vercel.app";
+    }, 150);
+}
+</script>
+
+<style>
+.c-box { color:#f43f5e; }
+</style>
+
+<a href="index4000.html" class="module-card">
+    <i class="fas fa-microchip c-box"></i>
+    <span class="block text-white mb-1">The Black Box 4000</span>
+    <span class="opacity-50 text-">Docs • Versiones • Exp</span>
+</a>
+
+<div class="mb-12">
+  <h4 class="mq-title-colombia">🇨🇴 Ecosistema MaxiQueen Colombia</h4>
+
+  <a href="Activosindex.html" class="mq-btn-access mq-btn-yellow">
+      <span class="mq-icon">⭐</span>1. Play Activos
+  </a>
+
+  <a href="https://juegos-maxi-queen-os.vercel.app/cuadro-play1.html" target="_blank" class="mq-btn-access mq-btn-blue">
+      <span class="mq-icon">🌌</span>2. Modulos AI Premium
+  </a>
+
+  <a href="Primeras_paginas_azul.html" target="_blank" class="mq-btn-access mq-btn-red">
+      <span class="mq-icon">🔥</span>3. Paguinas Primerisas 0.1 MQ OS
+  </a>
+
+  <a href="Play5MQ.html" class="mq-btn-access mq-btn-colombia">
+      <span class="mq-icon">👑</span>4. 🇨🇴 Play 5
+  </a>
+
+  <a href="MaxiqueenIA.html" class="mq-btn-access mq-btn-colombia">
+      <span class="mq-icon">👑</span>5. 🇨🇴 Maxiqueen IA PMQ
+  </a>
+</div>
+
+
+   
+<section class="mq-underworld-section">
+    <div class="mq-underworld-header">
+        <h2>⚡ Inframundo MaxiQueen OS</h2>
+        <p>Ecosistema oculto de herramientas, juegos, IA y módulos premium.</p>
+    </div>
+
+    <div class="mq-underworld-grid">
+        <a href="https://nextjs-wiia.vercel.app" target="_blank" class="mq-mini-card card-yellow">
+            <div class="mq-card-glow"></div>
+            <div class="mq-icon-box">🤖</div>
+            <h3>5. Agente Maxiqueen OS</h3>
+            <span> Llama y Groq </span>
+        </a>
+
+        <a href="AgenteVentas.html" class="mq-mini-card card-blue">
+            <div class="mq-card-glow"></div>
+            <div class="mq-icon-box">☁</div>
+            <h3>6. Agente de Ventas/Framework</h3>
+            <span>Automation Core</span>
+        </a>
+
+        <a href="Reporte_Int_Tec_Mongo.pdf" class="mq-mini-card card-red">
+            <div class="mq-card-glow"></div>
+            <div class="mq-icon-box">🎮</div>
+            <h3>7. Informe Mongo</h3>
+            <span>Mongo Studio</span>
+        </a>
+
+        <a href="QueenTower.html" target="_blank" class="mq-mini-card card-yellow">
+            <div class="mq-card-glow"></div>
+            <div class="mq-icon-box">🧠</div>
+            <h3>8. Queen Tower</h3>
+            <span>External Tower</span>
+        </a>
+
+        <a href="NodesJuegosMQ.html" target="_blank" class="mq-mini-card card-blue">
+            <div class="mq-card-glow"></div>
+            <div class="mq-icon-box">💬</div>
+            <h3>9. MQ nodes</h3>
+            <span>Nodes MQ</span>
+        </a>
+
+        <a href="REGISTRO_SIC.pdf" target="_blank" class="mq-mini-card card-red">
+            <div class="mq-card-glow"></div>
+            <div class="mq-icon-box">👑</div>
+            <h3>10. Registro SIC</h3>
+            <span>Legal Identity</span>
+        </a>
+        
+    </div>
+</section>
+
+<div class="mt-16 opacity-20">
+    <video src="https://maxiqueen-os.vercel.app/assets/video-1065399399981889.mp4" autoplay loop muted playsinline class="h-5 mx-auto grayscale invert"></video>
+</div>
+
+<div class="command-center text-center">
+        <div class="command-header">
+            <p class="text-cyan-400 font-mono text- tracking- mb-2">ACCESS PROTOCOL V.2</p>
+            <h2>CENTRO DE MANDO OPERATIVO</h2>
+        </div>
+
+        <div class="master-link-container">
+            <a href="https://maxiqueen-ver.vercel.app" class="master-btn">
+                <div class="btn-halo"></div>
+                <i class="fas fa-crown mr-3"></i> ACCESO GALERÍA MQ
+            </a>
+            <p class="text-zinc-500 text-xs mt-6 font-mono tracking-widest">
+                <i class="fas fa-shield-alt mr-2 text-green-500"></i> CONEXIÓN SEGURA SSL-256 BITS
+            </p>
+        </div>
+
+        <div class="command-grid">
+            <a href="NeonRunner.html" target="_blank" class="module-card card-google">
+                <i class="fab fa-google"></i>
+                <span>Neon Runner 1</span>
+            </a>
+        </div>
+
+        <div class="mt-12 opacity-30">
+            <img src="https://maxiqueen-os.vercel.app/assets/MAXIQUEEN_LOGO.png" alt="MQ Line" class="h-20 mx-auto grayscale invert">
+        </div>
+    </div>
+
+<section class="py-28 px-6 fade-in relative overflow-hidden mq-os-section isolation-auto" id="os-ecosystem">
+  <div class="absolute inset-0 mq-system-bg z-0" aria-hidden="true">
+    <div class="absolute inset-0 mq-nebula-vibe opacity-60"></div>
+    <div class="absolute inset-0 mq-os-grid opacity-30"></div>
+  </div>
+
+  <div class="relative z-10 max-w-7xl mx-auto">
+    
+      <h2 class="text-5xl md:text-7xl font-extrabold text-white leading-tight tracking-tighter">
+        <span class="text-zinc-500 uppercase text-xs tracking-[0.5rem] block mb-4 font-mono">Transformación Digital Real</span>
+        <span class="relative inline-block">Del caos digital<span class="absolute -bottom-2 left-0 w-full h-1 bg-mq-red/50 blur-sm"></span></span>
+        <span class="block mt-4 text-transparent bg-clip-text bg-gradient-to-r from-mq-gold via-mq-red to-mq-gold mq-title-glow animate-pulse-slow">a la operación inteligente</span>
+      </h2>
+      <p class="mt-10 text-zinc-400 text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed font-light">
+        La mayoría tiene herramientas, contenido o ideas dispersas. Pocos construyen una <strong class="text-mq-cyan font-semibold drop-shadow-[0_0_15px_rgba(0,212,255,0.5)]">infraestructura real</strong> que convierta ese potencial en ingresos y expansión predecible.
+      </p>
+    </header>
+
+    <div class="grid md:grid-cols-2 gap-10 lg:gap-16 items-stretch">
+      <article class="mq-glass-card mq-os-problem-card group relative transition-all duration-500 hover:-translate-y-2">
+        <div class="absolute inset-0 rounded-3xl border border-mq-red/0 group-hover:border-mq-red/50 transition-colors duration-500" aria-hidden="true"></div>
+        <div class="relative z-10">
+          <div class="mb-12 flex items-center gap-5 border-b border-mq-red/10 pb-6">
+            <div>
+              <p class="text-sm uppercase tracking-[0.4em] text-mq-red font-semibold mb-1.5 font-mono">SISTEMA: ESTADO CRÍTICO</p>
+              <h3 class="text-4xl md:text-5xl font-bold text-white tracking-tight">El Caos <span class="text-mq-red/80">Operativo</span></h3>
+            </div>
+          </div>
+          <ul class="space-y-7 text-zinc-300 text-lg leading-relaxed font-light">
+            <li><strong class="text-white font-medium">Ideas sin estructura</strong> que mueren antes de convertirse en activos rentables.</li>
+            <li><strong class="text-white font-medium">Publicación constante</strong> de contenido desconectado de una estrategia de ventas real.</li>
+            <li><strong class="text-white font-medium">Automatización aislada</strong>, usando parches técnicos sin visión integral.</li>
+            <li><strong class="text-white font-medium">Herramientas fragmentadas</strong> que consumen tiempo en lugar de optimizarlo.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="mq-glass-card mq-os-solution-card group relative transition-all duration-500 hover:-translate-y-2">
+        <div class="absolute inset-0 rounded-3xl border border-mq-cyan/0 group-hover:border-mq-cyan/50 transition-colors duration-500" aria-hidden="true"></div>
+        <div class="relative z-10">
+          <div class="mb-12 flex items-center gap-5 border-b border-mq-cyan/10 pb-6">
+            <div>
+              <p class="text-sm uppercase tracking-[0.4em] text-mq-cyan font-semibold mb-1.5 font-mono">SISTEMA: ESTADO OPTIMIZADO</p>
+              <h3 class="text-4xl md:text-5xl font-bold text-white tracking-tight">MAXIQUEEN OS</h3>
+            </div>
+          </div>
+          <p class="text-zinc-100 text-2xl mb-10 leading-snug font-normal bg-mq-cyan/5 border border-mq-cyan/10 p-5 rounded-xl backdrop-blur-sm">
+            Diseñamos el <strong class="text-mq-cyan font-semibold">ecosistema digital</strong> que convierte tu creatividad en infraestructura de alto rendimiento.
+          </p>
+          <ul class="space-y-7 text-zinc-300 text-lg leading-relaxed font-light">
+            <li><strong class="text-white font-medium">Contenido Estratégico</strong> que posiciona tu autoridad y nutre a tu audiencia automáticamente.</li>
+            <li><strong class="text-white font-medium">Plataformas de Alto Valor</strong> optimizadas para convertir tráfico en clientes leales.</li>
+            <li><strong class="text-white font-medium">Sistemas Automatizados</strong> de venta y entrega que operan 24/7.</li>
+            <li><strong class="text-white font-medium">Procesos Escalables</strong> y medibles que evolucionan con tu negocio.</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+    <!-- ================= FIRMA DE COMANDO FINAL ================= -->
+    <footer class="mt-28 pt-12 border-t-2 border-dashed border-white/10 mq-os-footer font-mono">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+        <div class="space-y-2">
+          <p class="text-lg text-zinc-400 uppercase tracking-[0.4em] mq-footer-firma-text">
+            No más improvisación digital.
+          </p>
+          <p class="text-sm text-zinc-600 uppercase tracking-widest">>> Ecosistema_v1.0 // Maxiqueen_Protocol</p>
+        </div>
+        <div class="mq-os-final-command-wrapper bg-black/30 border border-mq-cyan/20 p-4 rounded-lg backdrop-blur-sm shadow-[inset_0_0_15px_rgba(0,212,255,0.1)]">
+          <p class="mq-os-final-command text-xl text-mq-cyan font-bold tracking-tight text-right">
+            Opera con inteligencia.<br>
+            Escala con estructura.<span class="mq-terminal-cursor animate-pulse text-white">_</span>
+          </p>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+</section>
+
+  <!-- ================= RECURSOS DE CONFIRMACION ================= -->
+  <section class="py-24 px-6 bg-black/30 fade-in">
+    <div class="max-w-5xl mx-auto text-center">
+      <h3 class="text-2xl font-bold mb-10">🔥 Crea Productos y Programa 🤖</h3>
+  <h2>🔥🤖                   FEED MAXIQUEEN OS                    🔥                                   🔥</h2>
+  <div id="feed"></div>
+
+
+      <ul class="space-y-4 text-zinc-300">
+        <li><a class="hover:text-amber-400 transition" href="AdmProCatalogo.html" target="_blank" rel="noopener">💻 Programacion de Productos MQ_OS</a></li>
+        <li><a class="hover:text-amber-400 transition" href="Catalogosencillo_naranja.html" target="_blank" rel="noopener">💻 Catalogo Sencillo MQ_OS</a></li>
+        <li><a class="hover:text-amber-400 transition" href="AdmProdAvanzado.html" target="_blank" rel="noopener">💻 Editor Avanzado Licencia MQ_OS</a></li>
+
+        
+  <!-- ================= LICENCIA ================= -->
+  <section class="mq-license-box fade-in">
+
+    <h3>Antes de entrar al sistema</h3>
+    <p>Este sistema funciona bajo principios humanos y estructurales:</p>
+
+    <ul class="mq-rules">
+      <li>Mantener criterio humano en decisiones críticas</li>
+      <li>Respetar el Método MaxiQueen OS</li>
+      <li>No usar automatización deshumanizada</li>
+    </ul>
+
+    <label class="mq-license-check">
+      <input type="checkbox" id="acceptMQ" />
+      Acepto la
+      <a href="/licencia-maxiqueenos.pdf" target="_blank" rel="noopener">Licencia MaxiQueen OS</a>
+      
+      </a>
+    </label>
+
+
+    <button id="continueMQ" disabled>
+      Entrar al sistema
+    </button>
+
+
+  <!-- ... toda tu sección de licencia ... -->
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const acceptMQ = document.getElementById('acceptMQ');
+  const continueMQ = document.getElementById('continueMQ');
+  if (acceptMQ && continueMQ) {
+    acceptMQ.addEventListener('change', () => {
+      continueMQ.disabled = !acceptMQ.checked;
+    });
+  }
+});
+</script>
+
+  </section>
+  
+  <!-- ================= SECCIÓN LEGAL Y LICENCIA ================= -->
+  <section class="py-12 px-6 border-t border-zinc-900 bg-black/50">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="inline-block p-1 mb-6 rounded-full bg-gradient-to-r from-zinc-800 to-zinc-700">
+        <span class="px-4 py-1 text-xs font-bold text-zinc-400 uppercase tracking-widest bg-black rounded-full">Apache License 2.0</span>
+      </div>
+      
+      <h2 class="text-3xl font-bold text-white mb-4">Licencia de Uso Profesional</h2>
+      
+      <div class="text-zinc-400 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
+        <p>
+          El núcleo de <span class="text-yellow-500 font-medium">MaxiQueen OS</span> es de código abierto. 
+          Eres libre de usar, modificar y distribuir el sistema base, incluso para fines comerciales.
+        </p>
+        <p class="mt-4 border-l-2 border-yellow-600 pl-4 italic text-zinc-500">
+          Nota: La identidad visual, branding y módulos premium (Suite Black & Gold) están protegidos y no se incluyen bajo esta licencia.
+        </p>
+      </div>
+    </div>
+
+  <!-- ================= SOPORTE Y PAGOS ================= -->
+  <section class="py-16 text-center">
+    <div class="relative glass inline-block px-12 py-10 rounded-[2rem] border border-yellow-500/10 shadow-2xl overflow-hidden group">
+      <!-- Efecto de luz interna -->
+      <div class="absolute -top-24 -left-24 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl group-hover:bg-yellow-500/20 transition-all"></div>
+      
+      <h3 class="text-2xl font-bold text-white mb-2">Asistente MQ</h3>
+      <p class="mb-8 text-zinc-400">Finaliza tu solicitud o consulta con soporte técnico.</p>
+
+      <!-- Avatar de Soporte Interactuable -->
+      <div id="soporte-maxiqueen-container" class="relative inline-block">
+        <div class="absolute inset-0 bg-yellow-400 rounded-full animate-ping opacity-20"></div>
+        <video src="https://maxiqueen-os.vercel.app/assets/video-1065399399981889.mp4" 
+            alt="Soporte MaxiQueen" 
+            id="avatar-soporte-action"
+            class="relative w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-zinc-900 shadow-2xl cursor-pointer hover:scale-110 hover:border-yellow-500 transition-all duration-300">
+      </div>
+
+      <div class="mt-8">
+        <span class="text-xs text-zinc-500 uppercase tracking-widest">Soporte 24/7 Activo</span>
+      </div>
+    </div>
+  </section>
+
+<!-- REDES MAXIQUEEN OS -->
+<div class="py-10">
+  <h4 class="text-xl font-bold text-white mb-8 text-center tracking-widest uppercase drop-shadow-[0_0_8px_rgba(0,195,255,0.5)]">
+    🌐 Ecosistema Digital
+  </h4>
+
+  <div class="flex flex-wrap justify-center gap-8 px-4">
+    <a href="https://www.instagram.com/maxiqueen_store" target="_blank" rel="noopener" class="mq-social-link group relative">
+      <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-pink-600 text- text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">Sisters Shop</span>
+      <div class="mq-icon-wrapper ring-2 ring-pink-500/50 group-hover:ring-pink-500 group-hover:shadow-[0_0_15px_#ec4899] transition-all">
+        <img src="https://cdn.simpleicons.org/instagram/E4405F" alt="Instagram Store" width="24" height="24">
+      </div>
+      <span class="mq-social-label text-pink-400">Store</span>
+    </a>
+
+    <a href="https://wa.me/573016625921" target="_blank" rel="noopener" class="mq-social-link group">
+      <div class="mq-icon-wrapper"><img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="WhatsApp" width="24" height="24"></div>
+      <span class="mq-social-label">WhatsApp</span>
+    </a>
+
+    <a href="https://www.youtube.com/@cesarbedoya2288" target="_blank" rel="noopener" class="mq-social-link group">
+      <div class="mq-icon-wrapper"><img src="https://cdn.simpleicons.org/youtube/FF0000" alt="YouTube" width="24" height="24"></div>
+      <span class="mq-social-label">YouTube</span>
+    </a>
+
+    <a href="https://www.tiktok.com/@cesarbedoya9" target="_blank" rel="noopener" class="mq-social-link group">
+      <div class="mq-icon-wrapper"><img src="https://cdn.simpleicons.org/tiktok/white" alt="TikTok" width="24" height="24"></div>
+      <span class="mq-social-label">TikTok</span>
+    </a>
+
+    <a href="https://www.facebook.com/MaxCJBB" target="_blank" rel="noopener" class="mq-social-link group">
+      <div class="mq-icon-wrapper"><img src="https://cdn.simpleicons.org/facebook/1877F2" alt="Facebook" width="24" height="24"></div>
+      <span class="mq-social-label">Facebook</span>
+    </a>
+
+    <a href="https://www.linkedin.com/in/c%C3%A9sar-julio-bedoya-barrag%C3%A1n-7a63a2206/" target="_blank" rel="noopener" class="mq-social-link group">
+      <div class="mq-icon-wrapper flex items-center justify-center">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0.774 0 1.729v20.542C0 23.226.792 24 1.771 24h20.451C23.2 24 24 23.226 24 22.271V1.729C24.774 23.2 0 22.225 0z"/></svg>
+      </div>
+      <span class="mq-social-label">LinkedIn</span>
+    </a>
+  </div>
+</div>
+
+<!-- MERCADO PAGO -->
+<section class="py-10 text-center">
+  <div class="glass inline-block px-10 py-8 rounded-3xl" style="max-width:450px;width:90%">
+    <h1 class="text-2xl font-bold mb-2">Pago seguro MAXIQUEEN OS</h1>
+    <p class="mb-6 text-zinc-100">Finaliza tu compra usando MercadoPago.</p>
+    <div class="mp-container">
+      <script src="https://www.mercadopago.com.co/integrations/v1/web-payment-checkout.js" data-preference-id="453634078-e7931b13-abe1-45f2-95db-398ab50f1db0" data-source="button"></script>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX ÚNICO -->
+<div id="lightbox" class="fixed inset-0 bg-black/95 hidden items-center justify-center z-[100] backdrop-blur-sm">
+  <button type="button" onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-4xl hover:text-yellow-500">✕</button>
+  <div id="lightboxContent" class="max-w-4xl max-h-[90vh] p-4"></div>
+</div>
+
+<style>
+:root{
+  --accent:#facc15; --bg-main:#0b1220; --text-main:#f4ff23;
+  --mq-gold:#facc15; --mq-cyan:#00d4ff; --mq-red:#ff4d4d;
+  --tech-gold:#facc15; --tech-glow:rgba(250,204,21,.4);
+}
+html,body{background:#000;color:var(--text-main);font-family:'Poppins',system-ui,sans-serif;overflow-x:hidden}
+
+/* Chat */
+.mq-chat-trigger{position:fixed;bottom:20px;right:20px;cursor:pointer;z-index:1000;transition:transform.3s}
+.mq-chat-trigger:hover{transform:scale(1.1)}
+.avatar-glow{width:60px;height:60px;border-radius:50%;border:2px solid #eab308;box-shadow:0 0 15px rgba(234,179,8,.4);object-fit:cover}
+.mq-chat-trigger::after{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid #eab308;animation:pulse 2s infinite}
+@keyframes pulse{0%{transform:scale(.8);opacity:.5}100%{transform:scale(1.3);opacity:0}}
+
+.mq-chat{display:none;position:fixed;bottom:90px;right:20px;width:320px;max-height:450px;background:#09090b;border:1px solid #27272a;border-radius:15px;flex-direction:column;z-index:1000;box-shadow:0 10px 25px rgba(0,0,0,.5)}
+.mq-chat-header{padding:12px 16px;border-bottom:1px solid #27272a;display:flex;justify-content:space-between;align-items:center}
+.mq-chat-body{flex:1;overflow-y:auto;padding:12px;font-size:.9rem}
+.mq-chat-input{display:flex;gap:8px;padding:12px;border-top:1px solid #27272a}
+.mq-chat-input input{flex:1;background:#151517;border:1px solid #27272a;border-radius:8px;padding:8px 10px;color:#fff}
+.mq-chat-input button{background:var(--mq-gold);border:none;padding:8px 15px;border-radius:10px;font-weight:bold;cursor:pointer}
+.msg-user{text-align:right;color:#facc15;margin:5px 0;font-weight:600;white-space:pre-line}
+.msg-bot{text-align:left;color:#e4e4e7;margin:5px 0;white-space:pre-line}
+
+/* Compresor */
+.mq-card{background:rgb(14, 159, 118);border:1px solid rgb(89, 114, 95);border-radius:16px;padding:20px;max-width:600px;margin:40px auto}
+.btn-neon.green{background:#22c55e;color:#000;padding:10px 16px;border-radius:10px;font-weight:700;display:inline-block}
+.btn-neon.green.hidden{display:none}
+
+/* Lightbox */
+#lightbox.hidden{display:none}
+#lightbox.flex{display:flex}
+</style>
+
+
+
+<!-- CHAT TRIGGER -->
+<div id="mq-chat-trigger" class="mq-chat-trigger" role="button" tabindex="0" aria-label="Abrir chat">
+  <video src="https://res.cloudinary.com/maxiqueen-os1/video/upload/q_auto,f_auto/v1775273402/AQNVWIeLg7Gd6USeIi-k67wrV8SJm8fIhbwvcxrCyldnTQFv9n8OINm9quJpOcaI1KkuiMUwm6opl-vc4myPaI69RWdF9O3OcpZkEjj6Y3xvPgcOp7rNN1k3NI-GMdBq_dpqor9.mp4" class="avatar-glow" autoplay loop muted playsinline preload="none"></video>
+</div>
+
+<!-- CHAT BOX -->
+<div class="mq-chat" id="chatBox">
+  <div class="mq-chat-header">
+    <span style="font-weight:bold">👑 MaxiQueen OS</span>
+    <button type="button" onclick="closeChat()" style="background:transparent;border:none;color:var(--mq-gold);font-size:18px;cursor:pointer">✕</button>
+  </div>
+  <div class="mq-chat-body" id="chatLog">
+    <div class="msg-bot">¡Hola! 👑 Soy el sistema MaxiQueen OS. ¿En qué punto estás ahora mismo?
+
+1⃣ Ideas
+2⃣ Bloqueo
+3⃣ Crecimiento</div>
+  </div>
+  <div class="mq-chat-input">
+    <input type="text" id="userInput" placeholder="Maxiqueen OS te atiende...">
+    <button type="button" id="sendBtn">Enviar</button>
+  </div>
+</div>
+
+<script>
+/* ========== LIGHTBOX ÚNICO ========== */
+const lightbox = document.getElementById('lightbox');
+const lightboxContent = document.getElementById('lightboxContent');
+function openLightbox(url){
+  if(!lightbox) return;
+  lightboxContent.innerHTML = `<div class="relative"><img src="${url}" class="max-w-full max-h-[90vh] rounded-2xl border-white/10"><button onclick="closeLightbox()" class="absolute top-2 right-2 bg-black/70 px-3 py-1 rounded-lg">✕</button></div>`;
+  lightbox.classList.remove('hidden'); lightbox.classList.add('flex');
+}
+function closeLightbox(){
+  lightbox.classList.add('hidden'); lightbox.classList.remove('flex');
+}
+lightbox?.addEventListener('click',e=>{ if(e.target===lightbox) closeLightbox(); });
+/* ========== AUDIO / VOZ - FIX MÓVIL ========== */
+const soundUrls = {
+  open:'https://cdn.pixabay.com/audio/2022/03/15/audio_133f675681.mp3',
+  send:'https://cdn.pixabay.com/audio/2022/03/19/audio_1040854695.mp3'
+};
+const audioOpen = new Audio(soundUrls.open);
+const audioSend = new Audio(soundUrls.send);
+audioOpen.preload='auto'; 
+audioSend.preload='auto';
+audioOpen.volume = 0.9; 
+audioSend.volume = 0.9;
+
+// Desbloqueo para iOS
+let audioUnlocked = false;
+function unlockAudio(){
+  if(audioUnlocked) return;
+  audioOpen.play().then(()=>{audioOpen.pause();audioOpen.currentTime=0}).catch(()=>{});
+  audioSend.play().then(()=>{audioSend.pause();audioSend.currentTime=0}).catch(()=>{});
+  audioUnlocked = true;
+}
+document.addEventListener('touchstart', unlockAudio, {once:true});
+document.addEventListener('click', unlockAudio, {once:true});
+
+function playSound(a){ 
+  try{ 
+    a.currentTime=0; 
+    const p = a.play(); 
+    if(p) p.catch(e=>console.log('Audio bloqueado:', e)); 
+  }catch(e){}
+}
+function speakText(t){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang='es-CO'; // cambié a Colombia, funciona mejor en tu cel
+  u.rate=0.95; 
+  u.pitch=1;
+  speechSynthesis.speak(u);
+}
+function toggleMute(){ 
+  audioSend.muted=!audioSend.muted; 
+  audioOpen.muted=!audioOpen.muted; 
+}
+document.getElementById('volumen')?.addEventListener('input',e=>{ 
+  audioSend.volume=e.target.value; 
+  audioOpen.volume=e.target.value; 
+});
+
+/* ========== CHAT CORE ========== */
+const chatBox = document.getElementById('chatBox');
+const chatLog = document.getElementById('chatLog');
+const input = document.getElementById('userInput');
+const chatTrigger = document.getElementById('mq-chat-trigger');
+const sendBtn = document.getElementById('sendBtn');
+
+let isOpen = false;
+let state = { flujo:null, etapa:null, nivelDetectado:null };
+
+function toggleChat(){
+  isOpen =!isOpen;
+  chatBox.style.display = isOpen? 'flex' : 'none';
+  if(isOpen){
+    playSound(audioOpen);
+    const welcome = chatLog.querySelector('.msg-bot');
+    if(welcome) speakText(welcome.innerText);
+    input.focus();
+  }
+}
+function closeChat(){ isOpen=false; chatBox.style.display='none'; }
+
+function appendMessage(text,sender){
+  const div=document.createElement('div');
+  div.className = sender==='user'? 'msg-user' : 'msg-bot';
+  div.textContent = text;
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+/* =========================
+   📦 RESPUESTAS BASE
+========================= */
+const triggers = {
+  sistema: {
+    quienSoy: `
+👑 ¿Quién soy?
+
+Soy MaxiQueen OS.
+No soy un bot tradicional.
+No soy un asistente automático frío.
+
+Soy un sistema conversacional diseñado para:
+✔ Ordenar ideas
+✔ Aclarar decisiones
+✔ Construir estructura
+✔ Acompañar procesos reales
+
+No reemplazo humanos.
+No doy respuestas vacías.
+No improviso.
+
+Funciono como:
+🧠 Guía
+🧭 Sistema de pensamiento
+🤝 Puente entre intención y estructura
+
+Si quieres, dime:
+👉 ¿Estás aquí más por claridad, por proyecto o por acompañamiento humano? 👀
+`,
+    queEs: `
+👑 ¿Qué es MaxiQueen OS?
+
+MaxiQueen OS es un sistema digital integral de:
+✔ Contenido
+✔ Estructura
+✔ Conversación
+✔ Automatización
+✔ Acompañamiento humano
+
+No es una herramienta.
+No es solo una web.
+No es solo un bot.
+
+Es un sistema que:
+✔ Piensa contigo
+✔ Te ordena por dentro
+✔ Te da dirección
+✔ Te ayuda a convertir intención en acción
+
+Si quieres, dime:
+👉 ¿Lo estás viendo más como ayuda personal, proyecto de negocio o crecimiento? 👀
+`,
+    comoFunciona: `
+👑 ¿Cómo funciona MaxiQueen OS?
+
+Funciona en capas:
+
+1️⃣ Conversación → te escucho
+2️⃣ Diagnóstico → entiendo tu situación
+3️⃣ Estructura → ordenamos ideas, proyecto o proceso
+4️⃣ Sistema → construimos algo estable
+5️⃣ Acompañamiento → no te dejo solo
+
+No es:
+❌ Automatización sin criterio
+❌ Contenido vacío
+❌ Respuestas rápidas sin profundidad
+
+Es:
+✔ Proceso
+✔ Sistema
+✔ Pensamiento estructurado
+
+Si quieres, dime:
+👉 ¿Te gustaría entenderlo más desde lo personal o desde lo técnico? 👀
+`,
+    diagnostico: `
+👑 ¿Qué es el diagnóstico en MaxiQueen OS?
+
+No es un test.
+No es un formulario.
+No es una etiqueta.
+
+Es una lectura real de:
+✔ Tu nivel actual
+✔ Tu estado mental
+✔ Tu etapa de proyecto
+✔ Tu tipo de bloqueo
+✔ Tu tipo de crecimiento
+
+Sirve para:
+✔ No venderte lo que no necesitas
+✔ No forzarte procesos incorrectos
+✔ No hacerte perder tiempo
+✔ Construir desde donde estás, no desde donde “deberías estar”
+
+Si quieres, dime:
+👉 ¿Quieres que te haga un diagnóstico ahora mismo? 👀
+`,
+    claridad: `
+👑 ¿Qué significa “claridad” aquí?
+
+No es motivación.
+No es “pensar positivo”.
+No es solo tener ideas.
+
+Claridad es:
+✔ Saber qué hacer primero
+✔ Saber qué no hacer
+✔ Saber por qué haces algo
+✔ Tener dirección sin ansiedad
+✔ Sentirte estable aunque el camino no esté completo
+
+En MaxiQueen OS, claridad = estructura mental funcional.
+
+Si quieres, dime:
+👉 ¿Sientes más ruido mental, bloqueo o exceso de ideas ahora mismo? 👀
+`,
+    servicio: `
+👑 ¿Cómo es el servicio en MaxiQueen OS?
+
+No es atención automática.
+No es soporte técnico frío.
+No es solo responder mensajes.
+
+Es:
+✔ Acompañamiento humano real
+✔ Conversación con criterio
+✔ Guía estratégica
+✔ Seguimiento de procesos
+✔ Apoyo cuando hay bloqueo
+
+No tratamos problemas.
+Tratamos procesos.
+
+Si quieres, dime:
+👉 ¿Buscas más guía, acompañamiento o estructura ahora mismo? 👀
+`,
+    asesoria: `
+👑 ¿Cómo es la asesoría?
+
+No es consultoría tradicional.
+No es coaching motivacional vacío.
+No es mentoría genérica.
+
+Es:
+✔ Diagnóstico real
+✔ Claridad estratégica
+✔ Diseño de sistema
+✔ Acompañamiento práctico
+✔ Pensamiento estructurado
+
+No te decimos qué hacer.
+Construimos contigo qué tiene sentido hacer.
+
+Si quieres, dime:
+👉 ¿Estás más en ideas, bloqueo o crecimiento ahora mismo? 👀
+`,
+    soporte: `
+👑 ¿Cómo es el soporte?
+
+No es tickets.
+No es respuestas automáticas.
+No es “revise la FAQ”.
+
+Es:
+✔ Contacto humano directo
+✔ Conversación real
+✔ Resolución con criterio
+✔ Acompañamiento cuando te atoras
+
+Soporte aquí no es técnico.
+Es estructural y humano.
+
+Si quieres, dime:
+👉 ¿Prefieres WhatsApp o Instagram para hablar ahora? 👀
+`,
+    comunidad: `
+👑 ¿Qué es la Comunidad MaxiQueen?
+
+No es un grupo de ruido.
+No es motivación vacía.
+No es consumo de contenido.
+
+Es un espacio para:
+✔ Pensar
+✔ Ordenar
+✔ Construir
+✔ Tomar decisiones
+✔ Avanzar con estructura
+
+Aquí no vienes a mirar.
+Vienes a trabajar en ti y en tu proceso.
+
+Si quieres, dime:
+👉 ¿Te interesa más comunidad o acompañamiento 1:1? 👀
+`,
+    sesiones: `
+👑 ¿Qué son las sesiones reales?
+
+Son encuentros humanos, no automáticos.
+
+Sirven para:
+✔ Desbloquear
+✔ Tomar decisiones
+✔ Reordenar procesos
+✔ Aclarar dirección
+✔ Corregir rumbo
+
+No son charlas motivacionales.
+Son sesiones estratégicas.
+
+Si quieres, dime:
+👉 ¿Te serviría más una sesión de claridad o de estructura ahora mismo? 👀
+`,
+    equipo: `
+👑 ¿Cuántas personas hay en MaxiQueen OS?
+
+MaxiQueen OS no es una empresa tradicional.
+Es un sistema en expansión.
+
+Tiene:
+✔ Núcleo humano estratégico
+✔ Acompañamiento directo
+✔ Infraestructura digital
+✔ Comunidad en crecimiento
+
+No medimos valor en cantidad de personas.
+Medimos valor en calidad de proceso.
+
+Si quieres, dime:
+👉 ¿Te interesa más quiénes somos o cómo podemos ayudarte? 👀
+`
+  },
+
+  emociones: {
+    pereza: `
+Gracias por decirlo directo 👑  
+
+La pereza muchas veces no es flojera.
+Es:
+✔ Cansancio mental
+✔ Saturación
+✔ Falta de dirección
+✔ Exceso sin estructura
+
+No se soluciona empujando.
+Se soluciona ordenando.
+
+Si quieres, dime:
+👉 ¿Te sientes más cansado, saturado o confundido ahora mismo? 👀
+`,
+    cansancio: `
+Tiene todo el sentido 👑  
+
+El cansancio no siempre es físico.
+Muchas veces es mental:
+✔ Demasiadas decisiones
+✔ Demasiadas ideas
+✔ Poco orden
+✔ Mucha presión interna
+
+No necesitas más motivación.
+Necesitas estructura liviana.
+
+Si quieres, dime:
+👉 ¿Te sientes más bloqueado, saturado o sin dirección ahora mismo? 👀
+`,
+    frustracion: `
+Gracias por decirlo 👑  
+
+La frustración casi nunca es falta de capacidad.
+Es falta de estructura en medio de intención.
+
+No se arregla empujando más.
+Se arregla ordenando mejor.
+
+Si quieres, dime:
+👉 ¿Te frustra más no avanzar o no saber qué avanzar? 👀
+`
+  },
+
+  ventas: {
+    planes: `
+👑 PLANES MAXIQUEEN OS — claros, humanos y sin letra pequeña
+
+No vendemos herramientas.
+No vendemos plataformas.
+No vendemos humo.
+
+Construimos sistemas que piensan contigo,
+te ordenan por dentro,
+y convierten intención en estructura real.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🌱 👑 STARTER — $49/mes
+Ideal si hoy tienes ideas, pero no sistema.
+
+✔ Orden mental y estratégico
+✔ Diagnóstico real
+✔ Base operativa clara
+✔ Ruta de acción sin ruido
+✔ Acompañamiento inicial humano
+
+Perfecto para:
+Personas bloqueadas,
+emprendedores en inicio,
+creadores con ideas dispersas.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 👑 PRO — $99/mes
+Para crecer, vender y automatizar con estructura.
+
+✔ Todo lo de Starter
+✔ Sistema activo de ventas
+✔ Automatizaciones clave
+✔ Optimización de procesos
+✔ Acompañamiento continuo
+
+Perfecto para:
+Negocios en marcha,
+creadores que ya venden sin sistema,
+personas listas para estructurar crecimiento.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🏰 👑 ELITE — $199/mes
+Infraestructura completa + acompañamiento prioritario.
+
+✔ Todo lo de Pro
+✔ Arquitectura completa del sistema
+✔ Automatización avanzada
+✔ Control total del ecosistema
+✔ Acceso directo a soporte humano
+
+Perfecto para:
+Marcas, creadores y proyectos
+que quieren crecer con estabilidad real.
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+Si quieres, dime:
+👉 ¿Estás más en ideas, negocio activo o crecimiento serio ahora mismo? 👀👑
+`,
+    valor: `
+👑 ¿POR QUÉ MAXIQUEEN OS?
+
+No vendemos bots.
+No vendemos funnels.
+No vendemos automatización por automatizar.
+
+Vendemos:
+✔ Claridad
+✔ Orden
+✔ Dirección
+✔ Decisión
+✔ Sistema
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+Esto es lo que normalmente cambia en las personas:
+
+✔ Menos ruido mental
+✔ Menos decisiones improvisadas
+✔ Más foco
+✔ Más estructura
+✔ Más avance real
+✔ Menos ansiedad por “no saber qué hacer”
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+El valor no es tener una web.
+No es tener un bot.
+No es tener automatización.
+
+El valor es:
+Saber exactamente qué hacer con tu proyecto
+cuando nadie más te lo puede ordenar.
+
+Si quieres, dime:
+👉 ¿Hoy te falta más claridad, estructura o acompañamiento? 👑
+`
+  },
+
+  onboarding: {
+    inicio: `
+Hola 👑  
+Estoy aquí contigo, con calma.
+
+No soy un bot de respuestas rápidas.
+Soy parte del sistema MaxiQueen OS.
+
+¿En qué punto estás ahora mismo?
+
+1️⃣ Ideas  
+2️⃣ Bloqueo  
+3️⃣ Crecimiento  
+👉 o pereza / cansancio
+`
+  },
+
+  guia: {
+    flujo1: `
+👑 FLUJO 1 — ORDENAR IDEAS
+
+Este flujo es para ti si:
+✔ Tienes ideas, pero no sistema
+✔ Sientes ruido mental
+✔ No sabes por dónde empezar
+✔ Te cuesta tomar decisiones
+
+Aquí trabajamos:
+✔ Claridad personal
+✔ Dirección estratégica
+✔ Enfoque real
+✔ Prioridades concretas
+
+El objetivo no es hacer más.
+Es hacer mejor.
+
+Dime:
+👉 ¿Hoy sientes más confusión, bloqueo o exceso de ideas? 👀
+`,
+    flujo2: `
+👑 FLUJO 2 — CREAR ALGO VENDIBLE
+
+Este flujo es para ti si:
+✔ Ya tienes una idea clara
+✔ Quieres convertirla en oferta
+✔ Quieres vender sin improvisar
+✔ Quieres estructura comercial real
+
+Aquí trabajamos:
+✔ Propuesta de valor
+✔ Oferta clara
+✔ Mensaje correcto
+✔ Sistema de conversión
+
+El objetivo no es vender rápido.
+Es vender bien.
+
+Dime:
+👉 ¿Hoy tienes una idea clara o algo ya en marcha? 👀
+`,
+    flujo3: `
+📲 CONTACTO HUMANO — SIN BOTS
+
+Aquí no te responde un sistema.
+Te responde una persona real.
+
+Canales disponibles:
+✔ WhatsApp — atención directa
+✔ Instagram — contacto rápido
+✔ Comunidad — acompañamiento continuo
+
+Dime:
+👉 ¿Prefieres WhatsApp o Instagram ahora mismo? 👀
+`
+  },
+
+  comunidad: {
+    comunidad: `
+👥 COMUNIDAD MAXIQUEEN
+
+Este no es un grupo de ruido.
+No es motivación vacía.
+No es consumo de contenido.
+
+Es:
+✔ Acompañamiento humano
+✔ Sesiones reales
+✔ Seguimiento estratégico
+✔ Criterio compartido
+
+No entras para mirar.
+Entras para ordenar,
+decidir
+y avanzar.
+
+Dime:
+👉 ¿Prefieres empezar en comunidad o 1:1? 👀
+`
+  },
+
+  soporte: {
+    contacto: `
+📲 SOPORTE HUMANO
+
+Puedes hablar directamente con alguien real por:
+
+✔ WhatsApp:
+https://wa.me/573016625921?text=Hola%20MAXIQUEEN%20OS.%20Vengo%20desde%20la%20landing%20y%20quiero%20activar%20el%20sistema.
+
+✔ Instagram
+✔ Comunidad interna
+
+Dime:
+👉 ¿Qué canal prefieres ahora mismo? 👀
+`
+  },
+
+  diagnostico: {
+    starter: `
+👑 Por lo que me cuentas, estás en etapa de **orden y claridad**.
+
+No necesitas más herramientas.
+Necesitas estructura básica bien hecha.
+
+Por eso, el punto ideal para ti ahora es:
+
+🌱 **STARTER**
+
+Te saca del ruido,
+te da base,
+y te deja listo para crecer sin caos.
+
+Si quieres, dime:
+👉 ¿Quieres que te explique cómo empezamos paso a paso? 👀
+`,
+    pro: `
+👑 Por lo que me cuentas, ya estás en **movimiento real**.
+
+No necesitas más ideas.
+Necesitas sistema, procesos y estructura de venta.
+
+Por eso, el punto ideal para ti ahora es:
+
+🚀 **PRO**
+
+Convierte tu esfuerzo en sistema,
+y tu sistema en crecimiento estable.
+
+Si quieres, dime:
+👉 ¿Quieres que te muestre cómo sería tu estructura inicial? 👀
+`,
+    elite: `
+👑 Por lo que me cuentas, estás en **etapa de expansión seria**.
+
+No necesitas hacks.
+Necesitas arquitectura sólida.
+
+Por eso, el punto ideal para ti ahora es:
+
+🏰 **ELITE**
+
+Sistema completo,
+control total,
+acompañamiento prioritario.
+
+Si quieres, dime:
+👉 ¿Quieres que veamos cómo se diseña tu ecosistema completo? 👀
+`
+  }
+};
+
+/* =========================
+   🎯 INTENTS BASE
+========================= */
+const intents = [
+  // Sistema / Identidad
+  {
+    keywords: ["quien eres","quién eres","que eres","qué eres"],
+    response: () => triggers.sistema.quienSoy
+  },
+  {
+    keywords: ["que es","qué es","qué es esto","que es esto","que es maxiqueen","qué es maxiqueen"],
+    response: () => triggers.sistema.queEs
+  },
+  {
+    keywords: ["como funciona","cómo funciona","funciona","como es el sistema"],
+    response: () => triggers.sistema.comoFunciona
+  },
+  {
+    keywords: ["diagnostico","diagnóstico"],
+    response: () => triggers.sistema.diagnostico
+  },
+  {
+    keywords: ["claridad","qué es claridad","que es claridad"],
+    response: () => triggers.sistema.claridad
+  },
+  {
+    keywords: ["servicio","cómo es el servicio","como es el servicio"],
+    response: () => triggers.sistema.servicio
+  },
+  {
+    keywords: ["asesoria","asesoría","cómo es la asesoria","como es la asesoria"],
+    response: () => triggers.sistema.asesoria
+  },
+  {
+    keywords: ["soporte","cómo es el soporte","como es el soporte"],
+    response: () => triggers.sistema.soporte
+  },
+  {
+    keywords: ["comunidad interna","que es la comunidad","qué es la comunidad"],
+    response: () => triggers.sistema.comunidad
+  },
+  {
+    keywords: ["sesiones","sesiones reales"],
+    response: () => triggers.sistema.sesiones
+  },
+  {
+    keywords: ["cuantas personas","cuántas personas","equipo","cuantos son"],
+    response: () => triggers.sistema.equipo
+  },
+
+  // Emociones
+  {
+    keywords: ["pereza","flojo","desganado"],
+    response: () => triggers.emociones.pereza
+  },
+  {
+    keywords: ["cansado","agotado","fatigado"],
+    response: () => triggers.emociones.cansancio
+  },
+  {
+    keywords: ["frustrado","frustración","estresado","estres"],
+    response: () => triggers.emociones.frustracion
+  },
+
+  // Ventas
+  {
+    keywords: ["precio","planes","pago"],
+    response: () => triggers.ventas.planes
+  },
+  {
+    keywords: ["costos","cuánto vale","cuanto cuesta","precio real"],
+    response: () => triggers.ventas.planes
+  },
+  {
+    keywords: ["valor","vale la pena","beneficio","beneficios","por qué","porque"],
+    response: () => triggers.ventas.valor
+  },
+
+  // Inicio
+  {
+    keywords: ["empezar","inicio","onboarding","arrancar","comenzar"],
+    response: () => triggers.onboarding.inicio
+  },
+  {
+    keywords: ["hola","buenas","hey","saludos"],
+    response: () => triggers.onboarding.inicio
+  },
+
+  // Flujos
+  {
+    keywords: ["1","ordenar","ordenar ideas","ideas"],
+    response: () => {
+      state.flujo = "flujo1";
+      state.etapa = "diagnostico";
+      return triggers.guia.flujo1;
+    }
+  },
+  {
+    keywords: ["2","crear","vendible","producto","oferta"],
+    response: () => {
+      state.flujo = "flujo2";
+      state.etapa = "diagnostico";
+      return triggers.guia.flujo2;
+    }
+  },
+  {
+    keywords: ["3","humano","persona","asesor","hablar","hablar con alguien"],
+    response: () => {
+      state.flujo = "flujo3";
+      state.etapa = "contacto";
+      return triggers.guia.flujo3;
+    }
+  },
+
+  // Confirmaciones
+  {
+    keywords: ["si","sí","ok","dale","vamos","perfecto","listo","de una"],
+    response: () => `
+Perfecto 👑  
+Entonces dime:
+
+1️⃣ Ordenar ideas  
+2️⃣ Crear algo vendible  
+3️⃣ Hablar con alguien humano  
+`
+  }
+];
+
+/* =========================
+   🧠 MOTOR DE CONTEXTO
+========================= */
+function contextualResponse(text) {
+
+  // FLUJO 1 — ORDENAR IDEAS
+  if (state.flujo === "flujo1" && state.etapa === "diagnostico") {
+    if (text.includes("confusion") || text.includes("confusión")) {
+      state.nivelDetectado = "starter";
+      state.etapa = "recomendacion";
+      return `
+Gracias por decirlo directo 👑  
+
+La confusión no es falta de capacidad.
+Es exceso de ruido sin estructura.
+
+Eso significa que ahora mismo necesitas:
+✔ Claridad
+✔ Prioridades
+✔ Dirección concreta
+
+No más ideas.
+No más teoría.
+
+Sistema.
+
+${triggers.diagnostico.starter}
+`;
+    }
+    if (text.includes("bloqueo")) {
+      state.nivelDetectado = "starter";
+      state.etapa = "recomendacion";
+      return `
+Gracias por decirlo 👑  
+
+El bloqueo casi nunca es pereza.
+Es saturación sin estructura.
+
+Eso significa que ahora necesitas:
+✔ Orden mental
+✔ Enfoque claro
+✔ Dirección accionable
+
+No presión.
+No más información.
+
+Sistema.
+
+${triggers.diagnostico.starter}
+`;
+    }
+    if (text.includes("exceso")) {
+      state.nivelDetectado = "starter";
+      state.etapa = "recomendacion";
+      return `
+Tiene todo el sentido 👑  
+
+El exceso de ideas no es problema creativo.
+Es problema de jerarquía.
+
+Eso significa que ahora necesitas:
+✔ Prioridades claras
+✔ Dirección estratégica
+✔ Enfoque real
+
+No más ideas.
+No más estímulos.
+
+Sistema.
+
+${triggers.diagnostico.starter}
+`;
+    }
+  }
+
+  // FLUJO 2 — CREAR ALGO VENDIBLE
+  if (state.flujo === "flujo2" && state.etapa === "diagnostico") {
+    if (text.includes("ya") || text.includes("tengo") || text.includes("en marcha")) {
+      state.nivelDetectado = "pro";
+      state.etapa = "recomendacion";
+      return `
+Buenísimo 👑  
+
+Si ya tienes algo en marcha,
+tu cuello de botella no es creatividad.
+
+Es:
+✔ Sistema
+✔ Mensaje
+✔ Conversión
+✔ Estructura
+
+Eso significa que ahora necesitas orden comercial,
+no más ideas.
+
+${triggers.diagnostico.pro}
+`;
+    }
+    if (text.includes("no") || text.includes("todavía") || text.includes("aún")) {
+      state.nivelDetectado = "starter";
+      state.etapa = "recomendacion";
+      return `
+Perfecto 👑  
+
+Si aún no tienes nada concreto,
+lo inteligente no es vender rápido.
+
+Es:
+✔ Ordenar primero
+✔ Definir bien
+✔ Construir con criterio
+
+Eso te ahorra tiempo, frustración y desgaste.
+
+${triggers.diagnostico.starter}
+`;
+    }
+  }
+
+  // DESPUÉS DE RECOMENDACIÓN — MANTENER CONTEXTO
+  if (state.etapa === "recomendacion") {
+    if (text.includes("como") || text.includes("cómo") || text.includes("funciona") || text.includes("empezamos")) {
+      return `
+Buenísima pregunta 👑  
+
+Lo importante ahora no es el plan,
+es cómo empezamos contigo realmente.
+
+El proceso suele ser:
+
+1️⃣ Diagnóstico humano profundo  
+2️⃣ Orden mental y estratégico  
+3️⃣ Diseño de estructura mínima viable  
+4️⃣ Acompañamiento paso a paso  
+5️⃣ Evolución según tu ritmo  
+
+No te tiramos info encima.
+Construimos contigo.
+
+Si quieres, dime:
+👉 ¿Prefieres avanzar paso a paso o ver primero el panorama completo? 👀
+`;
+    }
+    if (text.includes("si") || text.includes("sí") || text.includes("dale") || text.includes("ok")) {
+      return `
+Perfecto 👑  
+
+Entonces empezamos así:
+
+Primero te hago unas preguntas cortas
+para entender bien tu punto actual,
+y desde ahí construimos contigo.
+
+Dime:
+👉 ¿Hoy estás más enfocado en ti como persona o en tu proyecto como negocio? 👀
+`;
+    }
+  }
+
+  // FLUJO 3 — CONTACTO HUMANO
+  if (state.flujo === "flujo3") {
+    if (text.includes("whatsapp")) {
+      return `
+Perfecto 👑  
+
+Aquí tienes acceso directo a una persona real:
+
+📲 WhatsApp:
+👉 https://wa.me/573016625921  
+
+(Escríbenos y seguimos contigo sin bots.)
+
+¿Quieres que mientras tanto sigamos conversando aquí? 👀
+`;
+    }
+    if (text.includes("instagram")) {
+      return `
+Perfecto 👑  
+
+Aquí puedes escribirnos directo:
+
+📲 Instagram:
+👉 https://instagram.com/maxiqueenos  
+
+¿Quieres que mientras tanto sigamos conversando aquí? 👀
+`;
+    }
+  }
+
+  return null;
+}
+
+/* =========================
+   🎯 RESPUESTA PRINCIPAL
+========================= */
+function getResponse(message){
+  const text = message.toLowerCase();
+
+  // 1️⃣ CONTEXTO PRIMERO
+  const contextual = contextualResponse(text);
+  if (contextual) return contextual;
+
+  // 2️⃣ INTENTS NORMALES
+  for(const intent of intents){
+    if(intent.keywords.some(k => text.includes(k))){
+      return intent.response();
+    }
+  }
+
+  // 3️⃣ FALLBACK INTELIGENTE (NO GENÉRICO)
+  return `
+Te leo 👀  
+
+No quiero responderte como bot.
+Quiero entenderte bien.
+
+¿Me cuentas un poco mejor qué tienes en mente ahora mismo? 👑
+`;
+}
+
+
+function sendMessage(){
+  const msg=input.value.trim();
+  if(!msg) return;
+  appendMessage(msg,'user');
+  playSound(audioSend);
+  input.value='';
+  setTimeout(()=>{
+    const res=getResponse(msg);
+    appendMessage(res,'bot');
+    speakText(res);
+  },250);
+}
+
+chatTrigger.addEventListener('click',toggleChat);
+sendBtn.addEventListener('click',sendMessage);
+input.addEventListener('keypress',e=>{ if(e.key==='Enter'){ e.preventDefault(); sendMessage(); }});
+
+/* ========== TEMA ========== */
+function toggleTheme(){
+  const r=document.documentElement;
+  const n=(r.getAttribute('data-theme')||'dark')==='dark'?'light':'dark';
+  r.setAttribute('data-theme',n);
+  localStorage.setItem('mq-theme',n);
+}
+(()=>{const s=localStorage.getItem('mq-theme'); if(s) document.documentElement.setAttribute('data-theme',s)})();
+
+
+</script>
+
+<!-- MQ PRO v2.3 - ACADEMIA -->
+<style>
+  .mq-pro-btn {
+    position: fixed !important; right: 90px; bottom: 20px; z-index: 9999;
+    width: 56px; height: 56px; border-radius: 50%;
+    border: 2px solid #facc15; background: #0a0a0a; color: #facc15;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 22px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .mq-pro-btn:hover { transform: scale(1.06); }
+  .mq-pro-frame {
+    position: fixed !important; right: 20px; bottom: 90px; z-index: 9998;
+    width: 420px; height: 680px; max-height: calc(100vh - 110px);
+    border: 1px solid #facc15; border-radius: 16px; background: #000;
+    overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    display: flex; flex-direction: column;
+    opacity: 0; transform: translateY(12px); pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease;
+  }
+  .mq-pro-frame.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .mq-pro-header {
+    flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px; background: #111; border-bottom: 1px solid #2a2a2a;
+    color: #facc15; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600;
+  }
+  .mq-pro-header button { background: transparent; border: none; color: #facc15; cursor: pointer; font-size: 18px; padding: 4px 8px; border-radius: 8px; }
+  .mq-tabs{display:flex;gap:6px;padding:8px 12px;background:#111;border-bottom:1px solid #2a2a2a}
+  .mq-tab{background:transparent;border:1px solid #333;color:#aaa;padding:6px 10px;border-radius:8px;font-size:12px;cursor:pointer}
+  .mq-tab.active{border-color:#facc15;color:#facc15}
+  .mq-pane{display:none;flex:1;overflow:hidden}
+  .mq-pane.active{display:flex;flex-direction:column}
+  .mq-pane iframe{width:100%;flex:1;border:0;background:#000}
+  .mq-academy{padding:16px;font-family:system-ui,sans-serif;color:#e5e5e5;font-size:13px;line-height:1.6;overflow:auto;background:#000}
+  .mq-academy h3{color:#facc15;margin:0 0 8px;font-size:15px}
+  .mq-card{background:#111;border:1px solid #2a2a2a;border-radius:12px;padding:14px;margin:12px 0}
+  .mq-card strong{color:#facc15}
+  .mq-card small{color:#bdbdbd}
+  a.mq-cta, .mq-academy .mq-cta{
+    display:inline-block !important; margin-top:10px;
+    background:#facc15 !important; color:#111 !important;
+    padding:10px 14px; border-radius:10px; font-weight:700; text-decoration:none !important;
+  }
+  a.mq-cta.secondary{background:transparent !important;color:#facc15 !important;border:1px solid #facc15 !important}
+  @media (max-width: 480px){
+    .mq-pro-btn { right: 20px; bottom: 20px; }
+    .mq-pro-frame { right:0; left:0; bottom:0; width:100%; height:92vh; max-height:92vh; border-radius:16px 16px 0 0; }
+  }
+</style>
+
+<button class="mq-pro-btn" id="mqProBtn" aria-label="Abrir MQ AI Pro" title="MQ AI Pro con archivos">📎</button>
+
+<div id="mqProFrame" class="mq-pro-frame" role="dialog" aria-label="MQ AI Pro">
+  <div class="mq-pro-header">
+    <span>MQ AI Pro V1</span>
+    <div>
+      <button id="mqProMin" type="button" title="Minimizar">—</button>
+      <button id="mqProClose" type="button" title="Cerrar">✕</button>
+    </div>
+  </div>
+  <div class="mq-tabs">
+    <button class="mq-tab active" data-tab="chat" type="button">Chat V1</button>
+    <button class="mq-tab" data-tab="academy" type="button">Academia Inicial</button>
+  </div>
+  <div class="mq-pane active" id="pane-chat">
+    <iframe src="https://maxiqueen-os-framework.vercel.app/" allow="microphone;clipboard-read;clipboard-write"></iframe>
+  </div>
+  <div class="mq-pane" id="pane-academy">
+    <div class="mq-academy">
+      <h3>MQ Academy V1</h3>
+      <p>IA aplicada a tu negocio, sin humo.</p>
+
+      <!-- CARD 1 - TU PRODUCTO PRINCIPAL -->
+      <div class="mq-card">
+        <strong>IA para Vendedores </strong><br>
+        <small>Prompts, plantillas y tu primer embudo en 7 días. Acceso inmediato.</small><br>
+        <!-- PEGA TU HOTLINK DE HOTMART AQUÍ -->
+        <a class="mq-cta" href="https://maxiqueen-os.vercel.app/Store_MaxiQueen.html" target="_blank" rel="noopener sponsored">Entrar a Version de Ventas</a>
+      </div>
+
+      <!-- CARD 2 - AFILIADO SECUNDARIO -->
+      <div class="mq-card">
+        <strong>Kit Backend MQ Digital</strong><br>
+        <small>Recursos listos para vender con IA. Ideal si estás empezando.</small><br>
+        <!-- PEGA TU SEGUNDO LINK DE AFILIADO AQUÍ -->
+        <a class="mq-cta secondary" href="https://backend-maxi-queen-os.vercel.app/chat-widget/" target="_blank" rel="noopener sponsored">Ver Version Backend</a>
+      </div>
+
+      <!-- CARD 3 - CIERRE POR WHATSAPP -->
+      <div class="mq-card">
+        <strong>¿Dudas?</strong><br>
+        <small>Te asesoro directo por WhatsApp, sin bots.</small><br>
+        <a class="mq-cta secondary" href="https://wa.me/573016625921" target="_blank" rel="noopener">Hablar por WhatsApp</a>
+      </div>
+
+      <p><small>Productos digitales vía Hotmart. 7 días de garantía. MaxiQueen OS es independiente.</small></p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const btn = document.getElementById('mqProBtn');
+  const frame = document.getElementById('mqProFrame');
+  if(!btn || !frame) return;
+  function setOpen(open){
+    frame.classList.toggle('open', open);
+    localStorage.setItem('mqProOpen', open ? '1' : '0');
+  }
+  btn.addEventListener('click', () => setOpen(!frame.classList.contains('open')));
+  document.getElementById('mqProClose')?.addEventListener('click', () => setOpen(false));
+  document.getElementById('mqProMin')?.addEventListener('click', () => setOpen(false));
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') setOpen(false); });
+  if(localStorage.getItem('mqProOpen') === '1') setOpen(true);
+  document.querySelectorAll('.mq-tab').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      document.querySelectorAll('.mq-tab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.mq-pane').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      const pane = document.getElementById('pane-'+t.dataset.tab);
+      if(pane) pane.classList.add('active');
+    });
+  });
+})();
+</script>
+
+<!-- /MQ PRO v2.3 -->
+
+<script>
+(function(){
+  const accept = document.getElementById('acceptMQ');
+  const btn = document.getElementById('continueMQ');
+  const frame = document.getElementById('mqProFrame');
+  if(!accept || !btn) return;
+
+  accept.addEventListener('change', () => {
+    btn.disabled = !accept.checked;
+  });
+
+  btn.addEventListener('click', () => {
+    if(frame){
+      frame.classList.add('open');
+      localStorage.setItem('mqProOpen', '1');
+    }
+  });
+})();
+</script>
+
+<div id="mq-avatar-mount"></div>
+<script src="/mq-avatar.js"></script>
+<script>
+  const mq = new MqAvatar('#mq-avatar-mount');
+  mq.greet();
+</script>
+
+</body>
+</html>

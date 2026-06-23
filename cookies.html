@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de Cookies | MaxiQueen OS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap');
+:root{--purple:#8A2BE2;--green:#00FF9C;--cyan:#00D4FF;--bg:#050507;--panel:rgba(15,15,20,.85)}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:#EAEAEA;font-family:'Inter',sans-serif;line-height:1.75;
+background-image:radial-gradient(circle at 10% 20%, rgba(138,43,226,.08) 0%, transparent 40%),radial-gradient(circle at 90% 80%, rgba(0,255,156,.06) 0%, transparent 40%),linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);background-size:100% 100%,100% 100%,30px 30px,30px 30px}
+.container{max-width:900px;margin:0 auto;padding:48px 24px}
+.glass{background:var(--panel);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(24px);border-radius:12px;padding:36px}
+h1{font-family:'Orbitron',sans-serif;font-size:2.1rem;margin:0 0 8px;background:linear-gradient(90deg,var(--purple),var(--cyan),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-family:'Orbitron',sans-serif;color:#fff;font-size:1.05rem;margin:2rem 0 .5rem;border-left:3px solid var(--green);padding-left:12px}
+a{color:var(--cyan);text-decoration:none} a:hover{color:var(--green)}
+.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 10px;border:1px solid rgba(0,255,156,.3);color:var(--green);background:rgba(0,255,156,.06);border-radius:999px}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px} th,td{border:1px solid rgba(255,255,255,.1);padding:10px;text-align:left} th{color:var(--green);font-family:'JetBrains Mono',monospace}
+.nav{display:flex;gap:18px;flex-wrap:wrap;margin:16px 0 28px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.nav a{color:#a1a1aa} .nav a.active{color:var(--green)}
+.btn{display:inline-block;background:transparent;border:1px solid var(--green);color:var(--green);padding:10px 18px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;cursor:pointer}
+.btn:hover{background:rgba(0,255,156,.08)}
+footer{margin-top:28px;color:#6b7280;font-size:12px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="glass">
+<div style="font-family:'Orbitron',sans-serif;color:#9ca3af;font-size:12px;letter-spacing:.2em">MAXIQUEEN OS v7</div>
+<h1>Política de Cookies</h1>
+<p><span class="badge">Última actualización: 15 de junio de 2026</span></p>
+
+<div class="nav">
+  <a href="privacidad.html">Privacidad</a>
+  <a href="cookies.html" class="active">Cookies</a>
+  <a href="terminos.html">Términos</a>
+  <a href="./">← Volver al OS</a>
+</div>
+
+<p>Esta política explica qué tecnologías de almacenamiento usa MaxiQueen OS, conforme a la Ley 1581 de Colombia y normativa UE ePrivacy/GDPR.</p>
+
+<h2>1. ¿Usamos cookies?</h2>
+<p>La versión v7 actual de MaxiQueen OS <strong>no usa cookies de seguimiento</strong>. Usamos únicamente <strong>almacenamiento local del navegador (localStorage)</strong> para que tu partida funcione.</p>
+
+<table>
+<tr><th>Nombre</th><th>Tipo</th><th>Finalidad</th><th>Duración</th></tr>
+<tr><td>mqos_v7</td><td>localStorage – Esencial</td><td>Guardar XP, nivel, torres, misiones, skins, voz on/off</td><td>Persistente hasta que borres datos</td></tr>
+<tr><td>mqos_consent</td><td>localStorage – Preferencias</td><td>Recordar tu elección de cookies</td><td>6 meses</td></tr>
+</table>
+
+<p>Sin estos datos locales el juego no puede guardar tu progreso. No contienen identificadores personales.</p>
+
+<h2>2. Cookies de terceros – desactivadas por defecto</h2>
+<p>Si en el futuro activamos analítica o monetización, serán <strong>opt-in</strong>:</p>
+<table>
+<tr><th>Categoría</th><th>Ejemplo</th><th>Estado en v7</th></tr>
+<tr><td>Analítica</td><td>Plausible / GA4</td><td>Desactivada</td></tr>
+<tr><td>Publicidad</td><td>Google AdSense</td><td>Desactivada</td></tr>
+<tr><td>Funcional externa</td><td>CDN Tailwind / Font Awesome</td><td>Activa – solo entrega archivos, sin tracking</td></tr>
+</table>
+
+<h2>3. Consentimiento</h2>
+<p>Al entrar por primera vez verás un banner simple: “Aceptar esenciales / Rechazar todo”. Las no esenciales quedan bloqueadas hasta tu consentimiento. Puedes cambiarlo en cualquier momento.</p>
+<p><button class="btn" onclick="localStorage.clear();alert('Almacenamiento local borrado. Recarga la página.')">Borrar datos locales de MQOS</button></p>
+
+<h2>4. Cómo gestionar cookies en tu navegador</h2>
+<ul>
+<li>Chrome: Configuración → Privacidad → Cookies</li>
+<li>Firefox: Ajustes → Privacidad y seguridad</li>
+<li>Safari: Preferencias → Privacidad</li>
+<li>Edge: Configuración → Cookies y permisos</li>
+</ul>
+<p>Si bloqueas el almacenamiento local, MaxiQueen OS funcionará pero no guardará tu progreso.</p>
+
+<h2>5. SpeechSynthesis / Voz</h2>
+<p>La voz de Queen usa la API nativa de tu navegador. No enviamos tu texto a nuestros servidores.</p>
+
+<h2>6. Actualizaciones</h2>
+<p>Si activamos nuevas categorías, actualizaremos esta tabla y te pediremos consentimiento de nuevo.</p>
+
+<p>Contacto: <strong>maxiqueen2025@gmail.com</strong></p>
+
+<footer>MaxiQueen OS v7 – Política de Cookies – 15/06/2026</footer>
+</div>
+</div>
+</body>
+</html>

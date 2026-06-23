@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MaxiQueen OS — MQ Avatar Pro v6</title>
+<meta name="color-scheme" content="dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#030712;
+  --panel:#0b1224;
+  --panel-2:#0e162d;
+  --neon-primary:#38bdf8;
+  --neon-accent:#facc15;
+  --text:#e6eef7;
+  --muted:#94a3b8;
+  --line:rgba(255,255,255,.08);
+  --line-strong:rgba(255,255,255,.14);
+  --ok:#4ade80;
+  --shadow-cyan: 0 0 38px rgba(56,189,248,.18);
+  --radius-xl:24px;
+  --radius-lg:16px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:"Instrument Sans", system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+  color:var(--text);
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(980px 620px at 14% -8%, rgba(56,189,248,.14), transparent 62%),
+    radial-gradient(820px 560px at 97% -4%, rgba(250,204,21,.11), transparent 58%),
+    radial-gradient(1100px 800px at 50% 120%, rgba(56,189,248,.045), transparent 55%),
+    linear-gradient(#030712, #030712);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+a{color:#7dd3fc}
+.wrap{
+  max-width:980px;
+  margin:0 auto;
+  padding:40px 20px 72px;
+}
+header.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; flex-wrap:wrap;
+  margin-bottom:34px;
+}
+.brand{
+  display:flex; align-items:center; gap:14px;
+}
+.brand-mark{
+  width:42px; height:42px; border-radius:12px;
+  background: linear-gradient(145deg, #0d203a, #0a1326);
+  border:1px solid var(--line-strong);
+  display:grid; place-items:center;
+  box-shadow: var(--shadow-cyan);
+  font-weight:800; font-size:15px; letter-spacing:.3px; color:#bff0ff;
+}
+.brand h1{
+  margin:0; font-size:18px; font-weight:700; letter-spacing:-.01em;
+}
+.brand p{margin:2px 0 0; color:var(--muted); font-size:12.8px}
+.co-badge{
+  font-size:12px; color:#fde68a; background: rgba(250,204,21,.07);
+  border:1px solid rgba(250,204,21,.22);
+  padding:7px 12px; border-radius:999px;
+}
+.stage{
+  position:relative;
+  display:flex; flex-direction:column; align-items:center;
+  padding:40px 20px 18px;
+}
+.stage-glow{
+  position:absolute; inset:auto;
+  width:420px; height:420px; top:0;
+  background: radial-gradient(closest-side, rgba(56,189,248,.10), transparent 70%);
+  filter: blur(12px);
+  pointer-events:none;
+}
+.stage-glow.amber{
+  width:340px; height:240px; top:130px; left:50%; transform:translateX(-8%);
+  background: radial-gradient(closest-side, rgba(250,204,21,.075), transparent 70%);
+}
+
+/* ---------- AVATAR ---------- */
+.mq-character{
+  width:220px;
+  position:relative;
+  animation: mq-float 4.6s ease-in-out infinite;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
+@keyframes mq-float{
+  0%,100%{ transform:translateY(0) }
+  50%{ transform:translateY(-11px) }
+}
+.mq-ears{
+  position:absolute; top:-16px; left:0; right:0;
+  display:flex; justify-content:space-between;
+  padding:0 28px;
+  pointer-events:none; z-index:2;
+}
+.ear{
+  width:54px; height:44px;
+  background: linear-gradient(180deg, #0f1b35, #0b1224);
+  border:1px solid var(--line-strong);
+  border-radius:20px 20px 9px 9px;
+  position:relative;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,.25);
+}
+.ear.left{ transform: rotate(-17deg); }
+.ear.right{ transform: rotate(17deg); }
+.ear::after{
+  content:"";
+  position:absolute; inset:9px 12px 9px 12px;
+  border-radius:12px 12px 6px 6px;
+  background: linear-gradient(180deg, rgba(56,189,248,.22), rgba(56,189,248,.045));
+}
+.mq-head{
+  width:220px; height:175px;
+  background: radial-gradient(120% 140% at 50% 0%, #13213d 0%, #0b1224 56%);
+  border:1px solid var(--line-strong);
+  border-radius:72px 72px 54px 54px;
+  position:relative;
+  box-shadow: 0 18px 60px rgba(0,0,0,.45), 0 0 42px rgba(56,189,248,.16), inset 0 1px 0 rgba(255,255,255,.055);
+  transition: transform .35s ease, box-shadow .35s ease;
+}
+.mq-head::before{
+  /* forehead signal */
+  content:"";
+  position:absolute; top:24px; left:50%; transform:translateX(-50%);
+  width:44px; height:3px; border-radius:3px;
+  background: linear-gradient(90deg, transparent, rgba(125,211,252,.95), transparent);
+  opacity:.9;
+}
+.mq-visor{
+  position:absolute;
+  top:70px; left:26px; right:26px;
+  height:46px;
+  border-radius:16px;
+  background: linear-gradient(180deg, rgba(56,189,248,.28), rgba(56,189,248,.12));
+  border:1px solid rgba(125,211,252,.45);
+  box-shadow: 0 0 24px rgba(56,189,248,.45), inset 0 0 22px rgba(186, 242, 255,.16);
+  display:flex; align-items:center; justify-content:center; gap:56px;
+  transition: background .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.eye{
+  width:10px; height:10px;
+  border-radius:50%;
+  background:#eaffff;
+  box-shadow: 0 0 14px rgba(56,189,248,.95), 0 0 30px rgba(56,189,248,.45);
+  animation: mq-blink 3.5s infinite;
+}
+.eye:nth-child(2){ animation-delay:.07s }
+@keyframes mq-blink{
+  0%, 93%, 100% { transform: scaleY(1); opacity:1 }
+  95.5% { transform: scaleY(.12); opacity:.9 }
+}
+.mq-mouth{
+  position:absolute;
+  left:50%; bottom:32px;
+  transform: translateX(-50%) scaleY(var(--mouth-scale, 1));
+  width:58px; height:11px;
+  background: #baf3ff;
+  border-radius:7px;
+  box-shadow: 0 0 16px rgba(56,189,248,.38);
+  transition: width .22s ease, height .22s ease, background .22s ease, border-radius .22s ease, box-shadow .22s ease;
+  transform-origin:center;
+}
+.mq-whiskers{
+  position:absolute; top:120px;
+  display:flex; flex-direction:column; gap:10px;
+  opacity:.95;
+}
+.mq-whiskers span{
+  display:block; width:30px; height:1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
+}
+.mq-whiskers.left{ left: -16px; align-items:flex-end }
+.mq-whiskers.right{ right: -16px; }
+.mq-body{
+  width:152px; height:90px;
+  margin: -10px auto 0;
+  border-radius:30px 30px 28px 28px;
+  background: radial-gradient(120% 140% at 50% 0%, #142544 0%, #0b1224 60%);
+  border:1px solid var(--line-strong);
+  box-shadow: 0 12px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.045);
+  position:relative;
+  display:grid; place-items:center;
+}
+.mq-body::before{
+  content:"MQ";
+  font-weight:800;
+  letter-spacing:1.6px;
+  font-size:18px;
+  color:#d7f6ff;
+  opacity:.72;
+  text-shadow:0 0 16px rgba(56,189,248,.45);
+}
+.mq-body::after{
+  content:"";
+  position:absolute; top:14px; left:22px; right:22px; height:1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
+}
+.mq-feet{
+  display:flex; justify-content:center; gap:22px;
+  margin-top:-6px;
+}
+.mq-feet .foot{
+  width:56px; height:18px;
+  background:#0a1326;
+  border:1px solid var(--line);
+  border-radius: 14px 14px 10px 10px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.32);
+}
+
+/* ----- States ----- */
+.mq-character[data-state="talking"] .mq-mouth{
+  animation: mq-talk-fallback .16s ease-in-out infinite alternate;
+}
+@keyframes mq-talk-fallback{
+  from{ transform:translateX(-50%) scaleY(.55) }
+  to{ transform:translateX(-50%) scaleY(1.7) }
+}
+.mq-character[data-state="talking"] .mq-visor{
+  animation: visorPulse .46s ease-in-out infinite alternate;
+}
+@keyframes visorPulse{
+  from{ box-shadow: 0 0 22px rgba(56,189,248,.45), inset 0 0 18px rgba(186,242,255,.15) }
+  to{ box-shadow: 0 0 38px rgba(56,189,248,.72), inset 0 0 26px rgba(186,242,255,.24) }
+}
+
+.mq-character[data-state="listening"] .mq-visor{
+  background: linear-gradient(180deg, rgba(74, 222, 128,.28), rgba(74,222,128,.12));
+  border-color: rgba(134,239,172,.55);
+  box-shadow: 0 0 26px rgba(74,222,128,.42), inset 0 0 20px rgba(187,247,208,.12);
+}
+.mq-character[data-state="listening"] .eye{
+  background:#eafff1;
+  box-shadow: 0 0 14px rgba(74,222,128,.95);
+}
+.mq-character[data-state="listening"] .ear.left{
+  animation: earTwL .34s ease-in-out infinite;
+  transform-origin: bottom right;
+}
+.mq-character[data-state="listening"] .ear.right{
+  animation: earTwR .34s ease-in-out infinite .11s;
+  transform-origin: bottom left;
+}
+@keyframes earTwL{ 0%,100%{transform:rotate(-17deg)} 50%{transform:rotate(-27deg) translateY(-2px)} }
+@keyframes earTwR{ 0%,100%{transform:rotate(17deg)} 50%{transform:rotate(27deg) translateY(-2px)} }
+
+.mq-character[data-state="thinking"] .mq-head{
+  transform: rotate(-3.5deg);
+}
+.mq-character[data-state="thinking"] .eye{
+  animation-duration: 2.05s;
+}
+
+.mq-character[data-state="happy"] .mq-mouth{
+  width:92px; height:15px;
+  border-radius: 0 0 34px 34px;
+  background: #fde68a;
+  box-shadow: 0 0 22px rgba(250,204,21,.5);
+}
+.mq-character[data-state="happy"] .mq-visor{
+  border-color: rgba(253,230,138,.72);
+  box-shadow: 0 0 34px rgba(250,204,21,.44), inset 0 0 22px rgba(253,230,138,.18);
+}
+.mq-character[data-state="happy"] .mq-head{
+  box-shadow: 0 18px 60px rgba(0,0,0,.45), 0 0 48px rgba(250,204,21,.19), inset 0 1px 0 rgba(255,255,255,.055);
+}
+
+.avatar-caption{
+  margin-top:18px;
+  text-align:center;
+  color:#9eb3cb;
+  font-size:13.5px;
+}
+.avatar-caption strong{ color:#dfeeff; font-weight:600 }
+
+/* ---------- Console ---------- */
+.console{
+  margin: 30px auto 0;
+  max-width: 780px;
+  background: linear-gradient(180deg, rgba(14,22,45,.84), rgba(10,16,33,.88));
+  border:1px solid var(--line-strong);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 80px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.035);
+  backdrop-filter: blur(16px);
+  padding:22px 22px 20px;
+}
+.console-top{
+  display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.console-title{ font-weight:700; font-size:16px }
+.console-sub{ color:var(--muted); font-size:13px; margin-top:2px}
+.status-pill{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 12px; border-radius:999px;
+  background: rgba(255,255,255,.035);
+  border:1px solid var(--line);
+  font-size:12.5px; color:#c8d6e6;
+  white-space:nowrap;
+}
+.status-dot{
+  width:8px; height:8px; border-radius:50%;
+  background:#7dd3fc; box-shadow: 0 0 10px rgba(56,189,248,.7);
+  transition: background .2s ease;
+}
+.status-pill.is-talking .status-dot{ background:#38bdf8 }
+.status-pill.is-listening .status-dot{ background:#4ade80; box-shadow: 0 0 10px rgba(74,222,128,.6)}
+.status-pill.is-thinking .status-dot{ background:#fbbf24; box-shadow: 0 0 10px rgba(251,191,36,.45)}
+.status-pill.is-happy .status-dot{ background:#facc15; box-shadow: 0 0 10px rgba(250,204,21,.55)}
+
+.ctrl-grid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap:10px;
+  margin-top:14px;
+}
+@media (max-width: 720px){
+  .ctrl-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 440px){
+  .ctrl-grid{ grid-template-columns: 1fr 1fr; }
+}
+.btn{
+  appearance:none; border:1px solid var(--line-strong);
+  background: linear-gradient(180deg, #111c35, #0d172f);
+  color:#e2efff;
+  border-radius:14px;
+  padding:13px 14px;
+  font-family:inherit; font-weight:600; font-size:14px;
+  cursor:pointer;
+  transition: transform .07s ease, border-color .18s, background .18s, box-shadow .18s;
+  text-align:center;
+}
+.btn:hover{ border-color: rgba(125,211,252,.5); box-shadow: 0 0 18px rgba(56,189,248,.10) }
+.btn:active{ transform: translateY(1px) scale(.997) }
+.btn.primary{
+  background: linear-gradient(180deg, rgba(56,189,248,.16), rgba(56,189,248,.06));
+  border-color: rgba(125,211,252,.52);
+  color:#dff8ff;
+}
+.btn.accent{
+  background: linear-gradient(180deg, rgba(250,204,21,.16), rgba(250,204,21,.055));
+  border-color: rgba(250,204,21,.44);
+  color:#fff7d6;
+}
+.btn.ghost{ background: rgba(255,255,255,.018) }
+.btn.danger{
+  border-color: rgba(255,255,255,.12);
+  color:#ffc8c8;
+}
+
+.talk-row{
+  display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;
+}
+.talk-row input{
+  flex:1 1 260px; min-width:180px;
+  background: #0a1226;
+  border:1px solid var(--line-strong);
+  color:var(--text);
+  border-radius:14px;
+  padding:13px 14px;
+  font-family:inherit; font-size:14.5px; outline:none;
+}
+.talk-row input::placeholder{ color:#7f92ad }
+.talk-row input:focus{ border-color: rgba(125,211,252,.6); box-shadow: 0 0 0 3px rgba(56,189,248,.11) }
+.btn-talk{
+  padding-left:18px; padding-right:18px; white-space:nowrap;
+}
+.hint{
+  margin-top:12px; color:#8ea0b8; font-size:12.7px; line-height:1.55;
+}
+.hint strong{ color:#cfe7ff }
+
+.toast{
+  position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(14px);
+  background:#0f1b34; border:1px solid var(--line-strong);
+  padding:11px 14px; border-radius:12px; color:#dbe8f6;
+  font-size:13px; opacity:0; pointer-events:none; transition:.22s ease;
+  z-index:60; box-shadow: 0 16px 40px rgba(0,0,0,.45);
+  max-width:90vw; text-align:center;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0) }
+
+/* Integration note */
+.integration{
+  margin:26px auto 0; max-width:780px;
+  background: rgba(255,255,255,.022);
+  border:1px dashed rgba(255,255,255,.15);
+  border-radius:18px;
+  padding:18px 18px;
+  color:#a8bbd2; font-size:13.4px; line-height:1.65;
+}
+.integration b{ color:#dceaff }
+.integration code{
+  background: rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.1);
+  padding:2px 7px; border-radius:7px; color:#bff2ff; font-size:12.6px;
+}
+
+footer{
+  margin-top:34px;
+  color:#7f92ad; font-size:12.6px; text-align:center;
+}
+footer a{ color:#9edfff; text-decoration:none }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">MQ</div>
+        <div>
+          <h1>MaxiQueen OS — MQ Avatar Pro v6</h1>
+          <p>Asistente conversacional colombiano · Cúcuta, Norte de Santander</p>
+        </div>
+      <div class="co-badge">Hecho en Colombia · es-CO</div>
+    </header>
+
+    <!-- Avatar Stage -->
+    <section class="stage" aria-label="Avatar MQ">
+      <div class="stage-glow" aria-hidden="true"></div>
+      <div class="stage-glow amber" aria-hidden="true"></div>
+
+      <!-- REQUIRED SKELETON - DO NOT CHANGE CLASS NAMES -->
+      <div class="mq-character" data-state="idle" id="mq-character" role="img" aria-label="Avatar robot-gato MQ, haz clic para saludar">
+        <div class="mq-ears"><div class="ear left"></div><div class="ear right"></div></div>
+        <div class="mq-head">
+          <div class="mq-visor"><i class="eye"></i><i class="eye"></i></div>
+          <div class="mq-mouth"></div>
+          <div class="mq-whiskers left"><span></span><span></span></div>
+          <div class="mq-whiskers right"><span></span><span></span></div>
+        </div>
+        <div class="mq-body"></div>
+        <div class="mq-feet"><div class="foot"></div><div class="foot"></div></div>
+      </div>
+
+      <div class="avatar-caption">Toca a MQ para saludar · <strong>Voz es-CO · Hotmart $97.000 COP</strong></div>
+    </section>
+
+    <!-- Console -->
+    <section class="console" aria-label="Panel de control MQ">
+      <div class="console-top">
+        <div>
+          <div class="console-title">Consola MQ</div>
+          <div class="console-sub">Control en vivo · TTS y STT en español Colombia</div>
+        </div>
+        <div class="status-pill" id="mq-status" aria-live="polite">
+          <span class="status-dot" id="mq-status-dot"></span>
+          <span id="mq-status-text">Listo</span>
+        </div>
+      </div>
+
+      <div class="ctrl-grid">
+        <button class="btn primary" id="btn-greet" type="button">Saludar</button>
+        <button class="btn" id="btn-present" type="button">Presentar MQ</button>
+        <button class="btn" id="btn-read" type="button">Leer página</button>
+        <button class="btn" id="btn-listen" type="button">Escuchar</button>
+        <button class="btn accent" id="btn-pitch" type="button">Vender $97k</button>
+        <button class="btn ghost" id="btn-happy" type="button">Feliz</button>
+        <button class="btn danger" id="btn-stop" type="button">Stop</button>
+      </div>
+
+      <div class="talk-row">
+        <input id="mq-input" type="text" maxlength="340" placeholder="Escribe algo para que MQ lo diga…" aria-label="Texto para que MQ hable">
+        <button class="btn primary btn-talk" id="btn-speak" type="button">Hablar</button>
+      </div>
+
+      <div class="hint">
+        Consejo: Activa el sonido del navegador. En Chrome funciona perfecto. <strong>Click en MQ = Saludar.</strong> Usa “Escuchar” para dictarle en español Colombia, MQ te responderá.
+      </div>
+    </section>
+
+    <div class="integration">
+      <b>Integración en AgenteVentas.html</b><br>
+      1. Copia todo este <code>&lt;section class="stage"&gt;…&lt;/section&gt;</code> y la <code>&lt;section class="console"&gt;</code> donde quieras montar el avatar.<br>
+      2. Copia también los estilos <code>:root</code> y <code>.mq-*</code> y el script de la clase <code>MqAvatar</code>.<br>
+      3. Punto de montaje sugerido: <code>&lt;div id="mq-avatar-mount"&gt;&lt;/div&gt;</code><br>
+      4. Inicializa con: <code>const mq = new MqAvatar(document.querySelector('#mq-character'));</code><br>
+      El archivo es 100% standalone, sin dependencias externas (solo Google Fonts).
+    </div>
+
+    <footer>
+      MaxiQueen OS · MQ Avatar Pro v6 · Cúcuta, Colombia · TTS: Web Speech API · Pago único $97.000 COP en Hotmart
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  const synth = window.speechSynthesis;
+  let preferredVoice = null;
+
+  function pickEsCoVoice(){
+    const voices = synth.getVoices();
+    if(!voices.length) return null;
+    return voices.find(v => v.lang.toLowerCase() === 'es-co') ||
+           voices.find(v => v.lang.toLowerCase().startsWith('es-co')) ||
+           voices.find(v => v.lang.toLowerCase().startsWith('es-419')) ||
+           voices.find(v => v.lang.toLowerCase().startsWith('es-us')) ||
+           voices.find(v => v.lang.toLowerCase().startsWith('es-mx')) ||
+           voices.find(v => v.lang.toLowerCase().startsWith('es-')) ||
+           null;
+  }
+  function loadVoices(){
+    preferredVoice = pickEsCoVoice();
+  }
+  if(synth){ loadVoices(); synth.onvoiceschanged = loadVoices; }
+
+  const statusText = document.getElementById('mq-status-text');
+  const statusPill = document.getElementById('mq-status');
+  function setStatusUI(state){
+    const map = {
+      idle: 'Listo',
+      talking: 'Hablando',
+      listening: 'Escuchando…',
+      thinking: 'Pensando…',
+      happy: 'Feliz'
+    };
+    statusText.textContent = map[state] || 'Listo';
+    statusPill.className = 'status-pill is-' + state;
+  }
+
+  class MqAvatar {
+    constructor(el){
+      this.el = el;
+      this._state = 'idle';
+      this._mouthTimer = null;
+      this.recognition = null;
+      this._currentUtter = null;
+    }
+    setState(s){
+      this._state = s;
+      this.el.setAttribute('data-state', s);
+      setStatusUI(s);
+    }
+    speak(text, opts = {}){
+      return new Promise((resolve) => {
+        if(!synth){ resolve(); return; }
+        try{ synth.cancel(); }catch(e){}
+        const u = new SpeechSynthesisUtterance(text);
+        const voice = preferredVoice || pickEsCoVoice();
+        if(voice) u.voice = voice;
+        u.lang = (voice && voice.lang) || 'es-CO';
+        u.rate = opts.rate ?? 1.05;
+        u.pitch = opts.pitch ?? 1.1;
+        u.volume = opts.volume ?? 1;
+
+        this._currentUtter = u;
+        this.setState('talking');
+
+        // lip-sync
+        let t = 0;
+        this._clearMouth();
+        this._mouthTimer = setInterval(()=>{
+          t++;
+          const scale = 0.55 + Math.random()*1.25;
+          this.el.style.setProperty('--mouth-scale', scale.toFixed(2));
+        }, 92);
+
+        u.onend = () => {
+          this._clearMouth();
+          this.setState('idle');
+          resolve();
+        };
+        u.onerror = () => {
+          this._clearMouth();
+          this.setState('idle');
+          resolve();
+        };
+        synth.speak(u);
+      });
+    }
+    _clearMouth(){
+      if(this._mouthTimer){ clearInterval(this._mouthTimer); this._mouthTimer = null; }
+      this.el.style.setProperty('--mouth-scale', '1');
+    }
+    greet(){
+      return this.speak("Hola, soy MQ, tu asistente de MaxiQueen OS, desde Cúcuta, Colombia.");
+    }
+    pitch(){
+      return this.speak("MaxiQueen OS convierte tu caos digital en un sistema inteligente. Acceso completo por noventa y siete mil pesos colombianos, pago único en Hotmart.");
+    }
+    readPage(){
+      const txt = (document.body.innerText || "")
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 600);
+      return this.speak(txt || "No encontré texto para leer en esta página.");
+    }
+    listen(){
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SR){
+        showToast("Reconocimiento de voz no disponible en este navegador. Usa Chrome en escritorio/Android.");
+        return;
+      }
+      try{ synth.cancel(); }catch(e){}
+      if(this.recognition){
+        try{ this.recognition.stop(); }catch(e){}
+      }
+      const rec = new SR();
+      this.recognition = rec;
+      rec.lang = 'es-CO';
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
+      rec.continuous = false;
+      this.setState('listening');
+      rec.onresult = (e) => {
+        const said = e.results[0][0].transcript;
+        this.setState('thinking');
+        setTimeout(() => {
+          this.speak(`Te escuché decir: ${said}`);
+        }, 240);
+      };
+      rec.onerror = () => {
+        showToast("No pude escucharte bien. Intenta de nuevo.");
+        this.setState('idle');
+      };
+      rec.onend = () => {
+        if(this._state === 'listening') this.setState('idle');
+      };
+      try{ rec.start(); }catch(e){ this.setState('idle'); }
+    }
+    stop(){
+      try{ synth.cancel(); }catch(e){}
+      try{ this.recognition && this.recognition.stop(); }catch(e){}
+      this._clearMouth();
+      this.setState('idle');
+    }
+    happy(){
+      this.setState('happy');
+      clearTimeout(this._happyTimer);
+      this._happyTimer = setTimeout(()=>{ if(this._state === 'happy') this.idle(); }, 2500);
+    }
+    think(){
+      this.setState('thinking');
+    }
+    idle(){
+      this.setState('idle');
+    }
+  }
+
+  window.MqAvatar = MqAvatar;
+
+  // Init
+  const avatarEl = document.getElementById('mq-character');
+  const mq = new MqAvatar(avatarEl);
+
+  // UI wiring
+  document.getElementById('btn-greet').addEventListener('click', ()=> mq.greet());
+  document.getElementById('btn-present').addEventListener('click', () => {
+    mq.speak("Soy MQ, el avatar conversacional de MaxiQueen OS. Integro tu embudo de ventas, tu soporte y tus dashboards, todo operando desde Colombia, veinticuatro siete.");
+  });
+  document.getElementById('btn-read').addEventListener('click', ()=> mq.readPage());
+  document.getElementById('btn-listen').addEventListener('click', ()=> mq.listen());
+  document.getElementById('btn-pitch').addEventListener('click', ()=> mq.pitch());
+  document.getElementById('btn-happy').addEventListener('click', ()=> mq.happy());
+  document.getElementById('btn-stop').addEventListener('click', ()=> mq.stop());
+
+  const input = document.getElementById('mq-input');
+  function doSpeakInput(){
+    const v = input.value.trim();
+    if(!v){ input.focus(); return; }
+    mq.speak(v);
+  }
+  document.getElementById('btn-speak').addEventListener('click', doSpeakInput);
+  input.addEventListener('keydown', e => { if(e.key === 'Enter') doSpeakInput(); });
+
+  avatarEl.addEventListener('click', ()=> mq.greet());
+
+  // Toast
+  let toastTimer = null;
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> t.classList.remove('show'), 3000);
+  }
+  window._mqShowToast = showToast;
+
+  // First interaction hint for voices (Chrome)
+  document.addEventListener('click', function first(){
+    if(synth && synth.getVoices().length === 0) synth.getVoices();
+    document.removeEventListener('click', first);
+  }, {once:true});
+
+  setStatusUI('idle');
+})();
+</script>
+<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
+</body>
+</html>

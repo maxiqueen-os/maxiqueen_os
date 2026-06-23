@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAXIQUEEN OS | Plataforma SaaS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&family=Space+Grotesk:wght@300;500;700&display=swap');
+
+        :root {
+            --primary: #00d4ff;
+            --primary-hover: #00a8cc;
+            --accent: #8A2BE2;
+            --gold: #FFD700;
+            --bg-dark: #05050a;
+            --panel-bg: rgba(17, 24, 39, 0.65);
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at top right, #1e1b4b 0%, transparent 40%),
+                              radial-gradient(circle at bottom left, #0f172a 0%, transparent 40%);
+            color: #f3f4f6;
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 0;
+            overflow: hidden; /* Evita scroll en body, lo manejamos internamente */
+        }
+
+        /* Utilidades Glassmorphism */
+        .glass {
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+        }
+
+        .glass-panel {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .neon-text {
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Botones SaaS */
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn-gold {
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            color: #000;
+            font-weight: 800;
+            transition: all 0.3s ease;
+        }
+        .btn-gold:hover {
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            transform: scale(1.02);
+        }
+
+        /* Animaciones */
+        .fade-in { animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Scrollbars customizados */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        .sidebar-item {
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background: rgba(255,255,255,0.05);
+            border-left-color: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex antialiased text-sm md:text-base">
+
+    <!-- ==================== PANTALLA DE AUTENTICACIÓN ==================== -->
+    <div id="authView" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md fade-in">
+        <div class="glass-panel w-full max-w-md p-8 rounded-2xl relative overflow-hidden">
+            <!-- Deco line -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent"></div>
+            
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-black italic tracking-tighter mb-1 neon-text">
+                    👑 MAXIQUEEN <span class="text-white">OS</span>
+                </h1>
+                <p class="text-zinc-500 uppercase tracking-widest text-[10px]">Client Portal v2.0</p>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="space-y-4 fade-in">
+                <div>
+                    <label class="block text-xs text-zinc-400 mb-1 ml-1">Email del Operador</label>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+                        <input type="email" id="loginEmail" placeholder="admin@maxiqueen.com" class="w-full bg-black/50 border border-white/10 pl-10 pr-4 py-3 rounded-xl outline-none focus:border-primary transition text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-zinc-400 mb-1 ml-1">Credenciales Seguras</label>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+                        <input type="password" id="loginPass" placeholder="••••••••" class="w-full bg-black/50 border border-white/10 pl-10 pr-4 py-3 rounded-xl outline-none focus:border-primary transition text-white">
+                    </div>
+                </div>
+                <button onclick="handleLogin()" class="btn-primary w-full py-3 rounded-xl mt-4 uppercase tracking-wider text-sm">
+                    Iniciar Sesión
+                </button>
+                <p class="text-center text-xs text-zinc-500 mt-4">
+                    ¿No tienes acceso? <a href="#" onclick="toggleAuth()" class="text-primary hover:underline">Solicitar cuenta</a>
+                </p>
+            </div>
+
+            <!-- Register Form (Oculto por defecto) -->
+            <div id="registerForm" class="space-y-4 hidden fade-in">
+                <div>
+                    <label class="block text-xs text-zinc-400 mb-1 ml-1">Tu Nombre</label>
+                    <input type="text" id="regName" placeholder="Reina Estratega" class="w-full bg-black/50 border border-white/10 px-4 py-3 rounded-xl outline-none focus:border-primary transition text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-zinc-400 mb-1 ml-1">Email</label>
+                    <input type="email" id="regEmail" placeholder="correo@ejemplo.com" class="w-full bg-black/50 border border-white/10 px-4 py-3 rounded-xl outline-none focus:border-primary transition text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-zinc-400 mb-1 ml-1">Crear Contraseña</label>
+                    <input type="password" id="regPass" placeholder="••••••••" class="w-full bg-black/50 border border-white/10 px-4 py-3 rounded-xl outline-none focus:border-primary transition text-white">
+                </div>
+                <button onclick="handleRegister()" class="btn-primary w-full py-3 rounded-xl mt-4 uppercase tracking-wider text-sm">
+                    Crear Ecosistema
+                </button>
+                <p class="text-center text-xs text-zinc-500 mt-4">
+                    ¿Ya eres miembro? <a href="#" onclick="toggleAuth()" class="text-primary hover:underline">Ingresar aquí</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PLATAFORMA SAAS (Oculta hasta login) ==================== -->
+    <div id="appView" class="hidden h-full w-full flex">
+        
+        <!-- SIDEBAR -->
+        <aside class="w-64 glass border-r border-white/10 flex flex-col justify-between hidden md:flex z-20">
+            <div>
+                <div class="h-20 flex items-center justify-center border-b border-white/5">
+                    <h2 class="text-xl font-black italic tracking-tighter neon-text">👑 MAXIQUEEN <span class="text-white">OS</span></h2>
+                </div>
+                
+                <nav class="mt-6 flex flex-col gap-1 px-3">
+                    <p class="px-4 text-[10px] uppercase tracking-widest text-zinc-500 mb-2">Menú Principal</p>
+                    
+                    <button onclick="navigate('dashboard')" id="nav-dashboard" class="sidebar-item active flex items-center w-full px-4 py-3 rounded-lg text-zinc-300 text-sm">
+                        <i class="fas fa-chart-pie w-6"></i> Dashboard
+                    </button>
+                    <button onclick="navigate('chatos')" id="nav-chatos" class="sidebar-item flex items-center w-full px-4 py-3 rounded-lg text-zinc-300 text-sm">
+                        <i class="fas fa-robot w-6"></i> ChatOS AI
+                    </button>
+                    <button onclick="navigate('modulos')" id="nav-modulos" class="sidebar-item flex items-center w-full px-4 py-3 rounded-lg text-zinc-300 text-sm">
+                        <i class="fas fa-th-large w-6"></i> Módulos
+                    </button>
+                    
+                    <p class="px-4 text-[10px] uppercase tracking-widest text-zinc-500 mt-6 mb-2">Suscripción</p>
+                    <button onclick="navigate('billing')" id="nav-billing" class="sidebar-item flex items-center w-full px-4 py-3 rounded-lg text-zinc-300 text-sm">
+                        <i class="fas fa-credit-card w-6"></i> Mi Plan
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Perfil / Logout -->
+            <div class="p-4 border-t border-white/5">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-primary/20 border border-primary/50 flex items-center justify-center text-primary font-bold">
+                        <span id="userInitial">MQ</span>
+                    </div>
+                    <div class="overflow-hidden">
+                        <p id="userNameDisplay" class="text-sm font-bold text-white truncate">Usuario</p>
+                        <p class="text-[10px] text-zinc-400 uppercase">Plan: <span class="text-gold">Starter</span></p>
+                    </div>
+                </div>
+                <button onclick="handleLogout()" class="w-full py-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg text-xs font-bold transition flex items-center justify-center">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+
+        <!-- ÁREA PRINCIPAL -->
+        <main class="flex-1 flex flex-col h-full relative overflow-hidden">
+            
+            <!-- Topbar Header -->
+            <header class="h-20 glass border-b border-white/10 flex items-center justify-between px-6 z-10">
+                <div class="flex items-center gap-4">
+                    <button class="md:hidden text-zinc-400 hover:text-white"><i class="fas fa-bars text-xl"></i></button>
+                    <div>
+                        <h2 id="pageTitle" class="text-lg font-bold">Resumen Operativo</h2>
+                        <p class="text-[10px] text-zinc-500 uppercase tracking-wider">Actualizado en tiempo real</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-zinc-400 transition relative">
+                        <i class="fas fa-bell"></i>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full"></span>
+                    </button>
+                    <button class="btn-gold px-4 py-2 rounded-lg text-xs tracking-wider shadow-lg">
+                        <i class="fas fa-crown mr-1"></i> UPGRADE PRO
+                    </button>
+                </div>
+            </header>
+
+            <!-- Vistas Dinámicas (Scrollable Content) -->
+            <div class="flex-1 overflow-y-auto p-4 md:p-8 relative">
+                
+                <!-- VISTA: DASHBOARD -->
+                <section id="view-dashboard" class="fade-in space-y-6">
+                    <!-- KPIs -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="glass-panel p-5 rounded-xl border-t-2 border-t-primary">
+                            <p class="text-xs text-zinc-400 mb-1">Estado del Sistema</p>
+                            <h3 class="text-2xl font-bold text-white flex items-center"><i class="fas fa-check-circle text-primary mr-2 text-xl"></i> Óptimo</h3>
+                        </div>
+                        <div class="glass-panel p-5 rounded-xl border-t-2 border-t-emerald-400">
+                            <p class="text-xs text-zinc-400 mb-1">Automatizaciones Activas</p>
+                            <h3 class="text-2xl font-bold text-white">12 <span class="text-sm text-emerald-400 ml-2">↑ 3 esta semana</span></h3>
+                        </div>
+                        <div class="glass-panel p-5 rounded-xl border-t-2 border-t-pink-500">
+                            <p class="text-xs text-zinc-400 mb-1">Leads Procesados</p>
+                            <h3 class="text-2xl font-bold text-white">847 <span class="text-sm text-zinc-500 ml-2">Últimos 30 días</span></h3>
+                        </div>
+                    </div>
+
+                    <!-- Grilla de Accesos Rápidos -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 flex items-center"><i class="fas fa-bolt text-gold mr-2"></i> Módulos Rápidos</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- Card 1 -->
+                            <div class="glass p-5 rounded-xl hover:bg-white/5 transition cursor-pointer border border-white/5 hover:border-primary/50 group">
+                                <div class="w-10 h-10 rounded-lg bg-primary/20 text-primary flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-robot text-lg"></i>
+                                </div>
+                                <h4 class="font-bold text-white mb-1">ChatOS AI</h4>
+                                <p class="text-[10px] text-zinc-400 leading-relaxed">Configura el comportamiento de tu asistente.</p>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="glass p-5 rounded-xl hover:bg-white/5 transition cursor-pointer border border-white/5 hover:border-pink-500/50 group">
+                                <div class="w-10 h-10 rounded-lg bg-pink-500/20 text-pink-500 flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-gem text-lg"></i>
+                                </div>
+                                <h4 class="font-bold text-white mb-1">Identidad Premium</h4>
+                                <p class="text-[10px] text-zinc-400 leading-relaxed">Ajusta tu posicionamiento de marca.</p>
+                            </div>
+                            <!-- Card 3 -->
+                            <div class="glass p-5 rounded-xl hover:bg-white/5 transition cursor-pointer border border-white/5 hover:border-emerald-400/50 group">
+                                <div class="w-10 h-10 rounded-lg bg-emerald-400/20 text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-chart-line text-lg"></i>
+                                </div>
+                                <h4 class="font-bold text-white mb-1">Embudos de Venta</h4>
+                                <p class="text-[10px] text-zinc-400 leading-relaxed">Analiza el tráfico y conversión.</p>
+                            </div>
+                            <!-- Card 4 -->
+                            <div class="glass p-5 rounded-xl hover:bg-white/5 transition cursor-pointer border border-white/5 hover:border-gold/50 group">
+                                <div class="w-10 h-10 rounded-lg bg-gold/20 text-gold flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-crown text-lg"></i>
+                                </div>
+                                <h4 class="font-bold text-white mb-1">Venta Elegante</h4>
+                                <p class="text-[10px] text-zinc-400 leading-relaxed">Guiones y tácticas de cierre VIP.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VISTA: CHATOS AI -->
+                <section id="view-chatos" class="hidden fade-in h-[calc(100vh-10rem)] flex flex-col">
+                    <div class="glass-panel flex-1 rounded-2xl flex flex-col overflow-hidden border border-white/10">
+                        <div class="p-4 bg-black/40 border-b border-white/5 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-black">
+                                    <i class="fas fa-robot text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold">MaxiQueen AI Core</h3>
+                                    <p class="text-[10px] text-emerald-400 flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> En línea</p>
+                                </div>
+                            </div>
+                            <button class="text-zinc-500 hover:text-white"><i class="fas fa-cog"></i></button>
+                        </div>
+                        
+                        <div id="mainChatBody" class="flex-1 overflow-y-auto p-6 space-y-4">
+                            <div class="flex items-start gap-3 max-w-[80%]">
+                                <div class="w-8 h-8 rounded-full bg-primary/20 flex-shrink-0 flex items-center justify-center text-primary text-xs"><i class="fas fa-robot"></i></div>
+                                <div class="bg-zinc-800 p-3 rounded-2xl rounded-tl-none border border-white/5 text-sm text-zinc-200 shadow-lg">
+                                    Hola 👑. Bienvenido a tu núcleo operativo. ¿Qué estrategia vamos a implementar o auditar el día de hoy?
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-black/40 border-t border-white/5">
+                            <div class="relative flex items-center">
+                                <input type="text" id="mainChatInput" placeholder="Escribe un comando o consulta a la IA..." class="w-full bg-zinc-900 border border-white/10 rounded-xl pl-4 pr-12 py-3 text-sm focus:border-primary outline-none transition text-white">
+                                <button onclick="sendMainMessage()" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-primary rounded-lg text-black hover:bg-primary-hover flex items-center justify-center transition">
+                                    <i class="fas fa-paper-plane text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VISTA: BILLING / PLANES -->
+                <section id="view-billing" class="hidden fade-in max-w-4xl mx-auto">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold mb-2">Gestiona tu Ecosistema</h2>
+                        <p class="text-zinc-400 text-sm">Escala las capacidades de tu plataforma según las necesidades de tu negocio.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Starter -->
+                        <div class="glass-panel p-8 rounded-2xl border border-white/10 opacity-70">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-bold text-white">STARTER</h3>
+                                <span class="bg-zinc-800 text-xs px-2 py-1 rounded text-zinc-400">Plan Actual</span>
+                            </div>
+                            <div class="mb-6"><span class="text-3xl font-black text-white">$49</span><span class="text-zinc-500 text-sm">/mes</span></div>
+                            <ul class="space-y-3 text-sm text-zinc-300 mb-8">
+                                <li><i class="fas fa-check text-primary mr-2"></i> Dashboard Básico</li>
+                                <li><i class="fas fa-check text-primary mr-2"></i> ChatOS AI (Límites Estándar)</li>
+                                <li><i class="fas fa-check text-primary mr-2"></i> Soporte vía Ticket</li>
+                            </ul>
+                            <button disabled class="w-full py-3 bg-zinc-800 text-zinc-500 rounded-xl font-bold text-sm cursor-not-allowed">Activo</button>
+                        </div>
+
+                        <!-- Pro Elite -->
+                        <div class="glass-panel p-8 rounded-2xl border border-gold relative overflow-hidden shadow-[0_0_30px_rgba(255,215,0,0.1)]">
+                            <div class="absolute top-4 right-[-35px] bg-gold text-black text-[10px] font-bold py-1 px-10 rotate-45">RECOMENDADO</div>
+                            
+                            <h3 class="text-xl font-bold text-gold mb-4 italic">PRO ELITE</h3>
+                            <div class="mb-6"><span class="text-3xl font-black text-white">$199</span><span class="text-zinc-500 text-sm">/mes</span></div>
+                            <ul class="space-y-3 text-sm text-zinc-300 mb-8">
+                                <li><i class="fas fa-check text-gold mr-2"></i> Todo lo de Starter</li>
+                                <li><i class="fas fa-check text-gold mr-2"></i> Acceso Total a Módulos Venta VIP</li>
+                                <li><i class="fas fa-check text-gold mr-2"></i> Automatizaciones Ilimitadas</li>
+                                <li><i class="fas fa-check text-gold mr-2"></i> Soporte 1 a 1 por WhatsApp</li>
+                            </ul>
+                            <button class="btn-gold w-full py-3 rounded-xl font-bold text-sm">ACTUALIZAR A ELITE</button>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Otras vistas pueden agregarse aquí ocultas por defecto -->
+
+            </div>
+        </main>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-primary text-black px-6 py-3 rounded-full font-bold z-[100] text-sm shadow-[0_0_20px_rgba(0,212,255,0.4)] transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px]">
+        Mensaje del sistema
+    </div>
+
+    <script>
+        /* ==================== ESTADO Y RUTEO (SPA) ==================== */
+        const views = ['dashboard', 'chatos', 'billing'];
+        
+        function navigate(viewId) {
+            // Ocultar todas las vistas
+            views.forEach(v => {
+                document.getElementById(`view-${v}`)?.classList.add('hidden');
+                document.getElementById(`nav-${v}`)?.classList.remove('active');
+            });
+            
+            // Mostrar la seleccionada
+            document.getElementById(`view-${viewId}`)?.classList.remove('hidden');
+            document.getElementById(`nav-${viewId}`)?.classList.add('active');
+            
+            // Cambiar título
+            const titles = {
+                'dashboard': 'Resumen Operativo',
+                'chatos': 'Central de Inteligencia AI',
+                'billing': 'Suscripción y Facturación'
+            };
+            document.getElementById('pageTitle').innerText = titles[viewId] || 'MaxiQueen OS';
+        }
+
+        /* ==================== AUTENTICACIÓN ==================== */
+        function checkAuth() {
+            const user = localStorage.getItem("mq_user");
+            if (user) {
+                const userData = JSON.parse(user);
+                document.getElementById("authView").classList.add("hidden");
+                document.getElementById("appView").classList.remove("hidden");
+                
+                // Setear datos en la UI
+                const name = userData.name || userData.email.split('@')[0];
+                document.getElementById("userNameDisplay").innerText = name;
+                document.getElementById("userInitial").innerText = name.substring(0,2).toUpperCase();
+                
+                navigate('dashboard'); // Cargar dashboard por defecto
+            } else {
+                document.getElementById("authView").classList.remove("hidden");
+                document.getElementById("appView").classList.add("hidden");
+            }
+        }
+
+        function toggleAuth() {
+            const loginF = document.getElementById("loginForm");
+            const regF = document.getElementById("registerForm");
+            if (loginF.classList.contains("hidden")) {
+                loginF.classList.remove("hidden");
+                regF.classList.add("hidden");
+            } else {
+                loginF.classList.add("hidden");
+                regF.classList.remove("hidden");
+            }
+        }
+
+        function handleRegister() {
+            const name = document.getElementById("regName").value;
+            const email = document.getElementById("regEmail").value;
+            const pass = document.getElementById("regPass").value;
+            
+            if(!email || !pass || !name) return showToast("Por favor completa todos los campos", true);
+
+            localStorage.setItem("mq_user", JSON.stringify({ name, email, pass }));
+            showToast("Ecosistema creado. Iniciando sesión...");
+            setTimeout(checkAuth, 1000);
+        }
+
+        function handleLogin() {
+            const email = document.getElementById("loginEmail").value;
+            const pass = document.getElementById("loginPass").value;
+            const stored = JSON.parse(localStorage.getItem("mq_user"));
+
+            if(stored && stored.email === email && stored.pass === pass) {
+                showToast("Acceso concedido.");
+                setTimeout(checkAuth, 800);
+            } else if (email === "admin@maxiqueen.com" && pass === "admin") {
+                // Cuenta demo rápida
+                localStorage.setItem("mq_user", JSON.stringify({ name: "Admin", email, pass }));
+                showToast("Acceso Demo Concedido.");
+                setTimeout(checkAuth, 800);
+            } else {
+                showToast("Credenciales incorrectas.", true);
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem("mq_user");
+            checkAuth();
+            showToast("Sesión finalizada de forma segura.");
+        }
+
+        /* ==================== SISTEMA DE CHAT INTERNO ==================== */
+        function sendMainMessage() {
+            const input = document.getElementById("mainChatInput");
+            const body = document.getElementById("mainChatBody");
+            const msg = input.value.trim();
+
+            if(!msg) return;
+
+            // Burbuja Usuario
+            body.innerHTML += `
+                <div class="flex items-start gap-3 justify-end w-full fade-in">
+                    <div class="bg-primary/20 p-3 rounded-2xl rounded-tr-none border border-primary/30 text-sm text-white shadow-lg max-w-[80%]">
+                        ${msg}
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-white/10 flex-shrink-0 flex items-center justify-center text-xs"><i class="fas fa-user"></i></div>
+                </div>
+            `;
+            
+            input.value = "";
+            body.scrollTop = body.scrollHeight;
+
+            // Simular "Escribiendo..."
+            const typingId = "typing-" + Date.now();
+            setTimeout(() => {
+                body.innerHTML += `
+                    <div id="${typingId}" class="flex items-start gap-3 max-w-[80%] fade-in">
+                        <div class="w-8 h-8 rounded-full bg-primary/20 flex-shrink-0 flex items-center justify-center text-primary text-xs"><i class="fas fa-robot"></i></div>
+                        <div class="bg-zinc-800 p-3 rounded-2xl rounded-tl-none border border-white/5 text-sm text-zinc-400">
+                            Procesando...
+                        </div>
+                    </div>
+                `;
+                body.scrollTop = body.scrollHeight;
+            }, 400);
+
+            // Respuesta de la IA
+            setTimeout(() => {
+                document.getElementById(typingId).remove();
+                body.innerHTML += `
+                    <div class="flex items-start gap-3 max-w-[80%] fade-in">
+                        <div class="w-8 h-8 rounded-full bg-primary/20 flex-shrink-0 flex items-center justify-center text-primary text-xs"><i class="fas fa-robot"></i></div>
+                        <div class="bg-zinc-800 p-3 rounded-2xl rounded-tl-none border border-white/5 text-sm text-zinc-200 shadow-lg leading-relaxed">
+                            He registrado tu directriz: "${msg}". Te recomiendo sincronizar esto con el módulo de Venta Elegante para automatizar el cierre. ¿Deseas que prepare el entorno?
+                        </div>
+                    </div>
+                `;
+                body.scrollTop = body.scrollHeight;
+            }, 1500);
+        }
+
+        // Enter para chat
+        document.getElementById("mainChatInput").addEventListener("keypress", (e) => {
+            if(e.key === "Enter") sendMainMessage();
+        });
+
+        /* ==================== UTILIDADES ==================== */
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById("toast");
+            toast.innerText = msg;
+            
+            if (isError) {
+                toast.style.background = "#ef4444"; // red-500
+                toast.style.color = "white";
+                toast.style.boxShadow = "0 0 20px rgba(239,68,68,0.4)";
+            } else {
+                toast.style.background = "var(--primary)";
+                toast.style.color = "black";
+                toast.style.boxShadow = "0 0 20px rgba(0,212,255,0.4)";
+            }
+
+            toast.style.opacity = "1";
+            toast.style.transform = "translate(-50%, 0)";
+            
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform = "translate(-50%, -20px)";
+            }, 3000);
+        }
+
+        // Inicializar App
+        window.onload = checkAuth;
+    </script>
+</body>
+</html>

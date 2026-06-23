@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQ-07 | Neon Runner</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --danger: #ff0055;
+            --bg: #0a0a0f;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            touch-action: none; /* Previene scroll en móviles */
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 600px;
+            background: #000;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .ui-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            pointer-events: none;
+        }
+
+        .score-box {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        .menu-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .btn-start {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--secondary);
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .btn-start:hover {
+            transform: scale(1.1);
+            background: var(--primary);
+            box-shadow: 0 0 30px var(--primary);
+        }
+
+        .instructions {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .game-over-text {
+            color: var(--danger);
+            font-size: 40px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div class="ui-overlay">
+            <div class="score-box">DATA: <span id="score">0</span></div>
+        </div>
+
+        <div id="start-menu" class="menu-overlay">
+            <h1 style="color: var(--primary); margin: 0;">NEON RUNNER</h1>
+            <p style="color: #888;">INFILTRACIÓN MQ-07</p>
+            <button class="btn-start" onclick="startGame()">Iniciar Enlace</button>
+            <div class="instructions">Usa las flechas ← → o toca los lados de la pantalla</div>
+        </div>
+
+        <div id="game-over-menu" class="menu-overlay" style="display: none;">
+            <div class="game-over-text">CONEXIÓN PERDIDA</div>
+            <p>Puntaje Final: <span id="final-score">0</span></p>
+            <button class="btn-start" onclick="startGame()">Reintentar</button>
+        </div>
+    </div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreElement = document.getElementById('score');
+    const startMenu = document.getElementById('start-menu');
+    const gameOverMenu = document.getElementById('game-over-menu');
+    const finalScoreElement = document.getElementById('final-score');
+
+    let gameActive = false;
+    let score = 0;
+    let player, obstacles, particles, frameId;
+    let speed = 5;
+
+    // Configurar dimensiones reales del canvas
+    function resize() {
+        const container = document.getElementById('game-container');
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Player {
+        constructor() {
+            this.width = 40;
+            this.height = 40;
+            this.x = canvas.width / 2 - this.width / 2;
+            this.y = canvas.height - 80;
+            this.color = '#00f2ff';
+            this.targetX = this.x;
+        }
+
+        draw() {
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = this.color;
+            ctx.fillStyle = this.color;
+            
+            // Dibujar una forma de nave/triángulo
+            ctx.beginPath();
+            ctx.moveTo(this.x + this.width / 2, this.y);
+            ctx.lineTo(this.x, this.y + this.height);
+            ctx.lineTo(this.x + this.width, this.y + this.height);
+            ctx.closePath();
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+
+        update() {
+            // Suavizado de movimiento
+            this.x += (this.targetX - this.x) * 0.2;
+            
+            // Límites
+            if (this.x < 0) this.x = 0;
+            if (this.x > canvas.width - this.width) this.x = canvas.width - this.width;
+        }
+    }
+
+    class Obstacle {
+        constructor() {
+            this.width = Math.random() * (canvas.width * 0.6) + 50;
+            this.height = 20;
+            this.x = Math.random() < 0.5 ? 0 : canvas.width - this.width;
+            this.y = -50;
+            this.color = '#ff0055';
+        }
+
+        draw() {
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = this.color;
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+            ctx.shadowBlur = 0;
+        }
+
+        update() {
+            this.y += speed;
+        }
+    }
+
+    function startGame() {
+        gameActive = true;
+        score = 0;
+        speed = 5;
+        player = new Player();
+        obstacles = [];
+        particles = [];
+        scoreElement.innerText = "0";
+        startMenu.style.display = 'none';
+        gameOverMenu.style.display = 'none';
+        
+        if (frameId) cancelAnimationFrame(frameId);
+        gameLoop();
+    }
+
+    function spawnObstacle() {
+        if (Math.random() < 0.03) {
+            obstacles.push(new Obstacle());
+        }
+    }
+
+    function checkCollision(p, o) {
+        return (p.x < o.x + o.width &&
+                p.x + p.width > o.x &&
+                p.y < o.y + o.height &&
+                p.y + p.height > o.y);
+    }
+
+    function gameOver() {
+        gameActive = false;
+        finalScoreElement.innerText = Math.floor(score);
+        gameOverMenu.style.display = 'flex';
+        cancelAnimationFrame(frameId);
+    }
+
+    function gameLoop() {
+        if (!gameActive) return;
+
+        ctx.fillStyle = 'rgba(10, 10, 15, 0.3)'; // Efecto de estela
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Dibujar rejilla de fondo
+        ctx.strokeStyle = 'rgba(0, 242, 255, 0.05)';
+        for(let i=0; i<canvas.width; i+=40) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+        }
+
+        player.update();
+        player.draw();
+
+        spawnObstacle();
+
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+            obstacles[i].update();
+            obstacles[i].draw();
+
+            if (checkCollision(player, obstacles[i])) {
+                gameOver();
+            }
+
+            if (obstacles[i].y > canvas.height) {
+                obstacles.splice(i, 1);
+                score += 10;
+                scoreElement.innerText = score;
+                speed += 0.1; // Aumentar dificultad gradualmente
+            }
+        }
+
+        frameId = requestAnimationFrame(gameLoop);
+    }
+
+    // Controles teclado
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') player.targetX -= 80;
+        if (e.key === 'ArrowRight') player.targetX += 80;
+    });
+
+    // Controles táctiles
+    canvas.addEventListener('touchstart', (e) => {
+        const touchX = e.touches[0].clientX;
+        const halfWidth = window.innerWidth / 2;
+        if (touchX < halfWidth) player.targetX -= 80;
+        else player.targetX += 80;
+    });
+
+</script>
+</body>
+</html>

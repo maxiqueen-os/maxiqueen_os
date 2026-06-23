@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>MAXIQUEEN OS — Page Manager 👑 [ROOT ACCESS]</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+/* ================= VARIABLES ================= */
+:root {
+  --neon-1: #00ff88;
+  --neon-2: #00ffaa;
+  --bg-black: #000000;
+  --bg-space: #05070f;
+  --glass-bg: rgba(0, 255, 136, 0.05);
+  --glass-border: rgba(0, 255, 136, 0.2);
+  --text-main: #e0ffe8;
+  --text-muted: #5e8a75;
+  --error: #ff0055;
+  --warning: #ffaa00;
+  --hud-glow: 0 0 10px rgba(0, 255, 136, 0.5);
+  --hud-glow-intense: 0 0 20px rgba(0, 255, 136, 0.8), 0 0 40px rgba(0, 255, 136, 0.4);
+}
+
+/* ================= RESET & BASICS ================= */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; user-select: none; }
+body {
+  background-color: var(--bg-black);
+  color: var(--text-main);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ================= BACKGROUND & HUD ================= */
+#canvas-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.6; }
+.scanlines {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+  background-size: 100% 4px; opacity: 0.3;
+}
+.vignette {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9998; pointer-events: none;
+  box-shadow: inset 0 0 150px rgba(0,0,0,0.9);
+}
+
+/* ================= BOOT SCREEN ================= */
+#boot-screen {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-black);
+  z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center;
+  transition: opacity 0.5s;
+}
+#boot-screen button {
+  background: transparent; border: 2px solid var(--neon-1); color: var(--neon-1);
+  padding: 15px 40px; font-size: 1.5rem; cursor: pointer; text-transform: uppercase;
+  box-shadow: var(--hud-glow); transition: 0.3s; letter-spacing: 4px; font-weight: bold;
+}
+#boot-screen button:hover { background: var(--neon-1); color: var(--bg-black); box-shadow: var(--hud-glow-intense); }
+
+/* ================= LAYOUT ================= */
+#app-container { display: flex; flex: 1; z-index: 10; position: relative; height: calc(100vh - 50px); }
+
+/* ================= DASHBOARD (TOP) ================= */
+#dashboard {
+  height: 50px; background: rgba(0, 0, 0, 0.8); border-bottom: 1px solid var(--neon-1);
+  display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
+  z-index: 20; box-shadow: 0 2px 15px rgba(0,255,136,0.2); backdrop-filter: blur(5px);
+}
+.dash-segment { display: flex; align-items: center; gap: 15px; font-size: 0.85rem; }
+.glitch-title { font-weight: bold; color: var(--neon-1); text-shadow: var(--hud-glow); letter-spacing: 2px; }
+.stat-box { border: 1px solid var(--glass-border); padding: 4px 10px; background: rgba(0,255,136,0.1); border-radius: 4px; }
+.xp-bar-container { width: 150px; height: 10px; background: #111; border: 1px solid var(--neon-1); position: relative; }
+.xp-bar-fill { height: 100%; background: var(--neon-1); width: 0%; transition: width 0.5s ease-out; box-shadow: var(--hud-glow); }
+.controls-toggles button { background: none; border: 1px solid var(--neon-1); color: var(--neon-1); cursor: pointer; padding: 2px 8px; font-size: 0.7rem; }
+.controls-toggles button.off { border-color: var(--error); color: var(--error); }
+
+/* ================= SIDEBAR ================= */
+#sidebar {
+  width: 320px; background: rgba(5, 7, 15, 0.85); border-right: 1px solid var(--neon-1);
+  display: flex; flex-direction: column; backdrop-filter: blur(10px); transition: 0.3s;
+}
+.sidebar-header { padding: 15px; border-bottom: 1px solid var(--glass-border); }
+.search-box { width: 100%; background: rgba(0,255,136,0.05); border: 1px solid var(--neon-1); color: var(--neon-1); padding: 8px; margin-top: 10px; outline: none; }
+.search-box::placeholder { color: var(--text-muted); }
+
+#pages-container { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: var(--neon-1); }
+
+/* Items */
+.page-item, .folder-item {
+  background: rgba(0, 0, 0, 0.6); border: 1px solid var(--glass-border); padding: 10px;
+  cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+  transition: 0.2s; border-left: 3px solid transparent;
+}
+.page-item:hover, .folder-item:hover { background: var(--glass-bg); border-left-color: var(--neon-1); transform: translateX(5px); }
+.page-item.active { border-color: var(--neon-1); border-left: 4px solid var(--neon-1); background: rgba(0,255,136,0.1); box-shadow: inset 0 0 10px rgba(0,255,136,0.2); }
+.item-info strong { display: block; font-size: 0.9rem; text-transform: uppercase; }
+.item-info span { font-size: 0.65rem; color: var(--text-muted); }
+.item-actions button { background: none; border: none; color: var(--neon-1); cursor: pointer; padding: 5px; opacity: 0.5; transition: 0.2s; }
+.item-actions button:hover { opacity: 1; text-shadow: var(--hud-glow); transform: scale(1.2); }
+
+.sidebar-footer { padding: 15px; border-top: 1px solid var(--glass-border); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* ================= MAIN WORKSPACE ================= */
+#main { flex: 1; display: flex; flex-direction: column; background: transparent; position: relative; }
+#toolbar {
+  height: 50px; background: rgba(0,0,0,0.6); border-bottom: 1px solid var(--glass-border);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+}
+.toolbar-title { font-size: 1.1rem; color: var(--neon-2); text-shadow: var(--hud-glow); }
+.toolbar-actions { display: flex; gap: 10px; }
+
+/* Buttons */
+.btn {
+  background: rgba(0,255,136,0.1); border: 1px solid var(--neon-1); color: var(--neon-1);
+  padding: 6px 15px; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; font-weight: bold; transition: 0.2s;
+}
+.btn:hover { background: var(--neon-1); color: #000; box-shadow: var(--hud-glow); }
+.btn-danger { border-color: var(--error); color: var(--error); background: rgba(255,0,85,0.1); }
+.btn-danger:hover { background: var(--error); color: #fff; box-shadow: 0 0 15px var(--error); }
+
+#viewer-container { flex: 1; padding: 20px; }
+#viewer { width: 100%; height: 100%; border: 1px solid var(--neon-1); background: #fff; box-shadow: var(--hud-glow); border-radius: 4px; }
+
+/* ================= TOASTS ================= */
+#toast-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 10px; z-index: 10000; }
+.toast {
+  background: rgba(0,0,0,0.9); border: 1px solid var(--neon-1); padding: 15px 20px;
+  min-width: 300px; box-shadow: var(--hud-glow); transform: translateX(120%);
+  animation: slideIn 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards; position: relative; overflow: hidden;
+}
+.toast.error { border-color: var(--error); box-shadow: 0 0 10px var(--error); }
+.toast.warning { border-color: var(--warning); box-shadow: 0 0 10px var(--warning); }
+.toast-title { font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; text-transform: uppercase; }
+.toast-msg { font-size: 0.8rem; color: var(--text-muted); }
+.toast-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--neon-1); width: 100%; animation: progress 3s linear forwards; }
+.toast.error .toast-progress { background: var(--error); }
+@keyframes slideIn { to { transform: translateX(0); } }
+@keyframes fadeOut { to { opacity: 0; transform: translateY(-20px); } }
+@keyframes progress { to { width: 0%; } }
+
+/* Mobile */
+@media (max-width: 768px) {
+  #sidebar { position: absolute; left: -320px; height: 100%; z-index: 50; }
+  #sidebar.open { left: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
+  .mobile-toggle { display: block !important; }
+}
+.mobile-toggle { display: none; background: none; border: none; color: var(--neon-1); font-size: 1.5rem; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div id="boot-screen">
+  <h1 style="color:var(--neon-1); text-shadow: var(--hud-glow-intense); margin-bottom: 30px;">MAXIQUEEN OS // KERNEL</h1>
+  <button onclick="bootSystem()">INICIALIZAR SISTEMA</button>
+</div>
+
+<canvas id="canvas-bg"></canvas>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<div id="dashboard">
+  <div class="dash-segment">
+    <span class="glitch-title">MQ_OS [ROOT]</span>
+    <span class="stat-box" id="sys-mem">MEM: -- MB</span>
+    <span class="stat-box" id="sys-pages">PAGES: 0</span>
+  </div>
+  <div class="dash-segment">
+    <div style="text-align: right; line-height: 1.1;">
+      <div id="user-rank" style="font-weight:bold; color:var(--neon-1);">NOVATO</div>
+      <div style="font-size:0.6rem; color:var(--text-muted);">XP: <span id="user-xp">0</span></div>
+    </div>
+    <div class="xp-bar-container"><div class="xp-bar-fill" id="xp-fill"></div></div>
+    <div class="controls-toggles">
+      <button id="toggle-audio" onclick="Engine.toggleAudio()">[VOL: ON]</button>
+      <button id="toggle-voice" onclick="Engine.toggleVoice()">[IA: ON]</button>
+    </div>
+  </div>
+</div>
+
+<div id="app-container">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="color:var(--neon-1);">DIRECTORIO</h3>
+        <button class="mobile-toggle" onclick="UI.toggleSidebar()">×</button>
+      </div>
+      <input type="text" id="searchInput" class="search-box" placeholder="Buscar ID, Nombre, Contenido..." oninput="Core.searchPages()">
+    </div>
+    
+    <div id="pages-container" ondragover="event.preventDefault()" ondrop="Core.handleDrop(event)">
+      </div>
+    
+    <div class="sidebar-footer">
+      <button class="btn" onclick="Core.createPage()">+ PÁGINA</button>
+      <button class="btn" onclick="Core.createFolder()">+ CARPETA</button>
+      <button class="btn" onclick="Storage.exportData()">EXPORT</button>
+      <button class="btn" onclick="document.getElementById('fileInput').click()">IMPORT</button>
+      <input type="file" id="fileInput" style="display:none" accept=".json" onchange="Storage.importData(event)">
+    </div>
+  </aside>
+
+  <main id="main">
+    <div id="toolbar">
+      <div style="display:flex; align-items:center; gap:15px;">
+        <button class="mobile-toggle" onclick="UI.toggleSidebar()">☰</button>
+        <span class="toolbar-title" id="current-page-title">// SELECCIONE UN ARCHIVO</span>
+      </div>
+      <div class="toolbar-actions" id="page-actions" style="display:none;">
+        <button class="btn" onclick="Core.openBuilder()">BUILDER 2.0</button>
+        <button class="btn" onclick="Core.renameCurrent()">RENOMBRAR</button>
+        <button class="btn" onclick="Core.duplicateCurrent()">DUPLICAR</button>
+        <button class="btn btn-danger" onclick="Core.deleteCurrent()">ELIMINAR</button>
+        <button class="btn" onclick="Storage.undo()" title="Deshacer" style="padding: 6px 10px;">↺</button>
+      </div>
+    </div>
+    <div id="viewer-container">
+      <iframe id="viewer" sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
+  </main>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+/**
+ * MAXIQUEEN OS - KERNEL ARCHITECTURE
+ * Architect: Senior Developer AI
+ */
+
+/* ================= STATE MANAGEMENT ================= */
+const State = {
+  project: {
+    id: crypto.randomUUID(),
+    created: Date.now(),
+    xp: 0,
+    level: 1,
+    folders: [{ id: 'root', name: 'ROOT_DIR' }],
+    pages: []
+  },
+  history: [],
+  currentIndex: null,
+  searchQuery: "",
+  settings: { audio: true, voice: true }
+};
+
+const RANKS = [
+  { max: 99, name: "NOVATO" },
+  { max: 299, name: "CONSTRUCTOR" },
+  { max: 599, name: "ARQUITECTO" },
+  { max: 999, name: "EMPERADOR DIGITAL" },
+  { max: Infinity, name: "MAXIQUEEN LEGEND" }
+];
+
+/* ================= ENGINE (AUDIO & VOICE & FX) ================= */
+const Engine = {
+  ctx: null,
+  voiceSynth: window.speechSynthesis,
+  voiceObj: null,
+  
+  init() {
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this._loadVoice();
+    this.startParticles();
+    // Memory interval
+    setInterval(() => {
+      if(performance && performance.memory) {
+        document.getElementById('sys-mem').innerText = `MEM: ${(performance.memory.usedJSHeapSize / 1048576).toFixed(1)} MB`;
+      } else {
+        document.getElementById('sys-mem').innerText = `MEM: ${Math.floor(Math.random() * 50 + 100)} MB (SIM)`;
+      }
+    }, 2000);
+  },
+
+  _loadVoice() {
+    const setVoice = () => {
+      const voices = this.voiceSynth.getVoices();
+      // Try to find a Spanish female voice, fallback to any Spanish, then default
+      this.voiceObj = voices.find(v => v.lang.includes('es') && v.name.toLowerCase().includes('female')) 
+                   || voices.find(v => v.lang.includes('es')) || voices[0];
+    };
+    if (this.voiceSynth.getVoices().length !== 0) setVoice();
+    else this.voiceSynth.onvoiceschanged = setVoice;
+  },
+
+  playSynth(type) {
+    if (!State.settings.audio || !this.ctx) return;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    
+    const now = this.ctx.currentTime;
+    if (type === 'hover') {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(800, now);
+      gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+      osc.start(now); osc.stop(now + 0.05);
+    } else if (type === 'click') {
+      osc.type = 'square'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+      gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+      osc.start(now); osc.stop(now + 0.1);
+    } else if (type === 'success') {
+      osc.type = 'triangle'; osc.frequency.setValueAtTime(400, now); osc.frequency.setValueAtTime(600, now + 0.1);
+      gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
+      osc.start(now); osc.stop(now + 0.3);
+    } else if (type === 'error') {
+      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.setValueAtTime(100, now + 0.2);
+      gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
+      osc.start(now); osc.stop(now + 0.3);
+    }
+  },
+
+  speak(text) {
+    if (!State.settings.voice || !this.voiceSynth || !this.voiceObj) return;
+    this.voiceSynth.cancel(); // clear queue
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.voice = this.voiceObj; utter.pitch = 1.2; utter.rate = 1.1; utter.volume = 0.8;
+    this.voiceSynth.speak(utter);
+  },
+
+  toggleAudio() {
+    State.settings.audio = !State.settings.audio;
+    const btn = document.getElementById('toggle-audio');
+    btn.innerText = State.settings.audio ? '[VOL: ON]' : '[VOL: OFF]';
+    btn.className = State.settings.audio ? '' : 'off';
+    if(State.settings.audio && this.ctx.state === 'suspended') this.ctx.resume();
+  },
+
+  toggleVoice() {
+    State.settings.voice = !State.settings.voice;
+    const btn = document.getElementById('toggle-voice');
+    btn.innerText = State.settings.voice ? '[IA: ON]' : '[IA: OFF]';
+    btn.className = State.settings.voice ? '' : 'off';
+    if(State.settings.voice) this.speak("Voz de inteligencia artificial activada.");
+  },
+
+  startParticles() {
+    const canvas = document.getElementById('canvas-bg');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const particles = Array.from({length: 50}, () => ({
+      x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5
+    }));
+    
+    function animate() {
+      ctx.clearRect(0,0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(0, 255, 136, 0.5)';
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
+    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+  }
+};
+
+/* ================= GAMIFICATION ================= */
+const Game = {
+  addXP(amount, actionName) {
+    State.project.xp += amount;
+    const currentRank = RANKS.find(r => State.project.xp <= r.max) || RANKS[RANKS.length-1];
+    
+    document.getElementById('user-xp').innerText = State.project.xp;
+    document.getElementById('user-rank').innerText = currentRank.name;
+    
+    // Calcular porcentaje para la barra respecto al rango actual
+    const prevMax = RANKS[RANKS.indexOf(currentRank)-1]?.max || 0;
+    const range = currentRank.max - prevMax;
+    const progress = Math.min(100, ((State.project.xp - prevMax) / range) * 100);
+    document.getElementById('xp-fill').style.width = `${progress}%`;
+    
+    UI.notify(`+${amount} XP: ${actionName}`, 'success');
+  }
+};
+
+/* ================= STORAGE & SECURITY ================= */
+const Storage = {
+  save() {
+    try {
+      State.project.modified = Date.now();
+      localStorage.setItem('MQ_OS_PROJECT', JSON.stringify(State.project));
+      this._pushHistory();
+    } catch(e) { UI.notify('Error CRÍTICO al guardar', 'error'); Engine.speak("Fallo en la matriz de almacenamiento."); }
+  },
+  
+  load() {
+    try {
+      const data = localStorage.getItem('MQ_OS_PROJECT');
+      if (data) {
+        const parsed = JSON.parse(data);
+        if(parsed.pages && Array.isArray(parsed.pages)) State.project = parsed;
+      }
+      this._pushHistory();
+    } catch(e) { console.error("Data corrupta", e); }
+  },
+
+  _pushHistory() {
+    const snap = JSON.stringify(State.project);
+    if(State.history.length === 0 || State.history[State.history.length-1] !== snap) {
+      State.history.push(snap);
+      if(State.history.length > 20) State.history.shift(); // Max 20
+    }
+  },
+
+  undo() {
+    if(State.history.length > 1) {
+      State.history.pop(); // discard current
+      State.project = JSON.parse(State.history[State.history.length-1]);
+      State.currentIndex = null;
+      Storage.save();
+      UI.renderSidebar();
+      UI.loadViewer();
+      UI.notify('Sistema restaurado a versión anterior', 'warning');
+      Engine.speak("Restauración completada");
+    } else {
+      UI.notify('No hay historial disponible', 'error');
+    }
+  },
+
+  exportData() {
+    Engine.playSynth('click');
+    const blob = new Blob([JSON.stringify(State.project, null, 2)], {type: "application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `MQ_OS_EXPORT_${Date.now()}.json`;
+    a.click();
+    Game.addXP(20, "Backup Seguro");
+    Engine.speak("Exportación de datos finalizada.");
+  },
+
+  importData(event) {
+    const file = event.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if(!data.pages || !Array.isArray(data.pages)) throw new Error("Estructura inválida");
+        State.project = data;
+        State.currentIndex = null;
+        this.save();
+        UI.renderSidebar();
+        UI.loadViewer();
+        UI.notify('Directorio importado con éxito', 'success');
+        Engine.playSynth('success');
+        Engine.speak("Datos externos asimilados correctamente.");
+      } catch(err) {
+        UI.notify('Infección detectada en archivo. Abortado.', 'error');
+        Engine.playSynth('error');
+        Engine.speak("Alerta. Estructura de datos corrupta.");
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = ''; // reset input
+  },
+  
+  autoSave() { setInterval(() => this.save(), 10000); } // 10s Autosave
+};
+
+/* ================= CORE LOGIC ================= */
+const Core = {
+  createPage() {
+    const name = prompt("INGRESAR NOMBRE DEL NODO:");
+    if(!name) return;
+    const newPage = {
+      id: crypto.randomUUID(),
+      name: this._sanitize(name),
+      folderId: 'root',
+      html: this._getTemplate(name)
+    };
+    State.project.pages.push(newPage);
+    State.currentIndex = State.project.pages.length - 1;
+    Storage.save();
+    UI.renderSidebar();
+    UI.loadViewer();
+    Engine.playSynth('success');
+    Engine.speak(`Nodo ${name} creado.`);
+    Game.addXP(10, "Creación de Nodo");
+  },
+
+  createFolder() {
+    const name = prompt("NOMBRE DE CATEGORÍA:");
+    if(!name) return;
+    State.project.folders.push({ id: crypto.randomUUID(), name: this._sanitize(name) });
+    Storage.save();
+    UI.renderSidebar();
+    Engine.playSynth('click');
+  },
+
+  duplicateCurrent() {
+    if(State.currentIndex === null) return;
+    const p = State.project.pages[State.currentIndex];
+    State.project.pages.push({ ...p, id: crypto.randomUUID(), name: p.name + " [CLON]" });
+    State.currentIndex = State.project.pages.length - 1;
+    Storage.save();
+    UI.renderSidebar();
+    UI.loadViewer();
+    Engine.playSynth('success');
+    Engine.speak("Clonación exitosa.");
+    Game.addXP(5, "Clonación");
+  },
+
+  deleteCurrent() {
+    if(State.currentIndex === null) return;
+    const pName = State.project.pages[State.currentIndex].name;
+    if(confirm(`¿PURGAR NODO [${pName}]?`)) {
+      State.project.pages.splice(State.currentIndex, 1);
+      State.currentIndex = null;
+      Storage.save();
+      UI.renderSidebar();
+      UI.loadViewer();
+      Engine.playSynth('error');
+      Engine.speak("Nodo purgado del sistema.");
+    }
+  },
+
+  renameCurrent() {
+    if(State.currentIndex === null) return;
+    const p = State.project.pages[State.currentIndex];
+    const newName = prompt("NUEVO IDENTIFICADOR:", p.name);
+    if(newName && newName !== p.name) {
+      p.name = this._sanitize(newName);
+      Storage.save();
+      UI.renderSidebar();
+      UI.loadViewer();
+      Engine.playSynth('click');
+    }
+  },
+
+  openBuilder() {
+    if(State.currentIndex === null) return;
+    UI.notify("Estableciendo enlace con BUILDER 2.0...", "warning");
+    Engine.speak("Abriendo interfaz de arquitectura avanzada.");
+    const win = window.open("builder.html", "builder");
+    // Simulador de envío de datos
+    setTimeout(() => {
+      if(win) win.postMessage({ type: "LOAD_PAGE", data: State.project.pages[State.currentIndex] }, "*");
+    }, 1000);
+  },
+
+  searchPages() {
+    State.searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    UI.renderSidebar();
+  },
+
+  handleDragStart(e, id) { e.dataTransfer.setData('text/plain', id); Engine.playSynth('hover'); },
+  handleDrop(e) {
+    const draggedId = e.dataTransfer.getData('text/plain');
+    const targetFolder = e.target.closest('.folder-item');
+    if(draggedId && targetFolder) {
+      const page = State.project.pages.find(p => p.id === draggedId);
+      if(page) {
+        page.folderId = targetFolder.dataset.id;
+        Storage.save();
+        UI.renderSidebar();
+        Engine.playSynth('success');
+        UI.notify("Nodo reasignado", "success");
+      }
+    }
+  },
+
+  _sanitize(str) { return str.replace(/</g, "&lt;").replace(/>/g, "&gt;"); },
+  
+  _getTemplate(name) {
+    return `<!DOCTYPE html><html><head><style>
+      body{background:#000;color:#00ff88;font-family:monospace;display:flex;justify-content:center;align-items:center;height:100vh;margin:0; text-align:center;}
+      .box{border:1px solid #00ff88;padding:40px;box-shadow:0 0 20px rgba(0,255,136,0.3); background:rgba(0,255,136,0.05);}
+      h1{text-shadow:0 0 10px #00ff88; text-transform:uppercase;}
+    </style></head><body>
+      <div class="box"><h1>[ ${name} ]</h1><p>SISTEMA ONLINE. ESPERANDO INYECCIÓN DE CÓDIGO.</p></div>
+    </body></html>`;
+  }
+};
+
+/* ================= UI RENDERING & NOTIFICATIONS ================= */
+const UI = {
+  toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); },
+  
+  renderSidebar() {
+    const container = document.getElementById('pages-container');
+    container.innerHTML = '';
+    document.getElementById('sys-pages').innerText = `PAGES: ${State.project.pages.length}`;
+
+    // Render Folders first
+    State.project.folders.forEach(f => {
+      if(State.searchQuery) return; // Hide folders during search
+      const div = document.createElement('div');
+      div.className = 'folder-item';
+      div.dataset.id = f.id;
+      div.innerHTML = `<div class="item-info"><strong style="color:#00ffaa;">📁 ${f.name}</strong></div>`;
+      container.appendChild(div);
+    });
+
+    // Render Pages
+    State.project.pages.forEach((p, idx) => {
+      if(State.searchQuery && !p.name.toLowerCase().includes(State.searchQuery) && !p.html.toLowerCase().includes(State.searchQuery)) return;
+      
+      const div = document.createElement('div');
+      div.className = `page-item ${State.currentIndex === idx ? 'active' : ''}`;
+      div.draggable = true;
+      div.ondragstart = (e) => Core.handleDragStart(e, p.id);
+      div.onclick = () => { State.currentIndex = idx; this.loadViewer(); this.renderSidebar(); Engine.playSynth('click'); };
+      
+      div.innerHTML = `
+        <div class="item-info">
+          <strong>📄 ${p.name}</strong>
+          <span>ID: ${p.id.split('-')[0]}</span>
+        </div>
+      `;
+      // Insert visually under correct folder (simplified for DOM linear appending)
+      container.appendChild(div);
+      
+      // Bind hover sound
+      div.addEventListener('mouseenter', () => Engine.playSynth('hover'));
+    });
+  },
+
+  loadViewer() {
+    const title = document.getElementById('current-page-title');
+    const actions = document.getElementById('page-actions');
+    const viewer = document.getElementById('viewer');
+    
+    if(State.currentIndex !== null && State.project.pages[State.currentIndex]) {
+      const p = State.project.pages[State.currentIndex];
+      title.innerText = `// NODO: ${p.name}`;
+      actions.style.display = 'flex';
+      viewer.srcdoc = p.html;
+    } else {
+      title.innerText = `// SELECCIONE UN ARCHIVO`;
+      actions.style.display = 'none';
+      viewer.srcdoc = `<html><body style="background:#000;color:#00ff88;display:flex;align-items:center;justify-content:center;font-family:monospace;"><h3>SISTEMA EN ESPERA</h3></body></html>`;
+    }
+  },
+
+  notify(msg, type = 'info') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+      <div class="toast-title">${type === 'error' ? '⚠ ALERTA CRÍTICA' : type === 'success' ? '✔ CONFIRMADO' : 'ℹ SISTEMA'}</div>
+      <div class="toast-msg">${msg}</div>
+      <div class="toast-progress"></div>
+    `;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.animation = 'fadeOut 0.4s forwards';
+      setTimeout(() => toast.remove(), 400);
+    }, 3000);
+  }
+};
+
+/* ================= BOOTSTRAP ================= */
+function bootSystem() {
+  document.getElementById('boot-screen').style.opacity = '0';
+  setTimeout(() => { document.getElementById('boot-screen').style.display = 'none'; }, 500);
+  
+  Engine.init();
+  Storage.load();
+  Storage.autoSave();
+  
+  // Initialize UI with existing state
+  Game.addXP(0, "Login"); // Force UI update
+  UI.renderSidebar();
+  UI.loadViewer();
+  
+  Engine.playSynth('success');
+  Engine.speak("Bienvenido a MAXIQUEEN OS. Sistemas en línea.");
+  UI.notify("Acceso Root Concedido", "success");
+}
+
+// Escuchar guardados desde Builder hipotético
+window.addEventListener("message", e => {
+  if(e.data?.type === "SAVE_PAGE" && typeof e.data.index === 'number'){
+    State.project.pages[e.data.index].html = e.data.html;
+    Storage.save();
+    if(State.currentIndex === e.data.index) UI.loadViewer();
+    UI.notify("Datos inyectados desde Builder", "success");
+    Game.addXP(2, "Compilación Builder");
+  }
+});
+</script>
+</body>
+</html>

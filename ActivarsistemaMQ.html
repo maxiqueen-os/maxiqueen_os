@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAXIQUEEN OS | COGNITIVE CORE 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-green: #00ff9c;
+            --neon-dim: rgba(0, 255, 156, 0.2);
+            --bg-dark: #050505;
+            --panel-bg: rgba(10, 15, 10, 0.85);
+            --text-main: #eaeaea;
+            --danger: #ff0055;
+            --glass-border: 1px solid rgba(0, 255, 156, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 255, 156, 0.1) 0%, transparent 50%),
+                linear-gradient(0deg, rgba(0, 255, 156, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 156, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+            color: var(--text-main);
+            overflow-x: hidden;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+        }
+
+        h1, h2, h3 { color: var(--neon-green); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-dim); }
+        
+        .font-mono { font-family: 'Share Tech Mono', monospace; }
+
+        /* HUD & NOTIFICATIONS */
+        #hud-message {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--panel-bg); border: var(--glass-border); border-radius: 8px;
+            padding: 15px 30px; color: var(--neon-green); font-weight: bold;
+            box-shadow: 0 0 20px var(--neon-dim); z-index: 1000;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+
+        /* BUTTONS */
+        button {
+            background: transparent; color: var(--neon-green); border: var(--glass-border);
+            padding: 15px 25px; margin: 10px; cursor: pointer; font-size: 1.1rem; font-weight: 600;
+            border-radius: 5px; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
+            backdrop-filter: blur(5px);
+        }
+        button:hover {
+            background: var(--neon-green); color: var(--bg-dark); box-shadow: 0 0 20px var(--neon-green); transform: translateY(-2px);
+        }
+        button:active { transform: translateY(0); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; border-color: #555; color: #555; background: transparent; box-shadow: none; }
+
+        /* SECTIONS */
+        section {
+            width: 100%; max-width: 800px; padding: 40px 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        .hidden { display: none !important; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* DASHBOARD STATUS */
+        .status-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; margin: 30px 0;
+        }
+        .status-box {
+            background: var(--panel-bg); border: var(--glass-border); border-radius: 8px;
+            padding: 20px; text-align: center; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+        .status-val { font-size: 2rem; color: var(--neon-green); font-weight: bold; text-shadow: 0 0 10px var(--neon-green); margin-top: 10px; }
+        .status-label { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* AI AVATAR */
+        .ai-core {
+            display: flex; align-items: center; justify-content: center; margin-bottom: 20px; gap: 15px;
+        }
+        .avatar {
+            width: 60px; height: 60px; border-radius: 50%;
+            border: 2px solid var(--neon-green); display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: var(--neon-green); font-size: 1.2rem;
+            box-shadow: 0 0 15px var(--neon-dim); transition: all 0.1s ease;
+        }
+        .avatar.speaking { transform: scale(1.1); box-shadow: 0 0 30px var(--neon-green); border-width: 3px; }
+
+        /* CARDS & PANELS */
+        .panel {
+            background: var(--panel-bg); border: var(--glass-border); border-radius: 10px;
+            padding: 30px; width: 100%; margin-bottom: 20px; text-align: center;
+        }
+        .card-content { font-size: 1.5rem; margin: 20px 0; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+        .level-badge { background: var(--neon-dim); color: var(--neon-green); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; margin-bottom: 15px; display: inline-block; border: 1px solid var(--neon-green); }
+
+        @media (max-width: 600px) {
+            .status-grid { grid-template-columns: 1fr; }
+            button { width: 100%; margin: 10px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="hud-message" class="font-mono"></div>
+
+<section id="hero">
+    <div class="ai-core">
+        <div class="avatar">MQ</div>
+    </div>
+    <h1 style="font-size: 3rem; text-align: center; margin-bottom: 10px;">MAXIQUEEN OS</h1>
+    <p class="font-mono" style="color: #888; text-align: center; margin-bottom: 40px;">// COGNITIVE & BUSINESS SIMULATOR 2026 //</p>
+    <button onclick="activarSistema()">[ INICIALIZAR ENLACE NEURAL ]</button>
+</section>
+
+<section id="dashboard" class="hidden">
+    <div class="ai-core">
+        <div class="avatar" id="dash-avatar">MQ</div>
+        <h2 style="margin: 0;">Centro de Comando</h2>
+    </div>
+    
+    <div class="status-grid">
+        <div class="status-box"><div class="status-label">Integridad</div><div class="status-val font-mono" id="ui-energia">100%</div></div>
+        <div class="status-box"><div class="status-label">Capital (K)</div><div class="status-val font-mono" id="ui-recursos">50</div></div>
+        <div class="status-box"><div class="status-label">Exp Cognitiva</div><div class="status-val font-mono" id="ui-xp">0</div></div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%; gap: 10px;">
+        <button onclick="irJuego()">🌐 Simulador de Negocios</button>
+        <button onclick="irTarjetas()">🧠 Módulo Cognitivo</button>
+        <button onclick="irRanking()">🏆 Leaderboard</button>
+    </div>
+</section>
+
+<section id="juego" class="hidden">
+    <div class="panel">
+        <div class="level-badge font-mono" id="lvl-badge">NIVEL 1</div>
+        <h2 id="lvl-title">Estabilización</h2>
+        <p id="lvl-desc" style="margin: 20px 0; color: #ccc; font-size: 1.1rem; line-height: 1.6;"></p>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button id="btn-opA" onclick="tomarDecision('A')">Opción A</button>
+            <button id="btn-opB" onclick="tomarDecision('B')">Opción B</button>
+        </div>
+    </div>
+    <button onclick="volver()">[ RETORNAR AL NÚCLEO ]</button>
+</section>
+
+<section id="tarjetas" class="hidden">
+    <div class="panel">
+        <h2 style="margin-bottom: 20px;">Red Neuronal: Conceptos</h2>
+        <div class="font-mono" style="color: #888;">Tarjeta <span id="card-counter">1/10</span></div>
+        
+        <div class="card-content font-mono" id="cardFront" style="color: var(--text-main);"></div>
+        <div class="card-content font-mono hidden" id="cardBack" style="color: var(--neon-green); text-shadow: 0 0 10px var(--neon-dim);"></div>
+
+        <button id="btn-mostrar" onclick="mostrarRespuesta()">Extraer Datos</button>
+
+        <div id="accionesTarjeta" class="hidden" style="display: flex; justify-content: center; gap: 10px; width: 100%;">
+            <button style="width: 50%; color: #00ff9c; border-color: #00ff9c;" onclick="evaluarTarjeta(true)">Asimilado</button>
+            <button style="width: 50%; color: var(--danger); border-color: var(--danger);" onclick="evaluarTarjeta(false)">Requerir Repaso</button>
+        </div>
+    </div>
+    <button onclick="volver()">[ RETORNAR AL NÚCLEO ]</button>
+</section>
+
+<section id="ranking" class="hidden">
+    <div class="panel">
+        <h2 style="margin-bottom: 20px;">Top Operadores Globales</h2>
+        <div style="text-align: left; font-size: 1.2rem; line-height: 2;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 10px 0;">
+                <span style="color: var(--neon-green);">01. MAXIQUEEN_AI</span> <span class="font-mono">9,999 XP</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 10px 0;">
+                <span>02. SYS_ADMIN</span> <span class="font-mono">4,520 XP</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                <span style="color: #888;">03. GUEST_USER</span> <span class="font-mono" id="rank-user">0 XP</span>
+            </div>
+        </div>
+    </div>
+    <button onclick="volver()">[ RETORNAR AL NÚCLEO ]</button>
+</section>
+
+<script>
+// --- ESTADO DEL SISTEMA ---
+let estado = { energia: 100, recursos: 50, xp: 0, nivelActual: 0 };
+
+// --- SISTEMA DE VOZ AI ---
+const synth = window.speechSynthesis;
+let mqVoice = null;
+
+function initVoice() {
+    const voices = synth.getVoices();
+    mqVoice = voices.find(v => v.lang.includes('es') && (v.name.includes('Google') || v.name.includes('Female'))) || voices.find(v => v.lang.includes('es')) || voices[0];
+}
+if (speechSynthesis.onvoiceschanged !== undefined) { speechSynthesis.onvoiceschanged = initVoice; }
+
+function speakAI(text) {
+    if (synth.speaking) synth.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (mqVoice) utterance.voice = mqVoice;
+    utterance.pitch = 1.1; utterance.rate = 1.15;
+    
+    const avatars = document.querySelectorAll('.avatar');
+    utterance.onstart = () => avatars.forEach(a => a.classList.add('speaking'));
+    utterance.onend = () => avatars.forEach(a => a.classList.remove('speaking'));
+    
+    synth.speak(utterance);
+}
+
+// --- HUD NOTIFICATIONS ---
+function showHUD(msg, isAlert = false) {
+    const hud = document.getElementById('hud-message');
+    hud.innerText = `> ${msg}`;
+    hud.style.color = isAlert ? 'var(--danger)' : 'var(--neon-green)';
+    hud.style.borderColor = isAlert ? 'var(--danger)' : 'var(--neon-green)';
+    hud.style.boxShadow = `0 0 20px ${isAlert ? 'rgba(255,0,85,0.3)' : 'var(--neon-dim)'}`;
+    hud.style.opacity = 1;
+    setTimeout(() => hud.style.opacity = 0, 3000);
+}
+
+// --- NIVELES EMPRESARIALES 2026 ---
+const niveles = [
+    { titulo: "Infraestructura", desc: "Tráfico anómalo detectado. Los servidores están al límite.", opA: "Escalar AWS (+20K Costo)", opB: "Limitar tráfico (Pérdida Exp)", costoA: 20, costoB: 0, resA: "Servidores estables.", resB: "Usuarios insatisfechos." },
+    { titulo: "Capital Semilla", desc: "Inversor ofrece $100K por 20% de la empresa.", opA: "Aceptar Inversión (+100K, -XP)", opB: "Bootstrapping (Retener control)", costoA: -100, costoB: 10, resA: "Liquidez asegurada. Control diluido.", resB: "Crecimiento lento pero soberano." },
+    { titulo: "Ciberseguridad", desc: "Intento de brecha en la base de datos de clientes.", opA: "Desplegar Firewall Pro (-30K)", opB: "Auditoría Interna (-10 Energía)", costoA: 30, costoB: 0, resA: "Datos asegurados.", resB: "Sistema temporalmente vulnerable." },
+    { titulo: "Automatización AI", desc: "El equipo de soporte no da abasto.", opA: "Integrar MaxiQueen AI (-40K)", opB: "Contratar más personal (-20K)", costoA: 40, costoB: 20, resA: "Soporte 24/7 optimizado. +XP masiva.", resB: "Costos operativos recurrentes." },
+    { titulo: "Crisis de PR", desc: "Un competidor lanza una campaña de desprestigio.", opA: "Respuesta agresiva legal (-50K)", opB: "Mejorar producto en silencio", costoA: 50, costoB: 10, resA: "Competidor silenciado.", resB: "El producto habla por sí solo." },
+    { titulo: "Expansión de Mercado", desc: "Oportunidad de abrir operaciones en Europa.", opA: "Expansión Total (-80K)", opB: "Piloto en un país (-30K)", costoA: 80, costoB: 30, resA: "Dominio global acelerado.", resB: "Riesgo mitigado." },
+    { titulo: "Retención de Talento", desc: "Tu desarrollador principal recibe oferta externa.", opA: "Igualar oferta (-40K)", opB: "Dejar ir y promover Junior", costoA: 40, costoB: 0, resA: "Núcleo técnico retenido.", resB: "Curva de aprendizaje cuesta energía." },
+    { titulo: "Adquisición (M&A)", desc: "Puedes comprar a tu competidor más pequeño.", opA: "Adquirir empresa (-150K)", opB: "Ignorar y competir", costoA: 150, costoB: 0, resA: "Monopolio táctico adquirido.", resB: "La competencia continúa." },
+    { titulo: "Caída del Mercado", desc: "Recesión económica global detectada.", opA: "Pivotar a B2B (-50K)", opB: "Congelar contrataciones", costoA: 50, costoB: 0, resA: "Ingresos estabilizados.", resB: "Ahorro de capital, pérdida de impulso." },
+    { titulo: "Singularidad Operativa", desc: "MaxiQueen OS está lista para control autónomo.", opA: "Activar IA General (-200K)", opB: "Mantener control manual", costoA: 200, costoB: 0, resA: "Sistema evolucionado. Nivel Máximo.", resB: "Seguridad humana mantenida." }
+];
+
+// --- TARJETAS COGNITIVAS ---
+let cardIndex = 0;
+const cards = [
+    {front:"¿Qué mide el LTV (Life Time Value)?", back:"El ingreso neto proyectado que un cliente genera durante toda su relación con la empresa."},
+    {front:"¿Qué es el CAC?", back:"Costo de Adquisición de Cliente. Cuánto cuesta convencer a un cliente potencial de comprar."},
+    {front:"Heurística de Disponibilidad", back:"Sesgo cognitivo: sobreestimar la importancia de la información que recordamos más fácilmente."},
+    {front:"Tasa de Churn", back:"El porcentaje de clientes que dejan de usar tu servicio durante un período determinado."},
+    {front:"Efecto Dunning-Kruger", back:"Sesgo: las personas con baja habilidad en una tarea sobreestiman su capacidad."},
+    {front:"¿Qué es un MVP?", back:"Producto Mínimo Viable. Versión con características suficientes para satisfacer a los primeros clientes."},
+    {front:"Principio de Pareto (80/20)", back:"El 80% de las consecuencias provienen del 20% de las causas."},
+    {front:"Costo de Oportunidad", back:"El valor de la mejor alternativa a la que se renuncia al tomar una decisión."},
+    {front:"Bootstrapping", back:"Iniciar y hacer crecer una empresa utilizando únicamente recursos propios e ingresos."},
+    {front:"Prueba Social (Social Proof)", back:"Fenómeno donde las personas asumen las acciones de otros en un intento de reflejar un comportamiento correcto."}
+];
+
+// --- FUNCIONES CORE ---
+function activarSistema() {
+    initVoice();
+    speakAI("Bienvenido. Maxi Queen OS en línea. Preparando módulos cognitivos y empresariales.");
+    showSection('dashboard');
+    actualizarUI();
+}
+
+function showSection(id) {
+    document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+}
+
+function volver() {
+    showSection('dashboard');
+    actualizarUI();
+}
+
+function actualizarUI() {
+    document.getElementById('ui-energia').innerText = estado.energia + '%';
+    document.getElementById('ui-energia').style.color = estado.energia < 30 ? 'var(--danger)' : 'var(--neon-green)';
+    document.getElementById('ui-recursos').innerText = estado.recursos + 'K';
+    document.getElementById('ui-xp').innerText = estado.xp;
+    document.getElementById('rank-user').innerText = estado.xp + ' XP';
+    
+    if(estado.energia <= 0) {
+        speakAI("Fallo crítico del sistema. Energía agotada.");
+        showHUD("SISTEMA CAÍDO. REINICIANDO.", true);
+        setTimeout(() => location.reload(), 2000);
+    }
+}
+
+// --- LÓGICA JUEGO (SIMULADOR) ---
+function irJuego() {
+    if (estado.nivelActual >= niveles.length) {
+        speakAI("Simulación completa. Has alcanzado la singularidad operativa.");
+        showHUD("TODOS LOS NIVELES COMPLETADOS");
+        return;
+    }
+    showSection('juego');
+    cargarNivel();
+}
+
+function cargarNivel() {
+    const n = niveles[estado.nivelActual];
+    document.getElementById('lvl-badge').innerText = `NIVEL 0${estado.nivelActual + 1}`;
+    document.getElementById('lvl-title').innerText = n.titulo;
+    document.getElementById('lvl-desc').innerText = n.desc;
+    
+    const btnA = document.getElementById('btn-opA');
+    btnA.innerText = `${n.opA} [${n.costoA > 0 ? '-'+n.costoA : '+'+Math.abs(n.costoA)}K]`;
+    btnA.disabled = (n.costoA > 0 && estado.recursos < n.costoA);
+
+    document.getElementById('btn-opB').innerText = n.opB;
+}
+
+function tomarDecision(op) {
+    const n = niveles[estado.nivelActual];
+    let mensaje = "";
+
+    if (op === 'A') {
+        estado.recursos -= n.costoA;
+        estado.xp += 50;
+        mensaje = n.resA;
+    } else {
+        estado.recursos -= n.costoB;
+        estado.energia -= 20;
+        estado.xp += 15;
+        mensaje = n.resB;
+    }
+
+    speakAI(mensaje);
+    showHUD(mensaje, op === 'B');
+    estado.nivelActual++;
+    actualizarUI();
+    
+    setTimeout(() => {
+        volver();
+    }, 2500);
+}
+
+// --- LÓGICA TARJETAS ---
+function irTarjetas() {
+    showSection('tarjetas');
+    cargarTarjeta();
+    speakAI("Módulo de asimilación de datos activado.");
+}
+
+function cargarTarjeta() {
+    const c = cards[cardIndex];
+    document.getElementById('card-counter').innerText = `${cardIndex + 1}/${cards.length}`;
+    document.getElementById('cardFront').innerText = c.front;
+    
+    const back = document.getElementById('cardBack');
+    back.innerText = c.back;
+    back.classList.add('hidden');
+    
+    document.getElementById('btn-mostrar').classList.remove('hidden');
+    document.getElementById('accionesTarjeta').classList.add('hidden');
+}
+
+function mostrarRespuesta() {
+    document.getElementById('cardBack').classList.remove('hidden');
+    document.getElementById('btn-mostrar').classList.add('hidden');
+    document.getElementById('accionesTarjeta').classList.remove('hidden');
+    speakAI(cards[cardIndex].back);
+}
+
+function evaluarTarjeta(correcta) {
+    if (correcta) {
+        estado.xp += 25;
+        showHUD("DATOS ASIMILADOS: +25 XP");
+    } else {
+        estado.energia -= 5;
+        showHUD("ERROR COGNITIVO: -5 ENERGÍA", true);
+    }
+    
+    cardIndex++;
+    if (cardIndex >= cards.length) {
+        speakAI("Banco de memoria procesado en su totalidad.");
+        showHUD("ENTRENAMIENTO COMPLETADO");
+        cardIndex = 0; // Reset
+        setTimeout(volver, 2000);
+    } else {
+        cargarTarjeta();
+    }
+    actualizarUI();
+}
+
+function irRanking() {
+    showSection('ranking');
+    speakAI("Mostrando jerarquía del sistema global.");
+}
+</script>
+
+</body>
+</html>

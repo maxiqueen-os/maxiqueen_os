@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MaxiQueen OS | Media Hub Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            /* MaxiQueen OS Color Palette */
+            --bg-base: #030712;
+            --glass-bg: rgba(17, 24, 39, 0.7);
+            --glass-border: rgba(56, 189, 248, 0.15);
+            --neon-primary: #38bdf8;
+            --neon-accent: #facc15;
+            --neon-danger: #f43f5e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --sidebar-width: 260px;
+            --panel-width: 320px;
+            --transition-speed: 0.3s;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+        body {
+            background: radial-gradient(circle at 50% 0%, #0f172a, var(--bg-base));
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Utilidades Glassmorphism */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* --- LAYOUT PRINCIPAL --- */
+        #app-container { display: flex; width: 100%; height: 100%; position: relative; }
+
+        /* Fondo oscuro para móvil cuando se abre el menú */
+        .mobile-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7); z-index: 8;
+        }
+        .mobile-overlay.active { display: block; }
+
+        /* --- SIDEBAR IZQUIERDO --- */
+        aside.sidebar {
+            width: var(--sidebar-width);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            border-right: 1px solid var(--glass-border);
+            z-index: 10;
+            background: var(--glass-bg);
+            transition: transform var(--transition-speed);
+        }
+        .brand { padding: 0 20px 20px; border-bottom: 1px solid var(--glass-border); text-align: center; display: flex; justify-content: space-between; align-items: center;}
+        .brand-text h1 { font-size: 1.2rem; font-weight: 800; color: var(--neon-primary); letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
+        .brand-text p { font-size: 0.7rem; color: var(--text-muted); }
+        .close-sidebar-btn { display: none; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
+        
+        .nav-menu { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 5px; }
+        .nav-item {
+            padding: 10px 15px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px;
+            color: var(--text-muted); font-size: 0.9rem; transition: all var(--transition-speed);
+        }
+        .nav-item:hover, .nav-item.active { background: rgba(56, 189, 248, 0.1); color: var(--neon-primary); }
+        
+        .stats-box { padding: 20px; border-top: 1px solid var(--glass-border); font-size: 0.8rem; color: var(--text-muted); }
+        .stats-box div { display: flex; justify-content: space-between; margin-bottom: 5px; }
+
+        /* --- AREA CENTRAL --- */
+        main.content-area { flex: 1; display: flex; flex-direction: column; position: relative; width: 100%; overflow: hidden; }
+        
+        /* Topbar */
+        header.topbar {
+            height: 70px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--glass-border); z-index: 5; gap: 15px;
+        }
+        .mobile-menu-toggle { display: none; background: none; border: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer; }
+        
+        .search-bar { display: flex; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 20px; padding: 5px 15px; flex: 1; max-width: 400px; }
+        .search-bar input { background: transparent; border: none; color: white; outline: none; padding: 5px 10px; width: 100%; }
+        
+        .view-controls { display: flex; gap: 10px; }
+        .view-controls button { background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; padding: 5px; }
+        .view-controls button:hover, .view-controls button.active { color: var(--neon-primary); }
+
+        /* Galería */
+        .gallery-container { flex: 1; overflow-y: auto; padding: 20px; position: relative; scroll-behavior: smooth; }
+        
+        /* Vista Cuadrícula */
+        .grid-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        
+        /* Vista Lista */
+        .list-view { display: flex; flex-direction: column; gap: 10px; }
+        .list-view .asset-card { display: flex; flex-direction: row; height: 80px; align-items: center; padding-right: 15px; }
+        .list-view .media-wrapper { width: 120px; height: 100%; border-bottom: none; border-right: 1px solid var(--glass-border); }
+
+        /* Tarjeta de Archivo */
+        .asset-card {
+            background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 12px;
+            overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; position: relative;
+        }
+        .asset-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5), 0 0 15px rgba(56,189,248,0.2); border-color: var(--neon-primary); }
+        .asset-card.selected { border-color: var(--neon-accent); box-shadow: 0 0 20px rgba(250, 204, 21, 0.3); }
+        
+        .media-wrapper { width: 100%; height: 160px; background: #000; position: relative; overflow: hidden; }
+        .media-wrapper img, .media-wrapper video { width: 100%; height: 100%; object-fit: cover; }
+        .badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.7); border: 1px solid var(--glass-border); font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; }
+        .fav-btn { position: absolute; top: 8px; right: 8px; color: var(--text-muted); cursor: pointer; text-shadow: 0 0 5px #000; z-index: 2; transition: 0.2s; font-size: 1.2rem; padding: 5px; }
+        .fav-btn.active { color: var(--neon-accent); text-shadow: 0 0 10px var(--neon-accent); }
+
+        .card-info { padding: 12px; }
+        .card-title { font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+        .card-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+
+        /* --- PANEL DERECHO (INFO) --- */
+        aside.info-panel {
+            width: var(--panel-width); border-left: 1px solid var(--glass-border); padding: 20px;
+            display: flex; flex-direction: column; gap: 20px; overflow-y: auto;
+            transform: translateX(100%); display: none; transition: transform 0.3s;
+            background: var(--glass-bg); z-index: 9;
+        }
+        aside.info-panel.active { display: flex; transform: translateX(0); }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
+        .panel-header h3 { font-size: 1.1rem; }
+        .close-panel-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; }
+        .close-panel-btn:hover { color: var(--neon-danger); }
+        .info-preview { width: 100%; height: 180px; border-radius: 8px; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center;}
+        .info-preview img, .info-preview video { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .info-details label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; margin-top: 10px; display: block; }
+        .info-details div { font-size: 0.85rem; word-break: break-all; margin-bottom: 5px; }
+        .info-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; }
+        .btn { padding: 10px; border: 1px solid var(--neon-primary); background: transparent; color: var(--neon-primary); border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: 0.2s; text-align: center; }
+        .btn:hover { background: var(--neon-primary); color: #000; }
+        .btn-danger { border-color: var(--neon-danger); color: var(--neon-danger); }
+        .btn-danger:hover { background: var(--neon-danger); color: #fff; }
+
+        /* --- LIGHTBOX MODAL --- */
+        #lightbox {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95);
+            z-index: 1000; display: none; flex-direction: column;
+        }
+        #lightbox.active { display: flex; }
+        .lightbox-toolbar { height: 60px; display: flex; justify-content: flex-end; align-items: center; padding: 0 20px; gap: 15px; flex-wrap: wrap; }
+        .lightbox-toolbar i { color: #fff; font-size: 1.4rem; cursor: pointer; transition: 0.2s; padding: 5px; }
+        .lightbox-toolbar i:hover { color: var(--neon-primary); }
+        .lightbox-content { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .lightbox-media { max-width: 90%; max-height: 90%; transition: transform 0.3s ease; }
+        .nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); font-size: 3rem; cursor: pointer; padding: 20px; transition: 0.3s; z-index: 1001; }
+        .nav-arrow:hover { color: #fff; }
+        #prev-btn { left: 10px; }
+        #next-btn { right: 10px; }
+
+        /* Utilidad de arrastre/estado */
+        .empty-state { text-align: center; color: var(--text-muted); margin-top: 100px; font-size: 1.2rem; grid-column: 1 / -1; }
+        
+        /* Notificaciones */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { background: var(--glass-bg); border: 1px solid var(--neon-primary); padding: 12px 20px; border-radius: 8px; color: #fff; font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: slideIn 0.3s forwards; pointer-events: auto; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* --- MEDIA QUERIES PARA MÓVILES Y TABLETS --- */
+        @media (max-width: 992px) {
+            aside.info-panel { position: absolute; right: 0; height: 100%; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle { display: block; }
+            aside.sidebar { position: fixed; left: -100%; top: 0; height: 100%; box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
+            aside.sidebar.active { left: 0; transform: translateX(0); }
+            .close-sidebar-btn { display: block; }
+            .search-bar { max-width: 100%; }
+            header.topbar { gap: 10px; padding: 0 15px; }
+            .view-controls { display: none; } /* Ocultar controles de vista en móvil para simplificar */
+            .grid-view { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+            .media-wrapper { height: 120px; }
+            .nav-arrow { font-size: 2rem; padding: 10px; }
+            aside.info-panel { width: 100%; max-width: 350px; }
+            .lightbox-toolbar { justify-content: center; background: rgba(0,0,0,0.8); position: absolute; bottom: 0; width: 100%; z-index: 1002; padding: 15px 0; }
+            .lightbox-toolbar span#lb-title { display: none; } /* Ocultar titulo en móvil para dar espacio a botones */
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <div class="mobile-overlay" id="mobileOverlay" onclick="closeAllPanels()"></div>
+
+    <aside class="sidebar glass" id="mainSidebar">
+        <div class="brand">
+            <div class="brand-text">
+                <h1>MaxiQueen OS</h1>
+                <p>Media Hub Pro v5</p>
+            </div>
+            <button class="close-sidebar-btn" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="nav-menu">
+            <div class="nav-item active" onclick="setFilter('all', this)"><i class="fas fa-folder-open"></i> Todos los Archivos</div>
+            <div class="nav-item" onclick="setFilter('image', this)"><i class="fas fa-image"></i> Imágenes</div>
+            <div class="nav-item" onclick="setFilter('video', this)"><i class="fas fa-video"></i> Videos</div>
+            <div class="nav-item" onclick="setFilter('favorites', this)"><i class="fas fa-star" style="color: var(--neon-accent)"></i> Favoritos</div>
+            <div class="nav-item" onclick="setFilter('recent', this)"><i class="fas fa-clock"></i> Recientes</div>
+            <hr style="border-color: var(--glass-border); margin: 10px 0;">
+            <div class="nav-item" onclick="setFilter('trash', this)"><i class="fas fa-trash"></i> Papelera</div>
+        </div>
+        <div class="stats-box">
+            <div><span>Archivos Totales:</span> <span id="stat-total">0</span></div>
+            <div><span>Imágenes:</span> <span id="stat-img">0</span></div>
+            <div><span>Videos:</span> <span id="stat-vid">0</span></div>
+        </div>
+    </aside>
+
+    <main class="content-area">
+        <header class="topbar glass">
+            <button class="mobile-menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+            <div class="search-bar">
+                <i class="fas fa-search" style="color: var(--text-muted)"></i>
+                <input type="text" id="searchInput" placeholder="Buscar ecosistema..." oninput="handleSearch()">
+            </div>
+            <div class="view-controls">
+                <button onclick="changeSort()"><i class="fas fa-sort-alpha-down" title="Ordenar"></i></button>
+                <button class="active" id="btn-grid" onclick="setView('grid')"><i class="fas fa-th" title="Vista Cuadrícula"></i></button>
+                <button id="btn-list" onclick="setView('list')"><i class="fas fa-list" title="Vista Lista"></i></button>
+            </div>
+        </header>
+        
+        <div class="gallery-container grid-view" id="gallery">
+            </div>
+    </main>
+
+    <aside class="info-panel glass" id="infoPanel">
+        </aside>
+</div>
+
+<div id="lightbox">
+    <div class="lightbox-toolbar">
+        <span style="flex-grow: 1; color: white; font-weight: bold; font-family: monospace;" id="lb-title">Archivo</span>
+        <i class="fas fa-search-minus" onclick="adjustZoom(-0.2)" title="Alejar"></i>
+        <i class="fas fa-search-plus" onclick="adjustZoom(0.2)" title="Acercar"></i>
+        <i class="fas fa-undo" onclick="resetTransforms()" title="Resetear Vista"></i>
+        <i class="fas fa-sync-alt" onclick="rotateMedia()" title="Rotar"></i>
+        <i class="fas fa-download" onclick="downloadCurrent()" title="Descargar"></i>
+        <i class="fas fa-share-alt" onclick="shareCurrent()" title="Compartir"></i>
+        <i class="fas fa-times" onclick="closeLightbox()" style="color: var(--neon-danger); font-size: 1.5rem; margin-left: 10px;" title="Cerrar"></i>
+    </div>
+    <div class="lightbox-content">
+        <i class="fas fa-chevron-left nav-arrow" id="prev-btn" onclick="navigateMedia(-1)"></i>
+        <div id="lb-media-container" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+            </div>
+        <i class="fas fa-chevron-right nav-arrow" id="next-btn" onclick="navigateMedia(1)"></i>
+    </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+    // --- 1. CONFIGURACIÓN Y BASE DE DATOS MÚLTIPLE ---
+    const BASE_URL = 'https://maxiqueen-os.vercel.app/assets/';
+    
+    // Lista completa y actualizada proporcionada
+    const rawFiles = [
+        "ChatGPT Image 31 ene 2026, 11_53_29 p.m..png", "Cloud_Maxiqueen.png", "ComicFamilia.mp4",
+        "ECOSISTEMA_MAXIQUEEN_OS_CLOUD.png", "Eco_Sistema_Cloud.png", "MAXIQUEEN 04022026 AUDITORIA.png",
+        "MAXIQUEEN v1 04022026 AUDITORIA.png", "MAXIQUEEN_LOGO.png", "MQ_OS_Arquitectura_CORE_Incompl.png",
+        "MQ_OS_Ayuda_Comic_Ladron.png", "MQ_OS_Casa_Humilde.png", "MQ_OS_Cloud_ChatDashbooard.png",
+        "MQ_OS_Cloud_Ecosystem.png", "MQ_OS_Comic_Ladrona_PT2.png", "MQ_OS_Comic_Ladrona_tios_PT3.png",
+        "MQ_OS_Emoji (2).png", "MQ_OS_Emoji.png", "MQ_OS_Emojis_Tam_Med.png",
+        "MQ_OS_HubSpotBasicoPanel de control.png", "MQ_OS_Imagen_IA_Joven_Adult (2).png",
+        "MQ_OS_Imagen_IA_Joven_Adult.png", "MQ_OS_LOGO_Avatar.png", "MQ_OS_Logo_Avatar_Dorado (2).png",
+        "MQ_OS_Logo_Avatar_Dorado.png", "MQ_OS_Matrimonio_Ladrones Pt3.png", "MQ_OS_Matrimonio_Ladrones pt2.png",
+        "MQ_OS_Matrimonio_Ladrones.png", "MQ_OS_MaxiQueen Emoji Pack.png", "MQ_OS_Methos Product line V1.png",
+        "MQ_OS_Modulo_Automa_Hosting.png", "MQ_OS_Modulo_Automatizacion.png", "MQ_OS_Modulo_Creativo.png",
+        "MQ_OS_Modulo_Creativo_Social.png", "MQ_OS_Modulo_Web.png", "MQ_OS_Modulos_Crea_Soc_Med_Web.png",
+        "MQ_OS_maxiqueen-avatar.png", "Max_Cloud_Eco_sis.png", "Maxi_Cloud_40%.png", "Maxiqueen Cloud Ecosystem.png",
+        "Maxiqueen_04_02.png", "Modulo de Hosting.png", "Pan_Con_Hub_OS1.png", "Pan_Con_Hub_OS2.png",
+        "Panel_control_HubSpot.png", "Queen_Das_SaaS_Cloud.png",
+        "add-the-maxiqueen-os-logo-with-the-panther-cat-wea (1).jpeg", "add-the-maxiqueen-os-logo-with-the-panther-cat-wea.jpeg",
+        "animate-with-subtle-elegant-motion-exactly-like-mo (1).mp4", "animate-with-subtle-elegant-motion-exactly-like-mo (2).mp4",
+        "animate-with-subtle-elegant-motion-exactly-like-mo (3).mp4", "animate-with-subtle-elegant-motion-exactly-like-mo (4).mp4",
+        "animate-with-subtle-elegant-motion-exactly-like-mo.mp4", "animate-with-subtle-elegant-motion-for-website-her.mp4",
+        "animate-with-subtle-elegant-motion-soft-golden-shi (1).mp4", "animate.mp4", "anime_logo.mp4",
+        "cinematic-video-dark-dig-space-with_1.mp4", "cinematic-video-dark-dig-space-with_10.mp4",
+        "cinematic-video-dark-dig-space-with_11.mp4", "cinematic-video-dark-dig-space-with_12.mp4",
+        "cinematic-video-dark-dig-space-with_13.mp4", "cinematic-video-dark-dig-space-with_14.mp4",
+        "cinematic-video-dark-dig-space-with_15.mp4", "cinematic-video-dark-dig-space-with_16.mp4",
+        "cinematic-video-dark-dig-space-with_17.mp4", "cinematic-video-dark-dig-space-with_18.mp4",
+        "cinematic-video-dark-dig-space-with_19.mp4", "cinematic-video-dark-dig-space-with_2.mp4",
+        "cinematic-video-dark-dig-space-with_20.mp4", "cinematic-video-dark-dig-space-with_21.mp4",
+        "cinematic-video-dark-dig-space-with_22.mp4", "cinematic-video-dark-dig-space-with_23.mp4",
+        "cinematic-video-dark-dig-space-with_24.mp4", "cinematic-video-dark-dig-space-with_25.mp4",
+        "cinematic-video-dark-dig-space-with_26.mp4", "cinematic-video-dark-dig-space-with_27.mp4",
+        "cinematic-video-dark-dig-space-with_28.mp4", "cinematic-video-dark-dig-space-with_29.mp4",
+        "cinematic-video-dark-dig-space-with_3.mp4", "cinematic-video-dark-dig-space-with_30.mp4",
+        "cinematic-video-dark-dig-space-with_31.mp4", "cinematic-video-dark-dig-space-with_4.mp4",
+        "cinematic-video-dark-dig-space-with_5.mp4", "cinematic-video-dark-dig-space-with_6.mp4",
+        "cinematic-video-dark-dig-space-with_7.mp4", "cinematic-video-dark-dig-space-with_8.mp4",
+        "cinematic-video-dark-dig-space-with_9.mp4"
+    ];
+
+    // --- 2. SISTEMA DE ESTADO LOCAL ---
+    let db = JSON.parse(localStorage.getItem('mqos_media_db')) || {
+        favorites: [],
+        trash: [],
+        customNames: {},
+        viewHistory: []
+    };
+
+    function saveDB() { localStorage.setItem('mqos_media_db', JSON.stringify(db)); }
+
+    let mediaAssets = rawFiles.map(filename => {
+        const isVideo = filename.toLowerCase().endsWith('.mp4');
+        return {
+            id: btoa(filename), 
+            filename: filename,
+            url: BASE_URL + encodeURIComponent(filename), // URL Encode preventivo
+            type: isVideo ? 'video' : 'image',
+            ext: filename.split('.').pop().toUpperCase(),
+            displayName: db.customNames[btoa(filename)] || decodeURIComponent(filename), 
+            dateAdded: new Date().toISOString()
+        };
+    });
+
+    let currentState = {
+        filter: 'all',
+        searchQuery: '',
+        sortAsc: true,
+        viewMode: 'grid',
+        selectedId: null,
+        lightboxIndex: 0,
+        lbZoom: 1,
+        lbRotate: 0
+    };
+
+    let filteredAssets = [];
+
+    // --- 3. RENDERIZADO PRINCIPAL ---
+    function init() {
+        applyFiltersAndRender();
+        updateStats();
+    }
+
+    function applyFiltersAndRender() {
+        filteredAssets = mediaAssets.filter(asset => {
+            const inTrash = db.trash.includes(asset.id);
+            if (currentState.filter === 'trash') return inTrash;
+            if (inTrash) return false;
+
+            if (currentState.filter === 'image' && asset.type !== 'image') return false;
+            if (currentState.filter === 'video' && asset.type !== 'video') return false;
+            if (currentState.filter === 'favorites' && !db.favorites.includes(asset.id)) return false;
+            if (currentState.filter === 'recent' && !db.viewHistory.includes(asset.id)) return false;
+
+            if (currentState.searchQuery) {
+                return asset.displayName.toLowerCase().includes(currentState.searchQuery.toLowerCase());
+            }
+            return true;
+        });
+
+        filteredAssets.sort((a, b) => {
+            let val = a.displayName.localeCompare(b.displayName);
+            return currentState.sortAsc ? val : -val;
+        });
+
+        renderGallery();
+    }
+
+    function renderGallery() {
+        const gallery = document.getElementById('gallery');
+        gallery.className = `gallery-container ${currentState.viewMode}-view`;
+        gallery.innerHTML = '';
+
+        if (filteredAssets.length === 0) {
+            gallery.innerHTML = `<div class="empty-state"><i class="fas fa-folder-open fa-3x" style="opacity:0.5; margin-bottom:20px;"></i><br>No hay archivos aquí</div>`;
+            return;
+        }
+
+        filteredAssets.forEach((asset, index) => {
+            const isFav = db.favorites.includes(asset.id);
+            const card = document.createElement('div');
+            card.className = `asset-card ${currentState.selectedId === asset.id ? 'selected' : ''}`;
+            card.onclick = () => selectAsset(asset.id);
+            card.ondblclick = () => openLightbox(index);
+
+            let mediaTag = asset.type === 'video' 
+                ? `<video src="${asset.url}#t=0.1" preload="metadata" loading="lazy" muted></video>`
+                : `<img src="${asset.url}" loading="lazy" alt="${asset.displayName}">`;
+
+            card.innerHTML = `
+                <div class="media-wrapper">
+                    <span class="badge">${asset.ext}</span>
+                    <i class="fas fa-star fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, '${asset.id}')" title="Favorito"></i>
+                    ${mediaTag}
+                </div>
+                <div class="card-info">
+                    <div class="card-title" title="${asset.displayName}">${asset.displayName}</div>
+                    <div class="card-meta">${asset.type === 'video' ? '🎬 Video' : '🖼️ Imagen'} | MaxiQueen OS</div>
+                </div>
+            `;
+            gallery.appendChild(card);
+        });
+    }
+
+    // --- 4. CONTROLES UI & MOBILE ---
+    function setFilter(filterType, element) {
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        currentState.filter = filterType;
+        currentState.selectedId = null;
+        closeAllPanels();
+        applyFiltersAndRender();
+    }
+
+    function setView(mode) {
+        currentState.viewMode = mode;
+        document.getElementById('btn-grid').classList.toggle('active', mode === 'grid');
+        document.getElementById('btn-list').classList.toggle('active', mode === 'list');
+        renderGallery();
+    }
+
+    function changeSort() {
+        currentState.sortAsc = !currentState.sortAsc;
+        applyFiltersAndRender();
+        showToast(`Ordenado ${currentState.sortAsc ? 'A-Z' : 'Z-A'}`);
+    }
+
+    function handleSearch() {
+        currentState.searchQuery = document.getElementById('searchInput').value;
+        applyFiltersAndRender();
+    }
+
+    function toggleSidebar() {
+        document.getElementById('mainSidebar').classList.toggle('active');
+        document.getElementById('mobileOverlay').classList.toggle('active');
+    }
+
+    function closeAllPanels() {
+        document.getElementById('mainSidebar').classList.remove('active');
+        document.getElementById('infoPanel').classList.remove('active');
+        document.getElementById('mobileOverlay').classList.remove('active');
+    }
+
+    function showToast(message) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerText = message;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // --- 5. PANEL DE INFORMACIÓN ---
+    function selectAsset(id) {
+        currentState.selectedId = id;
+        renderGallery(); 
+        
+        const asset = mediaAssets.find(a => a.id === id);
+        const panel = document.getElementById('infoPanel');
+        const inTrash = db.trash.includes(id);
+
+        if (!db.viewHistory.includes(id)) {
+            db.viewHistory.unshift(id);
+            if(db.viewHistory.length > 20) db.viewHistory.pop();
+            saveDB();
+        }
+
+        let mediaPreview = asset.type === 'video'
+            ? `<video src="${asset.url}" controls style="width:100%"></video>`
+            : `<img src="${asset.url}" style="width:100%">`;
+
+        let actionButtons = inTrash 
+            ? `<button class="btn" onclick="restoreFile('${asset.id}')"><i class="fas fa-trash-restore"></i> Restaurar</button>
+               <button class="btn btn-danger" onclick="permanentlyDelete('${asset.id}')"><i class="fas fa-times"></i> Destruir</button>`
+            : `<button class="btn" onclick="renameFile('${asset.id}')"><i class="fas fa-edit"></i> Renombrar</button>
+               <button class="btn" onclick="copyToClipboard('${asset.url}')"><i class="fas fa-link"></i> Enlace</button>
+               <button class="btn" onclick="downloadCurrent('${asset.url}')"><i class="fas fa-download"></i> Bajar</button>
+               <button class="btn btn-danger" onclick="moveToTrash('${asset.id}')"><i class="fas fa-trash"></i> Borrar</button>`;
+
+        panel.innerHTML = `
+            <div class="panel-header">
+                <h3>Detalles del Archivo</h3>
+                <button class="close-panel-btn" onclick="closeAllPanels()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="info-preview" onclick="openLightbox(${filteredAssets.findIndex(a => a.id === id)})" style="cursor:pointer">${mediaPreview}</div>
+            <div class="info-details">
+                <label>Nombre Virtual</label>
+                <div>${asset.displayName}</div>
+                <label>Ruta Origen (GitHub/Vercel)</label>
+                <div style="font-size:0.7rem; color: var(--neon-primary)">${asset.url}</div>
+                <label>Tipo de Archivo</label>
+                <div>${asset.ext} Document</div>
+                <label>Estado</label>
+                <div>${inTrash ? '<span style="color:red">En Papelera</span>' : '<span style="color:green">Activo / Online</span>'}</div>
+            </div>
+            <div class="info-actions">${actionButtons}</div>
+        `;
+        panel.classList.add('active');
+        if(window.innerWidth <= 992) {
+            document.getElementById('mobileOverlay').classList.add('active');
+        }
+    }
+
+    function toggleFav(event, id) {
+        event.stopPropagation();
+        const index = db.favorites.indexOf(id);
+        if (index > -1) db.favorites.splice(index, 1);
+        else db.favorites.push(id);
+        saveDB();
+        applyFiltersAndRender();
+        showToast(index > -1 ? 'Eliminado de Favoritos' : 'Añadido a Favoritos');
+    }
+
+    function moveToTrash(id) {
+        db.trash.push(id);
+        saveDB();
+        closeAllPanels();
+        applyFiltersAndRender();
+        updateStats();
+        showToast('Enviado a la papelera');
+    }
+
+    function restoreFile(id) {
+        db.trash = db.trash.filter(t => t !== id);
+        saveDB();
+        closeAllPanels();
+        applyFiltersAndRender();
+        updateStats();
+        showToast('Archivo restaurado');
+    }
+
+    function permanentlyDelete(id) {
+        if(confirm('¿Eliminar permanentemente de la vista local? (El origen en MaxiQueen OS Vercel seguirá existiendo)')) {
+            db.trash = db.trash.filter(t => t !== id);
+            mediaAssets = mediaAssets.filter(a => a.id !== id);
+            saveDB();
+            closeAllPanels();
+            applyFiltersAndRender();
+            updateStats();
+            showToast('Destruido de la interfaz');
+        }
+    }
+
+    function renameFile(id) {
+        const asset = mediaAssets.find(a => a.id === id);
+        const newName = prompt('Ingrese el nuevo nombre visible:', asset.displayName);
+        if (newName && newName.trim() !== '') {
+            db.customNames[id] = newName.trim();
+            asset.displayName = newName.trim();
+            saveDB();
+            applyFiltersAndRender();
+            selectAsset(id);
+            showToast('Renombrado exitoso');
+        }
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text);
+        showToast('Enlace copiado al portapapeles');
+    }
+
+    function updateStats() {
+        const activeAssets = mediaAssets.filter(a => !db.trash.includes(a.id));
+        document.getElementById('stat-total').innerText = activeAssets.length;
+        document.getElementById('stat-img').innerText = activeAssets.filter(a => a.type === 'image').length;
+        document.getElementById('stat-vid').innerText = activeAssets.filter(a => a.type === 'video').length;
+    }
+
+    // --- 6. LIGHTBOX ---
+    function openLightbox(index) {
+        if(index < 0 || index >= filteredAssets.length) return;
+        currentState.lightboxIndex = index;
+        resetTransforms();
+        updateLightboxContent();
+        document.getElementById('lightbox').classList.add('active');
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('active');
+        document.getElementById('lb-media-container').innerHTML = ''; 
+    }
+
+    function updateLightboxContent() {
+        const asset = filteredAssets[currentState.lightboxIndex];
+        const container = document.getElementById('lb-media-container');
+        document.getElementById('lb-title').innerText = asset.displayName;
+        
+        let transformCSS = `transform: scale(${currentState.lbZoom}) rotate(${currentState.lbRotate}deg);`;
+
+        if (asset.type === 'video') {
+            container.innerHTML = `<video src="${asset.url}" class="lightbox-media" style="${transformCSS}" controls autoplay></video>`;
+        } else {
+            container.innerHTML = `<img src="${asset.url}" class="lightbox-media" style="${transformCSS}">`;
+        }
+
+        document.getElementById('prev-btn').style.display = currentState.lightboxIndex > 0 ? 'block' : 'none';
+        document.getElementById('next-btn').style.display = currentState.lightboxIndex < filteredAssets.length - 1 ? 'block' : 'none';
+    }
+
+    function navigateMedia(dir) {
+        let newIndex = currentState.lightboxIndex + dir;
+        if (newIndex >= 0 && newIndex < filteredAssets.length) {
+            currentState.lightboxIndex = newIndex;
+            resetTransforms();
+            updateLightboxContent();
+        }
+    }
+
+    function adjustZoom(amount) {
+        currentState.lbZoom = Math.max(0.5, Math.min(currentState.lbZoom + amount, 4));
+        applyTransforms();
+    }
+    function rotateMedia() {
+        currentState.lbRotate = (currentState.lbRotate + 90) % 360;
+        applyTransforms();
+    }
+    function resetTransforms() {
+        currentState.lbZoom = 1;
+        currentState.lbRotate = 0;
+        applyTransforms();
+    }
+    function applyTransforms() {
+        const media = document.querySelector('.lightbox-media');
+        if(media) media.style.transform = `scale(${currentState.lbZoom}) rotate(${currentState.lbRotate}deg)`;
+    }
+
+    function downloadCurrent(specificUrl = null) {
+        const url = specificUrl || filteredAssets[currentState.lightboxIndex].url;
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = url.split('/').pop();
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast('Iniciando descarga...');
+    }
+
+    async function shareCurrent() {
+        const asset = filteredAssets[currentState.lightboxIndex];
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: asset.displayName,
+                    text: 'Mira este archivo en MaxiQueen OS',
+                    url: asset.url
+                });
+            } catch (err) { console.log('Share canceled'); }
+        } else {
+            copyToClipboard(asset.url);
+        }
+    }
+
+    // --- 7. EVENTOS DE TECLADO ---
+    document.addEventListener('keydown', (e) => {
+        const lightboxActive = document.getElementById('lightbox').classList.contains('active');
+        if (!lightboxActive) return;
+
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') navigateMedia(-1);
+        if (e.key === 'ArrowRight') navigateMedia(1);
+    });
+
+    // Iniciar app
+    window.onload = init;
+
+</script>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>CRM Ventas | MaxiQueen OS Core</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* --- VARIABLES DE DISEÑO (Identidad Tricolor Neón & Glassmorphism) --- */
+    :root {
+      --bg-cyber: radial-gradient(circle at top, #0b1528, #020617);
+      --glass-bg: rgba(15, 23, 42, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      
+      /* Tricolor Colombiano Neón AAA */
+      --neon-yellow: #facc15; /* Negociación / En Conversación */
+      --neon-blue: #38bdf8;   /* Propuesta Enviada / Avanzado */
+      --neon-red: #ef4444;    /* Cierre / Alta prioridad */
+      --neon-green: #22c55e;  /* Ganado / Éxito */
+      
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+
+    /* --- RESET & ESTRUCTURA BASE --- */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+    body {
+      background: var(--bg-cyber);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding-bottom: 40px;
+      overflow-x: hidden;
+    }
+
+    /* Barra de Identidad Superior (Bandera Sutil) */
+    .identity-bar {
+      height: 4px;
+      width: 100%;
+      background: linear-gradient(to right, var(--neon-yellow) 50%, var(--neon-blue) 25%, var(--neon-blue) 75%, var(--neon-red) 75%);
+      box-shadow: 0 2px 20px rgba(250, 204, 21, 0.3);
+    }
+
+    .demo-note {
+      background: rgba(56, 189, 248, 0.1);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+      color: var(--neon-blue);
+      text-align: center;
+      padding: 8px;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* --- HEADER & NAVEGACIÓN --- */
+    .crm-header {
+      max-width: 1400px;
+      margin: 30px auto 10px auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .crm-header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff, var(--neon-yellow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .crm-header p { color: var(--text-muted); font-size: 0.95rem; margin-top: 4px; }
+
+    .crm-nav {
+      max-width: 1400px;
+      margin: 10px auto 30px auto;
+      padding: 0 20px;
+    }
+    .crm-nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-right: 20px;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+    }
+    .crm-nav a:hover, .crm-nav a.active {
+      color: var(--neon-yellow);
+      border-color: rgba(250, 204, 21, 0.2);
+      background: rgba(250, 204, 21, 0.05);
+    }
+
+    /* --- DASHBOARD METRICS --- */
+    .metrics-grid {
+      max-width: 1400px;
+      margin: 0 auto 30px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .metric-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .metric-card.yellow { border-left: 4px solid var(--neon-yellow); }
+    .metric-card.blue { border-left: 4px solid var(--neon-blue); }
+    .metric-card.green { border-left: 4px solid var(--neon-green); }
+    
+    .metric-title { font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
+    .metric-value { font-size: 1.8rem; font-weight: 700; margin-top: 5px; color: var(--text-main); }
+
+    /* --- CONTENEDOR PRINCIPAL --- */
+    .crm-main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 30px;
+    }
+
+    @media (max-width: 968px) {
+      .crm-main { grid-template-columns: 1fr; }
+    }
+
+    /* --- TARJETAS GLASSMORPHISM --- */
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    }
+    .card h2 {
+      font-size: 1.25rem;
+      color: var(--text-main);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* --- FORMULARIOS --- */
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      transition: all 0.3s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--neon-yellow);
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.2);
+    }
+    select.form-control option { background: #0f172a; color: var(--text-main); }
+
+    /* --- BOTONES --- */
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary { background: var(--neon-yellow); color: #020617; }
+    .btn-primary:hover { background: #fef08a; box-shadow: 0 0 15px rgba(250, 204, 21, 0.4); }
+    
+    .btn-sync {
+      background: transparent;
+      border: 1px solid var(--neon-blue);
+      color: var(--neon-blue);
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      border-radius: 8px;
+      width: auto;
+    }
+    .btn-sync:hover { background: rgba(56, 189, 248, 0.1); box-shadow: 0 0 12px rgba(56, 189, 248, 0.2); }
+
+    /* --- LISTADOS DE OPORTUNIDADES --- */
+    .sales-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .sales-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .sales-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .sales-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+    .sales-info p { font-size: 0.85rem; color: var(--text-muted); }
+    .sales-value { font-weight: 700; color: var(--text-main); margin-top: 4px; font-size: 1.05rem; }
+    
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-conv { background: rgba(250, 204, 21, 0.1); color: var(--neon-yellow); }
+    .badge-sent { background: rgba(56, 189, 248, 0.1); color: var(--neon-blue); }
+    .badge-won { background: rgba(34, 197, 94, 0.1); color: var(--neon-green); }
+    
+    .actions { display: flex; gap: 12px; align-items: center; }
+    .btn-delete {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+    .btn-delete:hover { color: var(--neon-red); }
+    
+    .empty-state { text-align: center; color: var(--text-muted); padding: 40px 0; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+
+<div class="identity-bar"></div>
+<div class="demo-note">
+  🚀 Sistema de Tracking Comercial Activo • MaxiQueen OS
+</div>
+
+<header class="crm-header">
+  <div>
+    <h1>Ventas</h1>
+    <p>Monitoreo de Pipeline Económico y Conversión de Propuestas</p>
+  </div>
+  <button class="btn btn-sync" id="btnSyncPipeline" onclick="syncPipelineWithNotion()">
+    🔄 Sincronizar Negocios
+  </button>
+</header>
+
+<nav class="crm-nav">
+  <a href="CRM_PAG_FEB.html">Inicio</a>
+  <a href="Clientes.html">Clientes</a>
+  <a href="#" class="active">Oportunidades de Venta</a>
+</nav>
+
+<main class="crm-main">
+
+  <section class="card">
+    <h2>Estructurar Negocio</h2>
+    <form id="dealForm" onsubmit="saveDeal(event)">
+      <div class="form-group">
+        <label for="dealTitle">Nombre de la Propuesta / Solución</label>
+        <input type="text" id="dealTitle" class="form-control" placeholder="Ej. Implementación Automatización CRM" required>
+      </div>
+      <div class="form-group">
+        <label for="dealClient">Cliente Asociado</label>
+        <input type="text" id="dealClient" class="form-control" placeholder="Ej. Inversiones Cúcuta" required>
+      </div>
+      <div class="form-group">
+        <label for="dealValue">Valor Estimado (COP)</label>
+        <input type="number" id="dealValue" class="form-control" placeholder="Monto total del contrato" required>
+      </div>
+      <div class="form-group">
+        <label for="dealStage">Estado Comercial</label>
+        <select id="dealStage" class="form-control">
+          <option value="Conversación">En Conversación</option>
+          <option value="Enviada">Propuesta Enviada</option>
+          <option value="Ganado">Contrato Cerrado (Ganado)</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">
+        Inyectar Oportunidad al Flujo
+      </button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>
+      Embudo de Ventas Activo
+      <input type="text" id="salesSearch" class="form-control" placeholder="Filtrar por propuesta o cliente..." style="width: 250px; font-size: 0.85rem; padding: 8px 12px;" oninput="renderDeals()">
+    </h2>
+    
+    <div id="dealsContainer">
+      </div>
+  </section>
+
+</main>
+
+<section class="metrics-grid" style="margin-top: 30px;">
+  <div class="metric-card yellow">
+    <div class="metric-title">Pipeline en Negociación</div>
+    <div class="metric-value" id="pipelineNegotiation">$0 COP</div>
+  </div>
+  <div class="metric-card blue">
+    <div class="metric-title">Pipeline en Propuestas</div>
+    <div class="metric-value" id="pipelineSent">$0 COP</div>
+  </div>
+  <div class="metric-card green">
+    <div class="metric-title">Cierres Efectivos (Facturado)</div>
+    <div class="metric-value" id="pipelineWon">$0 COP</div>
+  </div>
+</section>
+
+<script>
+  // --- CORE ENGINE COMERCIAL (MaxiQueen Local Business Storage) ---
+  
+  let deals = JSON.parse(localStorage.getItem('MQ_CRM_DEALS')) || [
+    { id: 101, title: "Consultoría Estratégica Google Ads", client: "Inversiones Cúcuta S.A.S.", value: 1500000, stage: "Conversación" },
+    { id: 102, title: "Despliegue Ecosistema MaxiQueen OS", client: "Distribuidora Frontera", value: 4500000, stage: "Enviada" }
+  ];
+
+  function saveDealsToStorage() {
+    localStorage.setItem('MQ_CRM_DEALS', JSON.stringify(deals));
+  }
+
+  function formatCurrency(amount) {
+    return '$' + Number(amount).toLocaleString('es-CO') + ' COP';
+  }
+
+  function renderDeals() {
+    const container = document.getElementById('dealsContainer');
+    const searchTerm = document.getElementById('salesSearch').value.toLowerCase();
+    
+    const filteredDeals = deals.filter(d => 
+      d.title.toLowerCase().includes(searchTerm) || 
+      d.client.toLowerCase().includes(searchTerm)
+    );
+
+    if (filteredDeals.length === 0) {
+      container.innerHTML = `<div class="empty-state">No hay propuestas comerciales registradas bajo este criterio de búsqueda.</div>`;
+      calculatePipelineMetrics();
+      return;
+    }
+
+    let html = `<ul class="sales-list">`;
+    filteredDeals.forEach(deal => {
+      let badgeClass = 'badge-conv';
+      if (deal.stage === 'Enviada') badgeClass = 'badge-sent';
+      if (deal.stage === 'Ganado') badgeClass = 'badge-won';
+
+      html += `
+        <li class="sales-item">
+          <div class="sales-info">
+            <h3>${deal.title}</h3>
+            <p>Cliente: <strong>${deal.client}</strong></p>
+            <div class="sales-value">${formatCurrency(deal.value)}</div>
+          </div>
+          <div class="actions">
+            <span class="badge ${badgeClass}">${deal.stage}</span>
+            <button class="btn-delete" onclick="deleteDeal(${deal.id})" title="Eliminar propuesta">✕</button>
+          </div>
+        </li>
+      `;
+    });
+    html += `</ul>`;
+    container.innerHTML = html;
+    calculatePipelineMetrics();
+  }
+
+  function saveDeal(e) {
+    e.preventDefault();
+    const title = document.getElementById('dealTitle').value;
+    const client = document.getElementById('dealClient').value;
+    const value = parseFloat(document.getElementById('dealValue').value) || 0;
+    const stage = document.getElementById('dealStage').value;
+
+    const newDeal = {
+      id: Date.now(),
+      title,
+      client,
+      value,
+      stage
+    };
+
+    deals.unshift(newDeal);
+    saveDealsToStorage();
+    renderDeals();
+    document.getElementById('dealForm').reset();
+  }
+
+  function deleteDeal(id) {
+    deals = deals.filter(d => d.id !== id);
+    saveDealsToStorage();
+    renderDeals();
+  }
+
+  function calculatePipelineMetrics() {
+    let negotiationTotal = 0;
+    let sentTotal = 0;
+    let wonTotal = 0;
+
+    deals.forEach(d => {
+      if (d.stage === 'Conversación') negotiationTotal += d.value;
+      if (d.stage === 'Enviada') sentTotal += d.value;
+      if (d.stage === 'Ganado') wonTotal += d.value;
+    });
+
+    document.getElementById('pipelineNegotiation').innerText = formatCurrency(negotiationTotal);
+    document.getElementById('pipelineSent').innerText = formatCurrency(sentTotal);
+    document.getElementById('pipelineWon').innerText = formatCurrency(wonTotal);
+  }
+
+  // --- SYNC INTERFACES CON EL CORE DE NOTION ---
+  async function syncPipelineWithNotion() {
+    const btn = document.getElementById('btnSyncPipeline');
+    btn.innerText = "⏳ Sincronizando Pipeline...";
+    btn.disabled = true;
+
+    try {
+      // Endpoint listo para acoplarse con tu server.js corporativo
+      await fetch('/api/notion/sync-pipeline', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deals: deals })
+      });
+
+      setTimeout(() => {
+        alert(`¡Embudo Financiero Sincronizado!\n\nLas propuestas y flujos económicos se han indexado de forma segura en tu base de datos central.`);
+        btn.innerText = "🔄 Sincronizar Negocios";
+        btn.disabled = false;
+      }, 1500);
+
+    } catch (error) {
+      console.error("Error al sincronizar flujo de ventas:", error);
+      btn.innerText = "❌ Error de Enlace";
+      btn.disabled = false;
+    }
+  }
+
+  window.onload = () => {
+    renderDeals();
+  };
+</script>
+
+</body>
+</html>

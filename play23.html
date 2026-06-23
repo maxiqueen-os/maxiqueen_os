@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>MQ_T ERROR: Protocolo Vacío</title>
+    <style>
+        body { margin: 0; background: #000; color: #ff0000; font-family: 'Courier New', monospace; overflow: hidden; display: flex; flex-direction: column; height: 100vh; justify-content: center; align-items: center; }
+        canvas { display: block; background: radial-gradient(circle, #050505 0%, #000 100%); cursor: crosshair; }
+        #overlay { position: absolute; top: 20px; left: 20px; pointer-events: none; }
+        .battery { width: 100px; height: 10px; border: 1px solid #fff; margin-top: 5px; }
+        #batteryBar { height: 100%; background: #0f0; transition: width 0.3s; }
+        #glichEffect { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; }
+        #msg { position: absolute; font-size: 24px; font-weight: bold; text-align: center; display: none; color: #ff0000;}
+    </style>
+</head>
+<body>
+
+<div id="overlay">
+    <h2>MQ_SYSTEM [RECOV]</h2>
+    <div class="stat">BATERÍA LINCE:</div>
+    <div class="battery"><div id="batteryBar"></div></div>
+</div>
+
+<div id="glichEffect"></div>
+<canvas id="gameCanvas"></canvas>
+<div id="msg">LA SEÑAL SE HA PERDIDO<br><button onclick="location.reload()" style="background:#220000;color:red;padding:10px;border:1px solid red;cursor:pointer;">REINICIAR TRANSMISIÓN</button></div>
+
+<svg width="0" height="0">
+    <filter id="noiseFilter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/>
+        <feColorMatrix type="matrix" values="0 0 0 0 .1 0 0 0 0 .1 0 0 0 0 .1 0 0 0 1 0"/>
+    </filter>
+</svg>
+<style>
+    #glichEffect {
+        filter: url(#noiseFilter);
+        opacity: 0.1;
+    }
+</style>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let battery = 100;
+    let gameOver = false;
+    let victory = false;
+    let glichActive = false;
+
+    // Estado del Jugador (1ª persona simple)
+    let player = { x: 100, y: 100, angle: 0, speed: 2, r: 10 };
+    let keys = { w: false, a: false, s: false, d: false };
+
+    // Laberinto (0: Aire, 1: Pared)
+    const map = [
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,0,0,0,1,0,0,0,0,1],
+        [1,0,1,0,1,0,1,1,0,1],
+        [1,0,1,0,0,0,0,0,0,1],
+        [1,0,1,1,1,1,1,1,0,1],
+        [1,0,0,0,0,1,0,1,0,1],
+        [1,1,1,1,0,0,0,1,0,1],
+        [1,0,0,0,0,1,0,0,0,1],
+        [1,1,1,1,1,1,1,1,1,1]
+    ];
+    const TILE_SIZE = 64;
+
+    // Entidad acechante (IA simple)
+    let entity = { x: TILE_SIZE * 8, y: TILE_SIZE * 7, r: 8, speed: 0.8, active: true };
+
+    // Núcleo de seguridad (Objetivo)
+    let core = { x: TILE_SIZE * 6, y: TILE_SIZE * 1, r: 15 };
+
+    // Interacciones del mouse para girar la cámara
+    canvas.addEventListener('mousemove', (e) => {
+        if (gameOver || victory) return;
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        player.angle = (mouseX / canvas.width) * Math.PI * 2;
+    });
+
+    window.addEventListener('keydown', (e) => { if(keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = true; });
+    window.addEventListener('keyup', (e) => { if(keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = false; });
+
+    function isWall(x, y) {
+        let gridX = Math.floor(x / TILE_SIZE);
+        let gridY = Math.floor(y / TILE_SIZE);
+        if (gridY >= 0 && gridY < map.length && gridX >= 0 && gridX < map[0].length) {
+            return map[gridY][gridX] === 1;
+        }
+        return true;
+    }
+
+    function updateLogic() {
+        if (gameOver || victory) return;
+
+        // Movimiento del jugador
+        let nextX = player.x;
+        let nextY = player.y;
+        
+        if (keys.w) { nextX += Math.cos(player.angle) * player.speed; nextY += Math.sin(player.angle) * player.speed; }
+        if (keys.s) { nextX -= Math.cos(player.angle) * player.speed; nextY -= Math.sin(player.angle) * player.speed; }
+        if (keys.a) { nextX += Math.cos(player.angle - Math.PI/2) * player.speed; nextY += Math.sin(player.angle - Math.PI/2) * player.speed; }
+        if (keys.d) { nextX += Math.cos(player.angle + Math.PI/2) * player.speed; nextY += Math.sin(player.angle + Math.PI/2) * player.speed; }
+
+        // Colisión simple
+        if (!isWall(nextX, player.y)) player.x = nextX;
+        if (!isWall(player.x, nextY)) player.y = nextY;
+
+        // Movimiento de la Entidad (IA que te sigue lentamente)
+        if (entity.active) {
+            let angleToPlayer = Math.atan2(player.y - entity.y, player.x - entity.x);
+            let nextEntityX = entity.x + Math.cos(angleToPlayer) * entity.speed;
+            let nextEntityY = entity.y + Math.sin(angleToPlayer) * entity.speed;
+
+            // La entidad ignora las paredes para ser más terrorífica
+            entity.x = nextEntityX;
+            entity.y = nextEntityY;
+
+            // Control del Glich (Terror Atmosférico)
+            let dist = Math.hypot(player.x - entity.x, player.y - entity.y);
+            if (dist < 200) {
+                if (!glichActive) {
+                    document.getElementById('glichEffect').style.display = 'block';
+                    glichActive = true;
+                }
+                // Parpadeo de linterna cuando está cerca
+                if (Math.random() > 0.8) battery -= 0.5;
+            } else {
+                if (glichActive) {
+                    document.getElementById('glichEffect').style.display = 'none';
+                    glichActive = false;
+                }
+            }
+
+            // Colisión con la entidad (Derrota)
+            if (dist < player.r + entity.r) {
+                endGame("fallo");
+            }
+        }
+
+        // Batería de linterna
+        battery -= 0.05;
+        document.getElementById('batteryBar').style.width = battery + '%';
+        if (battery <= 0) {
+            endGame("oscuridad");
+        }
+
+        // Victoria
+        if (Math.hypot(player.x - core.x, player.y - core.y) < player.r + core.r) {
+            endGame("victoria");
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Raycasting extremadamente simple para el "cono de linterna"
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(player.x, player.y);
+        ctx.arc(player.x, player.y, 250 * (battery / 100 + 0.1), player.angle - Math.PI/6, player.angle + Math.PI/6);
+        ctx.closePath();
+        ctx.clip(); // Todo lo que se dibuje después solo saldrá dentro de este cono
+
+        // Dibujar laberinto
+        for (let r = 0; r < map.length; r++) {
+            for (let c = 0; c < map[0].length; c++) {
+                if (map[r][c] === 1) {
+                    ctx.fillStyle = '#0a0a0a'; // Paredes muy oscuras
+                    ctx.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                    ctx.strokeStyle = '#111';
+                    ctx.strokeRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+            }
+        }
+
+        // Dibujar Núcleo (Objetivo)
+        ctx.fillStyle = '#0ff';
+        ctx.shadowColor = '#0ff';
+        ctx.shadowBlur = 20;
+        ctx.beginPath(); ctx.arc(core.x, core.y, core.r, 0, Math.PI*2); ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.restore(); // Desactivar el clip de la linterna
+
+        // Dibujar Entidad (Oculta por defecto, solo visible por glich o si la batería está muerta)
+        if (gameOver) {
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.2)';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#f00';
+            ctx.beginPath(); ctx.arc(entity.x, entity.y, 20, 0, Math.PI*2); ctx.fill();
+        } else if (isWall(entity.x, entity.y)) {
+             // Si la entidad está atravesando pared, dibujamos una pequeña sombra roja
+             ctx.fillStyle = 'rgba(255,0,0,0.05)';
+             ctx.beginPath(); ctx.arc(entity.x, entity.y, 30, 0, Math.PI*2); ctx.fill();
+        }
+    }
+
+    function endGame(status) {
+        gameOver = true;
+        document.getElementById('glichEffect').style.display = 'none';
+        let msgEl = document.getElementById('msg');
+        msgEl.style.display = 'block';
+
+        if (status === "oscuridad") {
+            msgEl.innerHTML = "OSCURIDAD TOTAL<br>LA UNIDAD SE HA PERDIDO";
+        } else if (status === "victoria") {
+            victory = true;
+            gameOver = false;
+            msgEl.innerHTML = "MQ_T: NÚCLEO RESTAURADO<br>AMENAZA NEUTRALIZADA. BIENVENIDO.";
+            msgEl.style.color = '#0ff';
+        }
+    }
+
+    function gameLoop() {
+        updateLogic();
+        draw();
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Iniciar con un pequeño retraso
+    setTimeout(() => {
+        gameLoop();
+    }, 1000);
+
+</script>
+</body>
+</html>

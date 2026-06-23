@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxiQueen OS | Hub Omnicanal de Activos</title>
+    <style>
+        :root {
+            --bg-deep: #030712;
+            --glass-bg: rgba(15, 23, 42, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            
+            /* Paleta Neón Identidad Colombia */
+            --neon-yellow: #facc15; /* Amarillo - Destacados, Títulos, Filtros Activos */
+            --neon-blue: #3b82f6;   /* Azul - Estructura, Bordes, Glows Base */
+            --neon-red: #ef4444;    /* Rojo - Alertas, Estado Crítico, Botones de Acción */
+            
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: radial-gradient(circle at top, #091e3a, var(--bg-deep));
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* BARRA LATERAL (Sidebar) - Glassmorphism */
+        .sidebar {
+            width: 280px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-right: 1px solid var(--glass-border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .brand-container {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .brand-container h2 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--neon-yellow);
+            text-shadow: 0 0 10px rgba(250, 204, 21, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .brand-container p {
+            font-size: 0.75rem;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .menu-categorias {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .menu-categorias li {
+            padding: 14px 16px;
+            cursor: pointer;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .menu-categorias li:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.2);
+            transform: translateX(4px);
+        }
+
+        .menu-categorias li.active {
+            background: rgba(250, 204, 21, 0.15);
+            border-color: var(--neon-yellow);
+            color: var(--neon-yellow);
+            font-weight: 600;
+            box-shadow: 0 0 15px rgba(250, 204, 21, 0.2);
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        header p {
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-size: 1rem;
+        }
+
+        /* FILTROS SECUNDARIOS (Sub-división interna) */
+        .subfilters-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .subfilter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid transparent;
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .subfilter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .subfilter-btn.active {
+            background: var(--text-main);
+            color: var(--bg-deep);
+            font-weight: 600;
+        }
+
+        /* PANEL DE INGESTA DIRECTA */
+        .upload-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px dashed rgba(239, 68, 68, 0.3); /* Base Roja */
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .upload-panel:hover {
+            border-color: var(--neon-red);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.15);
+        }
+
+        .upload-panel h3 {
+            color: var(--text-main);
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--neon-yellow), #eab308);
+            color: #000;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 14px rgba(250, 204, 21, 0.3);
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(250, 204, 21, 0.5);
+        }
+
+        /* REJILLA DE LA GALERÍA (Grid) */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        .asset-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .asset-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.25);
+        }
+
+        .image-wrapper {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            background: #000;
+            position: relative;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .asset-card:hover .image-wrapper img {
+            transform: scale(1.08);
+        }
+
+        .asset-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--neon-yellow);
+            color: var(--neon-yellow);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .asset-info {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .asset-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .asset-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Sistema de feedback visual */
+        #status-msg {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .status-ok { color: var(--neon-yellow); }
+        .status-err { color: var(--neon-red); }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="brand-container">
+            <h2>👑 MAXIQUEEN OS</h2>
+            <p>Módulo de Control de Activos</p>
+        </div>
+        <ul class="menu-categorias" id="sidebar-menu">
+            <li class="active" onclick="switchCategory('todos', this)">🌐 Todos los Activos</li>
+            <li onclick="switchCategory('dibujos', this)">🎨 Dibujos y Cómics</li>
+            <li onclick="switchCategory('backend', this)">🖥️ Backend e Interfaces</li>
+            <li onclick="switchCategory('catalogo', this)">📁 Catálogo de Productos</li>
+            <li onclick="switchCategory('ropa', this)">👕 Ropa y Branding</li>
+            <li onclick="switchCategory('animaciones', this)">🎬 Animaciones</li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header>
+            <h1 id="main-title">Ecosistema Global de Imágenes</h1>
+            <p id="main-desc">Repositorio unificado de producción para la automatización visual.</p>
+        </header>
+
+        <section class="subfilters-bar" id="subfilters-container">
+            <button class="subfilter-btn active" onclick="filterSubcategory('todos', this)">Mostrar Todo</button>
+            <button class="subfilter-btn" onclick="filterSubcategory('h5-games', this)">H5 Games</button>
+            <button class="subfilter-btn" onclick="filterSubcategory('ui-core', this)">UI Core</button>
+            <button class="subfilter-btn" onclick="filterSubcategory('originals', this)">Originales</button>
+        </section>
+
+        <section class="upload-panel">
+            <h3>Ingesta de Activos al Baúl Local</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">
+                Carga imágenes en tiempo real para indexarlas en la memoria interna del ecosistema.
+            </p>
+            <input type="file" id="multi-file-input" style="display: none;" accept="image/*" multiple>
+            <button class="btn-action" onclick="document.getElementById('multi-file-input').click()">
+                Seleccionar Lote de Imágenes
+            </button>
+            <div id="status-msg"></div>
+        </section>
+
+        <div class="gallery-grid" id="master-gallery">
+            </div>
+    </main>
+
+    <script>
+        const CLOUD_NAME = 'maxiqueen-os';
+        let currentCategory = 'todos';
+        let currentSubcategory = 'todos';
+
+        // BASE DE DATOS LOCAL (Baúl de Emergencia/Respaldo Inteligente)
+        // Puedes meter MILES de registros aquí dentro ordenados por categorías y subcategorías
+        const LOCAL_ASSET_REPOSITORY = [
+            {
+                public_id: 'MQ_Logo_Oficial',
+                version: '1777666946',
+                format: 'png',
+                category: 'ropa',
+                subcategory: 'ui-core',
+                label: 'Logo Oficial Premium'
+            },
+            {
+                public_id: 'cuadro-play1_bg',
+                version: '1777666947',
+                format: 'png',
+                category: 'backend',
+                subcategory: 'h5-games',
+                label: 'Interfaz Arcade H5'
+            },
+            {
+                public_id: 'comic_concept_v1',
+                version: '1777666948',
+                format: 'jpg',
+                category: 'dibujos',
+                subcategory: 'originals',
+                label: 'Boceto Cómic Original'
+            },
+            {
+                public_id: 'producto_referencia_001',
+                version: '1777666949',
+                format: 'webp',
+                category: 'catalogo',
+                subcategory: 'ui-core',
+                label: 'Ropa Referencia Black'
+            }
+        ];
+
+        // Inicialización del Sistema
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMasterGallery();
+        });
+
+        // Controlador de Categorías Principales
+        function switchCategory(cat, element) {
+            // Manejo de UI
+            document.querySelectorAll('#sidebar-menu li').forEach(li => li.classList.remove('active'));
+            element.classList.add('active');
+
+            currentCategory = cat;
+            currentSubcategory = 'todos'; // Resetear subfiltro al cambiar de rama principal
+            
+            // Actualizar estados de botones de subfiltros
+            document.querySelectorAll('#subfilters-container .subfilter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('#subfilters-container .subfilter-btn').classList.add('active');
+
+            document.getElementById('main-title').innerText = `Rama: ${cat.toUpperCase()}`;
+            
+            renderMasterGallery();
+        }
+
+        // Controlador de Subcategorías
+        function filterSubcategory(subcat, element) {
+            document.querySelectorAll('#subfilters-container .subfilter-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+
+            currentSubcategory = subcat;
+            renderMasterGallery();
+        }
+
+        // Motor de Renderizado Unificado (Cloudinary API Fetch con Fallback Local Automático)
+        function renderMasterGallery() {
+            const grid = document.getElementById('master-gallery');
+            grid.innerHTML = "<p style='color: var(--neon-yellow);'>Sincronizando Nodos de Imagen...</p>";
+
+            // Si es la categoría 'todos', usamos directamente el fallback local unificado para velocidad estructural
+            if (currentCategory === 'todos') {
+                displayAssets(LOCAL_ASSET_REPOSITORY);
+                return;
+            }
+
+            // Intento de conexión en caliente con Cloudinary por Tag
+            fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${currentCategory}.json`)
+            .then(res => {
+                if (!res.ok) throw new Error("Modo Respaldo Local Activado");
+                return res.json();
+            })
+            .then(data => {
+                if (!data.resources || data.resources.length === 0) {
+                    executeFallbackRender();
+                } else {
+                    // Mapear respuesta de Cloudinary adaptándola a nuestra estructura interna
+                    const cloudAssets = data.resources.map(img => ({
+                        public_id: img.public_id,
+                        version: img.version,
+                        format: img.format,
+                        category: currentCategory,
+                        subcategory: 'ui-core', // Default para Cloudinary sin sub-tag
+                        label: img.public_id
+                    }));
+                    displayAssets(cloudAssets);
+                }
+            })
+            .catch(() => {
+                // Si falla Cloudinary (por límites o falta de tags expuestos), el sistema no se detiene
+                executeFallbackRender();
+            });
+        }
+
+        function executeFallbackRender() {
+            // Filtrar del baúl local masivo según selecciones actuales
+            const filtered = LOCAL_ASSET_REPOSITORY.filter(asset => asset.category === currentCategory);
+            displayAssets(filtered);
+        }
+
+        // Pintar elementos finales aplicando lógica de sub-filtrado
+        function displayAssets(assetsArray) {
+            const grid = document.getElementById('master-gallery');
+            grid.innerHTML = "";
+
+            // Aplicar sub-filtro si corresponde
+            let finalSelection = assetsArray;
+            if (currentSubcategory !== 'todos') {
+                finalSelection = assetsArray.filter(a => a.subcategory === currentSubcategory);
+            }
+
+            if (finalSelection.length === 0) {
+                grid.innerHTML = "<p style='color: var(--text-muted); grid-column: 1/-1; text-align: center;'>No se encontraron activos indexados bajo estos parámetros.</p>";
+                return;
+            }
+
+            finalSelection.forEach(asset => {
+                const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/v${asset.version}/${asset.public_id}.${asset.format}`;
+                
+                const card = document.createElement('div');
+                card.className = 'asset-card';
+                card.innerHTML = `
+                    <div class="image-wrapper">
+                        <span class="asset-badge">${asset.subcategory}</span>
+                        <a href="${url}" target="_blank">
+                            <img src="${url}" alt="${asset.label}" onerror="this.src='https://placehold.co/600x400/1a1a1a/ffffff?text=Falta+Activo'">
+                        </a>
+                    </div>
+                    <div class="asset-info">
+                        <div class="asset-title">${asset.label}</div>
+                        <div class="asset-meta">
+                            <span style="color: var(--neon-blue); font-family: monospace;">.${asset.format}</span>
+                            <span>ID: ${asset.public_id.substring(0, 12)}...</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Lógica de Ingesta Inmediata por Lote (Simulada para mantener persistencia visual)
+        const fileInput = document.getElementById('multi-file-input');
+        const statusMsg = document.getElementById('status-msg');
+
+        fileInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            statusMsg.className = "status-ok";
+            statusMsg.innerText = `Indexando ${files.length} archivos en caliente al módulo [${currentCategory.toUpperCase()}]...`;
+
+            Array.from(files).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    // Creamos un asset dinámico simulando la estructura cloud
+                    const simulatedAsset = {
+                        public_id: `Local_Ingest_${Date.now()}_${index}`,
+                        version: '1',
+                        format: file.name.split('.').pop(),
+                        category: currentCategory === 'todos' ? 'backend' : currentCategory,
+                        subcategory: 'originals',
+                        label: file.name
+                    };
+
+                    // Insertar al inicio de nuestra base de datos en memoria para procesamiento inmediato
+                    LOCAL_ASSET_REPOSITORY.unshift(simulatedAsset);
+                    
+                    // Si termina la iteración, repintar
+                    if (index === files.length - 1) {
+                        setTimeout(() => {
+                            statusMsg.innerText = `Operación exitosa. ${files.length} activos acoplados a la memoria flash.`;
+                            renderMasterGallery();
+                        }, 800);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
+</body>
+</html>

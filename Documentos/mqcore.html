@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAXIQUEEN OS | Global Mastery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;700;900&family=Inter:wght@300;600&display=swap');
+
+        :root {
+            --neon-purple: #8A2BE2;
+            --neon-green: #00FF9C;
+            --cyber-blue: #00D4FF;
+            --bg-black: #050507;
+            --panel-bg: rgba(15, 15, 20, 0.85);
+            --neon-red: #ff3366;
+        }
+
+        body {
+            background: var(--bg-black);
+            color: #EAEAEA;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(138, 43, 226, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 156, 0.08) 0%, transparent 40%),
+                linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .orbitron { font-family: 'Orbitron', sans-serif; }
+
+        /* CRT Scanline Effect */
+        body::after {
+            content: " ";
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.12) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 9999;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            opacity: 0.35;
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.33; }
+            50% { opacity: 0.37; }
+            100% { opacity: 0.33; }
+        }
+
+        .glass-panel {
+            background: var(--panel-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(24px);
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.02), 0 10px 30px rgba(0,0,0,0.6);
+            border-radius: 8px;
+        }
+
+        .btn-cyber {
+            position: relative;
+            background: transparent;
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 12px 30px;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 2px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            clip-path: polygon(10px 0%, 100% 0%, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0% 100%, 0% 10px);
+        }
+
+        .btn-cyber::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 156, 0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-cyber:hover::before { left: 100%; }
+        .btn-cyber:hover {
+            background: rgba(0, 255, 156, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 156, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Tactical Grid Layout */
+        #board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            background: rgba(5, 5, 8, 0.8);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(138, 43, 226, 0.4);
+            box-shadow: inset 0 0 30px rgba(138, 43, 226, 0.1);
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .cell {
+            aspect-ratio: 1/1;
+            background: rgba(20, 20, 25, 0.6);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .cell.drag-over {
+            background: rgba(138, 43, 226, 0.3);
+            border: 1px solid var(--neon-purple);
+            transform: scale(1.05);
+        }
+
+        .tower {
+            width: 85%;
+            height: 85%;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            font-size: 1.8rem;
+            transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: spawn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+            user-select: none;
+        }
+        
+        .tower:active { cursor: grabbing; transform: scale(0.9); }
+
+        @keyframes spawn { 
+            0% { transform: scale(0) rotate(-15deg); opacity: 0; } 
+            100% { transform: scale(1) rotate(0); opacity: 1; } 
+        }
+
+        .tower-1 { background: linear-gradient(135deg, #2a2a2a, #111); color: #888; border: 1px solid #444; }
+        .tower-2 { background: linear-gradient(135deg, #004d40, #00251a); color: var(--neon-green); border: 1px solid var(--neon-green); box-shadow: 0 0 15px rgba(0,255,156,0.2); }
+        .tower-3 { background: linear-gradient(135deg, #4a148c, #2a0a4a); color: #fff; border: 1px solid var(--neon-purple); box-shadow: 0 0 20px rgba(138,43,226,0.4); text-shadow: 0 0 10px #fff; }
+        .tower-4 { background: linear-gradient(135deg, #f57f17, #4a3a0a); color: #fff; border: 1px solid #ffab00; box-shadow: 0 0 25px rgba(255,171,0,0.5); }
+        .tower-5 { background: linear-gradient(135deg, #b71c1c, #4a0a0a); color: #fff; border: 1px solid #ff5252; animation: pulse-red 2s infinite; }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 5px #ff5252; transform: scale(1); }
+            50% { box-shadow: 0 0 25px #ff5252, inset 0 0 15px #ff5252; transform: scale(1.05); }
+            100% { box-shadow: 0 0 5px #ff5252; transform: scale(1); }
+        }
+
+        /* Flashcard 3D Engine */
+        .flip-container {
+            perspective: 1000px;
+            width: 100%;
+            height: 280px;
+        }
+        .flipper {
+            transition: 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .flip-container.flipped .flipper {
+            transform: rotateY(180deg);
+        }
+        .front, .back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1rem;
+            padding: 20px;
+        }
+        .front {
+            background: linear-gradient(180deg, rgba(30,30,40,0.95) 0%, rgba(15,15,20,0.95) 100%);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+        .back {
+            background: linear-gradient(180deg, rgba(20,40,30,0.95) 0%, rgba(10,20,15,0.95) 100%);
+            border: 1px solid rgba(0, 255, 156, 0.4);
+            transform: rotateY(180deg);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 3px; }
+
+        /* Interactive Canvas for Game overlay */
+        #game-canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        #active-vfx-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Safe System Loader Screen -->
+    <div id="loader" class="fixed inset-0 bg-black z-[10000] flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="w-32 h-32 mb-8 relative flex items-center justify-center">
+            <div class="absolute inset-0 border-t-4 border-neon-purple rounded-full animate-spin"></div>
+            <div class="absolute inset-2 border-r-4 border-cyber-blue rounded-full animate-spin direction-reverse" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
+            <div class="orbitron text-4xl font-black text-neon-green relative z-10">👑</div>
+        </div>
+        <div class="orbitron text-2xl font-black text-white tracking-widest">MAXIQUEEN<span class="text-cyber-blue">OS</span></div>
+        <div class="w-64 h-1 bg-zinc-900 mt-8 relative overflow-hidden rounded">
+            <div id="progress" class="absolute h-full w-0 bg-gradient-to-r from-neon-purple to-neon-green shadow-[0_0_10px_#00FF9C] transition-all duration-200"></div>
+        </div>
+        <div id="loadStatus" class="mono text-[10px] mt-4 text-zinc-500 uppercase tracking-widest">Iniciando Kernels...</div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-50 backdrop-blur-xl border-b border-white/5 bg-black/50 px-6 py-4 flex justify-between items-center">
+        <div class="orbitron font-black text-xl tracking-tighter flex items-center gap-2">
+            <i class="fas fa-chess-queen text-neon-purple animate-pulse"></i>
+            <span class="text-white">MQ</span><span class="text-zinc-500">OS</span>
+        </div>
+        <div id="globalStats" class="hidden flex gap-8 text-[11px] mono font-bold">
+            <div class="flex flex-col items-end">
+                <span class="text-zinc-500">ENERGÍA</span>
+                <span id="val-energia" class="text-cyber-blue drop-shadow-[0_0_5px_rgba(0,212,255,0.5)]">100%</span>
+            </div>
+            <div class="flex flex-col items-end">
+                <span class="text-zinc-500">RECURSOS</span>
+                <span id="val-recursos" class="text-neon-green drop-shadow-[0_0_5px_rgba(0,255,156,0.5)]">500</span>
+            </div>
+            <div class="flex flex-col items-end">
+                <span class="text-zinc-500">EXP GLOBAL</span>
+                <span id="val-xp" class="text-neon-purple drop-shadow-[0_0_5px_rgba(138,43,226,0.5)]">0000</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero / Entry Screen -->
+    <section id="hero" class="min-h-[85vh] flex flex-col items-center justify-center p-6 relative">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neon-purple/5 blur-[120px] rounded-full pointer-events-none"></div>
+        
+        <div class="text-center mb-12 relative z-10">
+            <h1 class="orbitron text-5xl md:text-8xl font-black text-white leading-none tracking-tighter">
+                DOMINIO<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-purple via-cyber-blue to-neon-green">COGNITIVO</span>
+            </h1>
+            <p class="mono text-zinc-400 mt-6 tracking-[0.5em] uppercase text-xs">Arquitectura Digital MaxiQueen</p>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-6 mb-24 relative z-10">
+            <button onclick="bootSystem()" class="btn-cyber">[ ACCEDER AL NÚCLEO ]</button>
+            <button onclick="openExternalDocs()" class="border border-zinc-700 bg-black/50 backdrop-blur text-zinc-400 px-8 py-3 hover:border-white hover:text-white transition uppercase text-xs font-bold tracking-widest rounded">Documentación V6</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full relative z-10">
+            <div class="glass-panel p-8 border-t-2 border-neon-purple hover:-translate-y-2 transition-transform duration-300">
+                <i class="fas fa-network-wired text-neon-purple text-2xl mb-4"></i>
+                <h4 class="orbitron text-sm font-bold text-white mb-2">01. ECOSISTEMA</h4>
+                <p class="text-xs text-zinc-400 leading-relaxed">Infraestructura centralizada conectando Vercel, MongoDB y flujos de marketing.</p>
+            </div>
+            <div class="glass-panel p-8 border-t-2 border-neon-green hover:-translate-y-2 transition-transform duration-300">
+                <i class="fas fa-chart-line text-neon-green text-2xl mb-4"></i>
+                <h4 class="orbitron text-sm font-bold text-white mb-2">02. NEGOCIO REAL</h4>
+                <p class="text-xs text-zinc-400 leading-relaxed">Lógica de monetización implacable y retención de usuarios a nivel corporativo.</p>
+            </div>
+            <div class="glass-panel p-8 border-t-2 border-cyber-blue hover:-translate-y-2 transition-transform duration-300">
+                <i class="fas fa-gem text-cyber-blue text-2xl mb-4"></i>
+                <h4 class="orbitron text-sm font-bold text-white mb-2">03. VENTA ELEGANTE</h4>
+                <p class="text-xs text-zinc-400 leading-relaxed">Neuro-ventas y posicionamiento premium. Operando en la más alta frecuencia.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Dashboard Screen -->
+    <section id="dashboard" class="hidden p-6 max-w-7xl mx-auto animate-fade-in mt-8">
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+            
+            <!-- Left Profile Column -->
+            <div class="xl:col-span-1 space-y-6">
+                <div class="glass-panel p-8 text-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-neon-purple/10 blur-[30px]"></div>
+                    <div class="w-24 h-24 bg-gradient-to-tr from-purple-600 via-blue-500 to-emerald-400 rounded-full mx-auto mb-6 border-4 border-black shadow-[0_0_20px_rgba(138,43,226,0.3)] flex items-center justify-center text-4xl relative z-10">
+                        👑
+                    </div>
+                    <h3 class="orbitron font-bold text-xl tracking-wide">MAXIQUEEN</h3>
+                    <p class="text-[10px] mono text-cyber-blue mt-1 bg-cyber-blue/10 inline-block px-3 py-1 rounded-full border border-cyber-blue/20">ARQUITECTO DEL SISTEMA</p>
+                    
+                    <div class="mt-8 space-y-4 text-left">
+                        <div>
+                            <div class="flex justify-between text-[10px] mono mb-1">
+                                <span class="text-zinc-400">ESTABILIDAD DEL NÚCLEO</span>
+                                <span class="text-neon-green">99.9%</span>
+                            </div>
+                            <div class="w-full bg-zinc-900 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-neon-green h-full shadow-[0_0_10px_#00FF9C]" style="width: 99.9%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation buttons inside system -->
+                <div class="space-y-3">
+                    <button onclick="irJuego()" class="w-full text-left p-4 glass-panel hover:bg-white/5 transition text-xs font-bold flex justify-between items-center group">
+                        <span class="flex items-center text-zinc-300 group-hover:text-white transition"><i class="fas fa-layer-group w-6 text-neon-purple"></i> QUEEN TOWERS (DEFENSA)</span>
+                        <i class="fas fa-chevron-right text-[10px] text-zinc-600 group-hover:text-neon-purple transition"></i>
+                    </button>
+                    <button onclick="irTarjetas()" class="w-full text-left p-4 glass-panel hover:bg-white/5 transition text-xs font-bold flex justify-between items-center group">
+                        <span class="flex items-center text-zinc-300 group-hover:text-white transition"><i class="fas fa-brain w-6 text-neon-green"></i> NÚCLEO MENTAL</span>
+                        <i class="fas fa-chevron-right text-[10px] text-zinc-600 group-hover:text-neon-green transition"></i>
+                    </button>
+                    <button onclick="irRanking()" class="w-full text-left p-4 glass-panel hover:bg-white/5 transition text-xs font-bold flex justify-between items-center group">
+                        <span class="flex items-center text-zinc-300 group-hover:text-white transition"><i class="fas fa-globe-americas w-6 text-cyber-blue"></i> RED GLOBAL</span>
+                        <i class="fas fa-chevron-right text-[10px] text-zinc-600 group-hover:text-cyber-blue transition"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Diagnostic Screen Column -->
+            <div class="xl:col-span-3 space-y-8">
+                <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                    <h2 class="orbitron text-xl font-bold">MÓDULOS ACTIVOS</h2>
+                    <span class="mono text-[10px] text-neon-green px-2 py-1 bg-neon-green/10 rounded border border-neon-green/20">SISTEMA ONLINE</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-panel p-8 relative overflow-hidden group cursor-pointer border border-white/5 hover:border-neon-purple/50 transition-colors" onclick="irJuego()">
+                        <div class="absolute -right-8 -bottom-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all duration-500">
+                            <i class="fas fa-chess-board text-9xl text-neon-purple"></i>
+                        </div>
+                        <div class="flex items-center gap-3 mb-4 relative z-10">
+                            <div class="w-10 h-10 rounded bg-neon-purple/20 flex items-center justify-center border border-neon-purple/40">
+                                <i class="fas fa-layer-group text-neon-purple"></i>
+                            </div>
+                            <h4 class="orbitron text-lg font-bold">QUEEN TOWERS</h4>
+                        </div>
+                        <p class="text-sm text-zinc-400 mb-8 relative z-10">Módulo de estabilización de activos digitales mediante fusión táctica algorítmica.</p>
+                        <span class="text-[10px] font-black text-neon-purple tracking-widest uppercase relative z-10 bg-neon-purple/10 px-3 py-1 rounded inline-block">[ INICIAR PROTOCOLO ]</span>
+                    </div>
+
+                    <div class="glass-panel p-8 relative overflow-hidden group cursor-pointer border border-white/5 hover:border-neon-green/50 transition-colors" onclick="irTarjetas()">
+                        <div class="absolute -right-8 -bottom-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all duration-500">
+                            <i class="fas fa-brain text-9xl text-neon-green"></i>
+                        </div>
+                        <div class="flex items-center gap-3 mb-4 relative z-10">
+                            <div class="w-10 h-10 rounded bg-neon-green/20 flex items-center justify-center border border-neon-green/40">
+                                <i class="fas fa-microchip text-neon-green"></i>
+                            </div>
+                            <h4 class="orbitron text-lg font-bold">NÚCLEO MENTAL</h4>
+                        </div>
+                        <p class="text-sm text-zinc-400 mb-8 relative z-10">Entrenamiento de alta velocidad para acondicionamiento y toma de decisiones tácticas.</p>
+                        <span class="text-[10px] font-black text-neon-green tracking-widest uppercase relative z-10 bg-neon-green/10 px-3 py-1 rounded inline-block">[ ACTIVAR MÓDULO ]</span>
+                    </div>
+                </div>
+
+                <!-- Live System Terminal Log -->
+                <div class="glass-panel border border-white/5 rounded-lg overflow-hidden">
+                    <div class="bg-black/80 border-b border-white/5 px-4 py-2 flex items-center justify-between">
+                        <h3 class="orbitron text-[10px] font-bold text-zinc-400 flex items-center">
+                            <i class="fas fa-terminal mr-2"></i> REGISTRO DEL SISTEMA
+                        </h3>
+                        <div class="flex gap-1.5">
+                            <div class="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
+                        </div>
+                    </div>
+                    <div id="consoleLog" class="p-4 mono text-[11px] space-y-1.5 h-40 overflow-y-auto text-zinc-500 bg-black/40"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Game Panel (Queen Towers Merger Defense) -->
+    <section id="juego" class="hidden p-6 max-w-3xl mx-auto animate-fade-in mt-8">
+        <div class="flex justify-between items-center mb-6 bg-black/40 p-4 rounded-lg border border-white/5 backdrop-blur">
+            <button onclick="volver()" class="text-zinc-400 hover:text-white transition text-xs font-bold uppercase tracking-wider flex items-center group">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i> ESCAPE
+            </button>
+            <h2 class="orbitron font-bold tracking-widest text-neon-purple"><i class="fas fa-layer-group mr-2"></i> SECTOR_QUEEN_TOWERS</h2>
+            <div class="text-right text-[10px] mono text-zinc-500">AUTO-SAVE: <span class="text-neon-green">ON</span></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+            <div class="md:col-span-7">
+                <!-- Tactical Map View Container -->
+                <div id="game-canvas-container" class="shadow-[0_0_50px_rgba(138,43,226,0.15)]">
+                    <canvas id="active-vfx-canvas"></canvas>
+                    <div id="board">
+                        <!-- 16 Empty cells generated dynamically inside JS -->
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-between items-center bg-black/30 p-3 rounded border border-white/5 text-[11px] mono">
+                    <span class="text-zinc-400">AMENAZAS ACTIVAS: <span id="val-threats" class="text-red-400 font-bold">0</span></span>
+                    <span class="text-zinc-400">NIVEL MÁXIMO: <span id="val-max-tower" class="text-neon-purple font-bold">T1</span></span>
+                </div>
+            </div>
+
+            <!-- Shop and Controller modules -->
+            <div class="md:col-span-5 space-y-4">
+                <button id="buyBtn" onclick="buyTower()" class="glass-panel p-6 w-full flex flex-col items-center justify-center group hover:bg-white/5 transition-all">
+                    <i class="fas fa-plus-circle text-2xl text-neon-purple mb-2 group-hover:scale-110 transition-transform duration-300"></i>
+                    <span class="text-[10px] mono text-zinc-400 mb-1">COMPILAR NUEVA UNIDAD</span>
+                    <span class="orbitron text-xl font-bold text-white group-hover:text-neon-purple transition-colors">T-1 CORE</span>
+                    <div class="mt-3 text-xs bg-neon-purple/10 border border-neon-purple/30 px-4 py-2 rounded text-neon-purple font-bold flex items-center gap-2">
+                        <i class="fas fa-coins"></i> COSTO: <span id="cost-label" class="text-white">10</span> RES
+                    </div>
+                </button>
+                
+                <div class="glass-panel p-6">
+                    <h5 class="orbitron text-[10px] text-zinc-400 mb-4 border-b border-white/10 pb-2">RUTINAS DE EMERGENCIA</h5>
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        <button onclick="decisionManual('overclock')" class="bg-cyber-blue/10 hover:bg-cyber-blue/20 transition border border-cyber-blue/40 p-3 rounded text-[10px] font-bold text-cyber-blue flex flex-col items-center gap-1">
+                            <i class="fas fa-bolt"></i>
+                            <span>SOBRECARGA</span>
+                            <span class="text-zinc-400 text-[8px]">-30 RES</span>
+                        </button>
+                        <button onclick="decisionManual('purge')" class="bg-red-900/10 border border-red-500/30 hover:bg-red-900/30 transition p-3 rounded text-[10px] font-bold text-red-400 flex flex-col items-center gap-1">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>PURGAR</span>
+                            <span class="text-zinc-400 text-[8px]">-15 ENG</span>
+                        </button>
+                    </div>
+                    <p class="text-[9px] mono text-center text-zinc-500 uppercase">Gestión manual de recursos del servidor.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cognitive Mental Core Flashcard panel -->
+    <section id="tarjetas" class="hidden p-6 max-w-xl mx-auto text-center animate-fade-in mt-12">
+        <h2 class="orbitron font-bold text-2xl mb-8 tracking-[0.4em] text-neon-green">
+            <i class="fas fa-brain mr-3"></i>CORE_TRAINING
+        </h2>
+        
+        <div class="flip-container mb-8 cursor-pointer" id="flipContainer" onclick="mostrarRespuesta()">
+            <div class="flipper shadow-2xl">
+                <div class="front">
+                    <span class="text-[10px] mono text-zinc-500 absolute top-4 left-4">PREGUNTA / ESTÍMULO</span>
+                    <i class="fas fa-fingerprint text-4xl text-neon-purple/20 mb-4"></i>
+                    <p id="cardFront" class="orbitron text-2xl font-black text-white px-6 text-center"></p>
+                    <div class="absolute bottom-4 right-4 text-[10px] mono text-neon-purple animate-pulse">Clic para desencriptar...</div>
+                </div>
+                <div class="back">
+                    <span class="text-[10px] mono text-zinc-500 absolute top-4 left-4">RESPUESTA / DATO</span>
+                    <i class="fas fa-check-circle text-4xl text-neon-green/20 mb-4"></i>
+                    <p id="cardBack" class="orbitron text-xl font-bold text-neon-green px-6 text-center uppercase tracking-widest"></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="controlesTarjeta" class="space-y-4 max-w-md mx-auto">
+            <div id="accionesTarjeta" class="hidden grid grid-cols-2 gap-4">
+                <button onclick="correcta()" class="bg-neon-green/10 text-neon-green border border-neon-green/40 p-4 rounded-lg font-bold hover:bg-neon-green hover:text-black transition uppercase text-xs flex items-center justify-center gap-2">
+                    <i class="fas fa-check"></i> ASIMILADO
+                </button>
+                <button onclick="incorrecta()" class="bg-red-900/20 text-red-400 border border-red-500/40 p-4 rounded-lg font-bold hover:bg-red-500 hover:text-white transition uppercase text-xs flex items-center justify-center gap-2">
+                    <i class="fas fa-times"></i> REINTENTAR
+                </button>
+            </div>
+        </div>
+
+        <button onclick="volver()" class="mt-12 text-zinc-500 text-xs hover:text-white transition mono tracking-widest flex items-center justify-center mx-auto gap-2">
+            <i class="fas fa-sign-out-alt"></i> CERRAR MÓDULO
+        </button>
+    </section>
+
+    <!-- Operator Rank Panel -->
+    <section id="ranking" class="hidden p-6 max-w-2xl mx-auto animate-fade-in mt-8">
+        <h2 class="orbitron font-bold text-2xl mb-10 text-center text-cyber-blue tracking-widest"><i class="fas fa-globe mr-3"></i>TOP_OPERATORS</h2>
+        <div class="glass-panel rounded-xl overflow-hidden border border-cyber-blue/30">
+            <div class="flex justify-between p-5 bg-cyber-blue/10 mono text-[10px] text-cyber-blue font-bold uppercase border-b border-cyber-blue/20">
+                <span class="w-16">Rango</span>
+                <span class="flex-1">Identidad de Red</span>
+                <span class="w-24 text-right">XP Total</span>
+            </div>
+            <div class="p-3 space-y-2">
+                <div class="flex justify-between items-center p-4 bg-gradient-to-r from-neon-purple/20 to-transparent border-l-4 border-neon-purple rounded-r-lg text-white">
+                    <span class="orbitron text-xs font-black w-16 text-neon-purple">#01</span>
+                    <span class="font-black flex-1 flex items-center gap-2"><i class="fas fa-crown text-yellow-500"></i> MAXIQUEEN_CORE</span>
+                    <span class="mono text-neon-green w-24 text-right font-bold" id="rank-xp">0000</span>
+                </div>
+                <div class="flex justify-between items-center p-4 text-zinc-400 text-xs hover:bg-white/5 rounded transition">
+                    <span class="mono w-16">#02</span>
+                    <span class="mono flex-1">X_VIP_ACCESS</span>
+                    <span class="mono w-24 text-right">15,400</span>
+                </div>
+                <div class="flex justify-between items-center p-4 text-zinc-500 text-xs hover:bg-white/5 rounded transition">
+                    <span class="mono w-16">#03</span>
+                    <span class="mono flex-1">GUEST_7822</span>
+                    <span class="mono w-24 text-right">1,200</span>
+                </div>
+            </div>
+        </div>
+        <div class="mt-8 text-center">
+            <button onclick="volver()" class="btn-cyber inline-block px-12">RETORNAR AL DASHBOARD</button>
+        </div>
+    </section>
+
+    <!-- -->
+    <script>
+        // System wide metrics State Management
+        const DEFAULT_STATE = {
+            energia: 100,
+            recursos: 500,
+            xp: 0,
+            costoTorre: 10,
+            grid: Array(16).fill(null),
+            cardIndex: 0
+        };
+
+        let state = { ...DEFAULT_STATE };
+
+        // Save State cleanly to Local Storage
+        function saveState() {
+            try {
+                localStorage.setItem('maxiqueen_os_v6', JSON.stringify(state));
+            } catch (e) {
+                console.error("No se pudo guardar el progreso en memoria local", e);
+            }
+        }
+
+        // Restore state dynamically on bootup
+        function loadState() {
+            try {
+                const saved = localStorage.getItem('maxiqueen_os_v6');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed.grid) && parsed.grid.length === 16) {
+                        state = { ...DEFAULT_STATE, ...parsed };
+                        logSystem("Estado anterior restaurado desde memoria local.");
+                    }
+                }
+            } catch (e) {
+                console.warn("Estado inexistente o corrupto. Inicializando por defecto.");
+            }
+        }
+
+        // --- FLASHCARDS STORAGE & LOGIC ---
+        const cards = [
+            {front:"ARQUITECTURA", back:"ECOSISTEMA INTEGRAL"},
+            {front:"VENTA ESTRATÉGICA", back:"POSICIONAMIENTO PREMIUM"},
+            {front:"TECNOLOGÍA CORE", back:"FASTAPI + REACT + NODE"},
+            {front:"OBJETIVO GLOBAL", back:"DOMINIO DEL MERCADO"}
+        ];
+
+        // --- QUEEN TOWERS GAME SYSTEM CONSTANTS & LOOP ---
+        let threats = [];
+        let particles = [];
+        let lastTickTime = Date.now();
+        let loopActive = false;
+        let animationFrameId = null;
+
+        const TowerConfigs = {
+            1: { symbol: "♟️", className: "tower-1", power: 1, range: 100 },
+            2: { symbol: "♞", className: "tower-2", power: 3, range: 140 },
+            3: { symbol: "♝", className: "tower-3", power: 8, range: 180 },
+            4: { symbol: "♜", className: "tower-4", power: 20, range: 220 },
+            5: { symbol: "♛", className: "tower-5", power: 50, range: 300 }
+        };
+
+        // Initialize board UI
+        function createBoardGrid() {
+            const board = document.getElementById("board");
+            board.innerHTML = "";
+            for (let i = 0; i < 16; i++) {
+                const cell = document.createElement("div");
+                cell.className = "cell";
+                cell.dataset.index = i;
+                
+                // Allow Drop action
+                cell.ondragover = (e) => e.preventDefault();
+                cell.ondragenter = () => cell.classList.add("drag-over");
+                cell.ondragleave = () => cell.classList.remove("drag-over");
+                cell.ondrop = (e) => handleDrop(e, i);
+
+                board.appendChild(cell);
+            }
+            renderTowers();
+        }
+
+        // Render Tower states visual representations
+        function renderTowers() {
+            const cells = document.querySelectorAll("#board .cell");
+            let maxLvl = 1;
+
+            cells.forEach((cell, idx) => {
+                cell.innerHTML = "";
+                const towerLvl = state.grid[idx];
+                if (towerLvl && TowerConfigs[towerLvl]) {
+                    if (towerLvl > maxLvl) maxLvl = towerLvl;
+                    const config = TowerConfigs[towerLvl];
+                    const div = document.createElement("div");
+                    div.className = `tower ${config.className}`;
+                    div.innerText = config.symbol;
+                    div.setAttribute("draggable", "true");
+                    
+                    // Drag Actions
+                    div.ondragstart = (e) => {
+                        e.dataTransfer.setData("text/plain", idx);
+                    };
+
+                    cell.appendChild(div);
+                }
+            });
+
+            document.getElementById("val-max-tower").innerText = `T${maxLvl}`;
+        }
+
+        // Drag merge and move solver
+        function handleDrop(e, targetIdx) {
+            e.preventDefault();
+            const cell = document.querySelectorAll("#board .cell")[targetIdx];
+            cell.classList.remove("drag-over");
+
+            const sourceIdx = parseInt(e.dataTransfer.getData("text/plain"), 10);
+            if (isNaN(sourceIdx) || sourceIdx === targetIdx) return;
+
+            const sourceLvl = state.grid[sourceIdx];
+            const targetLvl = state.grid[targetIdx];
+
+            if (!sourceLvl) return;
+
+            if (targetLvl === null) {
+                // Simply move tower
+                state.grid[targetIdx] = sourceLvl;
+                state.grid[sourceIdx] = null;
+                logSystem(`Unidad T${sourceLvl} recolocada.`);
+            } else if (sourceLvl === targetLvl) {
+                // Merge upgraded
+                if (sourceLvl < 5) {
+                    state.grid[targetIdx] = sourceLvl + 1;
+                    state.grid[sourceIdx] = null;
+                    state.xp += sourceLvl * 15;
+                    logSystem(`Fusión exitosa: Nueva torre de nivel T${sourceLvl + 1} compilada.`);
+                } else {
+                    logSystem("Máximo nivel de núcleo alcanzado (T5 Queen).");
+                }
+            } else {
+                logSystem("No puedes fusionar núcleos de diferentes frecuencias de nivel.");
+            }
+
+            renderTowers();
+            saveState();
+            actualizarUI();
+        }
+
+        // Purchase new tower unit inside loop
+        function buyTower() {
+            const emptyIdx = state.grid.indexOf(null);
+            if (emptyIdx === -1) {
+                logSystem("Advertencia: No hay espacio libre para compilar nuevos núcleos.");
+                return;
+            }
+
+            if (state.recursos >= state.costoTorre) {
+                state.recursos -= state.costoTorre;
+                state.grid[emptyIdx] = 1; // Start T1
+                state.costoTorre = Math.floor(state.costoTorre * 1.35); // Cost scaling
+                
+                logSystem(`Compilando unidad T-1 Core en dirección idx [${emptyIdx}]`);
+                renderTowers();
+                saveState();
+                actualizarUI();
+            } else {
+                logSystem("Recursos insuficientes para compilar nuevo núcleo.");
+            }
+        }
+
+        // Overclock and manual server controls
+        function decisionManual(action) {
+            if (action === 'overclock') {
+                if (state.recursos >= 30) {
+                    state.recursos -= 30;
+                    state.grid.forEach((val, idx) => {
+                        if (val && val < 5 && Math.random() > 0.6) {
+                            state.grid[idx] = val + 1;
+                        }
+                    });
+                    logSystem("¡SOBRECARGA! Hackeando servidores locales para forzar mejoras directas.");
+                    renderTowers();
+                } else {
+                    logSystem("Recursos insuficientes para activar sobrecarga.");
+                }
+            } else if (action === 'purge') {
+                if (state.energia >= 15) {
+                    state.energia -= 15;
+                    threats = []; // Purgar enemigos de la cola
+                    logSystem("PURGA DE ENERGÍA: Núcleo táctico desinfectado temporalmente.");
+                } else {
+                    logSystem("Estabilidad de energía insuficiente para purga del servidor.");
+                }
+            }
+            saveState();
+            actualizarUI();
+        }
+
+        // Game active threat and laser simulation looping engine
+        function threatLoop() {
+            if (!loopActive) return;
+
+            const now = Date.now();
+            const dt = (now - lastTickTime) / 1000;
+            lastTickTime = now;
+
+            // Canvas sizes adjusting dynamic redraw
+            const canvas = document.getElementById("active-vfx-canvas");
+            const container = document.getElementById("game-canvas-container");
+            if (canvas && container) {
+                if (canvas.width !== container.clientWidth || canvas.height !== container.clientHeight) {
+                    canvas.width = container.clientWidth;
+                    canvas.height = container.clientHeight;
+                }
+
+                const ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Spawning incoming cyberthreats randomly
+                if (Math.random() < 0.02 && threats.length < 5) {
+                    threats.push({
+                        x: canvas.width - 20,
+                        y: 30 + Math.random() * (canvas.height - 60),
+                        hp: 5 + Math.random() * 35,
+                        maxHp: 40,
+                        speed: 25 + Math.random() * 30
+                    });
+                }
+
+                // Move & Attack threats loop
+                for (let i = threats.length - 1; i >= 0; i--) {
+                    const threat = threats[i];
+                    threat.x -= threat.speed * dt;
+
+                    // Hit base detection
+                    if (threat.x < 15) {
+                        state.energia = Math.max(0, state.energia - 10);
+                        threats.splice(i, 1);
+                        logSystem("ADVERTENCIA: Amenaza enemiga penetró el núcleo principal.");
+                        actualizarUI();
+                        if (state.energia <= 0) {
+                            logSystem("CRÍTICO: Integridad destruida. Reiniciando núcleo de emergencia.");
+                            state.energia = 100;
+                        }
+                        continue;
+                    }
+
+                    // Render threat
+                    ctx.beginPath();
+                    ctx.arc(threat.x, threat.y, 8, 0, Math.PI * 2);
+                    ctx.fillStyle = "#ff3366";
+                    ctx.shadowColor = "#ff3366";
+                    ctx.shadowBlur = 10;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
+                // Towers scanning and auto defense laser firing
+                const cells = document.querySelectorAll("#board .cell");
+                cells.forEach((cell, idx) => {
+                    const lvl = state.grid[idx];
+                    if (lvl && TowerConfigs[lvl]) {
+                        const rect = cell.getBoundingClientRect();
+                        const boardRect = document.getElementById("board").getBoundingClientRect();
+                        
+                        // Coordinates mapping directly on overlay canvas
+                        const tx = (rect.left - boardRect.left) + (rect.width / 2);
+                        const ty = (rect.top - boardRect.top) + (rect.height / 2);
+                        const range = TowerConfigs[lvl].range;
+
+                        // Locate closest enemy target
+                        let target = null;
+                        let minDist = range;
+                        threats.forEach(enemy => {
+                            const dist = Math.hypot(enemy.x - tx, enemy.y - ty);
+                            if (dist < minDist) {
+                                minDist = dist;
+                                target = enemy;
+                            }
+                        });
+
+                        if (target) {
+                            // Fire laser shot render
+                            ctx.beginPath();
+                            ctx.moveTo(tx, ty);
+                            ctx.lineTo(target.x, target.y);
+                            ctx.strokeStyle = TowerConfigs[lvl].className === 'tower-2' ? '#00FF9C' : '#8A2BE2';
+                            ctx.lineWidth = 1.5;
+                            ctx.stroke();
+
+                            // Damage solving
+                            target.hp -= TowerConfigs[lvl].power * dt * 10;
+                        }
+                    }
+                });
+
+                // Solving dead targets
+                for (let i = threats.length - 1; i >= 0; i--) {
+                    if (threats[i].hp <= 0) {
+                        state.recursos += 4;
+                        state.xp += 10;
+                        threats.splice(i, 1);
+                        actualizarUI();
+                        saveState();
+                    }
+                }
+
+                // Sync visual stats counts
+                document.getElementById("val-threats").innerText = threats.length;
+            }
+
+            animationFrameId = requestAnimationFrame(threatLoop);
+        }
+
+        // --- SYSTEM NAVIGATION PROCEDURES ---
+        function bootSystem() {
+            document.getElementById("hero").classList.add("hidden");
+            document.getElementById("dashboard").classList.remove("hidden");
+            document.getElementById("globalStats").classList.remove("hidden");
+            logSystem("Acceso concedido. Bienvenidos al núcleo central de operaciones.");
+            actualizarUI();
+        }
+
+        function openExternalDocs() {
+            window.open('https://github.com/maxiqueen-os/maxiqueen_os', '_blank');
+        }
+
+        // Active logs appending mechanics
+        function logSystem(msg) {
+            const log = document.getElementById("consoleLog");
+            if (!log) return;
+            const div = document.createElement("div");
+            const time = new Date().toLocaleTimeString([], {hour12: false});
+            div.innerHTML = `<span class="text-zinc-600">[${time}]</span> <span class="text-white">></span> ${msg}`;
+            log.prepend(div);
+        }
+
+        function ocultarTodo() {
+            ["hero", "dashboard", "juego", "tarjetas", "ranking"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add("hidden");
+            });
+            
+            // Stop and release game loop whenever we switch view
+            loopActive = false;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }
+
+        function irJuego() {
+            ocultarTodo();
+            document.getElementById("juego").classList.remove("hidden");
+            createBoardGrid();
+            
+            // Activate core background defensive thread loop
+            loopActive = true;
+            lastTickTime = Date.now();
+            threatLoop();
+        }
+
+        // REPARADO: La definición de la función se encuentra completamente restaurada e intacta.
+        function irTarjetas() {
+            ocultarTodo();
+            document.getElementById("tarjetas").classList.remove("hidden");
+            cargarTarjeta();
+        }
+
+        function irRanking() {
+            ocultarTodo();
+            document.getElementById("ranking").classList.remove("hidden");
+        }
+
+        function volver() {
+            ocultarTodo();
+            document.getElementById("dashboard").classList.remove("hidden");
+            actualizarUI();
+        }
+
+        // --- FLASHCARD ENGINE CORE ---
+        function cargarTarjeta() {
+            const card = cards[state.cardIndex];
+            document.getElementById("cardFront").innerText = card.front;
+            document.getElementById("cardBack").innerText = card.back;
+            document.getElementById("flipContainer").classList.remove("flipped");
+            document.getElementById("accionesTarjeta").classList.add("hidden");
+        }
+
+        function mostrarRespuesta() {
+            document.getElementById("flipContainer").classList.toggle("flipped");
+            document.getElementById("accionesTarjeta").classList.remove("hidden");
+        }
+
+        function correcta() {
+            state.xp += 50;
+            logSystem(`Asimilación correcta del concepto: [${cards[state.cardIndex].front}]`);
+            avanzarTarjeta();
+        }
+
+        function incorrecta() {
+            logSystem(`Estímulo fallido. Programando reintento: [${cards[state.cardIndex].front}]`);
+            avanzarTarjeta();
+        }
+
+        function avanzarTarjeta() {
+            state.cardIndex = (state.cardIndex + 1) % cards.length;
+            saveState();
+            cargarTarjeta();
+            actualizarUI();
+        }
+
+        // Global UI state synchronize updates
+        function actualizarUI() {
+            document.getElementById("val-energia").innerText = `${state.energia}%`;
+            document.getElementById("val-recursos").innerText = state.recursos;
+            document.getElementById("val-xp").innerText = String(state.xp).padStart(4, '0');
+            document.getElementById("cost-label").innerText = state.costoTorre;
+            
+            const rXp = document.getElementById("rank-xp");
+            if (rXp) rXp.innerText = String(state.xp).padStart(4, '0');
+        }
+
+        // --- WINDOW EXECUTION INITIALIZATION ONBOOT ---
+        window.onload = () => {
+            try {
+                loadState();
+                logSystem("MaxiQueen OS v6.0 listo para iniciar operaciones.");
+
+                let progress = 0;
+                const bar = document.getElementById("progress");
+                const status = document.getElementById("loadStatus");
+                const statuses = [
+                    "Descifrando protocolos criptográficos...",
+                    "Enlazando bases de datos de usuario...",
+                    "Verificando módulos de monetización...",
+                    "Cargando Queen Core..."
+                ];
+
+                // Fast responsive loading simulation
+                const interval = setInterval(() => {
+                    progress += Math.random() * 25;
+                    if (progress > 100) progress = 100;
+                    if (bar) bar.style.width = `${progress}%`;
+                    if (status) status.innerText = statuses[Math.floor(progress / 26)] || "Listo para operar.";
+
+                    if (progress === 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            const loader = document.getElementById("loader");
+                            if (loader) {
+                                loader.style.opacity = "0";
+                                setTimeout(() => {
+                                    loader.style.display = "none";
+                                }, 500);
+                            }
+                        }, 400);
+                    }
+                }, 100);
+
+            } catch (err) {
+                // Foolproof fail-safe to make sure loader disappears even if there is a storage or execution anomaly
+                console.error("Fallo durante el arranque seguro del núcleo:", err);
+                const loader = document.getElementById("loader");
+                if (loader) loader.style.display = "none";
+            }
+        };
+    </script>
+</body>
+</html>

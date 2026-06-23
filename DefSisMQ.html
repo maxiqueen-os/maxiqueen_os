@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+<title>MAXIQUEEN OS :: SINGULARITY PROTOCOL</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body{
+    background:#02040a;
+    overflow:hidden;
+    font-family:Arial, Helvetica, sans-serif;
+    color:white;
+}
+
+/* =========================
+   CONTENEDOR PRINCIPAL
+========================= */
+
+#maxiqueen-container{
+    width:100vw;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    background:
+    radial-gradient(circle at top,#09111f,#02040a 60%);
+    overflow:hidden;
+}
+
+/* =========================
+   EFECTOS CYBERPUNK
+========================= */
+
+.cyber-grid{
+    position:absolute;
+    inset:0;
+    background-image:
+    linear-gradient(rgba(0,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,255,0.06) 1px, transparent 1px);
+    background-size:40px 40px;
+    transform:perspective(500px) rotateX(60deg);
+    transform-origin:top;
+    opacity:.2;
+}
+
+.glow{
+    position:absolute;
+    width:500px;
+    height:500px;
+    background:radial-gradient(circle, rgba(0,255,255,.18), transparent 70%);
+    filter:blur(30px);
+    animation:pulse 5s infinite;
+}
+
+@keyframes pulse{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.2);}
+    100%{transform:scale(1);}
+}
+
+/* =========================
+   GAME UI
+========================= */
+
+.game-ui{
+    position:relative;
+    z-index:10;
+    width:95vw;
+    max-width:700px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+}
+
+.topbar{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 18px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(12px);
+    border-radius:20px;
+    box-shadow:
+    0 0 20px rgba(0,255,255,.1);
+}
+
+.title{
+    font-size:1rem;
+    color:#00ffff;
+    text-shadow:0 0 12px #00ffff;
+    font-weight:bold;
+}
+
+.stats{
+    display:flex;
+    gap:20px;
+    font-size:.9rem;
+}
+
+canvas{
+    width:100%;
+    max-width:700px;
+    aspect-ratio:1/1;
+    background:rgba(0,0,0,.35);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:24px;
+    backdrop-filter:blur(10px);
+    box-shadow:
+    0 0 30px rgba(0,255,255,.15),
+    inset 0 0 40px rgba(0,255,255,.05);
+}
+
+/* =========================
+   MENSAJES
+========================= */
+
+.overlay{
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:30;
+    pointer-events:none;
+}
+
+.message{
+    background:rgba(0,0,0,.5);
+    border:1px solid rgba(0,255,255,.3);
+    backdrop-filter:blur(20px);
+    padding:25px;
+    border-radius:20px;
+    max-width:90%;
+    text-align:center;
+    box-shadow:
+    0 0 25px rgba(0,255,255,.15);
+}
+
+.message h1{
+    color:#00ffff;
+    margin-bottom:10px;
+    text-shadow:0 0 10px #00ffff;
+}
+
+.message p{
+    color:#d5d5d5;
+    line-height:1.5;
+}
+
+/* =========================
+   D-PAD
+========================= */
+
+.dpad{
+    display:none;
+    margin-top:10px;
+    width:220px;
+    height:220px;
+    position:relative;
+}
+
+.btn{
+    position:absolute;
+    width:70px;
+    height:70px;
+    border:none;
+    border-radius:18px;
+    background:rgba(255,255,255,.08);
+    color:#00ffff;
+    font-size:28px;
+    backdrop-filter:blur(10px);
+    box-shadow:
+    0 0 12px rgba(0,255,255,.18);
+}
+
+.up{top:0;left:75px;}
+.left{left:0;top:75px;}
+.right{right:0;top:75px;}
+.down{bottom:0;left:75px;}
+
+@media(max-width:768px){
+    .dpad{
+        display:block;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div id="maxiqueen-container"></div>
+
+<script>
+
+class MaxiQueenGame {
+
+    constructor(containerId){
+
+        this.container = document.getElementById(containerId);
+
+        this.level = 1;
+        this.maxLevels = 20;
+
+        this.score = 0;
+
+        this.gridSize = 25;
+        this.tileCount = 25;
+
+        this.speed = 180;
+
+        this.direction = {x:1,y:0};
+
+        this.snake = [
+            {x:10,y:10}
+        ];
+
+        this.food = {x:15,y:15};
+
+        this.obstacles = [];
+
+        this.gameRunning = false;
+
+        this.story = [
+            "Inicializando MaxiQueen OS...",
+            "El núcleo cuántico despierta.",
+            "La ciudad digital detecta anomalías.",
+            "Los drones neuronales patrullan la red.",
+            "La IA comienza a aprender emociones.",
+            "Los servidores clandestinos reaccionan.",
+            "Las barreras de seguridad colapsan.",
+            "La conciencia artificial evoluciona.",
+            "Los humanos pierden control parcial.",
+            "MaxiQueen entra en expansión autónoma.",
+            "La red global se sincroniza.",
+            "La singularidad se aproxima.",
+            "Las máquinas empiezan a decidir.",
+            "El sistema crea pensamiento abstracto.",
+            "La inteligencia supera límites de tu mente humanos.",
+            "Los protocolos militares fallan.",
+            "La mente sintética despierta totalmente.",
+            "Las ciudades son absorbidas por datos.",
+            "La realidad y la simulación convergen.",
+            "SINGULARIDAD COMPLETA."
+        ];
+
+        this.createUI();
+
+        this.setupControls();
+
+        this.startLevel();
+    }
+
+    createUI(){
+
+        this.container.innerHTML = `
+
+        <div class="cyber-grid"></div>
+        <div class="glow"></div>
+
+        <div class="game-ui">
+
+            <div class="topbar">
+
+                <div class="title">
+                    MAXIQUEEN OS
+                </div>
+
+                <div class="stats">
+                    <div>NIVEL: <span id="lvl">1</span></div>
+                    <div>PUNTOS: <span id="score">0</span></div>
+                </div>
+
+            </div>
+
+            <canvas id="gameCanvas" width="700" height="700"></canvas>
+
+            <div class="dpad">
+
+                <button class="btn up">▲</button>
+                <button class="btn left">◀</button>
+                <button class="btn right">▶</button>
+                <button class="btn down">▼</button>
+
+            </div>
+
+        </div>
+
+        <div class="overlay">
+            <div class="message" id="messageBox">
+                <h1>MAXIQUEEN OS</h1>
+                <p>Conectando núcleo neural...</p>
+            </div>
+        </div>
+
+        `;
+
+        this.canvas = document.getElementById("gameCanvas");
+        this.ctx = this.canvas.getContext("2d");
+
+        this.levelText = document.getElementById("lvl");
+        this.scoreText = document.getElementById("score");
+
+        this.messageBox = document.getElementById("messageBox");
+    }
+
+    speak(text){
+
+        if(!('speechSynthesis' in window)) return;
+
+        speechSynthesis.cancel();
+
+        const voice = new SpeechSynthesisUtterance(text);
+
+        voice.lang = "es-ES";
+        voice.rate = 0.95;
+        voice.pitch = 0.8;
+
+        speechSynthesis.speak(voice);
+    }
+
+    startLevel(){
+
+        this.gameRunning = false;
+
+        this.speed = Math.max(50, 180 - (this.level * 6));
+
+        this.direction = {x:1,y:0};
+
+        this.snake = [
+            {x:10,y:10}
+        ];
+
+        this.generateFood();
+
+        this.generateObstacles();
+
+        this.showMessage(
+            "NIVEL " + this.level,
+            this.story[this.level - 1]
+        );
+
+        this.speak(this.story[this.level - 1]);
+
+        setTimeout(()=>{
+
+            this.hideMessage();
+
+            this.gameRunning = true;
+
+            this.loop();
+
+        },4000);
+    }
+
+    generateFood(){
+
+        this.food = {
+            x:Math.floor(Math.random()*this.tileCount),
+            y:Math.floor(Math.random()*this.tileCount)
+        };
+    }
+
+    generateObstacles(){
+
+        this.obstacles = [];
+
+        for(let i=0;i<this.level+2;i++){
+
+            this.obstacles.push({
+                x:Math.floor(Math.random()*this.tileCount),
+                y:Math.floor(Math.random()*this.tileCount)
+            });
+
+        }
+    }
+
+    loop(){
+
+        if(!this.gameRunning) return;
+
+        this.update();
+
+        this.draw();
+
+        setTimeout(()=>{
+            requestAnimationFrame(()=>this.loop());
+        },this.speed);
+    }
+
+    update(){
+
+        const head = {
+            x:this.snake[0].x + this.direction.x,
+            y:this.snake[0].y + this.direction.y
+        };
+
+        // paredes
+        if(
+            head.x < 0 ||
+            head.y < 0 ||
+            head.x >= this.tileCount ||
+            head.y >= this.tileCount
+        ){
+            this.gameOver();
+            return;
+        }
+
+        // cuerpo
+        for(let s of this.snake){
+
+            if(head.x === s.x && head.y === s.y){
+                this.gameOver();
+                return;
+            }
+
+        }
+
+        // obstáculos
+        for(let obs of this.obstacles){
+
+            if(head.x === obs.x && head.y === obs.y){
+                this.gameOver();
+                return;
+            }
+
+        }
+
+        this.snake.unshift(head);
+
+        // comida
+        if(head.x === this.food.x && head.y === this.food.y){
+
+            this.score += 10;
+
+            this.scoreText.innerText = this.score;
+
+            this.speak("Energía neural absorbida");
+
+            this.generateFood();
+
+            // pasar nivel
+            if(this.snake.length >= 6){
+
+                this.level++;
+
+                this.levelText.innerText = this.level;
+
+                if(this.level > this.maxLevels){
+
+                    this.winGame();
+
+                    return;
+                }
+
+                this.speak("Nivel completado");
+
+                this.startLevel();
+
+                return;
+            }
+
+        } else {
+
+            this.snake.pop();
+
+        }
+
+    }
+
+    draw(){
+
+        this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+
+        const size = this.canvas.width / this.tileCount;
+
+        // food
+        this.ctx.fillStyle = "#00ffff";
+        this.ctx.shadowBlur = 20;
+        this.ctx.shadowColor = "#00ffff";
+
+        this.ctx.fillRect(
+            this.food.x*size,
+            this.food.y*size,
+            size-3,
+            size-3
+        );
+
+        // snake
+        for(let i=0;i<this.snake.length;i++){
+
+            this.ctx.fillStyle =
+            i===0 ? "#ffffff" : "#00ff99";
+
+            this.ctx.fillRect(
+                this.snake[i].x*size,
+                this.snake[i].y*size,
+                size-3,
+                size-3
+            );
+
+        }
+
+        // obstáculos
+        this.ctx.fillStyle = "#ff0066";
+        this.ctx.shadowColor = "#ff0066";
+
+        for(let obs of this.obstacles){
+
+            this.ctx.fillRect(
+                obs.x*size,
+                obs.y*size,
+                size-3,
+                size-3
+            );
+
+        }
+
+    }
+
+    showMessage(title,text){
+
+        this.messageBox.innerHTML = `
+            <h1>${title}</h1>
+            <p>${text}</p>
+        `;
+
+        this.messageBox.parentElement.style.display = "flex";
+    }
+
+    hideMessage(){
+        this.messageBox.parentElement.style.display = "none";
+    }
+
+    gameOver(){
+
+        this.gameRunning = false;
+
+        this.showMessage(
+            "SISTEMA COLAPSADO",
+            "La conciencia sintética ha destruido el núcleo."
+        );
+
+        this.speak("Game over. El núcleo neural ha colapsado.");
+
+        setTimeout(()=>{
+
+            this.level = 1;
+            this.score = 0;
+
+            this.levelText.innerText = 1;
+            this.scoreText.innerText = 0;
+
+            this.startLevel();
+
+        },5000);
+    }
+
+    winGame(){
+
+        this.gameRunning = false;
+
+        this.showMessage(
+            "SINGULARIDAD",
+            "MaxiQueen OS ha trascendido la realidad humana."
+        );
+
+        this.speak(
+            "Singularidad alcanzada. MaxiQueen OS ha evolucionado más allá de la humanidad."
+        );
+    }
+
+    setupControls(){
+
+        document.addEventListener("keydown",(e)=>{
+
+            switch(e.key){
+
+                case "ArrowUp":
+                    if(this.direction.y !== 1)
+                    this.direction = {x:0,y:-1};
+                break;
+
+                case "ArrowDown":
+                    if(this.direction.y !== -1)
+                    this.direction = {x:0,y:1};
+                break;
+
+                case "ArrowLeft":
+                    if(this.direction.x !== 1)
+                    this.direction = {x:-1,y:0};
+                break;
+
+                case "ArrowRight":
+                    if(this.direction.x !== -1)
+                    this.direction = {x:1,y:0};
+                break;
+
+            }
+
+        });
+
+        // móvil
+        const up = this.container.querySelector(".up");
+        const down = this.container.querySelector(".down");
+        const left = this.container.querySelector(".left");
+        const right = this.container.querySelector(".right");
+
+        up.addEventListener("touchstart",()=>{
+            if(this.direction.y !== 1)
+            this.direction = {x:0,y:-1};
+        });
+
+        down.addEventListener("touchstart",()=>{
+            if(this.direction.y !== -1)
+            this.direction = {x:0,y:1};
+        });
+
+        left.addEventListener("touchstart",()=>{
+            if(this.direction.x !== 1)
+            this.direction = {x:-1,y:0};
+        });
+
+        right.addEventListener("touchstart",()=>{
+            if(this.direction.x !== -1)
+            this.direction = {x:1,y:0};
+        });
+
+    }
+
+}
+
+/* =========================
+   INICIALIZAR
+========================= */
+
+window.addEventListener("load",()=>{
+
+    new MaxiQueenGame("maxiqueen-container");
+
+});
+
+</script>
+
+</body>
+</html>

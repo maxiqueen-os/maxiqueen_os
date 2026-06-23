@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MaxiQueen Game | Click Master XP</title>
+
+<style>
+    body {
+        margin: 0;
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        font-family: Arial, sans-serif;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .game-container {
+        text-align: center;
+        padding: 30px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.05);
+        box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        width: 300px;
+    }
+
+    h1 {
+        margin-bottom: 10px;
+        font-size: 24px;
+    }
+
+    .stats {
+        margin: 20px 0;
+        font-size: 18px;
+    }
+
+    button {
+        padding: 20px;
+        border: none;
+        border-radius: 50%;
+        font-size: 18px;
+        cursor: pointer;
+        background: #22c55e;
+        color: white;
+        transition: transform 0.1s;
+    }
+
+    button:active {
+        transform: scale(0.9);
+    }
+
+    .xp-bar {
+        width: 100%;
+        height: 15px;
+        background: #334155;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+
+    .xp-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #22c55e, #4ade80);
+        transition: width 0.2s;
+    }
+
+    .level {
+        font-size: 22px;
+        margin-top: 10px;
+        color: #facc15;
+    }
+
+    .floating {
+        position: absolute;
+        font-size: 20px;
+        color: #4ade80;
+        animation: floatUp 1s ease-out forwards;
+        pointer-events: none;
+    }
+
+    @keyframes floatUp {
+        0% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-80px);
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+    <h1>🎮 Click Master XP</h1>
+
+    <div class="stats">
+        XP: <span id="xp">0</span> / 100
+    </div>
+
+    <div class="xp-bar">
+        <div class="xp-fill" id="xpBar"></div>
+    </div>
+
+    <div class="level">
+        Nivel: <span id="level">1</span>
+    </div>
+
+    <button onclick="clickXP(event)">CLICK</button>
+</div>
+
+<script>
+let xp = 0;
+let level = 1;
+
+function playSound() {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+
+    oscillator.type = "sine";
+    oscillator.frequency.value = 600;
+
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+
+    oscillator.start();
+    oscillator.stop(ctx.currentTime + 0.1);
+}
+
+function showFloatingXP(x, y) {
+    const el = document.createElement("div");
+    el.className = "floating";
+    el.innerText = "+1 XP";
+
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+
+    document.body.appendChild(el);
+
+    setTimeout(() => {
+        el.remove();
+    }, 1000);
+}
+
+function clickXP(event) {
+    xp += 1;
+
+    // sonido
+    playSound();
+
+    // animación
+    showFloatingXP(event.clientX, event.clientY);
+
+    // nivel
+    if (xp >= 100) {
+        level++;
+        xp = 0;
+
+        alert("🔥 SUBISTE DE NIVEL: " + level);
+    }
+
+    updateUI();
+}
+
+function updateUI() {
+    document.getElementById("xp").innerText = xp;
+    document.getElementById("level").innerText = level;
+
+    let percent = (xp / 100) * 100;
+    document.getElementById("xpBar").style.width = percent + "%";
+}
+
+updateUI();
+</script>
+
+</body>
+</html>

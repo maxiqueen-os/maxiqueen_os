@@ -1,0 +1,61 @@
+# 🌟 Variables
+$base = "C:\MAXIQUEEN_OS\00_SYSTEM_CORE\ACTIVE_SYSTEM\api"
+$outputHTML = "$base\mapa_visual_api.html"
+
+# 🔹 Función para crear árbol HTML
+function Generate-FolderTreeHTML {
+    param (
+        [string]$Path,
+        [int]$Level = 0
+    )
+
+    $html = ""
+    $items = Get-ChildItem -Path $Path | Sort-Object PSIsContainer -Descending
+
+    foreach ($item in $items) {
+        $indent = "margin-left:" + ($Level * 20) + "px;"
+        if ($item.PSIsContainer) {
+            $html += "<div style='$indent color: cyan;'>📁 $($item.Name)</div>`n"
+            $html += Generate-FolderTreeHTML -Path $item.FullName -Level ($Level + 1)
+        } else {
+            $ext = $item.Extension.ToLower()
+            switch ($ext) {
+                ".py" { $color = "green" }
+                ".js" { $color = "orange" }
+                ".html" { $color = "magenta" }
+                ".css" { $color = "darkmagenta" }
+                ".json" { $color = "cyan" }
+                ".txt" { $color = "gray" }
+                ".db" { $color = "red" }
+                ".ico" { $color = "goldenrod" }
+                ".yaml" { $color = "darkcyan" }
+                default { $color = "black" }
+            }
+            $html += "<div style='$indent color: $color;'>📄 $($item.Name)</div>`n"
+        }
+    }
+    return $html
+}
+
+# 🌐 Generar contenido HTML completo
+$htmlContent = @"
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+<meta charset='UTF-8'>
+<title>Mapa Visual API</title>
+<style>
+body { font-family: Consolas, monospace; background-color: #1e1e1e; color: white; padding: 20px; }
+</style>
+</head>
+<body>
+<h2>📂 Mapa visual de la carpeta api/</h2>
+"@
+
+$htmlContent += Generate-FolderTreeHTML -Path $base
+$htmlContent += "</body></html>"
+
+# 🔹 Guardar archivo HTML
+$htmlContent | Out-File -FilePath $outputHTML -Encoding UTF8
+
+Write-Host "✅ Mapa visual permanente generado en: $outputHTML"

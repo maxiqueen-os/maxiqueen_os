@@ -1,0 +1,143 @@
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500&display=swap');
+
+body {
+    background: linear-gradient(135deg, #0a0a1a, #1a1a3a, #0a0a1a);
+    color: #ffffff;
+    font-family: 'Rajdhani', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+/* Interfaz futurista tipo cristal */
+.glassmorphism {
+    background: rgba(20, 20, 40, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+.neon-text {
+    font-family: 'Orbitron', sans-serif;
+    color: #0ff;
+    text-shadow: 0 0 5px #0ff, 0 0 15px #0ff;
+    margin-bottom: 20px;
+}
+
+.stats p {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Botones de acción */
+.btn {
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid #0ff;
+    color: #0ff;
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-family: 'Orbitron', sans-serif;
+    transition: 0.3s all;
+    font-size: 14px;
+}
+
+.btn:hover {
+    background: #0ff;
+    color: #000;
+    box-shadow: 0 0 15px #0ff;
+}
+
+/* Caja donde salen los textos a leer */
+.log-box {
+    background: rgba(0, 0, 0, 0.5);
+    height: 50px;
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    border-left: 4px solid #f0f;
+    color: #f0f;
+}
+
+/* Botón principal CTA */
+.cta-btn {
+    background: linear-gradient(90deg, #d500f9, #00e5ff);
+    border: none;
+    color: white;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    width: 100%;
+    transition: transform 0.2s;
+}
+
+.cta-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(213, 0, 249, 0.6);
+}
+
+/* --- ESTILOS DEL BOT LECTOR FLOTANTE --- */
+#audio-bot-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0,0,0,0.8);
+    padding: 10px 15px;
+    border-radius: 30px;
+    border: 1px solid #0ff;
+    z-index: 1000;
+}
+
+.bot-avatar {
+    font-size: 24px;
+    transition: transform 0.2s;
+}
+
+/* Esta clase se activa con JS solo cuando hay voz sonando */
+.bot-hablando {
+    animation: hablar 0.3s infinite alternate;
+    filter: drop-shadow(0 0 8px #0ff);
+}
+
+@keyframes hablar {
+    from { transform: scale(1) translateY(0); }
+    to { transform: scale(1.2) translateY(-3px); }
+}
+
+#toggleAudioBtn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+</style>

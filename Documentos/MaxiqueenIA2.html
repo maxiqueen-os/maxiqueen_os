@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maxiqueen OS - AI Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .ai-message {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-bottom-left-radius: 2px;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-bottom-right-radius: 2px;
+        }
+
+        .typing-dot {
+            animation: typing 1.4s infinite;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+    </style>
+</head>
+<body class="h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-4xl h-[90vh] glass-panel rounded-3xl overflow-hidden flex flex-col shadow-2xl">
+        <!-- Header -->
+        <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-400 to-rose-500 flex items-center justify-center shadow-lg">
+                    <i class="fas fa-robot text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">MAXIQUEEN <span class="text-blue-400 font-light">OS AI</span></h1>
+                    <p class="text-xs text-slate-400 flex items-center gap-1">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Sistema Inteligente Activo
+                    </p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button class="p-2 hover:bg-white/10 rounded-lg transition-colors text-slate-400"><i class="fas fa-cog"></i></button>
+                <button class="p-2 hover:bg-white/10 rounded-lg transition-colors text-slate-400"><i class="fas fa-expand"></i></button>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div id="chat-container" class="flex-1 overflow-y-auto p-6 space-y-6 chat-container">
+            <!-- Bienvenida -->
+            <div class="flex justify-start">
+                <div class="max-w-[80%] ai-message p-4 rounded-2xl shadow-sm border border-white/5">
+                    <p class="text-sm leading-relaxed">
+                        Hola, bienvenido a <strong>Maxiqueen OS</strong>. Soy tu núcleo de inteligencia artificial. ¿Cómo puedo ayudarte a optimizar tu flujo de trabajo hoy?
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div id="typing-indicator" class="hidden px-6 py-2 text-xs text-slate-500 flex items-center gap-2">
+            AI procesando <span class="flex gap-1"><span class="typing-dot">.</span><span class="typing-dot" style="animation-delay: 0.2s">.</span><span class="typing-dot" style="animation-delay: 0.4s">.</span></span>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-6 bg-white/5 border-t border-white/10">
+            <form id="chat-form" class="flex gap-4">
+                <div class="flex-1 relative">
+                    <input 
+                        type="text" 
+                        id="user-input"
+                        placeholder="Escribe un comando o pregunta..." 
+                        class="w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-600"
+                    >
+                </div>
+                <button 
+                    type="submit"
+                    class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20 active:scale-95"
+                >
+                    <span>Enviar</span>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = ""; // La plataforma inyectará la clave automáticamente
+        const modelName = "gemini-2.5-flash-preview-09-2025";
+        const chatContainer = document.getElementById('chat-container');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        // Función para agregar mensajes al DOM
+        function addMessage(content, isUser = false) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`;
+            
+            const div = document.createElement('div');
+            div.className = `max-w-[85%] p-4 rounded-2xl shadow-md border ${isUser ? 'user-message border-blue-400/20' : 'ai-message border-white/5'}`;
+            
+            const p = document.createElement('p');
+            p.className = "text-sm leading-relaxed";
+            p.innerHTML = content.replace(/\n/g, '<br>');
+            
+            div.appendChild(p);
+            wrapper.appendChild(div);
+            chatContainer.appendChild(wrapper);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Función de llamada a Gemini con Exponential Backoff
+        async function fetchGeminiResponse(prompt, retries = 5, delay = 1000) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { 
+                    parts: [{ text: "Eres el núcleo de inteligencia de Maxiqueen OS. Responde de forma profesional, eficiente y amigable. Ayuda al usuario con tareas de automatización, negocios y tecnología." }] 
+                }
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    if (retries > 0 && response.status >= 500) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return fetchGeminiResponse(prompt, retries - 1, delay * 2);
+                    }
+                    throw new Error('Error en la comunicación con el núcleo.');
+                }
+
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "No pude procesar esa solicitud.";
+
+            } catch (error) {
+                if (retries > 0) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return fetchGeminiResponse(prompt, retries - 1, delay * 2);
+                }
+                return "Error crítico: El sistema no responde. Por favor, verifica tu conexión.";
+            }
+        }
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // Limpiar input y mostrar mensaje de usuario
+            userInput.value = '';
+            addMessage(message, true);
+
+            // Mostrar indicador de carga
+            typingIndicator.classList.remove('hidden');
+
+            // Obtener respuesta
+            const response = await fetchGeminiResponse(message);
+            
+            // Ocultar carga y mostrar respuesta de la IA
+            typingIndicator.classList.add('hidden');
+            addMessage(response);
+        });
+    </script>
+</body>
+</html>
