@@ -14,6 +14,7 @@
             --texto-blanco: #ffffff;
             --texto-mutado: #8f8f9d;
             --borde-sutil: rgba(138, 43, 226, 0.15);
+            --verde-exito: #00ff66;
         }
 
         * {
@@ -29,6 +30,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
         }
 
         header {
@@ -137,6 +139,7 @@
             justify-content: space-between;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .tarjeta-link::before {
@@ -185,7 +188,7 @@
             padding: 3px 8px;
             border-radius: 4px;
             background-color: rgba(255, 255, 255, 0.05);
-            color: var(--texto-mutated);
+            color: var(--texto-mutado);
         }
 
         .html-tag { color: #e44d26; background: rgba(228, 77, 38, 0.1); }
@@ -201,9 +204,204 @@
             background-color: var(--bg-tarjeta);
         }
 
+        /* ==================== NUEVOS ESTILOS: VISUALIZADOR INTERNO (IFRAME MODAL) ==================== */
+        .modal-visor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(7, 7, 10, 0.95);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-visor-header {
+            background-color: var(--bg-tarjeta);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--borde-sutil);
+        }
+
+        .modal-visor-titulo {
+            font-weight: 600;
+            color: var(--texto-blanco);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-cerrar-visor {
+            background: linear-gradient(135deg, #ff3b30 0%, #cc0000 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+
+        .btn-cerrar-visor:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 59, 48, 0.4);
+        }
+
+        .iframe-contenedor {
+            flex-grow: 1;
+            width: 100%;
+            height: calc(100% - 60px);
+            background-color: #fff; /* Fondo blanco nativo para renderizado de páginas */
+        }
+
+        .iframe-modulo {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ==================== NUEVOS ESTILOS: CHAT CORE ASISTENTE ==================== */
+        .chat-flotante {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 380px;
+            height: 500px;
+            background-color: var(--bg-tarjeta);
+            border: 1px solid var(--morado-maxi);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 15px rgba(138, 43, 226, 0.2);
+            display: flex;
+            flex-direction: column;
+            z-index: 1500;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+            transform: translateY(0);
+        }
+
+        .chat-flotante.minimizado {
+            transform: translateY(calc(100% - 50px));
+            height: 50px;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--bg-tarjeta) 0%, var(--bg-hover) 100%);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--borde-sutil);
+            cursor: pointer;
+        }
+
+        .chat-header-titulo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .chat-status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--verde-exito);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px var(--verde-exito);
+        }
+
+        .btn-toggle-chat {
+            background: transparent;
+            border: none;
+            color: var(--texto-mutado);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .chat-mensajes {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: #0c0c12;
+        }
+
+        .mensaje {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .mensaje.sistema {
+            background-color: var(--bg-hover);
+            color: #e2e2e9;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .mensaje.usuario {
+            background: linear-gradient(135deg, var(--morado-maxi) 0%, #6a1b9a 100%);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .chat-input-area {
+            padding: 12px;
+            background-color: var(--bg-tarjeta);
+            border-top: 1px solid var(--borde-sutil);
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            background-color: var(--bg-principal);
+            border: 1px solid var(--borde-sutil);
+            border-radius: 20px;
+            padding: 8px 16px;
+            color: white;
+            font-size: 0.88rem;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: var(--morado-maxi);
+        }
+
+        .btn-enviar-chat {
+            background-color: var(--morado-maxi);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-enviar-chat:hover {
+            background-color: var(--morado-brillo);
+        }
+
         @media (max-width: 768px) {
             .grid-paginas { grid-template-columns: 1fr; }
             h1 { font-size: 1.8rem; }
+            .chat-flotante { width: calc(100% - 40px); right: 20px; bottom: 20px; }
         }
     </style>
 </head>
@@ -220,8 +418,39 @@
     </header>
 
     <main id="contenedorModulos">
-        <!-- Generación dinámica por categorías con JS Interno -->
-    </main>
+        </main>
+
+    <div id="modalVisor" class="modal-visor">
+        <div class="modal-visor-header">
+            <div class="modal-visor-titulo">
+                <span style="color: var(--morado-brillo);">⚡ Core Ejecución:</span>
+                <span id="visorNombreArchivo">archivo.html</span>
+            </div>
+            <button class="btn-cerrar-visor" onclick="cerrarModulo()">Cerrar Módulo</button>
+        </div>
+        <div class="iframe-contenedor">
+            <iframe id="iframeModulo" class="iframe-modulo" src=""></iframe>
+        </div>
+    </div>
+
+    <div id="chatWidget" class="chat-flotante">
+        <div class="chat-header" onclick="toggleChat()">
+            <div class="chat-header-titulo">
+                <span class="chat-status-dot"></span>
+                <span>MaxiQueen Core AI Asistente</span>
+            </div>
+            <button class="btn-toggle-chat" id="btnToggleChat">−</button>
+        </div>
+        <div class="chat-mensajes" id="chatMensajes">
+            <div class="mensaje sistema">
+                ¡Hola! Soy el asistente integrado de <strong>MaxiQueen OS</strong>. He indexado todos tus módulos del sistema de manera estructurada. Pregúntame por juegos, herramientas de nube o el CRM y te diré qué archivos necesitas.
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="inputChat" class="chat-input" placeholder="Escribe tu consulta sobre el ecosistema...">
+            <button class="btn-enviar-chat" onclick="enviarMensajeChat()">➔</button>
+        </div>
+    </div>
 
     <footer>
         MaxiQueen OS v2 • Ecosistema Autónomo de Gestión Corporativa
@@ -375,7 +604,6 @@
             let hayResultadosGlobales = false;
 
             baseDeDatosPaginas.forEach(modulo => {
-                // Filtramos los archivos dentro de la categoría
                 const archivosFiltrados = modulo.archivos.filter(archivo => 
                     archivo.name.toLowerCase().includes(filtro.toLowerCase()) || 
                     archivo.desc.toLowerCase().includes(filtro.toLowerCase())
@@ -384,7 +612,6 @@
                 if (archivosFiltrados.length > 0) {
                     hayResultadosGlobales = true;
                     
-                    // Crear sección de categoría
                     const seccion = document.createElement('section');
                     seccion.className = 'seccion-modulo';
 
@@ -393,7 +620,6 @@
                     titulo.innerHTML = `${modulo.categoria} <span>${archivosFiltrados.length}</span>`;
                     seccion.appendChild(titulo);
 
-                    // Crear contenedor Grid
                     const grid = document.createElement('div');
                     grid.className = 'grid-paginas';
 
@@ -403,10 +629,10 @@
                         if(ext === 'py') tagClass = 'py-tag';
                         if(ext === 'js') tagClass = 'js-tag';
 
-                        const tarjeta = document.createElement('a');
+                        const tarjeta = document.createElement('div');
                         tarjeta.className = 'tarjeta-link';
-                        tarjeta.href = `./${archivo.name}`; // Apunta a la raíz del proyecto
-                        tarjeta.target = '_blank'; // Lo abre en pestaña nueva para no perder el panel
+                        // Cambiado a manejador de eventos interno para abrir dentro de la app sin recargar o salir
+                        tarjeta.onclick = () => abrirModulo(archivo.name);
                         
                         tarjeta.innerHTML = `
                             <div>
@@ -428,9 +654,116 @@
             }
         }
 
-        // Evento del buscador en tiempo real
+        // CONTROL DEL INTERCEPTOR DE PÁGINAS (MODAL DE INSERCIÓN)
+        function abrirModulo(nombreArchivo) {
+            const modal = document.getElementById('modalVisor');
+            const iframe = document.getElementById('iframeModulo');
+            const titulo = document.getElementById('visorNombreArchivo');
+            
+            titulo.textContent = nombreArchivo;
+            iframe.src = `./${nombreArchivo}`; // Ejecución local o relativa
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Detiene scroll del fondo
+        }
+
+        function cerrarModulo() {
+            const modal = document.getElementById('modalVisor');
+            const iframe = document.getElementById('iframeModulo');
+            
+            modal.style.display = 'none';
+            iframe.src = ''; // Limpia memoria del iframe
+            document.body.style.overflow = 'auto'; // Devuelve scroll
+        }
+
+        // LÓGICA INTERNA DEL CHAT DEL CORE
+        function toggleChat() {
+            const chat = document.getElementById('chatWidget');
+            const btn = document.getElementById('btnToggleChat');
+            chat.classList.toggle('minimizado');
+            btn.textContent = chat.classList.contains('minimizado') ? '＋' : '－';
+        }
+
+        function enviarMensajeChat() {
+            const input = document.getElementById('inputChat');
+            const texto = input.value.trim();
+            if (!texto) return;
+
+            // Renderizar mensaje de usuario
+            agregarMensajeUI(texto, 'usuario');
+            input.value = '';
+
+            // Procesamiento de lectura estructurada de la base de datos
+            setTimeout(() => {
+                const respuesta = procesarConsultaEstructurada(texto);
+                agregarMensajeUI(respuesta, 'sistema');
+            }, 600);
+        }
+
+        function agregarMensajeUI(texto, remitente) {
+            const contenedorMensajes = document.getElementById('chatMensajes');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `mensaje ${remitente}`;
+            msgDiv.innerHTML = texto;
+            contenedorMensajes.appendChild(msgDiv);
+            contenedorMensajes.scrollTop = contenedorMensajes.scrollHeight;
+        }
+
+        function procesarConsultaEstructurada(consulta) {
+            const query = consulta.toLowerCase();
+            
+            // Buscar coincidencias directas en la estructura indexada
+            let categoriasEncontradas = [];
+            let archivosEncontrados = [];
+
+            baseDeDatosPaginas.forEach(cat => {
+                if (cat.categoria.toLowerCase().includes(query)) {
+                    categoriasEncontradas.push(cat);
+                }
+                cat.archivos.forEach(arc => {
+                    if (arc.name.toLowerCase().includes(query) || arc.desc.toLowerCase().includes(query)) {
+                        archivosEncontrados.push(arc);
+                    }
+                });
+            });
+
+            if (archivosEncontrados.length > 0) {
+                let htmlRes = `He localizado los siguientes componentes en el core:<br><br>`;
+                archivosEncontrados.slice(0, 4).forEach(a => {
+                    htmlRes += `• <strong style="color:var(--morado-brillo); cursor:pointer;" onclick="cerrarChatYAbrir('${a.name}')">${a.name}</strong>: ${a.desc}<br>`;
+                });
+                if (archivosEncontrados.length > 4) htmlRes += `<em>...y otros ${archivosEncontrados.length - 4} más. Usa el buscador principal para verlos todos.</em>`;
+                return htmlRes;
+            }
+
+            if (categoriasEncontradas.length > 0) {
+                return `He encontrado la sección estructurada: <strong>${categoriasEncontradas[0].categoria}</strong> que contiene ${categoriasEncontradas[0].archivos.length} archivos vinculados. Revisa el tablero central.`;
+            }
+
+            // Respuestas rápidas guiadas por palabras clave
+            if (query.includes('juego') || query.includes('arcade') || query.includes('sudoku')) {
+                return "El bloque <strong>MaxiQueen Arcade</strong> cuenta con 23 archivos, incluyendo las ediciones de <em>Sudoku MaxiQueen PRO</em> y <em>QueenTower</em>. ¿Quieres que busque un script específico?";
+            }
+            if (query.includes('crm') || query.includes('venta') || query.includes('cliente')) {
+                return "La sección de <strong>CRM y Ventas</strong> tiene mapeados componentes críticos como <em>CRM_PAG_FEB.html</em> y <em>ventas2026.html</em> conectados a Analytics.";
+            }
+
+            return "Entendido. No encuentro un archivo exacto con ese nombre, pero puedes usar la barra de búsqueda superior para filtrar todo el ecosistema de MaxiQueen OS en tiempo real.";
+        }
+
+        function cerrarChatYAbrir(nombreArchivo) {
+            const chat = document.getElementById('chatWidget');
+            chat.classList.add('minimizado');
+            document.getElementById('btnToggleChat').textContent = '＋';
+            abrirModulo(nombreArchivo);
+        }
+
+        // Eventos de teclado y buscador
         buscador.addEventListener('input', (e) => {
             renderizarPanel(e.target.value);
+        });
+
+        document.getElementById('inputChat').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') enviarMensajeChat();
         });
 
         // Inicializar la carga de la página
