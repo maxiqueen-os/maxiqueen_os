@@ -1,9 +1,9 @@
 // ==========================================================================
-// CONTENEDOR DE DATOS Y COMANDOS MAESTROS - MAXIQUEEN OS v3.0 MEMORIA
-// Todo en un solo archivo. No genera archivos externos.
+// CONTENEDOR DE DATOS Y COMANDOS MAESTROS - MAXIQUEEN OS v3.0 MEMORIA PRO
+// Versión de Producción Optimizada para Consola y Chat Box
 // ==========================================================================
 
-// 1. BASE DE DATOS DE TUS MÓDULOS - Sin cambios
+// 1. BASE DE DATOS DE TUS MÓDULOS - Preservada intacta
 window.baseDeDatosPaginas = [
     {
         categoria: "Vídeo del Sistema e Interfaces Base",
@@ -141,12 +141,12 @@ window.baseDeDatosPaginas = [
     }
 ];
 
-// 2. COMANDOS PERSONALIZADOS - Con memoria
+// 2. COMANDOS PERSONALIZADOS - Retornan cadenas limpias procesables por el chat
 window.comandosInteligentes = [
     {
         claves: ["hola", "buenos días", "buenas tardes", "saludos"],
         respuesta: "¡Hola, César! El núcleo operativo de MaxiQueen OS está listo. ¿Qué módulo deseas desplegar o buscar hoy?",
-        accion: () => MQCore.hablar("Hola César, todos los sistemas listos.")
+        accion: () => { MQCore.hablar("Hola César, todos los sistemas listos."); return "¡Hola, César! El núcleo operativo de MaxiQueen OS está listo."; }
     },
     {
         claves: ["estado del sistema", "estatus", "cómo va todo"],
@@ -166,47 +166,46 @@ window.comandosInteligentes = [
     {
         claves: ["leer página", "lee todo", "léeme esto"],
         respuesta: "Iniciando lectura completa de la página actual...",
-        accion: () => MQCore.leerPaginaCompleta()
+        accion: () => { MQCore.leerPaginaCompleta(); return "Leyendo el contenido visible de la página actual en voz alta..."; }
     },
     {
         claves: ["para de hablar", "silencio", "cállate"],
         respuesta: "De acuerdo, cancelando lectura de voz.",
-        accion: () => MQCore.detenerVoz()
+        accion: () => { MQCore.detenerVoz(); return "Lectura de voz cancelada."; }
     },
     {
-        claves: ["busca", "buscar", "encuentra"],
-        respuesta: "Dime qué texto quieres que busque en esta página.",
+        claves: ["busca ", "buscar ", "encuentra "],
+        respuesta: "Buscando término en el documento...",
         accion: (texto) => MQCore.buscarEnDOM(texto)
     },
     {
-        claves: ["abrir", "abre", "lanza", "ejecuta"],
-        respuesta: "Buscando módulo para abrir...",
+        claves: ["abrir ", "abre ", "lanza ", "ejecuta "],
+        respuesta: "Buscando módulo...",
         accion: (texto) => MQCore.abrirModulo(texto)
     },
     {
         claves: ["resumen", "resume la página"],
-        respuesta: "Analizando contenido para crear resumen...",
+        respuesta: "Creando resumen...",
         accion: () => MQCore.resumirPagina()
     },
     {
         claves: ["cuántos módulos", "total archivos"],
-        respuesta: "Calculando total de módulos registrados...",
+        respuesta: "Calculando total de módulos...",
         accion: () => MQCore.contarModulos()
     },
-    // NUEVOS COMANDOS DE MEMORIA
     {
         claves: ["historial", "memoria", "qué dije"],
-        respuesta: "Consultando memoria de sesión...",
+        respuesta: "Consultando memoria...",
         accion: () => MQCore.mostrarHistorial()
     },
     {
         claves: ["repite", "repite lo último", "qué dijiste"],
-        respuesta: "Repitiendo última acción...",
+        respuesta: "Repitiendo...",
         accion: () => MQCore.repetirUltimo()
     },
     {
         claves: ["qué abrí", "último módulo", "abiertos"],
-        respuesta: "Revisando módulos abiertos recientemente...",
+        respuesta: "Revisando módulos recientes...",
         accion: () => MQCore.ultimosModulos()
     },
     {
@@ -217,7 +216,7 @@ window.comandosInteligentes = [
 ];
 
 // ==========================================================================
-// 3. NÚCLEO CEREBRO MQCore - CON MEMORIA PERSISTENTE
+// 3. NÚCLEO CEREBRO MQCore - MANEJO AVANZADO DE VOZ Y MEMORIA
 // ==========================================================================
 window.MQCore = {
     voz: window.speechSynthesis,
@@ -229,7 +228,6 @@ window.MQCore = {
         ultimaAccion: localStorage.getItem('MQ_ultimaAccion') || ''
     },
 
-    // Guarda en memoria y localStorage
     guardarMemoria: function(tipo, dato) {
         const timestamp = new Date().toLocaleTimeString('es-CO');
         if (tipo === 'comando') {
@@ -248,37 +246,52 @@ window.MQCore = {
         }
     },
 
+    // Solución al Bug de congelamiento/corte de SpeechSynthesis en textos largos
     hablar: function(texto) {
         this.detenerVoz();
-        const utterance = new SpeechSynthesisUtterance(texto);
-        utterance.lang = 'es-CO';
-        utterance.rate = 1.1;
-        utterance.pitch = 1;
-        this.lectorActual = utterance;
-        this.voz.speak(utterance);
+        if (!texto) return;
+
+        // Dividir el texto en fragmentos por puntos para evitar que la API del navegador colapse
+        const fragmentos = texto.match(/[^.!?]+[.!?]+/g) || [texto];
+        
+        fragmentos.forEach((frase) => {
+            const utterance = new SpeechSynthesisUtterance(frase.trim());
+            utterance.lang = 'es-CO';
+            utterance.rate = 1.1;
+            utterance.pitch = 1;
+            
+            // Evento vital para evitar que el recolector de basura del navegador destruya el flujo de voz
+            utterance.onend = () => { this.lectorActual = null; };
+            
+            this.lectorActual = utterance;
+            this.voz.speak(utterance);
+        });
+
         this.memoria.ultimoTextoLeido = texto;
         localStorage.setItem('MQ_ultimoTexto', texto);
         return texto;
     },
 
     detenerVoz: function() {
-        if (this.voz.speaking) this.voz.cancel();
+        if (this.voz && this.voz.speaking) {
+            this.voz.cancel();
+        }
     },
 
     leerPaginaCompleta: function() {
-        const elementos = document.querySelectorAll('h1, h2, h3, p, li, td, span, button, a');
+        const elementos = document.querySelectorAll('h1, h2, h3, p, li, td, span:not(.status-badge)');
         let textoCompleto = '';
         elementos.forEach(el => {
             const txt = el.innerText.trim();
-            if (txt && txt.length > 3) textoCompleto += txt + '. ';
+            if (txt && txt.length > 3 && !el.closest('.chat-box')) { // No leer los mensajes del propio chat
+                textoCompleto += txt + '. ';
+            }
         });
         this.guardarMemoria('accion', 'Lectura completa de página');
-        if (textoCompleto.length > 5000) {
-            this.hablar("La página es muy extensa. Te leo los primeros 5000 caracteres. " + textoCompleto.substring(0, 5000));
-        } else {
-            this.hablar(textoCompleto || "No encontré texto legible en esta página.");
-        }
-        return textoCompleto;
+        
+        const textoLimpio = textoCompleto.substring(0, 4000);
+        this.hablar(textoLimpio || "No encontré texto legible fuera del chat en esta página.");
+        return textoLimpio;
     },
 
     buscarEnDOM: function(query) {
@@ -286,15 +299,20 @@ window.MQCore = {
         this.limpiarResaltado();
         const regex = new RegExp(query, 'gi');
         let encontrados = 0;
+        
         const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
         const nodosTexto = [];
-        while (walker.nextNode()) nodosTexto.push(walker.currentNode);
+        while (walker.nextNode()) {
+            if (!walker.currentNode.parentNode.closest('.chat-box')) {
+                nodosTexto.push(walker.currentNode);
+            }
+        }
 
         nodosTexto.forEach(node => {
             if (regex.test(node.nodeValue)) {
                 const span = document.createElement('mark');
-                span.style.background = '#FFD700';
-                span.style.color = '#000';
+                span.style.background = '#c084fc';
+                span.style.color = '#1e1b4b';
                 span.className = 'mq-highlight';
                 node.parentNode.replaceChild(span, node);
                 span.appendChild(node);
@@ -302,7 +320,7 @@ window.MQCore = {
             }
         });
 
-        const respuesta = `Encontré ${encontrados} coincidencias de "${query}" en la página.`;
+        const respuesta = `Encontré ${encontrados} coincidencias de "${query}" en la interfaz corporativa.`;
         this.guardarMemoria('accion', `Búsqueda: ${query}`);
         this.hablar(respuesta);
         return respuesta;
@@ -315,14 +333,13 @@ window.MQCore = {
     },
 
     abrirModulo: function(nombre) {
-        if (!nombre) return "Dime el nombre del módulo.";
+        if (!nombre) return "Dime el nombre del módulo que deseas lanzar.";
         const nombreLimpio = nombre.toLowerCase().replace(/abrir|abre|lanza|ejecuta/g, '').trim();
         let encontrado = null;
 
         for (const cat of window.baseDeDatosPaginas) {
             for (const archivo of cat.archivos) {
-                if (archivo.name.toLowerCase().includes(nombreLimpio) ||
-                    archivo.desc.toLowerCase().includes(nombreLimpio)) {
+                if (archivo.name.toLowerCase().includes(nombreLimpio) || archivo.desc.toLowerCase().includes(nombreLimpio)) {
                     encontrado = archivo;
                     break;
                 }
@@ -333,21 +350,19 @@ window.MQCore = {
         if (encontrado) {
             this.guardarMemoria('modulo', encontrado.name);
             this.guardarMemoria('accion', `Abrió ${encontrado.name}`);
-            this.hablar(`Abriendo ${encontrado.name}. ${encontrado.desc}`);
+            this.hablar(`Desplegando módulo ${encontrado.name}. ${encontrado.desc}`);
             window.open(encontrado.name, '_blank');
-            return `Abriendo: ${encontrado.name}`;
+            return `🚀 Módulo localizado y ejecutado con éxito: **${encontrado.name}** (${encontrado.desc})`;
         } else {
-            this.hablar(`No encontré ningún módulo llamado ${nombreLimpio}`);
-            return `Módulo no encontrado: ${nombreLimpio}`;
+            // Retorna null para que el sistema sepa que no es un comando local interno y use la IA del servidor
+            return null;
         }
     },
 
     resumirPagina: function() {
         const titulos = Array.from(document.querySelectorAll('h1, h2, h3')).map(h => h.innerText).slice(0, 5);
-        const parrafos = Array.from(document.querySelectorAll('p')).map(p => p.innerText).slice(0, 3);
-        let resumen = "Resumen de la página: ";
-        if (titulos.length) resumen += "Secciones: " + titulos.join(', ') + ". ";
-        if (parrafos.length) resumen += "Contenido: " + parrafos.join(' ').substring(0, 300) + "...";
+        let resumen = "Resumen del entorno: Te encuentras en la Consola Operativa MaxiQueen OS v2. ";
+        if (titulos.length) resumen += "Secciones activas detectadas: " + titulos.join(', ') + ".";
         this.guardarMemoria('accion', 'Resumen de página');
         this.hablar(resumen);
         return resumen;
@@ -355,7 +370,7 @@ window.MQCore = {
 
     estadoSistema: function() {
         const total = this.contarModulos(true);
-        const estado = `Sistemas operativos. Tienes ${total} módulos registrados. En memoria: ${this.memoria.historial.length} comandos y ${this.memoria.modulosAbiertos.length} módulos abiertos recientes.`;
+        const estado = `Sistemas de control MaxiQueen estables. ${total} módulos indexados en el ecosistema. Memoria de sesión: ${this.memoria.historial.length} logs almacenados.`;
         this.hablar(estado);
         return estado;
     },
@@ -363,46 +378,53 @@ window.MQCore = {
     contarModulos: function(silencioso = false) {
         let total = 0;
         window.baseDeDatosPaginas.forEach(cat => total += cat.archivos.length);
-        if (!silencioso) this.hablar(`Total de módulos: ${total}`);
-        return total;
+        const respuesta = `Ecosistema MaxiQueen compuesto por un total de ${total} módulos distribuidos en 8 categorías de control core.`;
+        if (!silencioso) this.hablar(respuesta);
+        return respuesta;
     },
 
-    // NUEVAS FUNCIONES DE MEMORIA
     mostrarHistorial: function() {
         if (this.memoria.historial.length === 0) {
-            this.hablar("No hay historial todavía.");
-            return "Sin historial";
+            const msg = "Memoria vacía. No se registran comandos previos en esta sesión corporativa.";
+            this.hablar(msg);
+            return msg;
         }
-        const ultimos5 = this.memoria.historial.slice(0, 5);
-        let texto = "Tus últimos comandos fueron: ";
-        ultimos5.forEach((item, i) => {
-            texto += `${i+1}. ${item.texto} a las ${item.hora}. `;
+        const ultimos = this.memoria.historial.slice(0, 3);
+        let texto = "Últimos logs de comandos en memoria: ";
+        let listadoMarkdown = "📋 **Últimos comandos en memoria:**\n";
+        ultimos.forEach((item, i) => {
+            texto += `${item.texto}. `;
+            listadoMarkdown += `${i+1}. *"${item.texto}"* a las ${item.hora}\n`;
         });
         this.hablar(texto);
-        return ultimos5;
+        return listadoMarkdown;
     },
 
     repetirUltimo: function() {
         if (this.memoria.ultimoTextoLeido) {
-            this.hablar("Repitiendo: " + this.memoria.ultimoTextoLeido);
-            return this.memoria.ultimoTextoLeido;
+            this.hablar(this.memoria.ultimoTextoLeido);
+            return `Repitiendo última salida de voz: *"${this.memoria.ultimoTextoLeido}"*`;
         } else {
-            this.hablar("No hay nada que repetir aún.");
-            return "Sin datos";
+            const msg = "No hay registros de voz previos en el búfer.";
+            this.hablar(msg);
+            return msg;
         }
     },
 
     ultimosModulos: function() {
         if (this.memoria.modulosAbiertos.length === 0) {
-            this.hablar("No has abierto módulos en esta sesión.");
-            return [];
+            const msg = "No se registra apertura de módulos en los ciclos recientes.";
+            this.hablar(msg);
+            return msg;
         }
         let texto = "Módulos abiertos recientemente: ";
-        this.memoria.modulosAbiertos.slice(0, 3).forEach((m, i) => {
-            texto += `${m.nombre} a las ${m.hora}. `;
+        let mdown = "📂 **Módulos abiertos recientemente:**\n";
+        this.memoria.modulosAbiertos.slice(0, 3).forEach((m) => {
+            texto += `${m.nombre}. `;
+            mdown += `- Módulo \`${m.nombre}\` (${m.hora})\n`;
         });
         this.hablar(texto);
-        return this.memoria.modulosAbiertos;
+        return mdown;
     },
 
     borrarMemoria: function() {
@@ -411,33 +433,39 @@ window.MQCore = {
         localStorage.removeItem('MQ_ultimoTexto');
         localStorage.removeItem('MQ_ultimaAccion');
         this.memoria = { historial: [], modulosAbiertos: [], ultimoTextoLeido: '', ultimaAccion: '' };
-        this.hablar("Memoria borrada. Empezamos de cero.");
-        return "Memoria limpia";
+        const msg = "Memoria volátil purgada con éxito. Ciclo limpio inicializado.";
+        this.hablar(msg);
+        return msg;
     },
 
     limpiarConsola: function() {
-        console.clear();
         this.detenerVoz();
         this.limpiarResaltado();
+        const container = document.getElementById('chat-messages');
+        if (container) container.innerHTML = '<div class="msg system">Consola limpia y reiniciada por comando maestro.</div>';
         this.hablar("Consola reiniciada");
+        return "Consola limpiada.";
     },
 
     mostrarAyuda: function() {
-        const comandos = window.comandosInteligentes.map(c => c.claves[0]).join(', ');
-        this.hablar(`Comandos clave: ${comandos}. Di historial para ver memoria.`);
+        const comandos = window.comandosInteligentes.map(c => `\`${c.claves[0]}\``).join(', ');
+        const respuesta = `Comandos del sistema: ${comandos}.`;
+        this.hablar("Consola de ayuda desplegada.");
+        return `🤖 **Comandos Locales Disponibles (Ejecución Instantánea):**\n\n${comandos}\n\n*Si escribes cualquier otra cosa, usaré mi motor de inferencia neuronal.*`;
     }
 };
 
 // ==========================================================================
-// 4. INTERPRETADOR DE COMANDOS - Ahora con memoria
+// 4. INTERPRETADOR CON FILTRO HÍBRIDO (Comando Local vs IA del Servidor)
 // ==========================================================================
 window.MQInterpretar = function(inputUsuario) {
     const texto = inputUsuario.toLowerCase().trim();
-    if (!texto) return "Esperando comando...";
+    if (!texto) return "Búfer vacío.";
 
+    // Guardar log en local storage
     MQCore.guardarMemoria('comando', inputUsuario);
 
-    // 1. Buscar en comandos inteligentes
+    // 1. Filtrar coincidencia exacta con comandos del sistema
     for (const cmd of window.comandosInteligentes) {
         for (const clave of cmd.claves) {
             if (texto.includes(clave)) {
@@ -451,26 +479,57 @@ window.MQInterpretar = function(inputUsuario) {
         }
     }
 
-    // 2. Si no hay comando, intentar abrir módulo por nombre
-    return MQCore.abrirModulo(texto);
+    // 2. Intentar buscar un archivo si la frase implica abrir algo de forma directa
+    if (texto.startsWith("abre") || texto.startsWith("abrir") || texto.startsWith("lanza") || texto.startsWith("ejecuta")) {
+        const resModulo = MQCore.abrirModulo(texto);
+        if (resModulo) return resModulo;
+    }
+
+    // 3. SI NO ES UN COMANDO LOCAL, RETORNA NULL
+    // Esto le avisa a tu función enviarMensaje() que debe llamar al servidor /api/chat
+    return null;
 };
 
-// Activar escucha de voz opcional
+// ==========================================================================
+// 5. RECONOCIMIENTO DE VOZ INTEGRADO (Optimizado para tus Selectores)
+// ==========================================================================
 window.MQEscuchar = function() {
-    if (!('webkitSpeechRecognition' in window)) {
-        return "Tu navegador no soporta reconocimiento de voz.";
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        return "Tu navegador no soporta reconocimiento de voz nativo (Se recomienda Chrome).";
     }
-    const recognition = new webkitSpeechRecognition();
+    
+    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    const recognition = new SpeechRecognition();
     recognition.lang = 'es-CO';
     recognition.continuous = false;
-    recognition.onresult = (event) => {
-        const comando = event.results[0][0].transcript;
-        console.log('Comando detectado:', comando);
-        const respuesta = window.MQInterpretar(comando);
-        MQCore.hablar(respuesta);
-        document.getElementById('comandoMQ').value = comando;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+        MQCore.detenerVoz();
+        // Buscar dinámicamente tu input de chat para rellenarlo visualmente
+        const chatInput = document.getElementById('chat-input');
+        if (chatInput) chatInput.placeholder = "🎙️ Escuchando tu orden...";
     };
+
+    recognition.onresult = async (event) => {
+        const comando = event.results[0][0].transcript;
+        const chatInput = document.getElementById('chat-input');
+        
+        if (chatInput) {
+            chatInput.value = comando;
+            chatInput.placeholder = "Escribe tu consulta aquí...";
+            // Ejecutar el envío automático si tienes declarada la función global enviarMensaje
+            if (typeof window.enviarMensaje === 'function') {
+                window.enviarMensaje();
+            }
+        }
+    };
+
+    recognition.onerror = () => {
+        const chatInput = document.getElementById('chat-input');
+        if (chatInput) chatInput.placeholder = "Error al escuchar. Intenta de nuevo...";
+    };
+
     recognition.start();
-    MQCore.hablar("Escuchando...");
-    return "Escuchando...";
+    return "Microfono activo.";
 };

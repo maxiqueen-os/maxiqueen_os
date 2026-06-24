@@ -594,8 +594,7 @@
                 ]
             }
         ];
-
-        const contenedor = document.getElementById('contenedorModulos');
+const contenedor = document.getElementById('contenedorModulos');
         const buscador = document.getElementById('inputBusqueda');
 
         // Función para renderizar los elementos en la pantalla
@@ -631,7 +630,6 @@
 
                         const tarjeta = document.createElement('div');
                         tarjeta.className = 'tarjeta-link';
-                        // Cambiado a manejador de eventos interno para abrir dentro de la app sin recargar o salir
                         tarjeta.onclick = () => abrirModulo(archivo.name);
                         
                         tarjeta.innerHTML = `
@@ -661,9 +659,9 @@
             const titulo = document.getElementById('visorNombreArchivo');
             
             titulo.textContent = nombreArchivo;
-            iframe.src = `./${nombreArchivo}`; // Ejecución local o relativa
+            iframe.src = `./${nombreArchivo}`; 
             modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Detiene scroll del fondo
+            document.body.style.overflow = 'hidden'; 
         }
 
         function cerrarModulo() {
@@ -671,8 +669,8 @@
             const iframe = document.getElementById('iframeModulo');
             
             modal.style.display = 'none';
-            iframe.src = ''; // Limpia memoria del iframe
-            document.body.style.overflow = 'auto'; // Devuelve scroll
+            iframe.src = ''; 
+            document.body.style.overflow = 'auto'; 
         }
 
         // LÓGICA INTERNA DEL CHAT DEL CORE
@@ -681,22 +679,6 @@
             const btn = document.getElementById('btnToggleChat');
             chat.classList.toggle('minimizado');
             btn.textContent = chat.classList.contains('minimizado') ? '＋' : '－';
-        }
-
-        function enviarMensajeChat() {
-            const input = document.getElementById('inputChat');
-            const texto = input.value.trim();
-            if (!texto) return;
-
-            // Renderizar mensaje de usuario
-            agregarMensajeUI(texto, 'usuario');
-            input.value = '';
-
-            // Procesamiento de lectura estructurada de la base de datos
-            setTimeout(() => {
-                const respuesta = procesarConsultaEstructurada(texto);
-                agregarMensajeUI(respuesta, 'sistema');
-            }, 600);
         }
 
         function agregarMensajeUI(texto, remitente) {
@@ -708,45 +690,6 @@
             contenedorMensajes.scrollTop = contenedorMensajes.scrollHeight;
         }
 
-        function procesarConsultaEstructurada(consulta) {
-    const query = consulta.toLowerCase().trim();
-    
-    // 1. Primero verifica si coincide con un comando personalizado del archivo externo
-    if (window.comandosInteligentes) {
-        for (let cmd of window.comandosInteligentes) {
-            if (cmd.claves.some(clave => query.includes(clave.toLowerCase()))) {
-                // Comando especial para limpiar chat si el usuario lo pide
-                if (query.includes("limpiar") || query.includes("borrar chat")) {
-                    setTimeout(() => { document.getElementById('chatMensajes').innerHTML = ''; }, 1000);
-                }
-                return cmd.respuesta;
-            }
-        }
-    }
-
-    // 2. Si no es un comando común, busca los archivos en la base de datos
-    let archivosEncontrados = [];
-    if (!window.baseDeDatosPaginas) return "Error de carga de base de datos.";
-
-    window.baseDeDatosPaginas.forEach(cat => {
-        cat.archivos.forEach(arc => {
-            if (arc.name.toLowerCase().includes(query) || arc.desc.toLowerCase().includes(query)) {
-                archivosEncontrados.push(arc);
-            }
-        });
-    });
-
-    if (archivosEncontrados.length > 0) {
-        let htmlRes = `Módulos encontrados dinámicamente:<br><br>`;
-        archivosEncontrados.slice(0, 5).forEach(a => {
-            htmlRes += `• <strong style="color:var(--morado-brillo); cursor:pointer;" onclick="cerrarChatYAbrir('${a.name}')">${a.name}</strong>: ${a.desc}<br>`;
-        });
-        return htmlRes;
-    }
-
-    return "Entendido. No encontré coincidencias exactas para esa instrucción. Recuerda que puedes configurar más respuestas automáticas directamente en tu archivo `datos_modulos.js`.";
-}
-
         function cerrarChatYAbrir(nombreArchivo) {
             const chat = document.getElementById('chatWidget');
             chat.classList.add('minimizado');
@@ -754,7 +697,83 @@
             abrirModulo(nombreArchivo);
         }
 
-        // Eventos de teclado y buscador
+        // ==========================================================================
+        // FUNCIÓN MAESTRA DE CHAT: FUSIÓN DE CEREBRO LOCAL + BUSCADOR DB + IA NUBE
+        // ==========================================================================
+        async function enviarMensajeChat() {
+            const input = document.getElementById('inputChat');
+            const texto = input.value.trim();
+            if (!texto) return;
+
+            // 1. Pintar el mensaje del usuario en tu caja real de 'chatMensajes'
+            agregarMensajeUI(texto, 'usuario');
+            input.value = '';
+
+            // CAPA 1: Verificar comandos del cerebro interno (Voz, limpiar, memoria, etc.)
+            if (window.MQInterpretar) {
+                const respuestaCerebro = window.MQInterpretar(texto);
+                if (respuestaCerebro !== null) {
+                    agregarMensajeUI(respuestaCerebro, 'sistema');
+                    return; // Detiene la ejecución porque el cerebro local ya lo resolvió
+                }
+            }
+
+            // CAPA 2: Buscar archivos interactivos en la base de datos de MaxiQueen
+            let archivosEncontrados = [];
+            const query = texto.toLowerCase();
+            if (window.baseDeDatosPaginas) {
+                window.baseDeDatosPaginas.forEach(cat => {
+                    cat.archivos.forEach(arc => {
+                        if (arc.name.toLowerCase().includes(query) || arc.desc.toLowerCase().includes(query)) {
+                            archivosEncontrados.push(arc);
+                        }
+                    });
+                });
+            }
+
+            if (archivosEncontrados.length > 0) {
+                let htmlRes = `Módulos encontrados dinámicamente:<br><br>`;
+                archivosEncontrados.slice(0, 5).forEach(a => {
+                    htmlRes += `• <strong style="color:var(--morado-brillo); cursor:pointer;" onclick="cerrarChatYAbrir('${a.name}')">${a.name}</strong>: ${a.desc}<br>`;
+                });
+                agregarMensajeUI(htmlRes, 'sistema');
+                if(window.MQCore) window.MQCore.hablar("He localizado los módulos correspondientes en tu base de datos.");
+                return; // Detiene la ejecución porque se mostraron tus accesos rápidos
+            }
+
+            // CAPA 3: FALLBACK AL SERVIDOR DE IA (Si no es comando ni archivo, la IA responde)
+            agregarMensajeUI('<em style="color:var(--texto-mutado);">MaxiQueen AI está pensando...</em>', 'sistema pensando-ia');
+            
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: texto })
+                });
+                
+                const data = await response.json();
+                
+                // Remover el indicador visual de "pensando"
+                const elPensando = document.querySelector('.pensando-ia');
+                if (elPensando) elPensando.remove();
+
+                if (data.success) {
+                    agregarMensajeUI(data.response, 'sistema');
+                    // Lector de voz automático para la respuesta de la IA remota
+                    if (window.MQCore) window.MQCore.hablar(data.response);
+                } else {
+                    agregarMensajeUI('Error del sistema neuronal: ' + (data.error || 'Desconocido'), 'sistema');
+                }
+            } catch (err) {
+                const elPensando = document.querySelector('.pensando-ia');
+                if (elPensando) elPensando.remove();
+                agregarMensajeUI('Error de enlace con el servidor central: ' + err.message, 'sistema');
+            }
+        }
+
+        // ==========================================================================
+        // ASIGNACIÓN DE EVENTOS DEL SISTEMA
+        // ==========================================================================
         buscador.addEventListener('input', (e) => {
             renderizarPanel(e.target.value);
         });
@@ -763,21 +782,9 @@
             if (e.key === 'Enter') enviarMensajeChat();
         });
 
-        // Inicializar la carga de la página
+        // Inicializar la carga del panel principal
         renderizarPanel();
     </script>
 
-    <input id="comandoMQ" placeholder="Escribe o habla un comando...">
-<button onclick="responder()">Enviar</button>
-<button onclick="MQEscuchar()">🎤 Hablar</button>
-
-<script>
-function responder() {
-    const input = document.getElementById('comandoMQ').value;
-    const respuesta = window.MQInterpretar(input);
-    console.log(respuesta);
-    // Aquí muestras la respuesta en tu chat
-}
-</script>
 </body>
 </html>
