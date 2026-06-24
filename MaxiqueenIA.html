@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxiQueen OS - Panel de Control Maestro</title>
+    <style>
+        :root {
+            --bg-principal: #0b0b0f;
+            --bg-tarjeta: #13131a;
+            --bg-hover: #1c1c24;
+            --morado-maxi: #8a2be2;
+            --morado-brillo: #a04ef6;
+            --texto-blanco: #ffffff;
+            --texto-mutado: #8f8f9d;
+            --borde-sutil: rgba(138, 43, 226, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-principal);
+            color: var(--texto-blanco);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(135deg, #13131a 0%, #07070a 100%);
+            padding: 2rem;
+            border-bottom: 1px solid var(--borde-sutil);
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, var(--texto-blanco), var(--morado-brillo));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h1 span {
+            color: var(--morado-brillo);
+        }
+
+        .buscador-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .buscador {
+            width: 100%;
+            padding: 14px 20px;
+            background-color: var(--bg-principal);
+            border: 2px solid var(--borde-sutil);
+            border-radius: 30px;
+            color: var(--texto-blanco);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .buscador:focus {
+            border-color: var(--morado-maxi);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+        }
+
+        main {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            flex-grow: 1;
+        }
+
+        .seccion-modulo {
+            margin-bottom: 3rem;
+        }
+
+        .seccion-titulo {
+            font-size: 1.4rem;
+            color: var(--texto-blanco);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid var(--morado-maxi);
+            padding-left: 12px;
+        }
+
+        .seccion-titulo span {
+            font-size: 0.9rem;
+            background-color: var(--borde-sutil);
+            color: var(--morado-brillo);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .grid-paginas {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tarjeta-link {
+            background-color: var(--bg-tarjeta);
+            border: 1px solid var(--borde-sutil);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: var(--texto-blanco);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tarjeta-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--morado-maxi), transparent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .tarjeta-link:hover {
+            background-color: var(--bg-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            border-color: rgba(138, 43, 226, 0.4);
+        }
+
+        .tarjeta-link:hover::before {
+            transform: scaleX(1);
+        }
+
+        .nombre-archivo {
+            font-weight: 600;
+            font-size: 1.05rem;
+            word-break: break-all;
+            margin-bottom: 0.5rem;
+            color: #f3f3f6;
+        }
+
+        .descripcion-commit {
+            font-size: 0.85rem;
+            color: var(--texto-mutado);
+            line-height: 1.3;
+        }
+
+        .tag-tipo {
+            align-self: flex-start;
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--texto-mutated);
+        }
+
+        .html-tag { color: #e44d26; background: rgba(228, 77, 38, 0.1); }
+        .py-tag { color: #3776ab; background: rgba(55, 118, 171, 0.1); }
+        .js-tag { color: #f7df1e; background: rgba(247, 223, 30, 0.1); }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--texto-mutado);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--borde-sutil);
+            background-color: var(--bg-tarjeta);
+        }
+
+        @media (max-width: 768px) {
+            .grid-paginas { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <h1>MaxiQueen OS <span>👑</span></h1>
+            <p style="color: var(--texto-mutado); font-size: 0.95rem;">Panel Operativo de Control y Acceso Directo</p>
+            <div class="buscador-wrapper">
+                <input type="text" id="inputBusqueda" class="buscador" placeholder="Buscar módulo, juego, crm, chat...">
+            </div>
+        </div>
+    </header>
+
+    <main id="contenedorModulos">
+        <!-- Generación dinámica por categorías con JS Interno -->
+    </main>
+
+    <footer>
+        MaxiQueen OS v2 • Ecosistema Autónomo de Gestión Corporativa
+    </footer>
+
+    <script>
+        // Mapeo completo y estructurado de los componentes del repositorio
+        const baseDeDatosPaginas = [
+            {
+                categoria: "Núcleo del Sistema e Interfaces Base",
+                archivos: [
+                    { name: "index.html", desc: "Interfaz de entrada principal unificada." },
+                    { name: "LoginMQ.html", desc: "Módulo de autenticación y acceso seguro." },
+                    { name: "system.html", desc: "Configuraciones globales del core operativo." },
+                    { name: "dashboard.html", desc: "Área de trabajo ejecutiva principal." },
+                    { name: "dashboard2.html", desc: "Variante alternativa del panel maestro." },
+                    { name: "apps.html", desc: "Librería y catálogo interno de aplicaciones." },
+                    { name: "ActivarsistemaMQ.html", desc: "Consola de activación de licencias." },
+                    { name: "ActivasistemaMQ2.html", desc: "Módulo complementario de activación." },
+                    { name: "Activosindex.html", desc: "Indexador de recursos activos." },
+                    { name: "index4000.html", desc: "Variante experimental del core de acceso." }
+                ]
+            },
+            {
+                categoria: "Ecosistema de Chats e Inteligencia Artificial",
+                archivos: [
+                    { name: "ChatOS.html", desc: "Chat principal con funciones avanzadas de voz." },
+                    { name: "ChatOS2.html", desc: "Segunda iteración de la interfaz del chat." },
+                    { name: "ChatAdvance.html", desc: "Consola de chat optimizada para flujos complejos." },
+                    { name: "ChatBuilderMQ.html", desc: "Constructor visual de flujos conversacionales." },
+                    { name: "ChatNeutral.html", desc: "Línea base limpia para interacciones conversacionales." },
+                    { name: "CHATBASICO2026.html", desc: "Modelo de mensajería básico estructurado." },
+                    { name: "Chat2026.html", desc: "Refactorización moderna del script de chat." },
+                    { name: "SOLOCHAT.html", desc: "Entorno aislado para pruebas conversacionales rápidas." },
+                    { name: "solo_chat_editable.html", desc: "Plantilla de chat interactivo modificable." },
+                    { name: "whatsappOS.html", desc: "Simulador e integrador para mensajería tipo WhatsApp." },
+                    { name: "Build_IA_Chat_Bas.html", desc: "Módulo de inicialización de prompts básicos de IA." },
+                    { name: "Builder_chat_MQ.html", desc: "Editor alternativo de layouts para chats." }
+                ]
+            },
+            {
+                categoria: "CRM, Automatización y Ventas",
+                archivos: [
+                    { name: "CRM_PAG_FEB.html", desc: "Tablero analítico principal del CRM comercial." },
+                    { name: "Clientes.html", desc: "Base de datos y perfiles de consumidores." },
+                    { name: "Ventas.html", desc: "Seguimiento de conversiones y embudos." },
+                    { name: "VentasDominio.html", desc: "Mapeo de ventas vinculadas a nombres de dominio." },
+                    { name: "ventas2026.html", desc: "Módulo comercial con vinculación a Google Analytics." },
+                    { name: "ventasv11.html", desc: "Última iteración del módulo transaccional." },
+                    { name: "AgenteVentas.html", desc: "Panel exclusivo para la gestión de ejecutivos comerciales." },
+                    { name: "Subagentes.html", desc: "Estructura jerárquica para redes de distribución." },
+                    { name: "crm_demo.html", desc: "Entorno de pruebas y demostración comercial." },
+                    { name: "pruebcrm.html", desc: "Laboratorio de flujos para automatizaciones de leads." },
+                    { name: "playCarrito.html", desc: "Motor interactivo del carro de compras." }
+                ]
+            },
+            {
+                categoria: "Gestión de Productos y Catálogos",
+                archivos: [
+                    { name: "AdmProCatalogo.html", desc: "Administrador nativo para inventarios de catálogo." },
+                    { name: "AdmProdAvanzado.html", desc: "Panel avanzado con control total de propiedades." },
+                    { name: "AdmProdCatalogo2.html", desc: "Variante optimizada del gestor de productos." },
+                    { name: "Store_MaxiQueen.html", desc: "Interfaz final de la tienda de ropa y calzado." },
+                    { name: "Catalogosencillo_naranja.html", desc: "Catálogo simplificado de alta conversión visual." },
+                    { name: "prodind.html", desc: "Fichas de producto individuales optimizadas." }
+                ]
+            },
+            {
+                categoria: "MaxiQueen Arcade (Módulo de Juegos)",
+                archivos: [
+                    { name: "Sudoku MaxiQueen PRO 👑.html", desc: "Edición premium y estilizada de Sudoku corporativo." },
+                    { name: "Sudokuadvance.html", desc: "Variante avanzada con algoritmos de dificultad." },
+                    { name: "Sudokutawtto.html", desc: "Integración específica del tablero de Sudoku." },
+                    { name: "sudoku-play1.0.html", desc: "Línea base del motor del juego." },
+                    { name: "sudoku-play2.0.html", desc: "Actualización de mecánicas del Sudoku." },
+                    { name: "playsnake.html", desc: "Juego clásico Snake con UI mejorada y lógica pulida." },
+                    { name: "JuegosIntegradosMQ.html", desc: "Hub centralizado de entretenimiento interno." },
+                    { name: "JuegotorresMQ.html", desc: "Juego QueenTower con soporte responsivo móvil." },
+                    { name: "PlayTorres2.html", desc: "Evolución de layouts responsivos con Flexbox." },
+                    { name: "PlayTorres3.html", desc: "Fase 3 de desarrollo de dinámicas de torres." },
+                    { name: "PlayTorres4.html", desc: "Fase 4 de desarrollo de físicas." },
+                    { name: "PlayTorres5.html", desc: "Fase 5 de optimización de renderizado." },
+                    { name: "PlayTorres6.html", desc: "Edición final fluida y adaptativa." },
+                    { name: "playTorresMQ.html", desc: "Instancia transaccional del juego de torres." },
+                    { name: "QueenTower.html", desc: "Script maestro del juego insignia de la torre." },
+                    { name: "ShadowRunner.html", desc: "Módulo arcade de desplazamiento lateral rápido." },
+                    { name: "adivina.html", desc: "Juego interactivo de agilidad mental y predicciones." },
+                    { name: "juego12.html", desc: "Prototipo lúdico número 12." },
+                    { name: "CuadroMQ.html", desc: "Estructuras y estilos para mecánicas de juegos RPG." },
+                    { name: "playclick2.html", desc: "Módulo incremental de clicks rápidos." },
+                    { name: "clickMQ.html", desc: "Mecánica base del clicker corporativo." }
+                ]
+            },
+            {
+                categoria: "Servicios Cloud, Motores y Diagnósticos",
+                archivos: [
+                    { name: "main.py", desc: "Motor backend principal, manejo de API Keys y endpoints." },
+                    { name: "cesarapi.py", desc: "Lógica API complementaria de procesamiento." },
+                    { name: "Cloudos.html", desc: "Módulo de gestión e infraestructura en la nube." },
+                    { name: "Clouds1.html", desc: "Consola de almacenamiento y lectura de archivos." },
+                    { name: "cloudAzulFebr.html", desc: "Interfaz temática para despliegues en servidores externos." },
+                    { name: "inspector MQ.html", desc: "Herramienta de auditoría de rendimiento del sistema." },
+                    { name: "inspectorv2.html", desc: "Segunda fase de la suite de diagnóstico interno." },
+                    { name: "inspectorv3.html", desc: "Versión de producción del inspector de flujos." },
+                    { name: "test-compressor.html", desc: "Compresor de video integrado para optimización de ancho de banda." },
+                    { name: "SeleccionarArcSubirDocumento.html", desc: "Gestor nativo de carga de archivos multimedia." },
+                    { name: "mapa_visual_api.html", desc: "Mapeador visual de endpoints y respuestas del servidor." }
+                ]
+            },
+            {
+                categoria: "Perfiles y Galerías Visuales",
+                archivos: [
+                    { name: "Perfil12026.html", desc: "Configurador avanzado de perfiles de usuario." },
+                    { name: "Perfil2026.html", desc: "Estructura de cuenta comercial actualizada." },
+                    { name: "Perfilv3.html", desc: "Ficha técnica y visual de usuarios del sistema." },
+                    { name: "Avatar_Pro.html", desc: "Módulo de personalización de identidades de marca." },
+                    { name: "Barraperfiles.html", desc: "Componente UI flotante de navegación de identidades." },
+                    { name: "galeria.html", desc: "Visualizador multimedia con barras laterales dinámicas." },
+                    { name: "galeria2.html", desc: "Layout alternativo para activos gráficos." },
+                    { name: "galeriav2.html", desc: "Módulo optimizado de renderizado de imágenes de alta fidelidad." },
+                    { name: "galeriav3.html", desc: "Galería de control de flujos visuales." },
+                    { name: "galeriav4.html", desc: "Variante con soporte de carga asíncrona." },
+                    { name: "galeriav5.html", desc: "Versión depurada y pulida para producción." },
+                    { name: "galeriav6.html", desc: "Último diseño del visor multimedia." },
+                    { name: "galeryoutube.html", desc: "Indexador de contenidos y tutoriales en formato video." }
+                ]
+            },
+            {
+                categoria: "Políticas, Información y Soporte Técnico",
+                archivos: [
+                    { name: "about.html", desc: "Información institucional y visión del proyecto." },
+                    { name: "contact.html", desc: "Canales directos de soporte y atención comercial." },
+                    { name: "privacidad.html", desc: "Estructura legal de protección de bases de datos de clientes." },
+                    { name: "terminos.html", desc: "Términos y condiciones de la plataforma SaaS humana." },
+                    { name: "cookies.html", desc: "Políticas vigentes de rastreo analítico y GTM." },
+                    { name: "premium.html", desc: "Detalle y pasarela de ventajas del plan empresarial." },
+                    { name: "PlataformaSaaSHumana.html", desc: "Manifiesto y flujo de la estructura tecnológica humana." },
+                    { name: "Inf_Sena.html", desc: "Reportes académicos y organizacionales vinculados." },
+                    { name: "Apache_License.html", desc: "Documentación de la licencia de distribución abierta." },
+                    { name: "license.html", desc: "Mapeo legal complementario de uso de software." }
+                ]
+            }
+        ];
+
+        const contenedor = document.getElementById('contenedorModulos');
+        const buscador = document.getElementById('inputBusqueda');
+
+        // Función para renderizar los elementos en la pantalla
+        function renderizarPanel(filtro = '') {
+            contenedor.innerHTML = '';
+            let hayResultadosGlobales = false;
+
+            baseDeDatosPaginas.forEach(modulo => {
+                // Filtramos los archivos dentro de la categoría
+                const archivosFiltrados = modulo.archivos.filter(archivo => 
+                    archivo.name.toLowerCase().includes(filtro.toLowerCase()) || 
+                    archivo.desc.toLowerCase().includes(filtro.toLowerCase())
+                );
+
+                if (archivosFiltrados.length > 0) {
+                    hayResultadosGlobales = true;
+                    
+                    // Crear sección de categoría
+                    const seccion = document.createElement('section');
+                    seccion.className = 'seccion-modulo';
+
+                    const titulo = document.createElement('h2');
+                    titulo.className = 'seccion-titulo';
+                    titulo.innerHTML = `${modulo.categoria} <span>${archivosFiltrados.length}</span>`;
+                    seccion.appendChild(titulo);
+
+                    // Crear contenedor Grid
+                    const grid = document.createElement('div');
+                    grid.className = 'grid-paginas';
+
+                    archivosFiltrados.forEach(archivo => {
+                        const ext = archivo.name.split('.').pop();
+                        let tagClass = 'html-tag';
+                        if(ext === 'py') tagClass = 'py-tag';
+                        if(ext === 'js') tagClass = 'js-tag';
+
+                        const tarjeta = document.createElement('a');
+                        tarjeta.className = 'tarjeta-link';
+                        tarjeta.href = `./${archivo.name}`; // Apunta a la raíz del proyecto
+                        tarjeta.target = '_blank'; // Lo abre en pestaña nueva para no perder el panel
+                        
+                        tarjeta.innerHTML = `
+                            <div>
+                                <div class="nombre-archivo">${archivo.name}</div>
+                                <div class="descripcion-commit">${archivo.desc}</div>
+                            </div>
+                            <div class="tag-tipo ${tagClass}">${ext}</div>
+                        `;
+                        grid.appendChild(tarjeta);
+                    });
+
+                    seccion.appendChild(grid);
+                    contenedor.appendChild(seccion);
+                }
+            });
+
+            if (!hayResultadosGlobales) {
+                contenedor.innerHTML = `<div style="text-align: center; padding: 3rem; color: var(--texto-mutado);">No se encontraron módulos o archivos con el término "${filtro}".</div>`;
+            }
+        }
+
+        // Evento del buscador en tiempo real
+        buscador.addEventListener('input', (e) => {
+            renderizarPanel(e.target.value);
+        });
+
+        // Inicializar la carga de la página
+        renderizarPanel();
+    </script>
+</body>
+</html>
