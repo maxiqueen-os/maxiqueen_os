@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxiQueen OS - Panel de Control Maestro</title>
+    <style>
+        :root {
+            --bg-principal: #0b0b0f;
+            --bg-tarjeta: #13131a;
+            --bg-hover: #1c1c24;
+            --morado-maxi: #8a2be2;
+            --morado-brillo: #a04ef6;
+            --texto-blanco: #ffffff;
+            --texto-mutated: #8f8f9d;
+            --borde-sutil: rgba(138, 43, 226, 0.15);
+            --verde-exito: #00ff66;
+            --rojo-error: #ff3b30;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-principal);
+            color: var(--texto-blanco);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #13131a 0%, #07070a 100%);
+            padding: 2rem;
+            border-bottom: 1px solid var(--borde-sutil);
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, var(--texto-blanco), var(--morado-brillo));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h1 span {
+            color: var(--morado-brillo);
+        }
+
+        .buscador-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .buscador {
+            width: 100%;
+            padding: 14px 20px;
+            background-color: var(--bg-principal);
+            border: 2px solid var(--borde-sutil);
+            border-radius: 30px;
+            color: var(--texto-blanco);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .buscador:focus {
+            border-color: var(--morado-maxi);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+        }
+
+        main {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            flex-grow: 1;
+        }
+
+        .seccion-modulo {
+            margin-bottom: 3rem;
+        }
+
+        .seccion-titulo {
+            font-size: 1.4rem;
+            color: var(--texto-blanco);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid var(--morado-maxi);
+            padding-left: 12px;
+        }
+
+        .seccion-titulo span {
+            font-size: 0.9rem;
+            background-color: var(--borde-sutil);
+            color: var(--morado-brillo);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .grid-paginas {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tarjeta-link {
+            background-color: var(--bg-tarjeta);
+            border: 1px solid var(--borde-sutil);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: var(--texto-blanco);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .tarjeta-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--morado-maxi), transparent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .tarjeta-link:hover {
+            background-color: var(--bg-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            border-color: rgba(138, 43, 226, 0.4);
+        }
+
+        .tarjeta-link:hover::before {
+            transform: scaleX(1);
+        }
+
+        .nombre-archivo {
+            font-weight: 600;
+            font-size: 1.05rem;
+            word-break: break-all;
+            margin-bottom: 0.5rem;
+            color: #f3f3f6;
+        }
+
+        .descripcion-commit {
+            font-size: 0.85rem;
+            color: var(--texto-mutated);
+            line-height: 1.3;
+        }
+
+        .tag-tipo {
+            align-self: flex-start;
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--texto-mutated);
+        }
+
+        .html-tag { color: #e44d26; background: rgba(228, 77, 38, 0.1); }
+        .py-tag { color: #3776ab; background: rgba(55, 118, 171, 0.1); }
+        .js-tag { color: #f7df1e; background: rgba(247, 223, 30, 0.1); }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--texto-mutated);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--borde-sutil);
+            background-color: var(--bg-tarjeta);
+        }
+
+        /* ==================== VISUALIZADOR INTERNO (IFRAME MODAL) ==================== */
+        .modal-visor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(7, 7, 10, 0.95);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-visor-header {
+            background-color: var(--bg-tarjeta);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--borde-sutil);
+        }
+
+        .modal-visor-titulo {
+            font-weight: 600;
+            color: var(--texto-blanco);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-cerrar-visor {
+            background: linear-gradient(135deg, #ff3b30 0%, #cc0000 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+
+        .btn-cerrar-visor:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 59, 48, 0.4);
+        }
+
+        .iframe-contenedor {
+            flex-grow: 1;
+            width: 100%;
+            height: calc(100% - 60px);
+            background-color: #fff;
+        }
+
+        .iframe-modulo {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ==================== CHAT CORE ASISTENTE CON BOTÓN DE VOZ ==================== */
+        .chat-flotante {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 380px;
+            height: 500px;
+            background-color: var(--bg-tarjeta);
+            border: 1px solid var(--morado-maxi);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 15px rgba(138, 43, 226, 0.2);
+            display: flex;
+            flex-direction: column;
+            z-index: 1500;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+            transform: translateY(0);
+        }
+
+        .chat-flotante.minimizado {
+            transform: translateY(calc(100% - 50px));
+            height: 50px;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--bg-tarjeta) 0%, var(--bg-hover) 100%);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--borde-sutil);
+            cursor: pointer;
+        }
+
+        .chat-header-titulo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .chat-status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--verde-exito);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px var(--verde-exito);
+        }
+
+        .btn-toggle-chat {
+            background: transparent;
+            border: none;
+            color: var(--texto-mutated);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .chat-mensajes {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: #0c0c12;
+        }
+
+        .mensaje {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .mensaje.sistema {
+            background-color: var(--bg-hover);
+            color: #e2e2e9;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .mensaje.usuario {
+            background: linear-gradient(135deg, var(--morado-maxi) 0%, #6a1b9a 100%);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .chat-input-area {
+            padding: 12px;
+            background-color: var(--bg-tarjeta);
+            border-top: 1px solid var(--borde-sutil);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            background-color: var(--bg-principal);
+            border: 1px solid var(--borde-sutil);
+            border-radius: 20px;
+            padding: 8px 16px;
+            color: white;
+            font-size: 0.88rem;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: var(--morado-maxi);
+        }
+
+        .btn-accion-chat {
+            background-color: var(--morado-maxi);
+            color: white;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.95rem;
+        }
+
+        .btn-accion-chat:hover {
+            background-color: var(--morado-brillo);
+            transform: scale(1.05);
+        }
+
+        .btn-voz {
+            background-color: #1c1c24;
+            border: 1px solid var(--borde-sutil);
+            color: var(--texto-mutated);
+        }
+
+        .btn-voz.escuchando {
+            background-color: var(--rojo-error);
+            color: white;
+            animation: pulsoVoz 1.2s infinite ease-in-out;
+            border-color: transparent;
+        }
+
+        @keyframes pulsoVoz {
+            0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 59, 48, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+        }
+
+        @media (max-width: 768px) {
+            .grid-paginas { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8rem; }
+            .chat-flotante { width: calc(100% - 40px); right: 20px; bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <h1>MaxiQueen OS <span>👑</span></h1>
+            <p style="color: var(--texto-mutated); font-size: 0.95rem;">Panel Operativo de Control y Acceso Directo</p>
+            <div class="buscador-wrapper">
+                <input type="text" id="inputBusqueda" class="buscador" placeholder="Buscar módulo, juego, crm, chat...">
+            </div>
+        </div>
+    </header>
+
+    <main id="contenedorModulos">
+        <div style="text-align: center; padding: 2rem; color: var(--texto-mutated);">Cargando componentes del ecosistema externo...</div>
+    </main>
+
+    <!-- VISUALIZADOR INTERNO DE MÓDULOS -->
+    <div id="modalVisor" class="modal-visor">
+        <div class="modal-visor-header">
+            <div class="modal-visor-titulo">
+                <span style="color: var(--morado-brillo);">⚡ Core Ejecución:</span>
+                <span id="visorNombreArchivo">archivo.html</span>
+            </div>
+            <button class="btn-cerrar-visor" onclick="cerrarModulo()">Cerrar Módulo</button>
+        </div>
+        <div class="iframe-contenedor">
+            <iframe id="iframeModulo" class="iframe-modulo" src=""></iframe>
+        </div>
+    </div>
+
+    <!-- CHAT DE ASISTENCIA INTEGRADO -->
+    <div id="chatWidget" class="chat-flotante">
+        <div class="chat-header" onclick="toggleChat()">
+            <div class="chat-header-titulo">
+                <span class="chat-status-dot"></span>
+                <span>MaxiQueen Core AI Asistente</span>
+            </div>
+            <button class="btn-toggle-chat" id="btnToggleChat">−</button>
+        </div>
+        <div class="chat-mensajes" id="chatMensajes">
+            <div class="mensaje sistema">
+                ¡Hola! He indexado los archivos desde tu base de datos externa. Puedes usar el botón de 🎙️ <strong>micrófono</strong> para dictarme tus comandos directamente sin necesidad de escribir.
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <button class="btn-accion-chat btn-voz" id="btnVoz" onclick="alternarEscuchaVoz()" title="Dictar por voz">🎤</button>
+            <input type="text" id="inputChat" class="chat-input" placeholder="Escribe o dicta tu consulta...">
+            <button class="btn-accion-chat" onclick="enviarMensajeChat()">➔</button>
+        </div>
+    </div>
+
+    <footer>
+        MaxiQueen OS v2.1 • Ecosistema Autónomo de Gestión Corporativa
+    </footer>
+
+    <!-- LLAMADA OBLIGATORIA AL ARCHIVO SEPARADO DE DATOS -->
+    <script src="./datos_modulos.js"></script>
+
+    <script>
+        const contenedor = document.getElementById('contenedorModulos');
+        const buscador = document.getElementById('inputBusqueda');
+        
+        // Configuración y validación del Reconocimiento de Voz
+        let reconocimientoVoz;
+        let estaEscuchando = false;
+        
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            reconocimientoVoz = new SpeechRecognition();
+            reconocimientoVoz.lang = 'es-ES';
+            reconocimientoVoz.continuous = false;
+            reconocimientoVoz.interimResults = false;
+
+            reconocimientoVoz.onstart = () => {
+                estaEscuchando = true;
+                document.getElementById('btnVoz').classList.add('escuchando');
+                document.getElementById('inputChat').placeholder = "Escuchando tu voz...";
+            };
+
+            reconocimientoVoz.onend = () => {
+                estaEscuchando = false;
+                document.getElementById('btnVoz').classList.remove('escuchando');
+                document.getElementById('inputChat').placeholder = "Escribe o dicta tu consulta...";
+            };
+
+            reconocimientoVoz.onresult = (evento) => {
+                const textoDictado = evento.results[0][0].transcript;
+                document.getElementById('inputChat').value = textoDictado;
+                enviarMensajeChat(); // Envía automáticamente al terminar de hablar
+            };
+
+            reconocimientoVoz.onerror = (e) => {
+                console.error("Error en Speech Recognition:", e.error);
+                cerrarVozUI();
+            };
+        } else {
+            document.getElementById('btnVoz').style.display = 'none';
+            console.log("El navegador actual no soporta reconocimiento de voz nativo.");
+        }
+
+        function alternarEscuchaVoz() {
+            if (!reconocimientoVoz) return;
+            if (estaEscuchando) {
+                reconocimientoVoz.stop();
+            } else {
+                reconocimientoVoz.start();
+            }
+        }
+
+        function cerrarVozUI() {
+            estaEscuchando = false;
+            document.getElementById('btnVoz').classList.remove('escuchando');
+        }
+
+        // Renderizador maestro basado en los datos cargados dinámicamente
+        function renderizarPanel(filtro = '') {
+            if (!window.baseDeDatosPaginas) {
+                contenedor.innerHTML = `<div style="text-align: center; padding: 3rem; color: var(--rojo-error);">Error crítico: No se encontró el archivo 'datos_modulos.js' o está mal configurado.</div>`;
+                return;
+            }
+
+            contenedor.innerHTML = '';
+            let hayResultadosGlobales = false;
+
+            window.baseDeDatosPaginas.forEach(modulo => {
+                const archivosFiltrados = modulo.archivos.filter(archivo => 
+                    archivo.name.toLowerCase().includes(filtro.toLowerCase()) || 
+                    archivo.desc.toLowerCase().includes(filtro.toLowerCase())
+                );
+
+                if (archivosFiltrados.length > 0) {
+                    hayResultadosGlobales = true;
+                    
+                    const seccion = document.createElement('section');
+                    seccion.className = 'seccion-modulo';
+
+                    const titulo = document.createElement('h2');
+                    titulo.className = 'seccion-titulo';
+                    titulo.innerHTML = `${modulo.categoria} <span>${archivosFiltrados.length}</span>`;
+                    seccion.appendChild(titulo);
+
+                    const grid = document.createElement('div');
+                    grid.className = 'grid-paginas';
+
+                    archivosFiltrados.forEach(archivo => {
+                        const ext = archivo.name.split('.').pop();
+                        let tagClass = 'html-tag';
+                        if(ext === 'py') tagClass = 'py-tag';
+                        if(ext === 'js') tagClass = 'js-tag';
+
+                        const tarjeta = document.createElement('div');
+                        tarjeta.className = 'tarjeta-link';
+                        tarjeta.onclick = () => abrirModulo(archivo.name);
+                        
+                        tarjeta.innerHTML = `
+                            <div>
+                                <div class="nombre-archivo">${archivo.name}</div>
+                                <div class="descripcion-commit">${archivo.desc}</div>
+                            </div>
+                            <div class="tag-tipo ${tagClass}">${ext}</div>
+                        `;
+                        grid.appendChild(tarjeta);
+                    });
+
+                    seccion.appendChild(grid);
+                    contenedor.appendChild(seccion);
+                }
+            });
+
+            if (!hayResultadosGlobales) {
+                contenedor.innerHTML = `<div style="text-align: center; padding: 3rem; color: var(--texto-mutated);">No se encontraron componentes con el término "${filtro}".</div>`;
+            }
+        }
+
+        function abrirModulo(nombreArchivo) {
+            const modal = document.getElementById('modalVisor');
+            const iframe = document.getElementById('iframeModulo');
+            const titulo = document.getElementById('visorNombreArchivo');
+            
+            titulo.textContent = nombreArchivo;
+            iframe.src = `./${nombreArchivo}`;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModulo() {
+            const modal = document.getElementById('modalVisor');
+            const iframe = document.getElementById('iframeModulo');
+            
+            modal.style.display = 'none';
+            iframe.src = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        function toggleChat() {
+            const chat = document.getElementById('chatWidget');
+            const btn = document.getElementById('btnToggleChat');
+            chat.classList.toggle('minimizado');
+            btn.textContent = chat.classList.contains('minimizado') ? '＋' : '－';
+        }
+
+        function enviarMensajeChat() {
+            const input = document.getElementById('inputChat');
+            const texto = input.value.trim();
+            if (!texto) return;
+
+            agregarMensajeUI(texto, 'usuario');
+            input.value = '';
+
+            setTimeout(() => {
+                const respuesta = procesarConsultaEstructurada(texto);
+                agregarMensajeUI(respuesta, 'sistema');
+            }, 500);
+        }
+
+        function agregarMensajeUI(texto, remitente) {
+            const contenedorMensajes = document.getElementById('chatMensajes');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `mensaje ${remitente}`;
+            msgDiv.innerHTML = texto;
+            contenedorMensajes.appendChild(msgDiv);
+            contenedorMensajes.scrollTop = contenedorMensajes.scrollHeight;
+        }
+
+        function procesarConsultaEstructurada(consulta) {
+            const query = consulta.toLowerCase();
+            let archivosEncontrados = [];
+
+            if (!window.baseDeDatosPaginas) return "Error de carga de base de datos.";
+
+            window.baseDeDatosPaginas.forEach(cat => {
+                cat.archivos.forEach(arc => {
+                    if (arc.name.toLowerCase().includes(query) || arc.desc.toLowerCase().includes(query)) {
+                        archivosEncontrados.push(arc);
+                    }
+                });
+            });
+
+            if (archivosEncontrados.length > 0) {
+                let htmlRes = `Módulos encontrados dinámicamente:<br><br>`;
+                archivosEncontrados.slice(0, 4).forEach(a => {
+                    htmlRes += `• <strong style="color:var(--morado-brillo); cursor:pointer;" onclick="cerrarChatYAbrir('${a.name}')">${a.name}</strong>: ${a.desc}<br>`;
+                });
+                return htmlRes;
+            }
+
+            return "Entendido. No encontré coincidencias exactas en la base de datos externa para esa palabra. Prueba diciendo cosas como 'ventas', 'sudoku' o el nombre del archivo.";
+        }
+
+        function cerrarChatYAbrir(nombreArchivo) {
+            const chat = document.getElementById('chatWidget');
+            chat.classList.add('minimizado');
+            document.getElementById('btnToggleChat').textContent = '＋';
+            abrirModulo(nombreArchivo);
+        }
+
+        buscador.addEventListener('input', (e) => {
+            renderizarPanel(e.target.value);
+        });
+
+        document.getElementById('inputChat').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') enviarMensajeChat();
+        });
+
+        // Carga inicial tras verificar la existencia del script externo
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => renderizarPanel(), 100);
+        });
+    </script>
+</body>
+</html>
