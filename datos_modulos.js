@@ -1,5 +1,5 @@
 // ==========================================================================
-// CONTENEDOR DE DATOS Y COMANDOS MAESTROS - MAXIQUEEN OS
+// CONTENEDOR DE DATOS Y COMANDOS MAESTROS - MAXIQUEEN OS v2.1
 // Modifica solo este archivo para añadir páginas o nuevos comandos de voz/texto.
 // ==========================================================================
 
@@ -141,24 +141,241 @@ window.baseDeDatosPaginas = [
     }
 ];
 
-// 2. NUEVA SECCIÓN DE COMANDOS PERSONALIZADOS
-// Aquí puedes agregar cualquier palabra clave que digas por voz o escribas en el chat
-// y definir qué debe responder el asistente automáticamente.
+// 2. COMANDOS PERSONALIZADOS - Ahora con funciones ejecutables
 window.comandosInteligentes = [
     {
         claves: ["hola", "buenos días", "buenas tardes", "saludos"],
-        respuesta: "¡Hola, César! El núcleo operativo de MaxiQueen OS está listo. ¿Qué módulo deseas desplegar o buscar hoy?"
+        respuesta: "¡Hola, César! El núcleo operativo de MaxiQueen OS está listo. ¿Qué módulo deseas desplegar o buscar hoy?",
+        accion: () => MQCore.hablar("Hola César, todos los sistemas listos.")
     },
     {
         claves: ["estado del sistema", "estatus", "cómo va todo"],
-        respuesta: "Todos los sistemas base están operando de forma óptima. Veo tus deploys correctos en el ecosistema y la sincronización lista."
+        respuesta: "Todos los sistemas base están operando de forma óptima. Veo tus deploys correctos en el ecosistema y la sincronización lista.",
+        accion: () => MQCore.estadoSistema()
     },
     {
         claves: ["limpiar", "borrar chat", "reiniciar"],
-        respuesta: "Entendido, reiniciando la consola conversacional..."
+        respuesta: "Entendido, reiniciando la consola conversacional...",
+        accion: () => MQCore.limpiarConsola()
     },
     {
         claves: ["ayuda", "qué puedes hacer", "comandos"],
-        respuesta: "Puedo buscar y abrir cualquier archivo por ti si mencionas su nombre (ej: 'abre sudoku', 'crm', 'ventas') o responder a los comandos que agregues en mi archivo de configuración."
+        respuesta: "Puedo buscar y abrir cualquier archivo por ti si mencionas su nombre, leer la página completa, buscar texto dentro del DOM, o responder a comandos. Di 'leer página' o 'busca X'.",
+        accion: () => MQCore.mostrarAyuda()
+    },
+    // NUEVOS COMANDOS CEREBRO
+    {
+        claves: ["leer página", "lee todo", "léeme esto"],
+        respuesta: "Iniciando lectura completa de la página actual...",
+        accion: () => MQCore.leerPaginaCompleta()
+    },
+    {
+        claves: ["para de hablar", "silencio", "cállate"],
+        respuesta: "De acuerdo, cancelando lectura de voz.",
+        accion: () => MQCore.detenerVoz()
+    },
+    {
+        claves: ["busca", "buscar", "encuentra"],
+        respuesta: "Dime qué texto quieres que busque en esta página.",
+        accion: (texto) => MQCore.buscarEnDOM(texto)
+    },
+    {
+        claves: ["abrir", "abre", "lanza", "ejecuta"],
+        respuesta: "Buscando módulo para abrir...",
+        accion: (texto) => MQCore.abrirModulo(texto)
+    },
+    {
+        claves: ["resumen", "resume la página"],
+        respuesta: "Analizando contenido para crear resumen...",
+        accion: () => MQCore.resumirPagina()
+    },
+    {
+        claves: ["cuántos módulos", "total archivos"],
+        respuesta: "Calculando total de módulos registrados...",
+        accion: () => MQCore.contarModulos()
     }
 ];
+
+// ==========================================================================
+// 3. NÚCLEO CEREBRO MQCore - NUEVAS FUNCIONES INTELIGENTES
+// ==========================================================================
+window.MQCore = {
+    voz: window.speechSynthesis,
+    lectorActual: null,
+    ultimaBusqueda: [],
+
+    // Lee texto con voz
+    hablar: function(texto) {
+        this.detenerVoz();
+        const utterance = new SpeechSynthesisUtterance(texto);
+        utterance.lang = 'es-CO';
+        utterance.rate = 1.1;
+        utterance.pitch = 1;
+        this.lectorActual = utterance;
+        this.voz.speak(utterance);
+        return texto;
+    },
+
+    detenerVoz: function() {
+        if (this.voz.speaking) this.voz.cancel();
+    },
+
+    // Lee toda la página sin salir de ella
+    leerPaginaCompleta: function() {
+        const elementos = document.querySelectorAll('h1, h2, h3, p, li, td, span, button, a');
+        let textoCompleto = '';
+        elementos.forEach(el => {
+            const txt = el.innerText.trim();
+            if (txt && txt.length > 3) textoCompleto += txt + '. ';
+        });
+        if (textoCompleto.length > 5000) {
+            this.hablar("La página es muy extensa. Te leo los primeros 5000 caracteres. " + textoCompleto.substring(0, 5000));
+        } else {
+            this.hablar(textoCompleto || "No encontré texto legible en esta página.");
+        }
+        return textoCompleto;
+    },
+
+    // Busca texto dentro del DOM actual y resalta resultados
+    buscarEnDOM: function(query) {
+        if (!query) return "¿Qué quieres que busque?";
+        this.limpiarResaltado();
+        const regex = new RegExp(query, 'gi');
+        let encontrados = 0;
+
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        const nodosTexto = [];
+        while (walker.nextNode()) nodosTexto.push(walker.currentNode);
+
+        nodosTexto.forEach(node => {
+            if (regex.test(node.nodeValue)) {
+                const span = document.createElement('mark');
+                span.style.background = '#FFD700';
+                span.style.color = '#000';
+                span.className = 'mq-highlight';
+                node.parentNode.replaceChild(span, node);
+                span.appendChild(node);
+                encontrados++;
+            }
+        });
+
+        const respuesta = `Encontré ${encontrados} coincidencias de "${query}" en la página.`;
+        this.hablar(respuesta);
+        return respuesta;
+    },
+
+    limpiarResaltado: function() {
+        document.querySelectorAll('.mq-highlight').forEach(mark => {
+            mark.outerHTML = mark.innerHTML;
+        });
+    },
+
+    // Abre módulo buscando por nombre aproximado
+    abrirModulo: function(nombre) {
+        if (!nombre) return "Dime el nombre del módulo.";
+        const nombreLimpio = nombre.toLowerCase().replace(/abrir|abre|lanza|ejecuta/g, '').trim();
+        let encontrado = null;
+
+        for (const cat of window.baseDeDatosPaginas) {
+            for (const archivo of cat.archivos) {
+                if (archivo.name.toLowerCase().includes(nombreLimpio) ||
+                    archivo.desc.toLowerCase().includes(nombreLimpio)) {
+                    encontrado = archivo;
+                    break;
+                }
+            }
+            if (encontrado) break;
+        }
+
+        if (encontrado) {
+            this.hablar(`Abriendo ${encontrado.name}. ${encontrado.desc}`);
+            window.open(encontrado.name, '_blank');
+            return `Abriendo: ${encontrado.name}`;
+        } else {
+            this.hablar(`No encontré ningún módulo llamado ${nombreLimpio}`);
+            return `Módulo no encontrado: ${nombreLimpio}`;
+        }
+    },
+
+    // Resume la página con IA básica
+    resumirPagina: function() {
+        const titulos = Array.from(document.querySelectorAll('h1, h2, h3')).map(h => h.innerText).slice(0, 5);
+        const parrafos = Array.from(document.querySelectorAll('p')).map(p => p.innerText).slice(0, 3);
+        let resumen = "Resumen de la página: ";
+        if (titulos.length) resumen += "Secciones: " + titulos.join(', ') + ". ";
+        if (parrafos.length) resumen += "Contenido: " + parrafos.join(' ').substring(0, 300) + "...";
+        this.hablar(resumen);
+        return resumen;
+    },
+
+    // Estado del sistema + módulos
+    estadoSistema: function() {
+        const total = this.contarModulos(true);
+        const estado = `Sistemas operativos. Tienes ${total} módulos registrados en ${window.baseDeDatosPaginas.length} categorías. Memoria del DOM: ${document.querySelectorAll('*').length} elementos.`;
+        this.hablar(estado);
+        return estado;
+    },
+
+    contarModulos: function(silencioso = false) {
+        let total = 0;
+        window.baseDeDatosPaginas.forEach(cat => total += cat.archivos.length);
+        if (!silencioso) this.hablar(`Total de módulos: ${total}`);
+        return total;
+    },
+
+    limpiarConsola: function() {
+        console.clear();
+        this.detenerVoz();
+        this.limpiarResaltado();
+        this.hablar("Consola reiniciada");
+    },
+
+    mostrarAyuda: function() {
+        const comandos = window.comandosInteligentes.map(c => c.claves[0]).join(', ');
+        this.hablar(`Comandos disponibles: ${comandos}. También puedo abrir archivos diciendo su nombre.`);
+    }
+};
+
+// ==========================================================================
+// 4. INTERPRETADOR DE COMANDOS - Ejecuta acciones automáticamente
+// ==========================================================================
+window.MQInterpretar = function(inputUsuario) {
+    const texto = inputUsuario.toLowerCase().trim();
+
+    // 1. Buscar en comandos inteligentes
+    for (const cmd of window.comandosInteligentes) {
+        for (const clave of cmd.claves) {
+            if (texto.includes(clave)) {
+                // Si el comando tiene acción, ejecutarla
+                if (cmd.accion) {
+                    // Extraer parámetro si existe: "busca clientes" -> "clientes"
+                    const parametro = texto.replace(clave, '').trim();
+                    const resultado = cmd.accion(parametro);
+                    return resultado || cmd.respuesta;
+                }
+                return cmd.respuesta;
+            }
+        }
+    }
+
+    // 2. Si no hay comando, intentar abrir módulo por nombre
+    return MQCore.abrirModulo(texto);
+};
+
+// Activar escucha de voz opcional
+window.MQEscuchar = function() {
+    if (!('webkitSpeechRecognition' in window)) {
+        return "Tu navegador no soporta reconocimiento de voz.";
+    }
+    const recognition = new webkitSpeechRecognition();
+    recognition.lang = 'es-CO';
+    recognition.continuous = false;
+    recognition.onresult = (event) => {
+        const comando = event.results[0][0].transcript;
+        console.log('Comando detectado:', comando);
+        const respuesta = window.MQInterpretar(comando);
+        MQCore.hablar(respuesta);
+    };
+    recognition.start();
+    return "Escuchando... di un comando.";
+};

@@ -709,46 +709,43 @@
         }
 
         function procesarConsultaEstructurada(consulta) {
-            const query = consulta.toLowerCase();
-            
-            // Buscar coincidencias directas en la estructura indexada
-            let categoriasEncontradas = [];
-            let archivosEncontrados = [];
-
-            baseDeDatosPaginas.forEach(cat => {
-                if (cat.categoria.toLowerCase().includes(query)) {
-                    categoriasEncontradas.push(cat);
+    const query = consulta.toLowerCase().trim();
+    
+    // 1. Primero verifica si coincide con un comando personalizado del archivo externo
+    if (window.comandosInteligentes) {
+        for (let cmd of window.comandosInteligentes) {
+            if (cmd.claves.some(clave => query.includes(clave.toLowerCase()))) {
+                // Comando especial para limpiar chat si el usuario lo pide
+                if (query.includes("limpiar") || query.includes("borrar chat")) {
+                    setTimeout(() => { document.getElementById('chatMensajes').innerHTML = ''; }, 1000);
                 }
-                cat.archivos.forEach(arc => {
-                    if (arc.name.toLowerCase().includes(query) || arc.desc.toLowerCase().includes(query)) {
-                        archivosEncontrados.push(arc);
-                    }
-                });
-            });
-
-            if (archivosEncontrados.length > 0) {
-                let htmlRes = `He localizado los siguientes componentes en el core:<br><br>`;
-                archivosEncontrados.slice(0, 4).forEach(a => {
-                    htmlRes += `• <strong style="color:var(--morado-brillo); cursor:pointer;" onclick="cerrarChatYAbrir('${a.name}')">${a.name}</strong>: ${a.desc}<br>`;
-                });
-                if (archivosEncontrados.length > 4) htmlRes += `<em>...y otros ${archivosEncontrados.length - 4} más. Usa el buscador principal para verlos todos.</em>`;
-                return htmlRes;
+                return cmd.respuesta;
             }
-
-            if (categoriasEncontradas.length > 0) {
-                return `He encontrado la sección estructurada: <strong>${categoriasEncontradas[0].categoria}</strong> que contiene ${categoriasEncontradas[0].archivos.length} archivos vinculados. Revisa el tablero central.`;
-            }
-
-            // Respuestas rápidas guiadas por palabras clave
-            if (query.includes('juego') || query.includes('arcade') || query.includes('sudoku')) {
-                return "El bloque <strong>MaxiQueen Arcade</strong> cuenta con 23 archivos, incluyendo las ediciones de <em>Sudoku MaxiQueen PRO</em> y <em>QueenTower</em>. ¿Quieres que busque un script específico?";
-            }
-            if (query.includes('crm') || query.includes('venta') || query.includes('cliente')) {
-                return "La sección de <strong>CRM y Ventas</strong> tiene mapeados componentes críticos como <em>CRM_PAG_FEB.html</em> y <em>ventas2026.html</em> conectados a Analytics.";
-            }
-
-            return "Entendido. No encuentro un archivo exacto con ese nombre, pero puedes usar la barra de búsqueda superior para filtrar todo el ecosistema de MaxiQueen OS en tiempo real.";
         }
+    }
+
+    // 2. Si no es un comando común, busca los archivos en la base de datos
+    let archivosEncontrados = [];
+    if (!window.baseDeDatosPaginas) return "Error de carga de base de datos.";
+
+    window.baseDeDatosPaginas.forEach(cat => {
+        cat.archivos.forEach(arc => {
+            if (arc.name.toLowerCase().includes(query) || arc.desc.toLowerCase().includes(query)) {
+                archivosEncontrados.push(arc);
+            }
+        });
+    });
+
+    if (archivosEncontrados.length > 0) {
+        let htmlRes = `Módulos encontrados dinámicamente:<br><br>`;
+        archivosEncontrados.slice(0, 5).forEach(a => {
+            htmlRes += `• <strong style="color:var(--morado-brillo); cursor:pointer;" onclick="cerrarChatYAbrir('${a.name}')">${a.name}</strong>: ${a.desc}<br>`;
+        });
+        return htmlRes;
+    }
+
+    return "Entendido. No encontré coincidencias exactas para esa instrucción. Recuerda que puedes configurar más respuestas automáticas directamente en tu archivo `datos_modulos.js`.";
+}
 
         function cerrarChatYAbrir(nombreArchivo) {
             const chat = document.getElementById('chatWidget');
