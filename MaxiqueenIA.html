@@ -766,5 +766,18 @@
         // Inicializar la carga de la página
         renderizarPanel();
     </script>
+
+    <input id="comandoMQ" placeholder="Escribe o habla un comando...">
+<button onclick="responder()">Enviar</button>
+<button onclick="MQEscuchar()">🎤 Hablar</button>
+
+<script>
+function responder() {
+    const input = document.getElementById('comandoMQ').value;
+    const respuesta = window.MQInterpretar(input);
+    console.log(respuesta);
+    // Aquí muestras la respuesta en tu chat
+}
+</script>
 </body>
 </html>
