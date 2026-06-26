@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAXIQUEEN OS - Retro Carrera AI Touch</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #030014;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+            touch-action: none;
+        }
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* CAPA UX premium: Glassmorphism / Modo Vidrio */
+        .mq-glass {
+            background: rgba(13, 8, 34, 0.65);
+            backdrop-filter: blur(14px) saturate(180%);
+            -webkit-backdrop-filter: blur(14px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            color: #ffffff;
+        }
+
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 5%;
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            z-index: 10;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            pointer-events: auto;
+        }
+
+        .mq-metric span {
+            color: #00ffcc;
+            font-family: monospace;
+            font-size: 22px;
+        }
+
+        /* Panel Inteligente Multimotor y Sistema de Voz */
+        #mq-ai-panel {
+            position: absolute;
+            bottom: 30px;
+            left: 5%;
+            width: 90%;
+            padding: 16px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .mq-ai-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mq-router-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        .mq-engine-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .mq-engine-badge.active {
+            background: linear-gradient(135deg, #00ee99 0%, #00aa66 100%);
+            color: #000;
+            box-shadow: 0 0 12px rgba(0, 238, 153, 0.4);
+            border: 1px solid transparent;
+        }
+
+        /* Control de voz optimizado para móviles */
+        #mq-voice-btn {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #7928CA 0%, #FF0080 100%);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(255, 0, 128, 0.4);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+        }
+
+        #mq-voice-btn:active, #mq-voice-btn.listening {
+            transform: scale(0.9);
+            box-shadow: 0 0 25px #FF0080, inset 0 0 10px rgba(255,255,255,0.5);
+            animation: pulse-border 1.5s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 128, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 0, 128, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 128, 0); }
+        }
+
+        #mq-log-stream {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            max-height: 40px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-style: italic;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 8px;
+        }
+
+        #game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 0, 20, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 20;
+            display: none;
+        }
+
+        #game-over-screen h1 {
+            font-size: 56px;
+            background: linear-gradient(to right, #ff3333, #ff0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+
+        #btn-restart {
+            padding: 14px 36px;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00ffcc 0%, #0099ff 100%);
+            color: #030014;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0,255,204,0.3);
+            transition: transform 0.2s ease;
+        }
+        #btn-restart:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div id="ui" class="mq-glass">
+        <div class="mq-metric">PUNTOS: <span id="score">0</span></div>
+        <div class="mq-metric">VEL: <span id="speed">100</span> <small>km/h</small></div>
+    </div>
+
+    <div id="mq-ai-panel" class="mq-glass">
+        <div class="mq-ai-row">
+            <div class="mq-router-container" id="mq-router">
+                <div class="mq-engine-badge active" data-engine="fast">⚡ Rápido</div>
+                <div class="mq-engine-badge" data-engine="smart">🧠 Inteligente</div>
+                <div class="mq-engine-badge" data-engine="code">💻 Programación</div>
+                <div class="mq-engine-badge" data-engine="creative">🎨 Creativo</div>
+            </div>
+            <button id="mq-voice-btn" title="Mantener presionado para hablar">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+        </div>
+        <div id="mq-log-stream">Ecosistema MaxiQueen OS Inicializado. Listo para recibir comandos por voz...</div>
+    </div>
+
+    <div id="game-over-screen">
+        <h1>¡CHOQUE!</h1>
+        <p style="font-size: 22px; margin-bottom: 25px;">Puntuación final: <span id="final-score" style="color:#00ffcc; font-weight:bold;">0</span></p>
+        <button id="btn-restart" onclick="resetGame()">Toca para reiniciar</button>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const speedEl = document.getElementById('speed');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const finalScoreEl = document.getElementById('final-score');
+        const logStream = document.getElementById('mq-log-stream');
+        const voiceBtn = document.getElementById('mq-voice-btn');
+
+        // Estado Global del Ecosistema MAXIQUEEN OS
+        let gameActive = true;
+        let score = 0;
+        let speed = 100; 
+        let distanceTraveled = 0;
+        const horizonY = window.innerHeight * 0.45; 
+        let roadLinesOffset = 0;
+
+        let playerX = 0; 
+        const playerY = window.innerHeight * 0.85;
+        let targetPlayerX = 0; 
+
+        let obstacles = [];
+        let spawnTimer = 0;
+        let minSpawnInterval = 80; 
+        const carColors = ['#ff3366', '#3333ff', '#ffff33', '#ff33ff', '#00ffcc'];
+
+        // Controles de entrada unificados
+        let isTouching = false;
+        let touchDirection = 0;
+
+        // CONFIGURACIÓN FASE 2: Router Multimotor Inteligente Automático
+        const AIRouter = {
+            currentEngine: 'fast',
+            engines: {
+                fast: { label: '⚡ Rápido', model: 'llama-3-fast' },
+                smart: { label: '🧠 Inteligente', model: 'gemini-1.5-pro' },
+                code: { label: '💻 Programación', model: 'codellama-70b' },
+                creative: { label: '🎨 Creativo', model: 'mixtral-8x22b' }
+            },
+            switchEngine(engineKey) {
+                this.currentEngine = engineKey;
+                document.querySelectorAll('.mq-engine-badge').forEach(badge => {
+                    badge.classList.toggle('active', badge.dataset.engine === engineKey);
+                });
+                AIRouter.log(`Cambiado a motor: ${this.engines[engineKey].label}`);
+            },
+            autoRoute(text) {
+                // Enrutador semántico en caliente
+                const input = text.toLowerCase();
+                if (input.includes('crea') || input.includes('escribe código') || input.includes('función') || input.includes('html') || input.includes('python')) {
+                    this.switchEngine('code');
+                } else if (input.includes('analiza') || input.includes('arquitectura') || input.includes('estrategia')) {
+                    this.switchEngine('smart');
+                } else if (input.includes('imagina') || input.includes('diseña') || input.includes('color')) {
+                    this.switchEngine('creative');
+                } else {
+                    this.switchEngine('fast');
+                }
+            },
+            log(msg) {
+                logStream.innerText = msg;
+            }
+        };
+
+        // Eventos del Enrutador Visual
+        document.getElementById('mq-router').addEventListener('click', (e) => {
+            if (e.target.classList.contains('mq-engine-badge')) {
+                AIRouter.switchEngine(e.target.dataset.engine);
+            }
+        });
+
+        // CONFIGURACIÓN FASE 3: Capa de Voz de Alta Fidelidad (STT + TTS)
+        const VoiceCore = {
+            recognition: null,
+            synthesis: window.speechSynthesis,
+            isListening: false,
+            init() {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                    AIRouter.log("Advertencia: API de voz no soportada en este navegador.");
+                    return;
+                }
+                this.recognition = new SpeechRecognition();
+                this.recognition.continuous = false;
+                this.recognition.lang = 'es-ES';
+                this.recognition.interimResults = false;
+
+                this.recognition.onstart = () => {
+                    this.isListening = true;
+                    voiceBtn.classList.add('listening');
+                    AIRouter.log("Escuchando comando MaxiQueen...");
+                };
+
+                this.recognition.onresult = (event) => {
+                    const speechToText = event.results[0][0].transcript;
+                    AIRouter.log(`Escuchado: "${speechToText}"`);
+                    AIRouter.autoRoute(speechToText);
+                    
+                    // Simular procesamiento del Agente de Inteligencia Artificial
+                    setTimeout(() => {
+                        this.speak(`Procesado con el motor ${AIRouter.engines[AIRouter.currentEngine].label}. Ejecutando en MaxiQueen OS.`);
+                    }, 600);
+                };
+
+                this.recognition.onerror = (e) => {
+                    AIRouter.log(`Error de voz: ${e.error}`);
+                    this.stop();
+                };
+
+                this.recognition.onend = () => {
+                    this.stop();
+                };
+            },
+            start() {
+                if (this.isListening) return;
+                this.synthesis.cancel(); // Detener lecturas previas
+                try { this.recognition.start(); } catch(e){}
+            },
+            stop() {
+                this.isListening = false;
+                voiceBtn.classList.remove('listening');
+            },
+            speak(text) {
+                if (!this.synthesis) return;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                utterance.rate = 1.0; // Velocidad refinada
+                
+                // Mapear voces del sistema para usar la más limpia disponible
+                const voices = this.synthesis.getVoices();
+                const premiumVoice = voices.find(v => v.lang.includes('es') && v.name.includes('Google'));
+                if (premiumVoice) utterance.voice = premiumVoice;
+
+                this.synthesis.speak(utterance);
+                AIRouter.log(`IA dice: ${text}`);
+            }
+        };
+
+        // Inicialización de voz
+        VoiceCore.init();
+
+        // Soporte de interacción Voz: Presionar y soltar (Push-to-Talk) adaptado para Mobile y Desktop
+        const startVoiceFlow = (e) => { e.preventDefault(); VoiceCore.start(); };
+        const endVoiceFlow = (e) => { e.preventDefault(); setTimeout(() => VoiceCore.recognition.stop(), 400); };
+
+        voiceBtn.addEventListener('mousedown', startVoiceFlow);
+        voiceBtn.addEventListener('mouseup', endVoiceFlow);
+        voiceBtn.addEventListener('touchstart', startVoiceFlow, {passive: false});
+        voiceBtn.addEventListener('touchend', endVoiceFlow, {passive: false});
+
+        // REDIMENSIONAMIENTO EFICIENTE DEL CANVAS
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // CONTROLES DE LA CARRERA
+        window.addEventListener('touchstart', (e) => {
+            if (!gameActive) return;
+            isTouching = true;
+            evaluateTouch(e.touches[0].clientX);
+        }, {passive: true});
+
+        window.addEventListener('touchmove', (e) => {
+            if (!gameActive) return;
+            evaluateTouch(e.touches[0].clientX);
+        }, {passive: true});
+
+        window.addEventListener('touchend', () => { isTouching = false; touchDirection = 0; });
+
+        window.addEventListener('keydown', (e) => {
+            if (['ArrowLeft', 'a', 'A'].includes(e.key)) { touchDirection = -1; isTouching = true; }
+            if (['ArrowRight', 'd', 'D'].includes(e.key)) { touchDirection = 1; isTouching = true; }
+        });
+        window.addEventListener('keyup', (e) => {
+            if (['ArrowLeft', 'ArrowRight', 'a', 'A', 'd', 'D'].includes(e.key)) { isTouching = false; touchDirection = 0; }
+        });
+
+        function evaluateTouch(clientX) {
+            touchDirection = clientX < window.innerWidth / 2 ? -1 : 1;
+        }
+
+        function spawnObstacle() {
+            const lanes = [-0.6, 0, 0.6];
+            const randomLane = lanes[Math.floor(Math.random() * lanes.length)];
+            obstacles.push({
+                laneX: randomLane,
+                z: 0,
+                color: carColors[Math.floor(Math.random() * carColors.length)],
+                speed: 0.015 + (score * 0.0004)
+            });
+        }
+
+        function resetGame() {
+            obstacles = [];
+            score = 0;
+            speed = 100;
+            playerX = 0;
+            targetPlayerX = 0;
+            scoreEl.innerText = score;
+            gameOverScreen.style.display = 'none';
+            gameActive = true;
+            animate();
+        }
+
+        function endGame() {
+            gameActive = false;
+            finalScoreEl.innerText = score;
+            gameOverScreen.style.display = 'flex';
+            VoiceCore.speak(`Colisión detectada. Tu puntuación final es de ${score} puntos.`);
+        }
+
+        // BUCLE MECÁNICA DE JUEGO (PROCESAMIENTO DE FÍSICAS REFINADO)
+        function update() {
+            if (!gameActive) return;
+
+            distanceTraveled += 1;
+            if (distanceTraveled % 10 === 0) {
+                score += 1;
+                scoreEl.innerText = score;
+                if (speed < 240) speed += 0.5;
+                speedEl.innerText = Math.floor(speed);
+            }
+
+            if (isTouching) targetPlayerX += touchDirection * 0.07;
+            if (!isTouching) targetPlayerX *= 0.93;
+
+            targetPlayerX = Math.max(-0.9, Math.min(0.9, targetPlayerX));
+            playerX += (targetPlayerX - playerX) * 0.25;
+
+            roadLinesOffset += (speed * 0.06);
+            if (roadLinesOffset > 70) roadLinesOffset = 0;
+
+            spawnTimer++;
+            let dynamicInterval = Math.max(30, minSpawnInterval - Math.floor(score / 6));
+            if (spawnTimer > dynamicInterval) {
+                spawnObstacle();
+                spawnTimer = 0;
+            }
+
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                let obs = obstacles[i];
+                obs.z += obs.speed;
+
+                let scale = obs.z;
+                let obsY = horizonY + (canvas.height - horizonY) * scale;
+                let roadWidthAtZ = canvas.width * 0.9 * scale;
+                let obsX = (canvas.width / 2) + (obs.laneX * roadWidthAtZ);
+
+                // Caja de colisión avanzada
+                if (obs.z >= 0.76 && obs.z <= 0.94) {
+                    let playerActualX = (canvas.width / 2) + (playerX * (canvas.width * 0.9 * 0.85));
+                    let carWidthAtCollision = canvas.width * 0.24;
+                    if (Math.abs(obsX - playerActualX) < carWidthAtCollision * 0.48) {
+                        endGame();
+                        return;
+                    }
+                }
+
+                if (obs.z > 1.3) obstacles.splice(i, 1);
+            }
+        }
+
+        // RENDERIZADO ALTO RENDIMIENTO (BAJO CONSUMO DE RAM)
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Cielo Nocturno Gradiente
+            let skyGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
+            skyGrad.addColorStop(0, '#02000a');
+            skyGrad.addColorStop(1, '#0f0926');
+            ctx.fillStyle = skyGrad;
+            ctx.fillRect(0, 0, canvas.width, horizonY);
+
+            // Montañas de Horizonte Estilizadas Cyberpunk
+            ctx.fillStyle = '#070314';
+            ctx.beginPath();
+            ctx.moveTo(0, horizonY);
+            ctx.lineTo(canvas.width * 0.15, horizonY - 35);
+            ctx.lineTo(canvas.width * 0.35, horizonY - 10);
+            ctx.lineTo(canvas.width * 0.55, horizonY - 45);
+            ctx.lineTo(canvas.width * 0.80, horizonY - 15);
+            ctx.lineTo(canvas.width, horizonY);
+            ctx.fill();
+
+            // Laterales de Carretera (Césped Oscuro)
+            let groundGrad = ctx.createLinearGradient(0, horizonY, 0, canvas.height);
+            groundGrad.addColorStop(0, '#040b12');
+            groundGrad.addColorStop(1, '#081711');
+            ctx.fillStyle = groundGrad;
+            ctx.fillRect(0, horizonY, canvas.width, canvas.height - horizonY);
+
+            // Pista en Perspectiva
+            ctx.fillStyle = '#14121f';
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2 - 15, horizonY);
+            ctx.lineTo(canvas.width / 2 + 15, horizonY);
+            ctx.lineTo(canvas.width * 0.98, canvas.height);
+            ctx.lineTo(canvas.width * 0.02, canvas.height);
+            ctx.closePath();
+            ctx.fill();
+
+            // Líneas de Carretera Laterales Neón
+            ctx.strokeStyle = 'rgba(0, 255, 204, 0.5)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2 - 15, horizonY);
+            ctx.lineTo(canvas.width * 0.02, canvas.height);
+            ctx.moveTo(canvas.width / 2 + 15, horizonY);
+            ctx.lineTo(canvas.width * 0.98, canvas.height);
+            ctx.stroke();
+
+            // Línea Segmentada Central
+            ctx.save();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 5;
+            ctx.setLineDash([40, 50]);
+            ctx.lineDashOffset = -roadLinesOffset;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, horizonY);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+            ctx.restore();
+
+            // Dibujar Enemigos Proyectados 3D
+            obstacles.forEach(obs => {
+                let scale = obs.z;
+                if (scale <= 0.02) return;
+
+                let obsY = horizonY + (canvas.height - horizonY) * scale;
+                let roadWidthAtZ = canvas.width * 0.9 * scale;
+                let obsX = (canvas.width / 2) + (obs.laneX * roadWidthAtZ);
+
+                let carW = canvas.width * 0.24 * scale;
+                let carH = canvas.height * 0.12 * scale;
+
+                ctx.fillStyle = 'rgba(0,0,0,0.45)';
+                ctx.fillRect(obsX - carW/2, obsY - carH*0.15, carW, carH*0.25);
+
+                ctx.fillStyle = obs.color;
+                ctx.fillRect(obsX - carW / 2, obsY - carH, carW, carH * 0.65); 
+
+                ctx.fillStyle = '#05030a';
+                ctx.fillRect(obsX - carW * 0.38, obsY - carH * 0.45, carW * 0.76, carH * 0.35); 
+
+                // Luces de frente neón
+                ctx.fillStyle = '#ffff33';
+                ctx.beginPath();
+                ctx.arc(obsX - carW * 0.33, obsY - carH * 0.2, carW * 0.07, 0, Math.PI * 2);
+                ctx.arc(obsX + carW * 0.33, obsY - carH * 0.2, carW * 0.07, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Dibujar Jugador
+            let playerScale = 0.85;
+            let playerActualWidth = canvas.width * 0.25;
+            let playerActualHeight = canvas.height * 0.13;
+            let roadWidthAtPlayer = canvas.width * 0.9 * playerScale;
+            let playerScreenX = (canvas.width / 2) + (playerX * roadWidthAtPlayer);
+
+            // Sombra Jugador
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.fillRect(playerScreenX - playerActualWidth/2, playerY - playerActualHeight*0.1, playerActualWidth, playerActualHeight * 0.3);
+
+            // Cuerpo Deportivo (Color corporativo MaxiQueen OS Premium)
+            ctx.fillStyle = '#00ffaa';
+            ctx.fillRect(playerScreenX - playerActualWidth / 2, playerY - playerActualHeight * 0.75, playerActualWidth, playerActualHeight * 0.5);
+
+            ctx.fillStyle = '#006644';
+            ctx.fillRect(playerScreenX - playerActualWidth * 0.32, playerY - playerActualHeight * 1.05, playerActualWidth * 0.64, playerActualHeight * 0.35);
+            ctx.fillStyle = '#a6f3ff'; 
+            ctx.fillRect(playerScreenX - playerActualWidth * 0.25, playerY - playerActualHeight * 1.0, playerActualWidth * 0.5, playerActualHeight * 0.22);
+
+            // Alerón Carbono
+            ctx.fillStyle = '#0b0914';
+            ctx.fillRect(playerScreenX - playerActualWidth * 0.54, playerY - playerActualHeight * 0.9, playerActualWidth * 1.08, playerActualHeight * 0.07);
+
+            // Luces Traseras de Freno Led
+            ctx.fillStyle = '#ff0055';
+            ctx.fillRect(playerScreenX - playerActualWidth * 0.46, playerY - playerActualHeight * 0.7, playerActualWidth * 0.14, playerActualHeight * 0.08);
+            ctx.fillRect(playerScreenX + playerActualWidth * 0.32, playerY - playerActualHeight * 0.7, playerActualWidth * 0.14, playerActualHeight * 0.08);
+        }
+
+        // CONTROL DE ANIMACIÓN OPTIMIZADO
+        function animate() {
+            update();
+            draw();
+            if (gameActive) {
+                requestAnimationFrame(animate);
+            }
+        }
+
+        // Ejecución inmediata del bucle central
+        animate();
+    </script>
+</body>
+</html>
