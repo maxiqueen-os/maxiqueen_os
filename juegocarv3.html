@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAXIQUEEN OS - Quantum Drive Premium</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;700;800&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html {
+            width: 100%; height: 100%; overflow: hidden;
+            background-color: #000005;
+            font-family: 'Inter', -apple-system, sans-serif;
+            user-select: none; touch-action: none;
+        }
+        
+        canvas {
+            display: block; width: 100vw; height: 100vh;
+            position: absolute; top: 0; left: 0; z-index: 1;
+            /* Optimización Fase 1: Evitar filtros CSS pesados, el color se maneja en el render loop */
+        }
+
+        .mq-hud {
+            background: radial-gradient(ellipse at center, rgba(2, 6, 16, 0.75) 0%, rgba(0, 2, 8, 0.9) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 255, 200, 0.12);
+            border-radius: 20px; color: #e0f8ff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+            /* Optimización Fase 1: Uso de transformaciones GPU */
+            transform: translateZ(0); 
+        }
+
+        #ui-top {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            width: min(92%, 650px); display: grid; grid-template-columns: 1fr auto 1fr;
+            align-items: center; padding: 12px 24px; z-index: 10;
+        }
+
+        .mq-metric { font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8; }
+        .mq-metric span {
+            display: block; color: #00ffc8; font-family: 'JetBrains Mono', monospace;
+            font-size: 30px; font-weight: 800; text-shadow: 0 0 12px rgba(0, 255, 200, 0.4); margin-top: 2px;
+        }
+        .mq-metric.right { text-align: right; }
+        .mq-metric.right span { color: #38bdf8; text-shadow: 0 0 12px rgba(56, 189, 248, 0.4); }
+
+        #speedometer { position: relative; width: 90px; height: 90px; }
+        #speedometer canvas { position: absolute; width: 100%; height: 100%; }
+
+        #mq-ai-panel {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: min(95%, 800px); padding: 16px; z-index: 10;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+
+        .mq-ai-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .mq-router-container { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-start; flex: 1; }
+
+        .mq-engine-badge {
+            padding: 8px 14px; border-radius: 10px; font-size: 11px; font-weight: 700;
+            font-family: 'JetBrains Mono', monospace; background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06); color: #94a3b8;
+            transition: all 0.25s ease; cursor: pointer;
+        }
+
+        .mq-engine-badge.active {
+            background: linear-gradient(135deg, var(--btn-c1, #00ffc8) 0%, var(--btn-c2, #008866) 100%);
+            color: #000; box-shadow: 0 0 15px var(--btn-shadow, rgba(0, 255, 200, 0.4));
+            border: 1px solid transparent; transform: translateY(-1px);
+        }
+
+        #mq-voice-btn {
+            flex-shrink: 0; width: 56px; height: 56px; border-radius: 50%;
+            border: 1px solid rgba(244, 63, 94, 0.4); background: radial-gradient(circle, #1e1b4b 0%, #4c1d95 100%);
+            color: #f43f5e; cursor: pointer; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.15); transition: all 0.3s ease; position: relative;
+        }
+
+        #mq-voice-btn::before {
+            content: ''; position: absolute; inset: -3px; border-radius: 50%;
+            border: 2px dashed #f43f5e; opacity: 0; transition: opacity 0.3s; animation: spin 4s linear infinite;
+        }
+
+        #mq-voice-btn.listening { color: #fff; box-shadow: 0 0 25px #f43f5e; border-color: transparent; }
+        #mq-voice-btn.listening::before { opacity: 0.8; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        #mq-voice-btn:active { transform: scale(0.92); }
+
+        #mq-log-stream {
+            font-size: 12px; color: #a1a1aa; font-family: 'JetBrains Mono', monospace;
+            min-height: 18px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 8px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        #mq-log-stream::before { content: '>'; color: #00ffc8; font-weight: bold; margin-right: 6px; }
+
+        #game-over-screen {
+            position: absolute; inset: 0; background: radial-gradient(circle, rgba(15, 0, 5, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            color: white; z-index: 100;
+        }
+
+        #game-over-screen h1 {
+            font-family: 'JetBrains Mono', monospace; font-size: clamp(40px, 8vw, 70px);
+            background: linear-gradient(135deg, #ff0055 0%, #ff0000 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; font-weight: 900; letter-spacing: -2px;
+        }
+
+        #btn-restart {
+            padding: 16px 40px; font-size: 15px; font-family: 'JetBrains Mono', monospace; font-weight: 700;
+            background: linear-gradient(135deg, #00ffc8 0%, #06b6d4 100%); color: #000;
+            border: none; border-radius: 12px; cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0, 255, 200, 0.3); transition: transform 0.2s ease;
+        }
+        #btn-restart:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div id="ui-top" class="mq-hud">
+        <div class="mq-metric">Score <span id="score">0</span></div>
+        <div id="speedometer"><canvas id="speedCanvas" width="90" height="90"></canvas></div>
+        <div class="mq-metric right">Distancia <span id="distance">0m</span></div>
+    </div>
+
+    <div id="mq-ai-panel" class="mq-hud">
+        <div class="mq-ai-row">
+            <div class="mq-router-container" id="mq-router">
+                <div class="mq-engine-badge active" data-engine="drive">🏎️ Drive</div>
+                <div class="mq-engine-badge" data-engine="tactical">🎯 Tactical</div>
+                <div class="mq-engine-badge" data-engine="neural">🧠 Neural</div>
+                <div class="mq-engine-badge" data-engine="quantum">⚛️ Quantum</div>
+                <div class="mq-engine-badge" data-engine="infinity">🌌 Infinity</div>
+                <div class="mq-engine-badge" data-engine="hyper">🔥 Hyper</div>
+            </div>
+            <button id="mq-voice-btn" title="Presionar para comando">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+        </div>
+        <div id="mq-log-stream">Sistemas MAXIQUEEN iniciados. Di "turbo" o "lluvia".</div>
+    </div>
+
+    <div id="game-over-screen">
+        <h1>SISTEMA OFFLINE</h1>
+        <p style="font-family: 'JetBrains Mono'; font-size: 16px; margin-bottom: 30px; color: #a1a1aa;">DATA RECOVERY: <span id="final-score" style="color:#00ffc8; font-weight:bold;">0</span> PTS</p>
+        <button id="btn-restart">REINICIAR NÚCLEO</button>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        // FASE 1: Limpieza y Optimización de Contextos (evitar lookups en el loop)
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+        const speedCanvas = document.getElementById('speedCanvas');
+        const speedCtx = speedCanvas.getContext('2d', { alpha: true });
+        const domScore = document.getElementById('score');
+        const domDist = document.getElementById('distance');
+        const domLog = document.getElementById('mq-log-stream');
+        
+        let W = window.innerWidth;
+        let H = window.innerHeight;
+        canvas.width = W; canvas.height = H;
+
+        // FASE 4: Preset Engines Expandido
+        const enginesPreset = {
+            drive: { maxSpeed: 280, acceleration: 0.8, friction: 0.96, lateralFriction: 0.88, color1: '#00ffc8', color2: '#008866', shadow: '#00ffc8' },
+            tactical: { maxSpeed: 240, acceleration: 1.1, friction: 0.95, lateralFriction: 0.74, color1: '#00a8ff', color2: '#0044cc', shadow: '#00a8ff' },
+            neural: { maxSpeed: 320, acceleration: 1.4, friction: 0.97, lateralFriction: 0.91, color1: '#a800ff', color2: '#5500aa', shadow: '#a800ff' },
+            quantum: { maxSpeed: 390, acceleration: 2.2, friction: 0.98, lateralFriction: 0.95, color1: '#ff00aa', color2: '#aa0055', shadow: '#ff00aa' },
+            infinity: { maxSpeed: 460, acceleration: 2.8, friction: 0.99, lateralFriction: 0.97, color1: '#e0e7ff', color2: '#6366f1', shadow: '#c7d2fe' },
+            hyper: { maxSpeed: 550, acceleration: 3.5, friction: 0.995, lateralFriction: 0.92, color1: '#ef4444', color2: '#f97316', shadow: '#fbbf24' }
+        };
+        let activeEngine = 'drive';
+
+        const Game = {
+            active: true, score: 0, distance: 0, speed: 0,
+            maxSpeed: enginesPreset.drive.maxSpeed,
+            acceleration: enginesPreset.drive.acceleration,
+            friction: enginesPreset.drive.friction,
+            lateralFriction: enginesPreset.drive.lateralFriction,
+            time: 0, deltaTime: 0, lastTime: 0, screenShake: 0, slowMo: 1,
+            isTurbo: false, turboSpeed: 600
+        };
+
+        const Player = { x: 0, y: H * 0.82, vx: 0, targetX: 0, width: W * 0.1, height: H * 0.12, angle: 0 };
+        const Camera = { shakeX: 0, shakeY: 0 };
+        
+        // FASE 3: Entorno y Ciclos (Clima y Partículas Optimizadas)
+        const Environment = { weather: 'normal', fogDensity: 0.8 };
+        let obstacles = []; let particles = []; let stars = []; let cityLights = []; let rainDrops = [];
+
+        // FASE 1 & 5: Audio Engine Seguro (Previene memory leaks)
+        const AudioEngine = {
+            ctx: null, engineOsc: null, engineGain: null,
+            init() {
+                if (this.ctx) return;
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                this.engineOsc = this.ctx.createOscillator();
+                this.engineGain = this.ctx.createGain();
+                this.engineOsc.type = 'sawtooth';
+                this.engineOsc.frequency.value = 40;
+                this.engineGain.gain.value = 0; // Inicia mudo
+                this.engineOsc.connect(this.engineGain).connect(this.ctx.destination);
+                this.engineOsc.start();
+            },
+            updateRPM(speed) {
+                if (!this.ctx || this.ctx.state !== 'running') return;
+                const rpm = 45 + (speed / Game.maxSpeed) * 150;
+                this.engineOsc.frequency.setTargetAtTime(rpm, this.ctx.currentTime, 0.1);
+                this.engineGain.gain.setTargetAtTime(0.02 + (speed / Game.maxSpeed) * 0.08, this.ctx.currentTime, 0.1);
+            },
+            uiBeep(type = 'start') {
+                if (!this.ctx) this.init();
+                const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(type === 'start' ? 600 : 400, this.ctx.currentTime);
+                if(type === 'start') osc.frequency.exponentialRampToValueAtTime(800, this.ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+                osc.connect(gain).connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.1);
+            },
+            playCrash() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(100, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(20, this.ctx.currentTime + 0.4);
+                gain.gain.setValueAtTime(0.4, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+                osc.connect(gain).connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.4);
+            }
+        };
+
+        // FASE 5: Sistema de Voz Refinado (Manejo de Cola e Interrupción)
+        const VoiceSystem = {
+            recognition: null, synthesis: window.speechSynthesis, listening: false,
+            init() {
+                const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SR) return;
+                this.recognition = new SR();
+                this.recognition.continuous = true;
+                this.recognition.interimResults = false;
+                this.recognition.lang = 'es-CO';
+
+                this.recognition.onresult = (e) => {
+                    const transcript = e.results[e.resultIndex][0].transcript.toLowerCase().trim();
+                    domLog.textContent = `IA CMD: "${transcript}"`;
+
+                    if (transcript.includes('turbo') || transcript.includes('boost')) {
+                        Game.isTurbo = true;
+                        Game.speed = Math.min(Game.turboSpeed, Game.speed + 150);
+                        Game.screenShake = 15;
+                        this.speak('Inyección cuántica activa');
+                        haptic(150);
+                        setTimeout(() => Game.isTurbo = false, 3000);
+                    }
+                    if (transcript.includes('frena') || transcript.includes('stop')) {
+                        Game.speed *= 0.4;
+                        this.speak('Frenado de emergencia');
+                    }
+                    if (transcript.includes('lluvia') || transcript.includes('clima')) {
+                        Environment.weather = Environment.weather === 'normal' ? 'rain' : 'normal';
+                        this.speak(`Modo de clima cambiado`);
+                        initRain();
+                    }
+                    if (transcript.includes('izquierda')) Player.targetX = -0.75;
+                    if (transcript.includes('derecha')) Player.targetX = 0.75;
+                    if (transcript.includes('centro')) Player.targetX = 0;
+                };
+
+                this.recognition.onend = () => { if (this.listening) this.recognition.start(); };
+            },
+            start() {
+                if (!this.recognition) return;
+                this.listening = true;
+                try { this.recognition.start(); } catch(e){}
+                document.getElementById('mq-voice-btn').classList.add('listening');
+                AudioEngine.uiBeep('start');
+                if (AudioEngine.ctx && AudioEngine.ctx.state === 'suspended') AudioEngine.ctx.resume();
+            },
+            stop() {
+                this.listening = false;
+                if (this.recognition) this.recognition.stop();
+                document.getElementById('mq-voice-btn').classList.remove('listening');
+                AudioEngine.uiBeep('stop');
+            },
+            speak(text) {
+                this.synthesis.cancel(); // FASE 5: Detener lectura anterior inmediatamente
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'es-CO'; utter.rate = 1.3; utter.pitch = 1.1;
+                this.synthesis.speak(utter);
+            }
+        };
+
+        function haptic(ms) { if (navigator.vibrate) navigator.vibrate(ms); }
+
+        // Inicialización de Escenario (Estrellas y Ciudad)
+        for (let i = 0; i < 150; i++) stars.push({ x: Math.random()*W, y: Math.random()*H*0.4, size: Math.random()*1.5+0.5 });
+        for (let i = 0; i < 40; i++) cityLights.push({ x: Math.random()*W, y: H*0.35 + Math.random()*H*0.1, w: Math.random()*4+1, h: Math.random()*30+10, color: `hsl(${180+Math.random()*60}, 90%, 60%)` });
+
+        function initRain() {
+            rainDrops = [];
+            if (Environment.weather === 'rain') {
+                for(let i=0; i<200; i++) rainDrops.push({ x: Math.random()*W, y: Math.random()*H, l: Math.random()*20+10, v: Math.random()*15+15 });
+            }
+        }
+
+        // FASE 1: Event Listeners consolidados (Debounce/Throttle natural en el frame)
+        let keys = {};
+        window.addEventListener('keydown', e => { 
+            keys[e.key.toLowerCase()] = true; 
+            if(e.key === ' ' || e.key === 'Shift') { Game.isTurbo = true; Game.screenShake = 10; setTimeout(()=> Game.isTurbo=false, 2000); }
+            if(!AudioEngine.ctx) AudioEngine.init();
+        });
+        window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+        let touchStartX = 0;
+        canvas.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; if(!AudioEngine.ctx) AudioEngine.init(); }, {passive: true});
+        canvas.addEventListener('touchmove', e => { Player.targetX = Math.max(-0.9, Math.min(0.9, (e.touches[0].clientX - touchStartX)/(W*0.3))); }, {passive: true});
+        canvas.addEventListener('touchend', () => Player.targetX *= 0.5, {passive: true});
+
+        // Router Panel IA Logic
+        document.getElementById('mq-router').addEventListener('click', (e) => {
+            const badge = e.target.closest('.mq-engine-badge');
+            if (!badge) return;
+            document.querySelectorAll('.mq-engine-badge').forEach(b => {
+                b.classList.remove('active');
+                b.style.cssText = ''; 
+            });
+            
+            activeEngine = badge.dataset.engine;
+            const settings = enginesPreset[activeEngine];
+            
+            // FASE 4: Actualización de Variables CSS para UI dinámica
+            badge.classList.add('active');
+            badge.style.setProperty('--btn-c1', settings.color1);
+            badge.style.setProperty('--btn-c2', settings.color2);
+            badge.style.setProperty('--btn-shadow', settings.shadow);
+
+            Game.maxSpeed = settings.maxSpeed;
+            Game.acceleration = settings.acceleration;
+            Game.friction = settings.friction;
+            Game.lateralFriction = settings.lateralFriction;
+
+            domLog.textContent = `Núcleo de control transferido a IA: ${activeEngine.toUpperCase()}`;
+            haptic(50);
+            if (AudioEngine.ctx && AudioEngine.ctx.state === 'suspended') AudioEngine.ctx.resume();
+        });
+
+        // Controles de Voz UI
+        const btnVoz = document.getElementById('mq-voice-btn');
+        btnVoz.addEventListener('mousedown', () => VoiceSystem.start());
+        btnVoz.addEventListener('mouseup', () => VoiceSystem.stop());
+        btnVoz.addEventListener('touchstart', e => { e.preventDefault(); VoiceSystem.start(); });
+        btnVoz.addEventListener('touchend', e => { e.preventDefault(); VoiceSystem.stop(); });
+
+        document.getElementById('btn-restart').addEventListener('click', resetGame);
+
+        // Lógica de Partículas y Obstáculos
+        function spawnObstacle() {
+            obstacles.push({ x: (Math.floor(Math.random()*3)-1)*0.6, z: 0, width: W*0.07, height: H*0.08, color: `hsl(${Math.random()*360}, 80%, 50%)`, speed: 0.015 + Math.random()*0.01 });
+        }
+
+        function createParticles(x, y, count, color) {
+            for (let i = 0; i < count; i++) {
+                particles.push({ x, y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*10 - 2, life: 1, size: Math.random()*4+1, color });
+            }
+        }
+
+        function resetGame() {
+            Game.active = true; Game.score = 0; Game.distance = 0; Game.speed = 0; Game.screenShake = 0;
+            Player.x = 0; Player.targetX = 0; Player.vx = 0; obstacles = []; particles = [];
+            document.getElementById('game-over-screen').style.display = 'none';
+            VoiceSystem.speak('Reiniciando chasis cibernético.');
+        }
+
+        // --- UPDATE LOOP ---
+        function update(dt) {
+            if (!Game.active) return;
+            Game.deltaTime = dt * Game.slowMo;
+
+            let currentTopSpeed = Game.isTurbo ? Game.turboSpeed : Game.maxSpeed;
+            
+            // Físicas Base
+            if (keys['arrowleft'] || keys['a']) Player.targetX = Math.max(-0.9, Player.targetX - 0.06);
+            if (keys['arrowright'] || keys['d']) Player.targetX = Math.min(0.9, Player.targetX + 0.06);
+            if (keys['arrowup'] || keys['w']) Game.speed = Math.min(currentTopSpeed, Game.speed + Game.acceleration);
+            if (keys['arrowdown'] || keys['s']) Game.speed = Math.max(0, Game.speed - Game.acceleration * 2.5);
+            if (!keys['arrowleft'] && !keys['arrowright'] && !keys['a'] && !keys['d']) Player.targetX *= 0.92;
+
+            Player.vx += (Player.targetX - Player.x) * 0.18;
+            Player.vx *= Game.lateralFriction;
+            Player.x += Player.vx * Game.deltaTime * 60;
+            Player.x = Math.max(-0.9, Math.min(0.9, Player.x));
+
+            Player.angle = Player.vx * 0.12;
+            
+            if (!keys['arrowup'] && !keys['w']) Game.speed *= Game.friction;
+            Game.distance += Game.speed * Game.deltaTime * 0.1;
+            Game.score = Math.floor(Game.distance);
+
+            // Generación de Chispas (Derrape)
+            if(Math.abs(Player.vx) > 0.015 && Game.speed > 100 && Math.random() > 0.5) {
+                createParticles(W/2 + Player.x*W*0.4 + (Player.vx < 0 ? 30 : -30), H*0.88, 1, enginesPreset[activeEngine].color1);
+            }
+
+            Camera.shakeX *= 0.85; Camera.shakeY *= 0.85;
+            if (Game.speed > 200) {
+                let intensity = Game.isTurbo ? (Game.speed/60) : (Game.speed/120);
+                Camera.shakeX += (Math.random()-0.5) * intensity; Camera.shakeY += (Math.random()-0.5) * intensity;
+            }
+
+            if (Math.random() < 0.02 + (Game.speed/12000)) spawnObstacle();
+
+            // Actualización de Obstáculos (Z-Buffer logic)
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                let obs = obstacles[i];
+                obs.z += (obs.speed + Game.speed/4500) * Game.deltaTime * 60;
+
+                if (obs.z > 0.78 && obs.z < 0.96) {
+                    let playerScreenX = W/2 + Player.x * W * 0.4;
+                    let obsScreenX = W/2 + obs.x * W * 0.4 * obs.z; 
+                    let scaledObsWidth = obs.width * obs.z;
+                    if (Math.abs(playerScreenX - obsScreenX) < (Player.width*0.8 + scaledObsWidth) * 0.4) {
+                        gameOver(); return;
+                    }
+                }
+                if (obs.z > 1.2) obstacles.splice(i, 1);
+            }
+
+            // Actualización Partículas y Clima
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx; p.y += p.vy; p.vy += 0.4; p.life -= 0.03;
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+
+            if(Environment.weather === 'rain') {
+                rainDrops.forEach(r => {
+                    r.y += r.v + (Game.speed*0.1);
+                    if(r.y > H) { r.y = 0; r.x = Math.random()*W; }
+                });
+            }
+
+            // Sync UI DOM
+            domScore.textContent = Game.score;
+            domDist.textContent = Math.floor(Game.distance) + 'm';
+            drawSpeedometerHUD();
+            AudioEngine.updateRPM(Game.speed);
+        }
+
+        function drawSpeedometerHUD() {
+            speedCtx.clearRect(0, 0, 90, 90); speedCtx.save(); speedCtx.translate(45, 45);
+            speedCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)'; speedCtx.lineWidth = 6;
+            speedCtx.beginPath(); speedCtx.arc(0, 0, 36, Math.PI*0.8, Math.PI*2.2); speedCtx.stroke();
+
+            const cTheme = enginesPreset[activeEngine];
+            const max = Game.isTurbo ? Game.turboSpeed : Game.maxSpeed;
+            const angle = Math.PI*0.8 + Math.min(Game.speed/max, 1) * Math.PI*1.4;
+            
+            speedCtx.strokeStyle = cTheme.color1; speedCtx.lineWidth = 6; speedCtx.lineCap = 'round';
+            speedCtx.shadowBlur = 10; speedCtx.shadowColor = cTheme.color1;
+            speedCtx.beginPath(); speedCtx.arc(0, 0, 36, Math.PI*0.8, angle); speedCtx.stroke();
+
+            speedCtx.shadowBlur = 0; speedCtx.fillStyle = '#fff';
+            speedCtx.font = '800 18px JetBrains Mono'; speedCtx.textAlign = 'center'; speedCtx.textBaseline = 'middle';
+            speedCtx.fillText(Math.floor(Game.speed), 0, -2);
+            speedCtx.font = '700 8px Inter'; speedCtx.fillStyle = cTheme.color1; speedCtx.fillText('KM/H', 0, 14);
+            speedCtx.restore();
+        }
+
+        function gameOver() {
+            Game.active = false; Game.slowMo = 0.2; Game.screenShake = 25;
+            AudioEngine.playCrash();
+            createParticles(W/2 + Player.x*W*0.4, Player.y, 80, enginesPreset[activeEngine].color1);
+            haptic([150, 50, 150]);
+            VoiceSystem.speak(`Colisión crítica. Chasis dañado. Puntuación ${Game.score}`);
+            setTimeout(() => { document.getElementById('final-score').textContent = Game.score; document.getElementById('game-over-screen').style.display = 'flex'; Game.slowMo = 1; }, 600);
+        }
+
+        // --- RENDER LOOP OPTIMIZADO (FASE 1, 2, 3) ---
+        function draw() {
+            // Fondo Motion Blur Dinámico (Fase 1: FillRect es más rápido que Filter CSS)
+            ctx.fillStyle = `rgba(2, 2, 6, ${0.4 + (Game.speed/2000)})`;
+            ctx.fillRect(0, 0, W, H);
+            
+            ctx.save(); ctx.translate(Camera.shakeX, Camera.shakeY);
+
+            // Cielo Estrellado
+            ctx.fillStyle = '#010103'; ctx.fillRect(0, 0, W, H*0.45);
+            stars.forEach(s => {
+                s.x -= (Player.vx * 2) + (Game.speed/200);
+                if(s.x < 0) s.x = W; if(s.x > W) s.x = 0;
+                ctx.fillStyle = `rgba(255, 255, 255, ${s.size/2})`; ctx.fillRect(s.x, s.y, s.size, s.size);
+            });
+
+            // Skyline Ciudad
+            cityLights.forEach(c => {
+                c.x -= (Player.vx * 4) + (Game.speed/100);
+                if(c.x < -20) c.x = W+20; if(c.x > W+20) c.x = -20;
+                ctx.fillStyle = c.color; ctx.globalAlpha = 0.4;
+                ctx.fillRect(c.x, c.y, c.w, c.h);
+            });
+            ctx.globalAlpha = 1;
+
+            const horizon = H * 0.45;
+            
+            // FASE 3: Carretera y Niebla
+            let roadGrad = ctx.createLinearGradient(0, horizon, 0, H);
+            roadGrad.addColorStop(0, '#040408'); roadGrad.addColorStop(1, '#0d0d16');
+            ctx.fillStyle = roadGrad;
+            ctx.beginPath(); ctx.moveTo(W*0.48, horizon); ctx.lineTo(W*0.52, horizon); ctx.lineTo(W*0.98, H); ctx.lineTo(W*0.02, H); ctx.fill();
+
+            // Reflejo de lluvia en el asfalto
+            if(Environment.weather === 'rain') {
+                ctx.fillStyle = 'rgba(200, 255, 255, 0.05)';
+                ctx.beginPath(); ctx.moveTo(W*0.49, horizon); ctx.lineTo(W*0.51, horizon); ctx.lineTo(W*0.8, H); ctx.lineTo(W*0.2, H); ctx.fill();
+            }
+
+            const cTheme = enginesPreset[activeEngine];
+            
+            // Líneas de Neón Carretera
+            ctx.strokeStyle = cTheme.color1; ctx.lineWidth = 3; ctx.shadowBlur = Game.isTurbo ? 30 : 15; ctx.shadowColor = cTheme.color1;
+            ctx.setLineDash([H*0.06, H*0.06]); ctx.lineDashOffset = -Game.distance * 2;
+            ctx.beginPath(); ctx.moveTo(W*0.5, horizon); ctx.lineTo(W*0.5, H); ctx.stroke();
+            ctx.setLineDash([]); ctx.shadowBlur = 0;
+
+            ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(W*0.48, horizon); ctx.lineTo(W*0.02, H); ctx.moveTo(W*0.52, horizon); ctx.lineTo(W*0.98, H); ctx.stroke();
+
+            // Obstáculos
+            obstacles.sort((a, b) => b.z - a.z);
+            obstacles.forEach(obs => {
+                const scale = obs.z;
+                const x = W/2 + obs.x * W*0.4 * scale;
+                const y = horizon + (H - horizon) * scale;
+                const w = obs.width * scale; const h = obs.height * scale;
+
+                ctx.fillStyle = obs.color; ctx.globalAlpha = Math.max(0, 1 - scale*0.5);
+                ctx.fillRect(x - w/2, y - h, w, h*0.7);
+                ctx.fillStyle = '#050a10'; ctx.fillRect(x - w*0.35, y - h*0.9, w*0.7, h*0.3);
+                ctx.fillStyle = '#fff'; ctx.fillRect(x - w*0.3, y - h*0.2, w*0.15, h*0.1); ctx.fillRect(x + w*0.15, y - h*0.2, w*0.15, h*0.1);
+            });
+            ctx.globalAlpha = 1;
+
+            // FASE 2: RENDERIZADO CARRO REALISTA (CANVAS PURO)
+            ctx.save();
+            ctx.translate(W/2 + Player.x * W * 0.4, Player.y);
+            ctx.rotate(Player.angle);
+
+            const pw = Player.width; const ph = Player.height;
+
+            // 1. Underglow (Neón inferior dinámico)
+            ctx.shadowBlur = 35; ctx.shadowColor = cTheme.shadow; ctx.fillStyle = cTheme.color1;
+            ctx.beginPath(); ctx.ellipse(0, -ph*0.2, pw*0.6, ph*0.2, 0, 0, Math.PI*2); ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 2. Sombra Suave
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.beginPath(); ctx.ellipse(0, 0, pw*0.6, ph*0.25, 0, 0, Math.PI*2); ctx.fill();
+
+            // 3. Llantas Traseras Circulares en Perspectiva (con Rines)
+            ctx.fillStyle = '#050505';
+            ctx.beginPath(); ctx.roundRect(-pw*0.5, -ph*0.4, pw*0.18, ph*0.45, 6); ctx.fill(); // Izq
+            ctx.beginPath(); ctx.roundRect(pw*0.32, -ph*0.4, pw*0.18, ph*0.45, 6); ctx.fill(); // Der
+            // Rines Metálicos
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(-pw*0.45, -ph*0.3, pw*0.08, ph*0.25);
+            ctx.fillRect(pw*0.37, -ph*0.3, pw*0.08, ph*0.25);
+
+            // 4. Carrocería Curva (Aerodinámica Cyberpunk)
+            let bodyGrd = ctx.createLinearGradient(0, -ph, 0, 0);
+            bodyGrd.addColorStop(0, cTheme.color2); bodyGrd.addColorStop(1, '#020617');
+            ctx.fillStyle = bodyGrd;
+            ctx.beginPath();
+            ctx.moveTo(-pw*0.45, -ph*0.1);
+            ctx.quadraticCurveTo(-pw*0.5, -ph*0.7, -pw*0.3, -ph);
+            ctx.lineTo(pw*0.3, -ph);
+            ctx.quadraticCurveTo(pw*0.5, -ph*0.7, pw*0.45, -ph*0.1);
+            ctx.quadraticCurveTo(0, 0, -pw*0.45, -ph*0.1);
+            ctx.fill();
+
+            // 5. Vidrio Trasero Realista (Reflejos)
+            let glassGrd = ctx.createLinearGradient(0, -ph, 0, -ph*0.5);
+            glassGrd.addColorStop(0, '#0f172a'); glassGrd.addColorStop(1, '#38bdf8');
+            ctx.fillStyle = glassGrd;
+            ctx.beginPath();
+            ctx.moveTo(-pw*0.3, -ph*0.9);
+            ctx.lineTo(pw*0.3, -ph*0.9);
+            ctx.lineTo(pw*0.35, -ph*0.5);
+            ctx.lineTo(-pw*0.35, -ph*0.5);
+            ctx.fill();
+            // Reflejo luz
+            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            ctx.beginPath(); ctx.moveTo(-pw*0.2, -ph*0.85); ctx.lineTo(pw*0.1, -ph*0.85); ctx.lineTo(pw*0.15, -ph*0.6); ctx.closePath(); ctx.fill();
+
+            // 6. Alerón Cyber Deportivo
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath(); ctx.roundRect(-pw*0.55, -ph*0.25, pw*1.1, ph*0.1, 4); ctx.fill();
+            // Soportes Alerón
+            ctx.fillStyle = '#020617'; ctx.fillRect(-pw*0.3, -ph*0.35, pw*0.05, ph*0.15); ctx.fillRect(pw*0.25, -ph*0.35, pw*0.05, ph*0.15);
+
+            // 7. Luces Traseras LED (Brillan al frenar)
+            let isBraking = keys['arrowdown'] || keys['s'];
+            ctx.fillStyle = isBraking ? '#ff0033' : '#990011';
+            ctx.shadowBlur = isBraking ? 25 : 8; ctx.shadowColor = '#ff0033';
+            ctx.beginPath(); ctx.roundRect(-pw*0.45, -ph*0.15, pw*0.25, ph*0.06, 3); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(pw*0.2, -ph*0.15, pw*0.25, ph*0.06, 3); ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 8. Propulsor Central (Turbo)
+            if(Game.isTurbo || Game.speed > Game.maxSpeed * 0.9) {
+                ctx.fillStyle = '#fff'; ctx.shadowBlur = 20; ctx.shadowColor = cTheme.color1;
+                ctx.beginPath(); ctx.arc(0, -ph*0.05, pw*0.1, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            ctx.restore();
+
+            // Renderizado de Lluvia en Foreground
+            if(Environment.weather === 'rain') {
+                ctx.strokeStyle = 'rgba(200,255,255,0.25)'; ctx.lineWidth = 1.5;
+                rainDrops.forEach(r => {
+                    ctx.beginPath(); ctx.moveTo(r.x, r.y); ctx.lineTo(r.x + (Player.vx*2), r.y + r.l); ctx.stroke();
+                });
+            }
+
+            // Partículas de Impacto
+            particles.forEach(p => { ctx.fillStyle = p.color; ctx.globalAlpha = p.life; ctx.fillRect(p.x, p.y, p.size, p.size); });
+            ctx.globalAlpha = 1;
+
+            ctx.restore();
+        }
+
+        // --- CORE LOOP ---
+        let lastTime = 0;
+        function gameLoop(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            const dt = Math.min((timestamp - lastTime) / 1000, 0.033); // FASE 1: Clamp dt máximo (30fps min limit para físicas estables)
+            lastTime = timestamp;
+
+            update(dt); draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        window.addEventListener('resize', () => { W = window.innerWidth; H = window.innerHeight; canvas.width = W; canvas.height = H; Player.width = W*0.1; Player.height = H*0.12; }, {passive: true});
+        
+        VoiceSystem.init(); requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>
