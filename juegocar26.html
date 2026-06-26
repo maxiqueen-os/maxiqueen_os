@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Retro Carrera Touch</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Arial', sans-serif;
+            user-select: none;
+            touch-action: none;
+        }
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 30px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            pointer-events: none;
+            z-index: 10;
+        }
+        #game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 20;
+            display: none;
+        }
+        #game-over-screen h1 {
+            font-size: 48px;
+            color: #ff3333;
+            margin-bottom: 10px;
+        }
+        #game-over-screen p {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        #btn-restart {
+            padding: 12px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            background-color: #00cc66;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,204,102,0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui">
+        <div>PUNTOS: <span id="score">0</span></div>
+        <div>VEL: <span id="speed">120</span> km/h</div>
+    </div>
+
+    <div id="game-over-screen">
+        <h1>¡CHOQUE!</h1>
+        <p>Puntuación final: <span id="final-score">0</span></p>
+        <button id="btn-restart" onclick="resetGame()">Toca para reiniciar</button>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const speedEl = document.getElementById('speed');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const finalScoreEl = document.getElementById('final-score');
+
+        // Configuración de pantalla física
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Variables del Estado del Juego
+        let gameActive = true;
+        let score = 0;
+        let speed = 100; 
+        let distanceTraveled = 0;
+
+        // Perspectiva y Carretera
+        const horizonY = canvas.height * 0.45; 
+        let roadLinesOffset = 0;
+
+        // Jugador (Tu carro en la zona inferior de la pantalla)
+        let playerX = 0; // -1 es extremo izquierdo de la vía, 1 es extremo derecho
+        const playerY = canvas.height * 0.85;
+        let targetPlayerX = 0; // Para suavizar el movimiento táctil
+
+        // Obstáculos (Carros que vienen de frente)
+        let obstacles = [];
+        let spawnTimer = 0;
+        let minSpawnInterval = 80; 
+
+        // Colores de los carros enemigos aleatorios
+        const carColors = ['#ff3333', '#3333ff', '#ffff33', '#ff33ff', '#00ffcc'];
+
+        // Manejo de Controles Táctiles (Pantalla dividida)
+        let isTouching = false;
+        let touchDirection = 0; // -1 izquierda, 1 derecha
+
+        window.addEventListener('touchstart', (e) => {
+            if (!gameActive) return;
+            isTouching = true;
+            evaluateTouch(e.touches[0].clientX);
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!gameActive) return;
+            evaluateTouch(e.touches[0].clientX);
+        });
+
+        window.addEventListener('touchend', () => {
+            isTouching = false;
+            touchDirection = 0;
+        });
+
+        // Soporte alternativo para teclado (Flechas Izquierda / Derecha)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                touchDirection = -1;
+                isTouching = true;
+            }
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                touchDirection = 1;
+                isTouching = true;
+            }
+        });
+        window.addEventListener('keyup', (e) => {
+            if (['ArrowLeft', 'ArrowRight', 'a', 'A', 'd', 'D'].includes(e.key)) {
+                isTouching = false;
+                touchDirection = 0;
+            }
+        });
+
+        function evaluateTouch(clientX) {
+            // Si toca el lado izquierdo del ancho total, cruza a la izquierda. Si no, a la derecha.
+            if (clientX < window.innerWidth / 2) {
+                touchDirection = -1;
+            } else {
+                touchDirection = 1;
+            }
+        }
+
+        // Crear carros enemigos desde el fondo (el horizonte)
+        function spawnObstacle() {
+            // Elige un carril aleatorio entre -0.6 (izq), 0 (centro) y 0.6 (der)
+            const lanes = [-0.6, 0, 0.6];
+            const randomLane = lanes[Math.floor(Math.random() * lanes.length)];
+            
+            obstacles.push({
+                laneX: randomLane, 
+                z: 0,              // Distancia desde el horizonte (0 es fondo, 1 es choque frontal)
+                color: carColors[Math.floor(Math.random() * carColors.length)],
+                speed: 0.015 + (score * 0.0005) // Se vuelven progresivamente más rápidos
+            });
+        }
+
+        function resetGame() {
+            obstacles = [];
+            score = 0;
+            speed = 100;
+            playerX = 0;
+            targetPlayerX = 0;
+            scoreEl.innerText = score;
+            gameOverScreen.style.display = 'none';
+            gameActive = true;
+            animate();
+        }
+
+        function endGame() {
+            gameActive = false;
+            finalScoreEl.innerText = score;
+            gameOverScreen.style.display = 'flex';
+        }
+
+        // Núcleo del juego: Actualización de físicas y posiciones
+        function update() {
+            if (!gameActive) return;
+
+            // Actualizar puntuación basada en la velocidad estable
+            distanceTraveled += 1;
+            if (distanceTraveled % 10 === 0) {
+                score += 1;
+                scoreEl.innerText = score;
+                // Aumentar velocidad dinámicamente
+                if (speed < 240) speed += 0.5;
+                speedEl.innerText = Math.floor(speed);
+            }
+
+            // Mover el carro del jugador de forma fluida
+            if (isTouching) {
+                targetPlayerX += touchDirection * 0.06;
+            }
+            // Retorno automático leve al centro si dejas de tocar (efecto volante)
+            if (!isTouching) {
+                targetPlayerX *= 0.95;
+            }
+
+            // Límites de la carretera para el jugador
+            targetPlayerX = Math.max(-0.9, Math.min(0.9, targetPlayerX));
+            playerX += (targetPlayerX - playerX) * 0.3;
+
+            // Movimiento de las líneas de la carretera según la velocidad
+            roadLinesOffset += (speed * 0.05);
+            if (roadLinesOffset > 40) roadLinesOffset = 0;
+
+            // Generación de obstáculos controlada por tiempo
+            spawnTimer++;
+            let dynamicInterval = Math.max(35, minSpawnInterval - Math.floor(score / 5));
+            if (spawnTimer > dynamicInterval) {
+                spawnObstacle();
+                spawnTimer = 0;
+            }
+
+            // Procesar obstáculos en perspectiva
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                let obs = obstacles[i];
+                obs.z += obs.speed; // Avanza hacia la pantalla
+
+                // Calcular la posición real proyectada en base al factor Z
+                let currentHorizonY = canvas.height * 0.45;
+                let scale = obs.z; 
+                let obsY = currentHorizonY + (canvas.height - currentHorizonY) * scale;
+                let roadWidthAtZ = canvas.width * 0.9 * scale;
+                let obsX = (canvas.width / 2) + (obs.laneX * roadWidthAtZ);
+
+                // Detección de colisión cuando el enemigo llega a la línea del jugador (Z ≈ 0.85)
+                if (obs.z >= 0.78 && obs.z <= 0.92) {
+                    let playerActualX = (canvas.width / 2) + (playerX * (canvas.width * 0.9 * 0.85));
+                    let carWidthAtCollision = canvas.width * 0.22; 
+                    
+                    // Comprobar la cercanía en el eje horizontal X
+                    if (Math.abs(obsX - playerActualX) < carWidthAtCollision * 0.45) {
+                        endGame();
+                        return;
+                    }
+                }
+
+                // Eliminar carros que ya pasaron de largo de la pantalla
+                if (obs.z > 1.2) {
+                    obstacles.splice(i, 1);
+                }
+            }
+        }
+
+        // Renderizado gráfico en Canvas
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const currentHorizonY = canvas.height * 0.45;
+
+            // 1. Dibujar el cielo nocturno
+            let skyGrad = ctx.createLinearGradient(0, 0, 0, currentHorizonY);
+            skyGrad.addColorStop(0, '#020017');
+            skyGrad.addColorStop(1, '#1b1440');
+            ctx.fillStyle = skyGrad;
+            ctx.fillRect(0, 0, canvas.width, currentHorizonY);
+
+            // 2. Dibujar las montañas de fondo estilizadas
+            ctx.fillStyle = '#0d0722';
+            ctx.beginPath();
+            ctx.moveTo(0, currentHorizonY);
+            ctx.lineTo(canvas.width * 0.2, currentHorizonY - 40);
+            ctx.lineTo(canvas.width * 0.4, currentHorizonY - 15);
+            ctx.lineTo(canvas.width * 0.6, currentHorizonY - 50);
+            ctx.lineTo(canvas.width * 0.8, currentHorizonY - 20);
+            ctx.lineTo(canvas.width, currentHorizonY);
+            ctx.fill();
+
+            // 3. Dibujar el césped / suelo lateral
+            let groundGrad = ctx.createLinearGradient(0, currentHorizonY, 0, canvas.height);
+            groundGrad.addColorStop(0, '#051d08');
+            groundGrad.addColorStop(1, '#0b3d12');
+            ctx.fillStyle = groundGrad;
+            ctx.fillRect(0, currentHorizonY, canvas.width, canvas.height - currentHorizonY);
+
+            // 4. Dibujar la pista en perspectiva (Trapecio)
+            ctx.fillStyle = '#2b2b2b';
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2 - 10, currentHorizonY);
+            ctx.lineTo(canvas.width / 2 + 10, currentHorizonY);
+            ctx.lineTo(canvas.width * 0.95, canvas.height);
+            ctx.lineTo(canvas.width * 0.05, canvas.height);
+            ctx.closePath();
+            ctx.fill();
+
+            // 5. Dibujar líneas de la carretera que se mueven
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 4;
+            
+            // Líneas laterales (Bordes de carretera)
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2 - 10, currentHorizonY);
+            ctx.lineTo(canvas.width * 0.05, canvas.height);
+            ctx.moveTo(canvas.width / 2 + 10, currentHorizonY);
+            ctx.lineTo(canvas.width * 0.95, canvas.height);
+            ctx.stroke();
+
+            // Líneas segmentadas del centro de la carretera
+            ctx.save();
+            ctx.lineWidth = 6;
+            ctx.setLineDash([30, 40]);
+            ctx.lineDashOffset = -roadLinesOffset;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, currentHorizonY);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+            ctx.restore();
+
+            // 6. Dibujar carros enemigos en perspectiva 3D
+            obstacles.forEach(obs => {
+                let scale = obs.z;
+                let obsY = currentHorizonY + (canvas.height - currentHorizonY) * scale;
+                let roadWidthAtZ = canvas.width * 0.9 * scale;
+                let obsX = (canvas.width / 2) + (obs.laneX * roadWidthAtZ);
+
+                // Dimensiones del carro proporcional a su distancia (Z)
+                let carW = canvas.width * 0.22 * scale;
+                let carH = canvas.height * 0.11 * scale;
+
+                if (scale > 0.05) {
+                    // Sombra del auto inferior
+                    ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                    ctx.fillRect(obsX - carW/2, obsY - carH*0.2, carW, carH*0.3);
+
+                    // Carrocería del enemigo (Visto desde atrás/frente de forma simplificada)
+                    ctx.fillStyle = obs.color;
+                    ctx.fillRect(obsX - carW / 2, obsY - carH, carW, carH * 0.6); // Chasis principal
+                    
+                    ctx.fillStyle = '#111111';
+                    ctx.fillRect(obsX - carW * 0.4, obsY - carH * 0.4, carW * 0.8, carH * 0.4); // Vidrio / Parabrisas
+                    
+                    // Llantas
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(obsX - carW * 0.48, obsY - carH * 0.2, carW * 0.15, carH * 0.25);
+                    ctx.fillRect(obsX + carW * 0.33, obsY - carH * 0.2, carW * 0.15, carH * 0.25);
+
+                    // Luces encendidas amarillas (Vienen de frente)
+                    ctx.fillStyle = '#ffff66';
+                    ctx.beginPath();
+                    ctx.arc(obsX - carW * 0.35, obsY - carH * 0.25, carW * 0.08, 0, Math.PI * 2);
+                    ctx.arc(obsX + carW * 0.35, obsY - carH * 0.25, carW * 0.08, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            // 7. Dibujar el Carro del Jugador (Tu auto en la parte inferior fija)
+            let playerScale = 0.85; 
+            let playerActualWidth = canvas.width * 0.26;
+            let playerActualHeight = canvas.height * 0.14;
+            let roadWidthAtPlayer = canvas.width * 0.9 * playerScale;
+            let playerScreenX = (canvas.width / 2) + (playerX * roadWidthAtPlayer);
+
+            // Sombra del jugador
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fillRect(playerScreenX - playerActualWidth/2, playerY - playerActualHeight*0.1, playerActualWidth, playerActualHeight * 0.3);
+
+            // Carrocería base (Estilo deportivo moderno)
+            ctx.fillStyle = '#00cc66'; // Color verde brillante
+            ctx.fillRect(playerScreenX - playerActualWidth / 2, playerY - playerActualHeight * 0.8, playerActualWidth, playerActualHeight * 0.5);
+
+            // Cabina superior
+            ctx.fillStyle = '#009952';
+            ctx.fillRect(playerScreenX - playerActualWidth * 0.35, playerY - playerActualHeight * 1.1, playerActualWidth * 0.7, playerActualHeight * 0.35);
+            ctx.fillStyle = '#a6d9ff'; // Vidrio trasero
+            ctx.fillRect(playerScreenX - playerActualWidth * 0.28, playerY - playerActualHeight * 1.05, playerActualWidth * 0.56, playerActualHeight * 0.25);
+
+            // Alerón deportivo
+            ctx.fillStyle = '#111';
+            ctx.fillRect(playerScreenX - playerActualWidth * 0.52, playerY - playerActualHeight * 0.95, playerActualWidth * 1.04, playerActualHeight * 0.08);
+
+            // Llantas traseras grandes
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(playerScreenX - playerActualWidth * 0.48, playerY - playerActualHeight * 0.4, playerActualWidth * 0.14, playerActualHeight * 0.4);
+            ctx.fillRect(playerScreenX + playerActualWidth * 0.34, playerY - playerActualHeight * 0.4, playerActualWidth * 0.14, playerActualHeight * 0.4);
+
+            // Stop / Luces traseras rojas
+            ctx.fillStyle = '#ff0000';
+            ctx.fillRect(playerScreenX - playerActualWidth * 0.45, playerY - playerActualHeight * 0.75, playerActualWidth * 0.15, playerActualHeight * 0.1);
+            ctx.fillRect(playerScreenX + playerActualWidth * 0.3, playerY - playerActualHeight * 0.75, playerActualWidth * 0.15, playerActualHeight * 0.1);
+
+            // 8. Dibujar las áreas de control visuales (Sutiles indicadores en los extremos inferiores)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+            ctx.fillRect(0, canvas.height * 0.5, canvas.width / 2, canvas.height * 0.5); // Izquierda
+            ctx.fillRect(canvas.width / 2, canvas.height * 0.5, canvas.width / 2, canvas.height * 0.5); // Derecha
+        }
+
+        // Bucle Principal de Animación
+        function animate() {
+            update();
+            draw();
+            if (gameActive) {
+                requestAnimationFrame(animate);
+            }
+        }
+
+        // Iniciar el juego automáticamente
+        animate();
+    </script>
+</body>
+</html>
