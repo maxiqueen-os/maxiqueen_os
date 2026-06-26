@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAXIQUEEN OS - Quantum Drive</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000008;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            user-select: none;
+            touch-action: none;
+        }
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            filter: contrast(1.1) saturate(1.2);
+        }
+
+       .mq-hud {
+            background: radial-gradient(ellipse at center, rgba(0,15,30,0.7) 0%, rgba(0,5,15,0.85) 100%);
+            backdrop-filter: blur(20px) saturate(200%);
+            -webkit-backdrop-filter: blur(20px) saturate(200%);
+            border: 1px solid rgba(0, 255, 200, 0.15);
+            border-radius: 24px;
+            color: #e0f8ff;
+            box-shadow:
+                0 0 40px rgba(0, 255, 200, 0.1),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        #ui-top {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(90%, 600px);
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 16px 28px;
+            z-index: 10;
+        }
+
+       .mq-metric {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+       .mq-metric span {
+            display: block;
+            color: #00ffc8;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 0 0 15px rgba(0, 255, 200, 0.6);
+            margin-top: 4px;
+        }
+       .mq-metric.center { text-align: center; }
+       .mq-metric.right { text-align: right; }
+
+        #speedometer {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+        #speedometer canvas {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            filter: none;
+        }
+
+        #mq-ai-panel {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(90%, 700px);
+            padding: 20px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+       .mq-ai-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+       .mq-router-container {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+       .mq-engine-badge {
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(0, 255, 200, 0.05);
+            border: 1px solid rgba(0, 255, 200, 0.2);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            letter-spacing: 0.5px;
+        }
+
+       .mq-engine-badge.active {
+            background: linear-gradient(135deg, #00ffc8 0%, #00a8ff 100%);
+            color: #000a12;
+            box-shadow: 0 0 20px rgba(0, 255, 200, 0.5);
+            border: 1px solid transparent;
+            transform: translateY(-2px);
+        }
+
+        #mq-voice-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 0, 128, 0.3);
+            background: radial-gradient(circle, #1a0033 0%, #330066 100%);
+            color: #ff00aa;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow:
+                0 0 30px rgba(255, 0, 170, 0.3),
+                inset 0 0 20px rgba(255, 0, 170, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        #mq-voice-btn::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, transparent, #ff00aa, transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+            animation: rotate 2s linear infinite;
+        }
+
+        #mq-voice-btn.listening::before {
+            opacity: 1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        #mq-voice-btn:active {
+            transform: scale(0.92);
+        }
+
+        #mq-log-stream {
+            font-size: 12px;
+            color: rgba(200, 255, 255, 0.6);
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 18px;
+            border-top: 1px solid rgba(0, 255, 200, 0.1);
+            padding-top: 12px;
+        }
+
+        #game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(20, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 20;
+        }
+
+        #game-over-screen h1 {
+            font-size: clamp(48px, 10vw, 72px);
+            background: linear-gradient(135deg, #ff3366 0%, #ff0066 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
+
+        #btn-restart {
+            padding: 16px 48px;
+            font-size: 16px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00ffc8 0%, #00a8ff 100%);
+            color: #000a12;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(0, 255, 200, 0.4);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+        #btn-restart:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div id="ui-top" class="mq-hud">
+        <div class="mq-metric">
+            Score
+            <span id="score">0</span>
+        </div>
+        <div id="speedometer">
+            <canvas id="speedCanvas" width="100" height="100"></canvas>
+        </div>
+        <div class="mq-metric right">
+            Distancia
+            <span id="distance">0m</span>
+        </div>
+    </div>
+
+    <div id="mq-ai-panel" class="mq-hud">
+        <div class="mq-ai-row">
+            <div class="mq-router-container" id="mq-router">
+                <div class="mq-engine-badge active" data-engine="drive">🏎️ Drive</div>
+                <div class="mq-engine-badge" data-engine="tactical">🎯 Tactical</div>
+                <div class="mq-engine-badge" data-engine="neural">🧠 Neural</div>
+                <div class="mq-engine-badge" data-engine="quantum">⚛️ Quantum</div>
+            </div>
+            <button id="mq-voice-btn" title="Mantener para comando">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+        </div>
+        <div id="mq-log-stream">Quantum Drive inicializado. Sistemas online. Di "turbo" para boost.</div>
+    </div>
+
+    <div id="game-over-screen">
+        <h1>SISTEMA OFFLINE</h1>
+        <p style="font-size: 20px; margin-bottom: 32px; opacity: 0.7;">Puntuación: <span id="final-score" style="color:#00ffc8; font-weight:bold;">0</span></p>
+        <button id="btn-restart">REINICIAR QUANTUM DRIVE</button>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        const speedCanvas = document.getElementById('speedCanvas');
+        const speedCtx = speedCanvas.getContext('2d');
+
+        let W = window.innerWidth;
+        let H = window.innerHeight;
+        canvas.width = W;
+        canvas.height = H;
+
+        // Estado del juego con físicas reales
+        const Game = {
+            active: true,
+            score: 0,
+            distance: 0,
+            speed: 0,
+            maxSpeed: 280,
+            acceleration: 0.8,
+            friction: 0.96,
+            lateralFriction: 0.88,
+            time: 0,
+            deltaTime: 0,
+            lastTime: 0,
+            screenShake: 0,
+            slowMo: 1
+        };
+
+        const Player = {
+            x: 0,
+            y: H * 0.82,
+            vx: 0,
+            vy: 0,
+            targetX: 0,
+            width: W * 0.08,
+            height: H * 0.09,
+            angle: 0,
+            drift: 0
+        };
+
+        const Camera = {
+            x: 0,
+            y: 0,
+            shakeX: 0,
+            shakeY: 0
+        };
+
+        const Road = {
+            segments: [],
+            segmentLength: 200,
+            roadWidth: 2000,
+            lanes: 3,
+            fogDensity: 0.001
+        };
+
+        let obstacles = [];
+        let particles = [];
+        let stars = [];
+        let cityLights = [];
+
+        // Audio engine con Web Audio API
+        const AudioEngine = {
+            ctx: null,
+            engineOsc: null,
+            engineGain: null,
+            init() {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                this.engineOsc = this.ctx.createOscillator();
+                this.engineGain = this.ctx.createGain();
+                this.engineOsc.type = 'sawtooth';
+                this.engineOsc.frequency.value = 40;
+                this.engineGain.gain.value = 0.05;
+                this.engineOsc.connect(this.engineGain).connect(this.ctx.destination);
+                this.engineOsc.start();
+            },
+            updateRPM(speed) {
+                if (!this.ctx) return;
+                const rpm = 40 + (speed / Game.maxSpeed) * 120;
+                this.engineOsc.frequency.setTargetAtTime(rpm, this.ctx.currentTime, 0.1);
+                this.engineGain.gain.setTargetAtTime(0.05 + (speed / Game.maxSpeed) * 0.1, this.ctx.currentTime, 0.1);
+            },
+            playCrash() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(100, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+                osc.connect(gain).connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.3);
+            }
+        };
+
+        // Sistema de voz mejorado
+        const VoiceSystem = {
+            recognition: null,
+            synthesis: window.speechSynthesis,
+            listening: false,
+            init() {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) return;
+
+                this.recognition = new SpeechRecognition();
+                this.recognition.continuous = true;
+                this.recognition.interimResults = true;
+                this.recognition.lang = 'es-CO';
+
+                this.recognition.onresult = (e) => {
+                    const transcript = Array.from(e.results)
+                       .map(r => r[0].transcript)
+                       .join('')
+                       .toLowerCase();
+
+                    document.getElementById('mq-log-stream').textContent = `Escuchando: ${transcript}`;
+
+                    if (transcript.includes('turbo') || transcript.includes('boost')) {
+                        Game.speed = Math.min(Game.maxSpeed, Game.speed + 60);
+                        Camera.shakeX = 8;
+                        this.speak('Turbo activado');
+                        haptic(100);
+                    }
+                    if (transcript.includes('frena') || transcript.includes('stop')) {
+                        Game.speed *= 0.7;
+                        this.speak('Frenando');
+                    }
+                    if (transcript.includes('izquierda')) Player.targetX = -0.6;
+                    if (transcript.includes('derecha')) Player.targetX = 0.6;
+                    if (transcript.includes('centro')) Player.targetX = 0;
+                };
+
+                this.recognition.onend = () => {
+                    if (this.listening) this.recognition.start();
+                };
+            },
+            start() {
+                if (!this.recognition) return;
+                this.listening = true;
+                this.recognition.start();
+                document.getElementById('mq-voice-btn').classList.add('listening');
+                if (!AudioEngine.ctx) AudioEngine.init();
+            },
+            stop() {
+                this.listening = false;
+                if (this.recognition) this.recognition.stop();
+                document.getElementById('mq-voice-btn').classList.remove('listening');
+            },
+            speak(text) {
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'es-CO';
+                utter.rate = 1.1;
+                utter.pitch = 1.0;
+                this.synthesis.speak(utter);
+            }
+        };
+
+        function haptic(duration) {
+            if (navigator.vibrate) navigator.vibrate(duration);
+        }
+
+        // Inicializar estrellas y ciudad
+        for (let i = 0; i < 200; i++) {
+            stars.push({
+                x: Math.random() * W,
+                y: Math.random() * H * 0.5,
+                size: Math.random() * 2,
+                speed: Math.random() * 0.5 + 0.1
+            });
+        }
+
+        for (let i = 0; i < 50; i++) {
+            cityLights.push({
+                x: Math.random() * W,
+                y: H * 0.35 + Math.random() * H * 0.1,
+                w: Math.random() * 3 + 1,
+                h: Math.random() * 40 + 10,
+                color: `hsl(${180 + Math.random() * 60}, 100%, 70%)`
+            });
+        }
+
+        // Controles
+        let keys = {};
+        window.addEventListener('keydown', e => keys[e.key] = true);
+        window.addEventListener('keyup', e => keys[e.key] = false);
+
+        let touchStartX = 0;
+        canvas.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+            if (!AudioEngine.ctx) AudioEngine.init();
+        });
+        canvas.addEventListener('touchmove', e => {
+            const dx = e.touches[0].clientX - touchStartX;
+            Player.targetX = Math.max(-0.9, Math.min(0.9, dx / (W * 0.3)));
+        });
+        canvas.addEventListener('touchend', () => Player.targetX *= 0.5);
+
+        document.getElementById('mq-voice-btn').addEventListener('mousedown', () => VoiceSystem.start());
+        document.getElementById('mq-voice-btn').addEventListener('mouseup', () => VoiceSystem.stop());
+        document.getElementById('mq-voice-btn').addEventListener('touchstart', e => { e.preventDefault(); VoiceSystem.start(); });
+        document.getElementById('mq-voice-btn').addEventListener('touchend', e => { e.preventDefault(); VoiceSystem.stop(); });
+
+        document.getElementById('btn-restart').addEventListener('click', resetGame);
+
+        function spawnObstacle() {
+            const lane = Math.floor(Math.random() * 3) - 1;
+            obstacles.push({
+                x: lane * 0.6,
+                z: 0,
+                width: W * 0.07,
+                height: H * 0.08,
+                color: `hsl(${Math.random() * 360}, 80%, 60%)`,
+                speed: 0.012 + Math.random() * 0.008
+            });
+        }
+
+        function createParticles(x, y, count, color) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10 - 5,
+                    life: 1,
+                    size: Math.random() * 4 + 2,
+                    color
+                });
+            }
+        }
+
+        function resetGame() {
+            Game.active = true;
+            Game.score = 0;
+            Game.distance = 0;
+            Game.speed = 0;
+            Game.screenShake = 0;
+            Game.slowMo = 1;
+            Player.x = 0;
+            Player.targetX = 0;
+            Player.vx = 0;
+            obstacles = [];
+            particles = [];
+            document.getElementById('game-over-screen').style.display = 'none';
+            VoiceSystem.speak('Quantum Drive reiniciado. Buena suerte.');
+        }
+
+        function update(dt) {
+            if (!Game.active) return;
+
+            Game.time += dt;
+            Game.deltaTime = dt * Game.slowMo;
+
+            // Input
+            if (keys['ArrowLeft'] || keys['a']) Player.targetX = Math.max(-0.9, Player.targetX - 0.05);
+            if (keys['ArrowRight'] || keys['d']) Player.targetX = Math.min(0.9, Player.targetX + 0.05);
+            if (keys['ArrowUp'] || keys['w']) Game.speed = Math.min(Game.maxSpeed, Game.speed + Game.acceleration);
+            if (keys['ArrowDown'] || keys['s']) Game.speed = Math.max(0, Game.speed - Game.acceleration * 2);
+            if (!keys['ArrowLeft'] &&!keys['ArrowRight'] &&!keys['a'] &&!keys['d']) Player.targetX *= 0.92;
+
+            // Físicas del jugador con inercia
+            const dx = Player.targetX - Player.x;
+            Player.vx += dx * 0.15;
+            Player.vx *= Game.lateralFriction;
+            Player.x += Player.vx * Game.deltaTime * 60;
+            Player.x = Math.max(-0.9, Math.min(0.9, Player.x));
+
+            // Drift visual
+            Player.drift = Player.vx * 0.3;
+            Player.angle = Player.vx * 0.1;
+
+            // Velocidad y fricción
+            if (!keys['ArrowUp'] &&!keys['w']) Game.speed *= Game.friction;
+            Game.distance += Game.speed * Game.deltaTime * 0.1;
+            Game.score = Math.floor(Game.distance);
+
+            // Camera shake basado en velocidad
+            Camera.shakeX *= 0.9;
+            Camera.shakeY *= 0.9;
+            if (Game.speed > 200) {
+                Camera.shakeX += (Math.random() - 0.5) * (Game.speed / 100);
+                Camera.shakeY += (Math.random() - 0.5) * (Game.speed / 100);
+            }
+
+            // Spawn obstáculos
+            if (Math.random() < 0.02 + Game.speed / 10000) spawnObstacle();
+
+            // Update obstáculos
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                const obs = obstacles[i];
+                obs.z += (obs.speed + Game.speed / 5000) * Game.deltaTime * 60;
+
+                // Colisión
+                if (obs.z > 0.75 && obs.z < 0.95) {
+                    const playerScreenX = W / 2 + Player.x * W * 0.4;
+                    const obsScreenX = W / 2 + obs.x * W * 0.4;
+                    if (Math.abs(playerScreenX - obsScreenX) < (Player.width + obs.width) * 0.4) {
+                        gameOver();
+                        return;
+                    }
+                }
+
+                if (obs.z > 1.2) obstacles.splice(i, 1);
+            }
+
+            // Update partículas
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.3;
+                p.life -= 0.02;
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+
+            // Update UI
+            document.getElementById('score').textContent = Game.score;
+            document.getElementById('distance').textContent = Math.floor(Game.distance) + 'm';
+            drawSpeedometer();
+            AudioEngine.updateRPM(Game.speed);
+        }
+
+        function drawSpeedometer() {
+            speedCtx.clearRect(0, 0, 100, 100);
+            speedCtx.save();
+            speedCtx.translate(50, 50);
+
+            // Fondo
+            speedCtx.strokeStyle = 'rgba(0, 255, 200, 0.2)';
+            speedCtx.lineWidth = 8;
+            speedCtx.beginPath();
+            speedCtx.arc(0, 0, 40, Math.PI * 0.75, Math.PI * 2.25);
+            speedCtx.stroke();
+
+            // Velocidad
+            const angle = Math.PI * 0.75 + (Game.speed / Game.maxSpeed) * Math.PI * 1.5;
+            speedCtx.strokeStyle = '#00ffc8';
+            speedCtx.lineWidth = 8;
+            speedCtx.lineCap = 'round';
+            speedCtx.beginPath();
+            speedCtx.arc(0, 0, 40, Math.PI * 0.75, angle);
+            speedCtx.stroke();
+
+            // Texto
+            speedCtx.fillStyle = '#00ffc8';
+            speedCtx.font = 'bold 20px JetBrains Mono';
+            speedCtx.textAlign = 'center';
+            speedCtx.textBaseline = 'middle';
+            speedCtx.fillText(Math.floor(Game.speed), 0, 5);
+            speedCtx.font = '10px Inter';
+            speedCtx.fillText('KM/H', 0, 20);
+
+            speedCtx.restore();
+        }
+
+        function gameOver() {
+            Game.active = false;
+            Game.slowMo = 0.2;
+            Game.screenShake = 20;
+            AudioEngine.playCrash();
+            createParticles(W / 2 + Player.x * W * 0.4, Player.y, 50, '#ff6600');
+            haptic([100, 50, 100]);
+            VoiceSystem.speak(`Impacto detectado. Puntuación final ${Game.score}`);
+
+            setTimeout(() => {
+                document.getElementById('final-score').textContent = Game.score;
+                document.getElementById('game-over-screen').style.display = 'flex';
+                Game.slowMo = 1;
+            }, 500);
+        }
+
+        function draw() {
+            // Clear con motion blur
+            ctx.fillStyle = `rgba(0, 0, 8, ${0.3 + Game.speed / 1000})`;
+            ctx.fillRect(0, 0, W, H);
+
+            ctx.save();
+            ctx.translate(Camera.shakeX, Camera.shakeY);
+
+            // Cielo con estrellas parallax
+            ctx.fillStyle = '#000008';
+            ctx.fillRect(0, 0, W, H * 0.5);
+
+            stars.forEach(star => {
+                star.x -= star.speed * Game.speed / 100;
+                if (star.x < 0) star.x = W;
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.size / 2})`;
+                ctx.fillRect(star.x, star.y, star.size, star.size);
+            });
+
+            // Ciudad de fondo
+            cityLights.forEach(light => {
+                light.x -= Game.speed / 200;
+                if (light.x < -10) light.x = W + 10;
+                ctx.fillStyle = light.color;
+                ctx.fillRect(light.x, light.y, light.w, light.h);
+            });
+
+            // Horizonte con niebla
+            const horizon = H * 0.45;
+            const gradient = ctx.createLinearGradient(0, horizon - 50, 0, horizon + 50);
+            gradient.addColorStop(0, 'rgba(0, 20, 40, 0)');
+            gradient.addColorStop(1, 'rgba(0, 20, 40, 0.8)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, horizon - 50, W, 100);
+
+            // Carretera con perspectiva
+            ctx.fillStyle = '#0a0a15';
+            ctx.beginPath();
+            ctx.moveTo(W * 0.5 - 10, horizon);
+            ctx.lineTo(W * 0.5 + 10, horizon);
+            ctx.lineTo(W * 0.95, H);
+            ctx.lineTo(W * 0.05, H);
+            ctx.closePath();
+            ctx.fill();
+
+            // Líneas de carretera con glow
+            ctx.strokeStyle = '#00ffc8';
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#00ffc8';
+            ctx.setLineDash([40, 40]);
+            ctx.lineDashOffset = -Game.distance * 2;
+            ctx.beginPath();
+            ctx.moveTo(W * 0.5, horizon);
+            ctx.lineTo(W * 0.5, H);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.shadowBlur = 0;
+
+            // Laterales
+            ctx.strokeStyle = 'rgba(0, 255, 200, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(W * 0.5 - 10, horizon);
+            ctx.lineTo(W * 0.05, H);
+            ctx.moveTo(W * 0.5 + 10, horizon);
+            ctx.lineTo(W * 0.95, H);
+            ctx.stroke();
+
+            // Obstáculos con escala y niebla
+            obstacles.sort((a, b) => b.z - a.z);
+            obstacles.forEach(obs => {
+                const scale = obs.z;
+                const x = W / 2 + obs.x * W * 0.4 * scale;
+                const y = horizon + (H - horizon) * scale;
+                const w = obs.width * scale;
+                const h = obs.height * scale;
+
+                const fog = 1 - scale * 0.7;
+                ctx.fillStyle = obs.color;
+                ctx.globalAlpha = fog;
+                ctx.shadowBlur = 15 * scale;
+                ctx.shadowColor = obs.color;
+                ctx.fillRect(x - w / 2, y - h, w, h * 0.7);
+
+                // Ventanas
+                ctx.fillStyle = '#001122';
+                ctx.fillRect(x - w * 0.35, y - h * 0.9, w * 0.7, h * 0.3);
+
+                // Luces
+                ctx.fillStyle = '#ffff00';
+                ctx.fillRect(x - w * 0.3, y - h * 0.2, w * 0.15, h * 0.1);
+                ctx.fillRect(x + w * 0.15, y - h * 0.2, w * 0.15, h * 0.1);
+
+                ctx.globalAlpha = 1;
+                ctx.shadowBlur = 0;
+            });
+
+            // Jugador con drift y luces
+            ctx.save();
+            ctx.translate(W / 2 + Player.x * W * 0.4, Player.y);
+            ctx.rotate(Player.angle);
+
+            // Sombra
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(-Player.width / 2, -Player.height * 0.1, Player.width, Player.height * 0.3);
+
+            // Cuerpo con gradiente
+            const bodyGrad = ctx.createLinearGradient(0, -Player.height, 0, 0);
+            bodyGrad.addColorStop(0, '#00ffaa');
+            bodyGrad.addColorStop(1, '#008866');
+            ctx.fillStyle = bodyGrad;
+            ctx.shadowBlur = 30;
+            ctx.shadowColor = '#00ffaa';
+            ctx.fillRect(-Player.width / 2, -Player.height * 0.8, Player.width, Player.height * 0.5);
+
+            // Cabina
+            ctx.fillStyle = '#002244';
+            ctx.fillRect(-Player.width * 0.3, -Player.height, Player.width * 0.6, Player.height * 0.3);
+
+            // Faros
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowBlur = 40;
+            ctx.shadowColor = '#ffffff';
+            ctx.fillRect(-Player.width * 0.4, -Player.height * 0.75, Player.width * 0.15, Player.height * 0.1);
+            ctx.fillRect(Player.width * 0.25, -Player.height * 0.75, Player.width * 0.15, Player.height * 0.1);
+
+            ctx.restore();
+
+            // Partículas
+            particles.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+            });
+            ctx.globalAlpha = 1;
+
+            ctx.restore();
+        }
+
+        function gameLoop(timestamp) {
+            if (!Game.lastTime) Game.lastTime = timestamp;
+            const dt = Math.min((timestamp - Game.lastTime) / 1000, 0.1);
+            Game.lastTime = timestamp;
+
+            update(dt);
+            draw();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            W = window.innerWidth;
+            H = window.innerHeight;
+            canvas.width = W;
+            canvas.height = H;
+            Player.width = W * 0.08;
+            Player.height = H * 0.09;
+        });
+
+        VoiceSystem.init();
+        gameLoop(0);
+    </script>
+</body>
+</html>
