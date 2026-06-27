@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MaxiQueen OS Ventas — El Sistema Operativo que Llena tu Agenda en Automático</title>
+    
+    <!-- Open Graph para WhatsApp / Redes -->
+    <meta property="og:title" content="MaxiQueen OS Ventas — Agenda Llena en Automático">
+    <meta property="og:description" content="Instala el sistema para atraer y retener clientas premium en automático sin depender de referidos.">
+    <meta property="og:image" content="https://tuweb.com/preview.jpg"> <!-- Reemplazar -->
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,11 +77,12 @@
         }
     </style>
 </head>
-<body class="antialiased selection:bg-pink-500/30 selection:text-white">
+<!-- pb-24 evita que el botón sticky de móvil tape el footer al final -->
+<body class="antialiased selection:bg-pink-500/30 selection:text-white pb-24 sm:pb-0">
 
     <!-- TOP BAR URGENCIA -->
     <div class="fixed top-0 w-full z-[60] bg-gradient-to-r from-[#FF2E78] to-[#D4A96A] text-black text-center text-[12px] sm:text-sm font-semibold py-2 px-2">
-        🔥 ÚLTIMOS 7 CUPOS DE NOVIEMBRE — Cierre hoy 11:59 PM. Sube a $197.000 mañana.
+        🔥 ÚLTIMOS 7 CUPOS DE ESTE MES — Cierre hoy 11:59 PM. Sube a $197.000 mañana.
     </div>
 
     <!-- NAV -->
@@ -116,16 +123,16 @@
                     <a href="https://wa.me/573016625921?text=Hola,%20quiero%20mi%20MaxiQueen%20OS%20por%20$147.000%20COP%20YA" class="btn-primary px-7 py-4 rounded-2xl text-base sm:text-lg text-center shimmer">
                         Quiero mi OS por $147.000 COP
                     </a>
-                    <a href="https://wa.me/573016625921?text=Hola,%20quiero%20la%20implementación%20DONE-FOR-YOU%20de%20$897.000%20COP" class="glass px-7 py-4 rounded-2xl text-base font-semibold text-center hover:bg-white/10 transition">
+                    <a href="#upgrade-section" class="glass px-7 py-4 rounded-2xl text-base font-semibold text-center hover:bg-white/10 transition">
                         Quiero que lo instalen por mí — $897.000
                     </a>
                 </div>
 
                 <div class="mt-6 flex items-center gap-4 text-sm text-white/60">
                     <div class="flex -space-x-2">
-                        <img src="https://i.pravatar.cc/32?img=5" class="w-8 h-8 rounded-full border-2 border-black"/>
-                        <img src="https://i.pravatar.cc/32?img=32" class="w-8 h-8 rounded-full border-2 border-black"/>
-                        <img src="https://i.pravatar.cc/32?img=8" class="w-8 h-8 rounded-full border-2 border-black"/>
+                        <img src="https://i.pravatar.cc/32?img=5" class="w-8 h-8 rounded-full border-2 border-black" alt="User avatar"/>
+                        <img src="https://i.pravatar.cc/32?img=32" class="w-8 h-8 rounded-full border-2 border-black" alt="User avatar"/>
+                        <img src="https://i.pravatar.cc/32?img=8" class="w-8 h-8 rounded-full border-2 border-black" alt="User avatar"/>
                     </div>
                     <p><span class="text-white font-semibold">+1.247</span> beauty bosses ya activaron su OS</p>
                 </div>
@@ -216,7 +223,9 @@
                 <a href="https://wa.me/573016625921?text=Hola,%20quiero%20pagar%20los%20$147.000%20COP%20de%20MaxiQueen%20OS" class="mt-8 inline-flex btn-whatsapp px-8 py-4 rounded-2xl text-lg w-full sm:w-auto justify-center">Activar mi OS ahora — $147.000</a>
                 <p class="text-xs text-white/50 mt-3">Pago seguro por Nequi, Daviplata, Bancolombia o link de pago.</p>
             </div>
-            <div class="lg:sticky lg:top-28">
+            
+            <!-- Agregado el ID para el smooth scroll del botón secundario del hero -->
+            <div id="upgrade-section" class="lg:sticky lg:top-28">
                 <div class="glass rounded-[2rem] p-1 gold-glow">
                     <div class="bg-[#0B0B0E] rounded-[1.8rem] p-8 border border-white/10">
                         <p class="text-xs tracking-widest text-[#D4A96A] font-semibold mb-2">UPGRADE RECOMENDADO</p>
@@ -243,9 +252,9 @@
         <div class="max-w-6xl mx-auto px-4">
             <h2 class="text-center text-3xl lg:text-4xl mb-12">No es teoría. Son agendas llenas.</h2>
             <div class="grid md:grid-cols-3 gap-6">
-                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Pasé de $2.1M a $6.4M en 28 días. No aumenté precios, solo instalé el OS y dejé de dar descuentos por DM.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=16" class="w-10 h-10 rounded-full"/><div><p class="font-semibold text-sm">Karen M. — Lashes Bogotá</p><p class="text-xs text-white/50">Plan $147.000</p></div></div></div>
-                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Tomé el de $897.000. En 3 días tenía todo listo. La primera semana agenda llena sin publicar nada nuevo.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=47" class="w-10 h-10 rounded-full"/><div><p class="font-semibold text-sm">Daniela T. — Nails Medellín</p><p class="text-xs text-white/50">Plan Implementado</p></div></div></div>
-                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Recuperé 34 clientas perdidas con el mensaje #7. $4.2M solo en reagendamientos.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=23" class="w-10 h-10 rounded-full"/><div><p class="font-semibold text-sm">Valeria S. — Micropigmentación Cali</p><p class="text-xs text-white/50">Plan $147.000</p></div></div></div>
+                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Pasé de $2.1M a $6.4M en 28 días. No aumenté precios, solo instalé el OS y dejé de dar descuentos por DM.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=16" class="w-10 h-10 rounded-full" alt="Karen M."/><div><p class="font-semibold text-sm">Karen M. — Lashes Bogotá</p><p class="text-xs text-white/50">Plan $147.000</p></div></div></div>
+                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Tomé el de $897.000. En 3 días tenía todo listo. La primera semana agenda llena sin publicar nada nuevo.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=47" class="w-10 h-10 rounded-full" alt="Daniela T."/><div><p class="font-semibold text-sm">Daniela T. — Nails Medellín</p><p class="text-xs text-white/50">Plan Implementado</p></div></div></div>
+                <div class="glass p-6 rounded-2xl"><p class="text-white/80">“Recuperé 34 clientas perdidas con el mensaje #7. $4.2M solo en reagendamientos.”</p><div class="flex items-center gap-3 mt-4"><img src="https://i.pravatar.cc/40?img=23" class="w-10 h-10 rounded-full" alt="Valeria S."/><div><p class="font-semibold text-sm">Valeria S. — Micropigmentación Cali</p><p class="text-xs text-white/50">Plan $147.000</p></div></div></div>
             </div>
         </div>
     </section>
@@ -289,8 +298,9 @@
         </div>
     </section>
 
+    <!-- FOOTER (Año corregido a 2026) -->
     <footer class="border-t border-white/5 py-10 text-center text-sm text-white/40">
-        <p>© 2025 MaxiQueen OS Ventas. Hecho en Colombia para beauty bosses que facturan en serio.</p>
+        <p>© 2026 MaxiQueen OS Ventas. Hecho en Colombia para beauty bosses que facturan en serio.</p>
         <p class="mt-2">Contacto directo: <a href="https://wa.me/573016625921" class="underline hover:text-white">WhatsApp +57 301 6625921</a></p>
     </footer>
 
@@ -311,7 +321,7 @@
             });
         });
 
-        // Smooth scroll
+        // Smooth scroll activado correctamente para id internos
         document.querySelectorAll('a[href^="#"]').forEach(a => {
             a.addEventListener('click', e => {
                 e.preventDefault();
@@ -319,6 +329,5 @@
             });
         });
     </script>
-<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
 </body>
 </html>
