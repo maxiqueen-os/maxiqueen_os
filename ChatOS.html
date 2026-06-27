@@ -2,395 +2,676 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>MaxiQueen OS v3 | IA de Voz 👑</title>
+  <title>MaxiQueen OS v3 | Premium Voice Core 👑</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
   <style>
+    /* Estilos base y variables de diseño */
     body { 
-        background: #050505; 
-        background-image: radial-gradient(circle at 50% 0%, #1a1a24 0%, #050505 70%);
+        background: #030303; 
+        background-image: radial-gradient(circle at 0% 0%, #111115 0%, #030303 60%), radial-gradient(circle at 100% 100%, #16120a 0%, #030303 60%);
         font-family: 'Inter', system-ui, sans-serif;
     }
     
-    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
 
-    .fade-in-up { animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    /* Animaciones Cinemáticas */
+    .fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     @keyframes fadeInUp { 
-        from { opacity: 0; transform: translateY(10px); } 
-        to { opacity: 1; transform: translateY(0); } 
+        from { opacity: 0; transform: translateY(12px); filter: blur(4px); } 
+        to { opacity: 1; transform: translateY(0); filter: blur(0); } 
     }
 
-    .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
-    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-    @keyframes typing {
-      0%, 80%, 100% { transform: scale(0); }
-      40% { transform: scale(1); }
-    }
+    /* --- ESTADOS DEL AVATAR NÚCLEO IA --- */
+    .avatar-ring { transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    
+    /* Estado: Reposo (Glow sutil ámbar) */
+    .state-idle .ring-core { fill: rgba(251, 191, 36, 0.2); stroke: #fbbf24; filter: drop-shadow(0 0 15px rgba(251,191,36,0.4)); }
+    .state-idle .ring-outer { stroke: rgba(251, 191, 36, 0.3); animation: spin-slow 12s linear infinite; }
+    .state-idle .ring-inter { stroke: rgba(251, 191, 36, 0.15); animation: spin-reverse 8s linear infinite; }
 
-    /* Animación para el micrófono cuando está escuchando */
-    .mic-listening {
-      animation: pulse-red 1.5s infinite;
-      background-color: #ef4444 !important; /* Rojo */
-      color: white !important;
-    }
-    @keyframes pulse-red {
-      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-      70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-    }
+    /* Estado: Escuchando (Energía Roja/Alerta) */
+    .state-listening .ring-core { fill: rgba(239, 68, 68, 0.3); stroke: #ef4444; filter: drop-shadow(0 0 25px rgba(239,68,68,0.8)); }
+    .state-listening .ring-outer { stroke: #ef4444; animation: pulse-fast 1s infinite alternate, spin-slow 3s linear infinite; }
+    .state-listening .ring-inter { stroke: rgba(239, 68, 68, 0.5); animation: spin-reverse 2s linear infinite; }
+
+    /* Estado: Procesando/Pensando (Ciclo continuo Ámbar/Blanco) */
+    .state-thinking .ring-core { fill: rgba(217, 119, 6, 0.2); stroke: #d97706; filter: drop-shadow(0 0 20px rgba(217,119,6,0.5)); }
+    .state-thinking .ring-outer { stroke: #fbbf24; stroke-dasharray: 40 120; animation: spin-fast 1.5s linear infinite; }
+    .state-thinking .ring-inter { stroke: #ffffff; stroke-dasharray: 10 30; animation: spin-reverse 1s linear infinite; }
+
+    /* Estado: Hablando (Modulación cinética de ondas de audio) */
+    .state-speaking .ring-core { fill: rgba(251, 191, 36, 0.3); stroke: #fff; filter: drop-shadow(0 0 30px rgba(251,191,36,0.7)); }
+    .state-speaking .ring-outer { stroke: #fbbf24; animation: wave-pulse 0.4s infinite alternate, spin-slow 20s linear infinite; stroke-width: 3; }
+    .state-speaking .ring-inter { stroke: #fde68a; animation: wave-pulse-delayed 0.4s infinite alternate; stroke-width: 2; }
+
+    @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes spin-fast { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes spin-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+    @keyframes pulse-fast { from { transform: scale(0.95); opacity: 0.8; } to { transform: scale(1.05); opacity: 1; } }
+    @keyframes wave-pulse { from { stroke-width: 1; transform: scale(0.92); } to { stroke-width: 4; transform: scale(1.08); } }
+    @keyframes wave-pulse-delayed { from { transform: scale(1.05); } to { transform: scale(0.9); } }
+
+    /* Indicador de escritura interno */
+    .typing-dot { animation: typing-wave 1.2s infinite ease-in-out both; }
+    .typing-dot:nth-child(1) { animation-delay: -0.3s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.15s; }
+    @keyframes typing-wave { 0%, 80%, 100% { transform: scale(0.4); opacity: 0.3; } 40% { transform: scale(1.1); opacity: 1; } }
   </style>
 </head>
 
-<body class="min-h-screen flex flex-col items-center justify-between text-zinc-100 selection:bg-amber-500 selection:text-black">
+<body class="min-h-screen text-zinc-100 flex flex-col justify-between selection:bg-amber-400 selection:text-black">
 
-<main class="w-full max-w-2xl p-4 md:p-6 flex-1 flex flex-col">
-  
-  <header class="relative text-center mb-6 mt-4">
-    <h1 class="text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 drop-shadow-[0_0_8px_rgba(251,191,36,0.3)]">
-      👑 MaxiQueen OS
-    </h1>
-    <p class="text-sm text-zinc-400 mt-1 tracking-widest uppercase">Ecosistema de Inteligencia Estratégica</p>
+  <!-- Contenedor Principal Dashboard de Doble Panel -->
+  <div class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
     
-    <!-- Controles Superiores -->
-    <div class="absolute top-0 right-0 flex gap-2">
-      <button id="voiceToggleBtn" onclick="toggleVoice()" class="p-2 text-zinc-500 hover:text-amber-400 transition-colors tooltip" title="Activar/Desactivar Voz de la IA">
-        <svg id="icon-vol-off" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
-        <svg id="icon-vol-on" class="w-5 h-5 hidden text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
-      </button>
-      <button onclick="restartChat()" class="p-2 text-zinc-500 hover:text-amber-400 transition-colors tooltip" title="Reiniciar Sistema">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-      </button>
-    </div>
-  </header>
-
-  <div class="relative flex-1 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-    
-    <div id="chatLog" class="flex-1 overflow-y-auto p-5 space-y-6 scroll-smooth">
-      <!-- Los mensajes irán aquí -->
-    </div>
-
-    <div id="typingIndicator" class="hidden px-5 pb-2">
-      <div class="bg-zinc-800/80 border border-white/5 w-fit rounded-2xl px-4 py-3 flex items-center gap-1 shadow-lg">
-        <div class="w-2 h-2 bg-amber-400 rounded-full typing-dot"></div>
-        <div class="w-2 h-2 bg-amber-400 rounded-full typing-dot"></div>
-        <div class="w-2 h-2 bg-amber-400 rounded-full typing-dot"></div>
+    <!-- PANEL IZQUIERDO: Avatar Cuántico, Telemetría y Configuración de Voz -->
+    <aside class="lg:col-span-4 bg-zinc-900/40 backdrop-blur-2xl border border-white/5 rounded-3xl p-6 flex flex-col items-center justify-between shadow-2xl relative overflow-hidden">
+      
+      <!-- Cabecera de Identidad -->
+      <div class="text-center w-full z-10">
+        <div class="flex items-center justify-center gap-2 mb-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-xs text-zinc-500 uppercase tracking-widest font-mono">Core Engine Active</span>
+        </div>
+        <h1 class="text-2xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-white">
+          👑 MAXIQUEEN OS
+        </h1>
+        <p class="text-[10px] text-zinc-400 tracking-wider font-mono uppercase mt-1">Ecosistema Cognitivo v3.0</p>
       </div>
-    </div>
 
-    <div class="p-4 bg-zinc-900/80 backdrop-blur-md border-t border-white/5">
-      <div class="flex gap-2 sm:gap-3 items-center">
-        <!-- Botón de Micrófono -->
-        <button id="micBtn" onclick="toggleListening()" class="bg-zinc-800 text-zinc-400 border border-white/10 p-3 rounded-xl hover:text-amber-400 transition-all flex items-center justify-center disabled:opacity-50" title="Dictar por voz">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+      <!-- COMPONENTE AVATAR INTERACTIVO -->
+      <div class="my-8 flex items-center justify-center z-10">
+        <div id="avatarContainer" class="state-idle relative w-48 h-48 flex items-center justify-center transition-all duration-500">
+          <svg class="w-full h-full transform origin-center" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <g class="origin-center" style="transform-box: fill-box; transform-origin: center;">
+              <!-- Anillo Externo Complejo -->
+              <circle class="avatar-ring ring-outer" cx="100" cy="100" r="85" fill="none" stroke-width="1.5" stroke-dasharray="20 10 5 10"/>
+              <!-- Anillo Intermedio Alterno -->
+              <circle class="avatar-ring ring-inter" cx="100" cy="100" r="65" fill="none" stroke-width="1" stroke-dasharray="40 15"/>
+              <!-- Núcleo de Energía Conductora -->
+              <circle class="avatar-ring ring-core" cx="100" cy="100" r="40" stroke-width="2"/>
+            </g>
+          </svg>
+          <!-- Indicador textual de estado flotante -->
+          <div id="avatarStatusLabel" class="absolute bottom-2 bg-black/80 border border-white/10 px-3 py-0.5 rounded-full text-[9px] font-mono tracking-widest text-amber-400 uppercase">
+            REPOSO
+          </div>
+        </div>
+      </div>
+
+      <!-- SUITE DE CONFIGURACIÓN DE VOZ DE LA IA -->
+      <div class="w-full bg-black/40 border border-white/5 rounded-2xl p-4 space-y-3 z-10">
+        <div class="flex items-center justify-between border-b border-white/5 pb-2">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            Parámetros de Voz Sintetizada
+          </h3>
+          <!-- Switch maestro de audio -->
+          <button id="voiceGlobalToggle" onclick="toggleVoiceOutput()" class="text-xs px-2.5 py-1 rounded-lg font-mono border border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-amber-400 transition-all flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-zinc-500 status-dot"></span>
+            <span class="label-text">MUTE</span>
+          </button>
+        </div>
+
+        <!-- Selector de voces nativas -->
+        <div class="space-y-1">
+          <label class="text-[10px] text-zinc-500 font-mono uppercase block">Banco de Voces del Sistema</label>
+          <select id="voiceSelector" class="w-full bg-zinc-900 border border-white/10 rounded-lg p-2 text-xs text-zinc-200 outline-none focus:border-amber-400 transition-colors">
+            <!-- Cargado dinámicamente vía JS -->
+            <option value="">Cargando catálogo sintético...</option>
+          </select>
+        </div>
+
+        <!-- Deslizadores de Calibración -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <div class="flex justify-between text-[10px] text-zinc-500 font-mono mb-1">
+              <span>VELOCIDAD</span>
+              <span id="rateVal">1.0x</span>
+            </div>
+            <input id="voiceRate" type="range" min="0.6" max="1.8" step="0.05" value="1.05" oninput="updateVoiceSliders()" class="w-full accent-amber-400 bg-zinc-800 h-1 rounded-lg appearance-none cursor-pointer">
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] text-zinc-500 font-mono mb-1">
+              <span>TONO</span>
+              <span id="pitchVal">1.1x</span>
+            </div>
+            <input id="voicePitch" type="range" min="0.5" max="1.5" step="0.05" value="1.1" oninput="updateVoiceSliders()" class="w-full accent-amber-400 bg-zinc-800 h-1 rounded-lg appearance-none cursor-pointer">
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- PANEL DERECHO: Consola Conversacional Inteligente -->
+    <main class="lg:col-span-8 bg-black/60 backdrop-blur-2xl border border-white/10 rounded-3xl flex flex-col justify-between shadow-2xl relative overflow-hidden">
+      
+      <!-- Barra superior de estado del Chat -->
+      <div class="p-4 bg-zinc-900/60 border-b border-white/5 flex justify-between items-center px-6">
+        <div class="flex items-center gap-3">
+          <div class="p-2 rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 002-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold tracking-wide">Terminal Conversacional</h2>
+            <p id="subsystemIndicator" class="text-[10px] text-zinc-400 font-mono">Módulo Base: Diagnóstico</p>
+          </div>
+        </div>
+        
+        <!-- Botón de Reinicio -->
+        <button onclick="restartSystem()" class="p-2 text-zinc-500 hover:text-amber-400 hover:bg-white/5 rounded-xl transition-all border border-transparent hover:border-white/5" title="Reiniciar Sistema">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
         </button>
+      </div>
 
-        <input id="userInput"
-               type="text"
-               placeholder="Escribe o dicta tu respuesta..."
-               class="flex-1 bg-black/50 border border-white/10 focus:border-amber-400/50 focus:shadow-[0_0_10px_rgba(251,191,36,0.1)] rounded-xl px-4 py-3 text-white outline-none transition-all placeholder:text-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed" 
-               autocomplete="off" />
+      <!-- Tronco de Mensajes / Log Histórico -->
+      <div id="chatLog" class="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth">
+        <!-- Contenido generado dinámicamente -->
+      </div>
+
+      <!-- Indicador Visual Intermitente de Cómputo -->
+      <div id="typingIndicator" class="hidden px-6 pb-3">
+        <div class="bg-zinc-900/90 border border-white/5 w-fit rounded-2xl px-4 py-2.5 flex items-center gap-1.5 shadow-xl">
+          <span class="text-xs font-mono text-zinc-500 mr-1">Procesando vectores</span>
+          <div class="w-1.5 h-1.5 bg-amber-400 rounded-full typing-dot"></div>
+          <div class="w-1.5 h-1.5 bg-amber-400 rounded-full typing-dot"></div>
+          <div class="w-1.5 h-1.5 bg-amber-400 rounded-full typing-dot"></div>
+        </div>
+      </div>
+
+      <!-- Consola de Entrada e Interacción Física/Voz -->
+      <div class="p-4 bg-zinc-900/40 border-t border-white/5 backdrop-blur-md">
+        <div class="flex gap-2 sm:gap-3 items-center w-full">
+          
+          <!-- Transmisor por Dictado de Voz -->
+          <button id="micBtn" onclick="toggleListening()" class="bg-zinc-900 text-zinc-400 border border-white/10 p-3.5 rounded-2xl hover:text-amber-400 hover:border-amber-400/40 transition-all flex items-center justify-center disabled:opacity-30 relative group" title="Activar entrada de micrófono">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+            <span class="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] font-mono py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-white/10 whitespace-nowrap">DICTAR (VOZ)</span>
+          </button>
+
+          <!-- Input de entrada principal -->
+          <input id="userInput"
+                 type="text"
+                 placeholder="Ejecuta un comando o dicta una respuesta..."
+                 class="flex-1 bg-zinc-950 border border-white/5 focus:border-amber-400/50 focus:shadow-[0_0_15px_rgba(251,191,36,0.05)] rounded-2xl px-4 py-3.5 text-sm text-white outline-none transition-all placeholder:text-zinc-600 disabled:opacity-40 disabled:cursor-not-allowed" 
+                 autocomplete="off" />
                
-        <button id="sendBtn" onclick="handleUserSubmit()"
-                class="bg-amber-400 text-black font-bold px-5 py-3 rounded-xl hover:bg-amber-300 hover:shadow-[0_0_15px_rgba(251,191,36,0.4)] transition-all active:scale-95 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:active:scale-100">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-        </button>
+          <!-- Disparador de Envío -->
+          <button id="sendBtn" onclick="handleUserSubmit()"
+                  class="bg-gradient-to-r from-amber-400 to-amber-300 text-black font-extrabold px-6 py-3.5 rounded-2xl hover:brightness-110 hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all active:scale-95 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:active:scale-100">
+            <svg class="w-4 h-4 transform rotate-45 -translate-y-0.5 translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+          </button>
+        </div>
       </div>
-    </div>
+    </main>
   </div>
-</main>
 
-<script>
-/* ========================= 🧠 ESTADO GLOBAL ========================= */
-let state = {
-  flujoActual: 'inicio',
-  datosRecopilados: {},
-  esperandoRespuesta: false
-};
+  <!-- Pie de consistencia técnica -->
+  <footer class="w-full text-center p-3 border-t border-white/5 text-[10px] font-mono text-zinc-600 tracking-wider">
+    MAXIQUEEN OS PIPELINE AUTOMATION PLATFORM © 2026
+  </footer>
 
-let isVoiceEnabled = false; // Por defecto apagado para no asustar al usuario
+  <!-- ======================================================================= -->
+  <!-- LÓGICA CORE DE ARQUITECTURA DIGITAL Y RECONOCIMIENTO DE VOZ -->
+  <!-- ======================================================================= -->
+  <script>
+    /* ========================= 🧠 MAQUINA DE ESTADO GLOBAL ========================= */
+    let systemState = {
+      activeNode: 'inicio',
+      historyMemory: {},
+      isVoiceOutputActive: false
+    };
 
-/* ========================= 🎙️ MOTOR DE VOZ (IA) ========================= */
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition;
-let isListening = false;
-const micBtn = document.getElementById("micBtn");
+    /* ========================= 🎙️ CONFIGURACIÓN AVANZADA DE VOZ (SPEECH) ========================= */
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let speechEngine;
+    let activelyListening = false;
+    
+    const micButtonElement = document.getElementById("micBtn");
+    const voiceSelector = document.getElementById("voiceSelector");
 
-// Inicializar reconocimiento de voz si el navegador lo soporta
-if (SpeechRecognition) {
-  recognition = new SpeechRecognition();
-  recognition.lang = 'es-CO'; // Español Colombia
-  recognition.interimResults = false;
-  
-  recognition.onstart = () => {
-    isListening = true;
-    micBtn.classList.add("mic-listening");
-    document.getElementById("userInput").placeholder = "Escuchando...";
-  };
-  
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    document.getElementById("userInput").value = transcript;
-    // Autocompletar y enviar tras dictar
-    setTimeout(() => handleUserSubmit(), 500); 
-  };
-  
-  recognition.onend = () => {
-    isListening = false;
-    micBtn.classList.remove("mic-listening");
-    document.getElementById("userInput").placeholder = "Escribe o dicta tu respuesta...";
-  };
-  
-  recognition.onerror = (event) => {
-    console.warn("Error de voz: ", event.error);
-    isListening = false;
-    micBtn.classList.remove("mic-listening");
-    document.getElementById("userInput").placeholder = "Escribe o dicta tu respuesta...";
-  };
-} else {
-  micBtn.style.display = "none"; // Ocultar si el navegador no lo soporta
-}
+    // Inicializar Catálogo de Voces Nativo del Navegador
+    function populationSystemVoices() {
+      if (!('speechSynthesis' in window)) return;
+      let voices = window.speechSynthesis.getVoices();
+      voiceSelector.innerHTML = '';
+      
+      // Filtrar preferentemente voces en español
+      let esVoices = voices.filter(v => v.lang.startsWith('es'));
+      let targetList = esVoices.length > 0 ? esVoices : voices;
 
-function toggleListening() {
-  if (!recognition) return alert("Tu navegador no soporta reconocimiento de voz.");
-  if (isListening) {
-    recognition.stop();
-  } else {
-    recognition.start();
-  }
-}
-
-// Lógica de Text-to-Speech (IA Hablando)
-function toggleVoice() {
-  isVoiceEnabled = !isVoiceEnabled;
-  document.getElementById("icon-vol-off").classList.toggle("hidden");
-  document.getElementById("icon-vol-on").classList.toggle("hidden");
-  if (!isVoiceEnabled && window.speechSynthesis) {
-    window.speechSynthesis.cancel(); // Callar inmediatamente si se apaga
-  }
-}
-
-function speakText(text) {
-  if (!isVoiceEnabled || !('speechSynthesis' in window)) return;
-  
-  window.speechSynthesis.cancel(); // Cortar audio anterior si hay
-  
-  // Limpiar emojis, asteriscos y saltos de línea para la lectura
-  const cleanText = text
-    .replace(/[\u{1F600}-\u{1F6FF}|\u{2600}-\u{26FF}]/gu, '') // quitar emojis
-    .replace(/\*/g, '') // quitar negritas
-    .replace(/\n/g, '. '); // pausas en saltos de linea
-
-  const utterance = new SpeechSynthesisUtterance(cleanText);
-  utterance.lang = 'es-CO'; // Español
-  utterance.pitch = 1.1; // Tono ligeramente alterado para que no suene tan robot genérico
-  utterance.rate = 1.05; // Velocidad un poquito más rápida
-  
-  window.speechSynthesis.speak(utterance);
-}
-
-
-/* ========================= 📦 BASE DE CONOCIMIENTO ========================= */
-const knowledgeBase = {
-  inicio: {
-    mensaje: `Hola 👑\n\nEstoy aquí contigo. No soy un bot de respuestas rápidas; soy el núcleo conversacional con Inteligencia de Voz de MaxiQueen OS.\n\nMi objetivo es entenderte. ¿En qué punto sientes que estás ahora mismo?`,
-    opciones: [
-      "1️⃣ Tengo ideas, pero me falta orden",
-      "2️⃣ Estoy bloqueado o saturado",
-      "3️⃣ Quiero crecer y vender más"
-    ],
-    procesar: (texto) => {
-      if (texto.includes("idea") || texto.includes("1")) return 'ideas';
-      if (texto.includes("bloque") || texto.includes("saturado") || texto.includes("2")) return 'bloqueo';
-      if (texto.includes("crecer") || texto.includes("vender") || texto.includes("3")) return 'crecimiento';
-      return 'incomprendido';
+      targetList.forEach((voice, index) => {
+        let option = document.createElement('option');
+        option.value = voice.name;
+        option.innerText = `${voice.name} (${voice.lang}) ${voice.default ? '[Default]' : ''}`;
+        // Intentar seleccionar por defecto una voz colombiana o latinoamericana
+        if (voice.lang === 'es-CO' || voice.lang.includes('es_CO')) option.selected = true;
+        voiceSelector.appendChild(option);
+      });
     }
-  },
-  ideas: {
-    mensaje: `Entendido. Tienes la materia prima, pero te falta la arquitectura.\n\nTener ideas sin un sistema genera ruido mental y poca ejecución. ¿Qué es lo que más te cuesta actualmente?`,
-    opciones: ["No sé por dónde empezar", "Me cuesta mantener el enfoque", "No sé monetizar"],
-    procesar: (t) => 'solucion_starter'
-  },
-  bloqueo: {
-    mensaje: `Gracias por la honestidad.\n\nEl bloqueo es exceso de decisiones sin jerarquía clara. Tu mente se satura. ¿Es por falta de dirección o estás haciendo todo solo?`,
-    opciones: ["Falta dirección", "Hago todo solo", "Mezcla de ambas"],
-    procesar: (t) => 'solucion_starter'
-  },
-  crecimiento: {
-    mensaje: `Excelente. Si piensas en crecimiento, la base existe. \n\nPero necesitas dejar el esfuerzo manual y automatizar. ¿Qué parte es la más lenta para ti hoy?`,
-    opciones: ["Creación de contenido", "Cierre de ventas", "Entrega del servicio"],
-    procesar: (t) => 'solucion_pro'
-  },
-  solucion_starter: {
-    mensaje: `Necesitas **estructura base**, lo que llamamos fase 'Starter'. Limpiar el ruido y trazar la ruta de acción. \n\n¿Te explico cómo estructuramos esto paso a paso?`,
-    opciones: ["Sí, explícame", "Prefiero hablar con un humano"],
-    procesar: (t) => t.includes("humano") ? 'contacto_humano' : 'explicacion_starter'
-  },
-  solucion_pro: {
-    mensaje: `La solución es sistematizar. Esta es la arquitectura 'Pro'. Implica integrar automatización y CRMs bajo una lógica humana 24/7.\n\n¿Quieres ver cómo diseñamos estos ecosistemas?`,
-    opciones: ["Sí, muéstrame", "Necesito un asesor"],
-    procesar: (t) => (t.includes("asesor") || t.includes("humano")) ? 'contacto_humano' : 'explicacion_pro'
-  },
-  explicacion_starter: {
-    mensaje: `La ruta:\n1. Diagnóstico Profundo.\n2. Arquitectura de prioridades.\n3. Ejecución Asistida.\n\nEl objetivo es trabajar con sentido. ¿Tiene sentido para ti?`,
-    opciones: ["Tiene sentido", "Tengo dudas"],
-    procesar: () => 'contacto_humano'
-  },
-  explicacion_pro: {
-    mensaje: `Diseñamos el ecosistema así:\n1. Auditoría de flujos.\n2. Ingeniería y centralización.\n3. Delegación de tareas repetitivas al sistema.\n\n¿Cómo avanzamos?`,
-    opciones: ["Me interesa", "Quiero ver planes"],
-    procesar: () => 'contacto_humano'
-  },
-  contacto_humano: {
-    mensaje: `👑 Llegamos al punto donde la tecnología da paso a la interacción real.\n\nPara adaptar el sistema a ti, hablemos directamente. ¿Qué canal prefieres?`,
-    opciones: ["📲 Continuar por WhatsApp", "📸 Hablar por Instagram"],
-    procesar: (t) => {
-      if(t.includes("whatsapp")) { window.open("https://wa.me/573016625921", "_blank"); return 'despedida'; }
-      if(t.includes("instagram")) { window.open("https://instagram.com/maxiqueenos", "_blank"); return 'despedida'; }
-      return 'incomprendido';
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = populationSystemVoices;
+      populationSystemVoices();
     }
-  },
-  despedida: {
-    mensaje: `Excelente. Te espero por allá para continuar construyendo. ¡Seguimos avanzando! 👑`,
-    opciones: [],
-    procesar: () => 'inicio'
-  },
-  incomprendido: {
-    mensaje: `Interesante perspectiva. Para guiarte correctamente, elige una de las opciones o usa otras palabras por favor.`,
-    opciones: [], 
-    procesar: (t) => knowledgeBase[state.flujoActual].procesar(t)
-  }
-};
 
-/* ========================= 🧩 UI CONTROLLERS ========================= */
-const chatLog = document.getElementById("chatLog");
-const input = document.getElementById("userInput");
-const typingIndicator = document.getElementById("typingIndicator");
-const sendBtn = document.getElementById("sendBtn");
+    function updateVoiceSliders() {
+      document.getElementById("rateVal").innerText = document.getElementById("voiceRate").value + "x";
+      document.getElementById("pitchVal").innerText = document.getElementById("voicePitch").value + "x";
+    }
 
-function getTime() {
-  return new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
-}
+    // Cambiar dinámicamente los estados visuales del Avatar Central
+    function setAvatarState(state) {
+      const avatar = document.getElementById("avatarContainer");
+      const label = document.getElementById("avatarStatusLabel");
+      avatar.className = "relative w-48 h-48 flex items-center justify-center transition-all duration-500";
+      
+      switch(state) {
+        case 'listening':
+          avatar.classList.add("state-listening");
+          label.innerText = "ESCUCHANDO";
+          label.className = "absolute bottom-2 bg-red-950/90 border border-red-500/30 px-3 py-0.5 rounded-full text-[9px] font-mono tracking-widest text-red-400 uppercase";
+          break;
+        case 'thinking':
+          avatar.classList.add("state-thinking");
+          label.innerText = "PROCESANDO";
+          label.className = "absolute bottom-2 bg-amber-950/80 border border-amber-500/30 px-3 py-0.5 rounded-full text-[9px] font-mono tracking-widest text-amber-500 uppercase animate-pulse";
+          break;
+        case 'speaking':
+          avatar.classList.add("state-speaking");
+          label.innerText = "HABLANDO";
+          label.className = "absolute bottom-2 bg-zinc-900 border border-white/20 px-3 py-0.5 rounded-full text-[9px] font-mono tracking-widest text-white uppercase";
+          break;
+        default:
+          avatar.classList.add("state-idle");
+          label.innerText = "REPOSO";
+          label.className = "absolute bottom-2 bg-black/80 border border-white/10 px-3 py-0.5 rounded-full text-[9px] font-mono tracking-widest text-amber-400 uppercase";
+      }
+    }
 
-function scrollBottom() {
-  setTimeout(() => chatLog.scrollTop = chatLog.scrollHeight, 50);
-}
+    // Configuración del Motor de Reconocimiento de Voz Pasivo/Activo
+    if (SpeechRecognition) {
+      speechEngine = new SpeechRecognition();
+      speechEngine.lang = 'es-CO';
+      speechEngine.interimResults = false;
+      
+      speechEngine.onstart = () => {
+        activelyListening = true;
+        setAvatarState('listening');
+        document.getElementById("userInput").placeholder = "Sistemas abiertos... Habla ahora.";
+      };
+      
+      speechEngine.onresult = (event) => {
+        const transcriptText = event.results[0][0].transcript;
+        document.getElementById("userInput").value = transcriptText;
+        setTimeout(() => handleUserSubmit(), 600); 
+      };
+      
+      speechEngine.onend = () => {
+        activelyListening = false;
+        if(document.getElementById("avatarStatusLabel").innerText === "ESCUCHANDO") {
+          setAvatarState('idle');
+        }
+        document.getElementById("userInput").placeholder = "Escribe o dicta un comando...";
+      };
+      
+      speechEngine.onerror = () => {
+        activelyListening = false;
+        setAvatarState('idle');
+      };
+    } else {
+      micButtonElement.style.display = "none";
+    }
 
-function renderOptions(options) {
-  if (!options || options.length === 0) return '';
-  let buttonsHtml = options.map(opt => 
-    `<button onclick="handleQuickReply('${opt}')" 
-             class="block w-full text-left bg-zinc-800/80 hover:bg-amber-400 hover:text-black border border-white/5 hover:border-amber-400 transition-all rounded-xl px-4 py-3 text-sm font-medium shadow-sm">
-      ${opt}
-    </button>`
-  ).join('');
-  return `<div class="mt-4 space-y-2 fade-in-up" style="animation-delay: 0.2s">${buttonsHtml}</div>`;
-}
+    function toggleListening() {
+      if (!speechEngine) return alert("Arquitectura de audio no soportada nativamente por este navegador.");
+      if (activelyListening) {
+        speechEngine.stop();
+      } else {
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        speechEngine.start();
+      }
+    }
 
-function appendMessage(text, sender = "bot", options = []) {
-  const msgDiv = document.createElement("div");
-  msgDiv.className = `flex flex-col max-w-[85%] fade-in-up ${sender === "user" ? "ml-auto items-end" : "mr-auto items-start"}`;
-  
-  const bubble = document.createElement("div");
-  bubble.className = sender === "user"
-    ? "bg-amber-400 text-black font-semibold rounded-2xl rounded-tr-sm px-5 py-3 shadow-md"
-    : "bg-zinc-800/90 text-zinc-200 rounded-2xl rounded-tl-sm px-5 py-4 border border-white/10 leading-relaxed whitespace-pre-wrap shadow-lg";
-  
-  bubble.innerHTML = text + `<span class="block text-[10px] mt-1 ${sender === 'user' ? 'text-black/60 text-right' : 'text-zinc-500 text-left'}">${getTime()}</span>`;
-  msgDiv.appendChild(bubble);
+    function toggleVoiceOutput() {
+      systemState.isVoiceOutputActive = !systemState.isVoiceOutputActive;
+      const btn = document.getElementById("voiceGlobalToggle");
+      const dot = btn.querySelector(".status-dot");
+      const txt = btn.querySelector(".label-text");
+      
+      if(systemState.isVoiceOutputActive) {
+        dot.className = "w-1.5 h-1.5 rounded-full bg-amber-400";
+        txt.innerText = "AUDIO LIVE";
+        btn.classList.add("border-amber-400/40");
+      } else {
+        dot.className = "w-1.5 h-1.5 rounded-full bg-zinc-500";
+        txt.innerText = "MUTE";
+        btn.classList.remove("border-amber-400/40");
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        setAvatarState('idle');
+      }
+    }
 
-  if (sender === "bot" && options.length > 0) {
-    msgDiv.innerHTML += renderOptions(options);
-  }
+    function speakTextData(text) {
+      if (!systemState.isVoiceOutputActive || !('speechSynthesis' in window)) return;
+      
+      window.speechSynthesis.cancel(); 
+      
+      // Sanitización profunda de cadenas para flujo sintético límpido
+      const absoluteCleanString = text
+        .replace(/[\u{1F600}-\u{1F6FF}|\u{2600}-\u{26FF}]/gu, '') 
+        .replace(/\*/g, '') 
+        .replace(/#/g, '')
+        .replace(/\n/g, '. ');
 
-  chatLog.appendChild(msgDiv);
-  scrollBottom();
-  
-  // Si es el bot, lanzar motor de voz
-  if(sender === "bot") {
-    speakText(text);
-  }
-}
+      const voiceUtterance = new SpeechSynthesisUtterance(absoluteCleanString);
+      
+      // Asignar canal de voz seleccionado en el UI
+      const selectedVoiceName = voiceSelector.value;
+      if(selectedVoiceName) {
+        const matchingVoice = window.speechSynthesis.getVoices().find(v => v.name === selectedVoiceName);
+        if(matchingVoice) voiceUtterance.voice = matchingVoice;
+      }
+      
+      voiceUtterance.rate = parseFloat(document.getElementById("voiceRate").value);
+      voiceUtterance.pitch = parseFloat(document.getElementById("voicePitch").value);
+      
+      voiceUtterance.onstart = () => setAvatarState('speaking');
+      voiceUtterance.onend = () => setAvatarState('idle');
+      voiceUtterance.onerror = () => setAvatarState('idle');
+      
+      window.speechSynthesis.speak(voiceUtterance);
+    }
 
-function showTyping() {
-  typingIndicator.classList.remove("hidden");
-  input.disabled = true;
-  sendBtn.disabled = true;
-  if(micBtn) micBtn.disabled = true;
-  scrollBottom();
-}
 
-function hideTyping() {
-  typingIndicator.classList.add("hidden");
-  input.disabled = false;
-  sendBtn.disabled = false;
-  if(micBtn) micBtn.disabled = false;
-  input.focus();
-}
+    /* ========================= 📦 BASE DE CONOCIMIENTO MODULAR AVANZADA ========================= */
+    const strategicKnowledgeBase = {
+      inicio: {
+        subsystem: "Módulo Base: Diagnóstico Global",
+        mensaje: `Sistemas listos. Bienvenido al Ecosistema de Inteligencia Estratégica **MaxiQueen OS v3**.\n\nHe inicializado los módulos cognitivos de automatización y arquitectura comercial. No soy un bot lineal; soy tu motor de ejecución estructural.\n\n¿Cuál es el vector crítico que requiere optimización inmediata hoy?`,
+        opciones: [
+          "1️⃣ [ESTRATEGIA] Tengo ideas pero carezco de arquitectura y orden claro",
+          "2️⃣ [AUTOMATIZACIÓN] Siento cuello de botella operativo / Hago todo solo",
+          "3️⃣ [MONETIZACIÓN] Estructurar embudos de conversión y escalar ventas",
+          "4️⃣ [TIKTOK] Optimizar algoritmos, retención y posicionamiento de marca"
+        ],
+        procesar: (txt) => {
+          if (txt.includes("estrategia") || txt.includes("idea") || txt.includes("1")) return 'modulo_ideas';
+          if (txt.includes("automatiz") || txt.includes("cuello") || txt.includes("2")) return 'modulo_operaciones';
+          if (txt.includes("monetiz") || txt.includes("venta") || txt.includes("3")) return 'modulo_ventas';
+          if (txt.includes("tiktok") || txt.includes("algoritmo") || txt.includes("4")) return 'modulo_tiktok';
+          return 'nodo_fallback';
+        }
+      },
+      modulo_ideas: {
+        subsystem: "Módulo Alpha: Arquitectura Estratégica",
+        mensaje: `Entendido. Tienes la materia prima intacta, pero careces del mapa táctico de desarrollo.\n\nEl exceso de ideas sin un embudo de prioridades genera parálisis por análisis y dispersión de foco. Evaluemos tu estado actual: ¿Qué infraestructura te urge implementar hoy?`,
+        opciones: [
+          "📋 Definición de ruta crítica y plan de acción paso a paso",
+          "🔧 Organización de herramientas, bases de datos y backend core",
+          "🔙 Regresar al menú principal de sistemas"
+        ],
+        procesar: (txt) => {
+          if (txt.includes("ruta") || txt.includes("accion") || txt.includes("paso")) return 'explicacion_ruta';
+          if (txt.includes("herramienta") || txt.includes("backend") || txt.includes("base")) return 'explicacion_backend';
+          if (txt.includes("regresar") || txt.includes("menu") || txt.includes("volver")) return 'inicio';
+          return 'nodo_fallback';
+        }
+      },
+      modulo_operaciones: {
+        subsystem: "Módulo Beta: Automatización e Infraestructura",
+        mensaje: `Identificado. Estás atrapado en autoempleo de alta fricción. Ejecutar procesos manuales repetitivos limita de forma crítica tu escala de crecimiento.\n\nNecesitamos delegar flujos nativos hacia arquitecturas lógicas automatizadas o CRMs inteligentes integrados 24/7. ¿Dónde reside el cuello de botella principal?`,
+        opciones: [
+          "🤖 Integración de Webhooks, APIs y pasarelas de pago",
+          "📨 Gestión reactiva de leads y mensajería automatizada",
+          "🔙 Regresar al panel general"
+        ],
+        procesar: (txt) => {
+          if (txt.includes("webhook") || txt.includes("api") || txt.includes("pago")) return 'explicacion_integracion';
+          if (txt.includes("lead") || txt.includes("mensajeria") || txt.includes("automatiz")) return 'explicacion_crm';
+          if (txt.includes("regresar") || txt.includes("panel")) return 'inicio';
+          return 'nodo_fallback';
+        }
+      },
+      modulo_ventas: {
+        subsystem: "Módulo Gamma: Growth & Monetización",
+        mensaje: `Foco en monetización establecido. Si ya cuentas con un producto o servicio viable, la clave no es trabajar más duro, sino sistematizar el tráfico orgánico e inyectar ofertas irresistibles automatizadas.\n\n¿Cuál es tu meta de transformación prioritaria para tus sistemas comerciales?`,
+        opciones: [
+          "🚀 Lanzamiento y empaquetamiento de ofertas de alto valor",
+          "⚙️ Creación de embudos de conversión automáticos",
+          "🔙 Volver al panel de control central"
+        ],
+        procesar: (txt) => {
+          if (txt.includes("lanzamiento") || txt.includes("empaquet") || txt.includes("alto valor")) return 'explicacion_high_ticket';
+          if (txt.includes("embudo") || txt.includes("conversion")) return 'explicacion_funnels';
+          if (txt.includes("volver") || txt.includes("central")) return 'inicio';
+          return 'nodo_fallback';
+        }
+      },
+      modulo_tiktok: {
+        subsystem: "Módulo Delta: Algoritmos de Tráfico Orgánico",
+        mensaje: `Accediendo al núcleo de distribución masiva. El algoritmo de TikTok no premia el azar, premia la retención en los primeros 3 segundos y la interacción orgánica dirigida mediante ganchos psicológicos eficientes.\n\n¿Cuál es tu mayor obstáculo técnico o estratégico en la plataforma?`,
+        opciones: [
+          "🎯 Retención de audiencia y diseño de hooks magnéticos",
+          "📊 Optimización de conversión de vistas a leads/clientes reales",
+          "🔙 Volver al inicio"
+        ],
+        procesar: (txt) => {
+          if (txt.includes("retencion") || txt.includes("audiencia") || txt.includes("hook")) return 'explicacion_hooks';
+          if (txt.includes("conversion") || txt.includes("vista") || txt.includes("lead")) return 'explicacion_tiktok_funnel';
+          if (txt.includes("volver")) return 'inicio';
+          return 'nodo_fallback';
+        }
+      },
+      explicacion_ruta: {
+        subsystem: "Módulo Alpha: Plan de Ejecución",
+        mensaje: `La estructura de contingencia 'Starter' requiere:\n1. Auditoría profunda de prioridades comerciales.\n2. Limpieza exhaustiva de ruido mental y tareas secundarias.\n3. Construcción de un tablero Kanban táctico semanal.\n\n¿Iniciamos la estructuración del flujo o necesitas asistencia personalizada directa?`,
+        opciones: ["🛠️ Estructurar plan de acción", "📲 Solicitar Conexión de Línea Humana"],
+        procesar: (txt) => txt.includes("humana") || txt.includes("conexion") || txt.includes("solicitar") ? 'puente_humano' : 'inicio'
+      },
+      explicacion_backend: {
+        subsystem: "Módulo Alpha: Core Técnico",
+        mensaje: `Excelente enfoque. Para sostener el ecosistema MaxiQueen OS, estructuramos arquitecturas limpias:\n• Backends robustos (Python / FastAPI / Node.js) eficientes.\n• Bases de datos dinámicas no relacionales centralizadas.\n• Estilos inyectados mediante control unificado y escalable.\n\n¿Quieres integrar un nuevo endpoint o prefieres avanzar al despliegue comercial?`,
+        opciones: ["💻 Ver protocolos de código", "🔙 Regresar al inicio"],
+        procesar: (txt) => txt.includes("codigo") || txt.includes("protocolo") ? 'puente_humano' : 'inicio'
+      },
+      explicacion_integracion: {
+        subsystem: "Módulo Beta: Automatización",
+        mensaje: `El protocolo implica mapear arquitecturas limpias:\n1. Interceptar eventos mediante Webhooks seguros.\n2. Conectar lógica a través de entornos serverless o APIs nativas.\n3. Controlar pasarelas internacionales automatizando la entrega de credenciales.\n\n¿Quieres automatizar un flujo específico de tu negocio ahora mismo?`,
+        opciones: ["⚡ Sí, iniciar automatización", "📲 Hablar con un especialista técnico"],
+        procesar: (txt) => txt.includes("especialista") || txt.includes("hablar") || txt.includes("tecnico") ? 'puente_humano' : 'inicio'
+      },
+      explicacion_crm: {
+        subsystem: "Módulo Beta: Flujo de Mensajería",
+        mensaje: `Cero fugas de dinero. Centralizar cada interacción web mediante bots interactivos avanzados garantiza conversión continua y respuestas inmediatas a prospectos.\n\n¿Evaluamos las integraciones disponibles para tus canales activos?`,
+        opciones: ["📊 Evaluar mis canales", "🔙 Volver al panel"],
+        procesar: (txt) => txt.includes("evaluar") || txt.includes("canales") ? 'puente_humano' : 'inicio'
+      },
+      explicacion_high_ticket: {
+        subsystem: "Módulo Gamma: Monetización",
+        mensaje: `Para escalar, debes dejar de vender horas sueltas y estructurar una oferta High-Ticket irreversible. Esto soluciona de raíz el problema de flujo de caja y te permite entregar resultados extraordinarios a un grupo selecto de clientes.\n\n¿Te gustaría ver la matriz de diseño de ofertas irresistibles de MaxiQueen OS?`,
+        opciones: ["💎 Ver matriz estratégica", "🔙 Volver al inicio"],
+        procesar: (txt) => txt.includes("matriz") || txt.includes("estrategica") ? 'puente_humano' : 'inicio'
+      },
+      explicacion_funnels: {
+        subsystem: "Módulo Gamma: Embudos",
+        mensaje: `Un embudo automatizado eficiente opera bajo esta regla de oro: Capturar atención masiva -> Filtrar mediante valor -> Agendar/Vender en piloto automático. El sistema trabaja mientras duermes.\n\n¿Revisamos el diseño de tu embudo de ventas actual?`,
+        opciones: ["🎯 Analizar mi embudo", "🔙 Regresar"],
+        procesar: (txt) => txt.includes("analizar") || txt.includes("embudo") ? 'puente_humano' : 'inicio'
+      },
+      explicacion_hooks: {
+        subsystem: "Módulo Delta: Retención TikTok",
+        mensaje: `La anatomía del éxito orgánico masivo:\n• **0-3 Segundos**: Gancho visual potente + Texto disruptivo en pantalla.\n• **Cuerpo**: Ritmo dinámico, subtítulos kinéticos e información accionable de alto impacto.\n• **Cierre**: Llamado a la acción directo al link del perfil sin rodeos.\n\n¿Quieres estructurar los guiones de tus próximos contenidos bajo este marco técnico?`,
+        opciones: ["📝 Redactar guiones optimizados", "🔙 Volver"],
+        procesar: (txt) => txt.includes("redactar") || txt.includes("guiones") ? 'puente_humano' : 'inicio'
+      },
+      explicacion_tiktok_funnel: {
+        subsystem: "Módulo Delta: Conversión de Tráfico",
+        mensaje: `El tráfico masivo sin conversión es solo vanidad métrica. Automatizamos la captura redirigiendo a tu audiencia desde el enlace biográfico hacia disparadores de conversación automatizados.\n\n¿Deseas implementar este puente de automatización de leads inmediatos?`,
+        opciones: ["🚀 Implementar puente de conversión", "🔙 Regresar al inicio"],
+        procesar: (txt) => txt.includes("implementar") || txt.includes("puente") ? 'puente_humano' : 'inicio'
+      },
+      puente_humano: {
+        subsystem: "Enlace Directo de Comunicación Real",
+        mensaje: `👑 Excelente decisión. Hemos alcanzado el límite de los módulos de simulación sintética estándar y es momento de pasar a la acción estratégica real en el mundo físico.\n\n¿Por qué canal seguro prefieres que establezcamos la conexión para estructurar tu ecosistema comercial?`,
+        opciones: ["📲 Canal de Ejecución Inmediata (WhatsApp)", "📸 Enlace de Identidad Corporativa (Instagram)"],
+        procesar: (txt) => {
+          if(txt.includes("whatsapp") || txt.includes("ejecucion")) { window.open("https://wa.me/573016625921", "_blank"); return 'nodo_despedida'; }
+          if(txt.includes("instagram") || txt.includes("identidad")) { window.open("https://instagram.com/maxiqueenos", "_blank"); return 'nodo_despedida'; }
+          return 'nodo_fallback';
+        }
+      },
+      nodo_despedida: {
+        subsystem: "Pipeline Finalizado",
+        mensaje: `Sistemas enrutados con éxito. Te espero en los canales operativos para iniciar la transformación real de tus ideas y automatizar tus procesos comerciales. ¡Seguimos escalando con paso firme! 👑`,
+        opciones: ["🔄 Reiniciar Consola Conversacional"],
+        procesar: () => 'inicio'
+      },
+      nodo_fallback: {
+        subsystem: "Consola de Excepción Lógica",
+        mensaje: `Entrada alternativa detectada. Para asegurar el óptimo mapeo de tu infraestructura, selecciona una de las opciones interactivas en pantalla o reformula tu instrucción con términos operativos específicos.`,
+        opciones: [],
+        procesar: (txt) => strategicKnowledgeBase[systemState.activeNode].procesar(txt)
+      }
+    };
 
-function processInput(text) {
-  const currentStateNode = knowledgeBase[state.flujoActual];
-  let nextStateKey = currentStateNode.procesar(text.toLowerCase());
-  
-  if (nextStateKey === 'incomprendido') {
-    const fallbackNode = knowledgeBase['incomprendido'];
-    simulateBotResponse(fallbackNode.mensaje, currentStateNode.opciones);
-  } else {
-    state.flujoActual = nextStateKey;
-    const nextNode = knowledgeBase[nextStateKey];
-    simulateBotResponse(nextNode.mensaje, nextNode.opciones);
-  }
-}
+    /* ========================= 🧩 CONTROLADORES DE INTERFAZ DE USUARIO ========================= */
+    const chatLogContainer = document.getElementById("chatLog");
+    const textInputNode = document.getElementById("userInput");
+    const typingIndicatorNode = document.getElementById("typingIndicator");
+    const sendButtonNode = document.getElementById("sendBtn");
+    const subsystemIndicator = document.getElementById("subsystemIndicator");
 
-function simulateBotResponse(text, options) {
-  showTyping();
-  const delay = Math.max(800, text.length * 15); 
-  setTimeout(() => {
-    hideTyping();
-    appendMessage(text, "bot", options);
-  }, delay > 2500 ? 2500 : delay); 
-}
+    function getFormattedTimestamp() {
+      return new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
 
-function handleUserSubmit() {
-  const message = input.value.trim();
-  if (!message) return;
-  
-  // Apagar micrófono automáticamente si estaba prendido al enviar por texto
-  if(isListening && recognition) recognition.stop();
-  
-  appendMessage(message, "user");
-  input.value = "";
-  processInput(message);
-}
+    function maintainScrollBottom() {
+      setTimeout(() => chatLogContainer.scrollTop = chatLogContainer.scrollHeight, 60);
+    }
 
-function handleQuickReply(text) {
-  appendMessage(text, "user");
-  processInput(text);
-}
+    function renderDynamicOptions(optionsArray) {
+      if (!optionsArray || optionsArray.length === 0) return '';
+      let buttonsLayout = optionsArray.map(optionText => 
+        `<button onclick="executeQuickReply('${optionText}')" 
+                 class="block w-full text-left bg-zinc-900/90 hover:bg-amber-400 hover:text-black border border-white/5 hover:border-amber-400/50 transition-all duration-300 rounded-xl px-4 py-3 text-xs font-mono tracking-wide shadow-md">
+          ${optionText}
+        </button>`
+      ).join('');
+      return `<div class="mt-4 space-y-2 fade-in-up" style="animation-delay: 0.15s">${buttonsLayout}</div>`;
+    }
 
-function restartChat() {
-  chatLog.innerHTML = '';
-  state.flujoActual = 'inicio';
-  state.datosRecopilados = {};
-  input.value = "";
-  if(window.speechSynthesis) window.speechSynthesis.cancel();
-  
-  const inicioNode = knowledgeBase['inicio'];
-  simulateBotResponse(inicioNode.mensaje, inicioNode.opciones);
-}
+    function appendMessageNode(textString, targetSender = "bot", structuralOptions = []) {
+      const parentMessageWrapper = document.createElement("div");
+      parentMessageWrapper.className = `flex flex-col max-w-[85%] fade-in-up ${targetSender === "user" ? "ml-auto items-end" : "mr-auto items-start"}`;
+      
+      const textBubble = document.createElement("div");
+      textBubble.className = targetSender === "user"
+        ? "bg-gradient-to-r from-amber-400 to-amber-300 text-black font-bold rounded-2xl rounded-tr-sm px-5 py-3 shadow-xl text-sm"
+        : "bg-zinc-900/70 text-zinc-100 rounded-2xl rounded-tl-sm px-5 py-4 border border-white/5 leading-relaxed whitespace-pre-wrap shadow-xl text-sm backdrop-blur-md";
+      
+      // Integrar formateador básico para sintaxis Markdown de negritas en la consola
+      const filteredText = textString.replace(/\*\*(.*?)\*\*/g, '<span class="text-amber-400 font-extrabold">$1</span>');
 
-input.addEventListener("keydown", e => {
-  if (e.key === "Enter") handleUserSubmit();
-});
+      textBubble.innerHTML = filteredText + `<span class="block text-[9px] font-mono mt-1.5 ${targetSender === 'user' ? 'text-black/50 text-right' : 'text-zinc-500 text-left'}">[TIMESTAMP: ${getFormattedTimestamp()}]</span>`;
+      parentMessageWrapper.appendChild(textBubble);
 
-window.onload = () => {
-  const inicioNode = knowledgeBase['inicio'];
-  simulateBotResponse(inicioNode.mensaje, inicioNode.opciones);
-};
-</script>
+      if (targetSender === "bot" && structuralOptions.length > 0) {
+        parentMessageWrapper.innerHTML += renderDynamicOptions(structuralOptions);
+      }
 
+      chatLogContainer.appendChild(parentMessageWrapper);
+      maintainScrollBottom();
+      
+      if(targetSender === "bot") {
+        speakTextData(textString);
+      }
+    }
+
+    function triggerProcessingState() {
+      typingIndicatorNode.classList.remove("hidden");
+      setAvatarState('thinking');
+      textInputNode.disabled = true;
+      sendButtonNode.disabled = true;
+      if(micButtonElement) micButtonElement.disabled = true;
+      maintainScrollBottom();
+    }
+
+    function endProcessingState() {
+      typingIndicatorNode.classList.add("hidden");
+      textInputNode.disabled = false;
+      sendButtonNode.disabled = false;
+      if(micButtonElement) micButtonElement.disabled = false;
+      // Retornar a reposo si no está hablando la IA
+      if(!window.speechSynthesis || !window.speechSynthesis.speaking) {
+        setAvatarState('idle');
+      }
+      textInputNode.focus();
+    }
+
+    function routeInputVector(rawText) {
+      const activeNodeContext = strategicKnowledgeBase[systemState.activeNode];
+      let targetNextNodeKey = activeNodeContext.procesar(rawText.toLowerCase());
+      
+      if (targetNextNodeKey === 'nodo_fallback') {
+        const fallbackNodeContext = strategicKnowledgeBase['nodo_fallback'];
+        simulateBotCompute(fallbackNodeContext.mensaje, activeNodeContext.opciones, activeNodeContext.subsystem);
+      } else {
+        systemState.activeNode = targetNextNodeKey;
+        const nextNodeContext = strategicKnowledgeBase[targetNextNodeKey];
+        simulateBotCompute(nextNodeContext.mensaje, nextNodeContext.opciones, nextNodeContext.subsystem);
+      }
+    }
+
+    function simulateBotCompute(messageResponse, menuOptions, moduleName) {
+      triggerProcessingState();
+      subsystemIndicator.innerText = moduleName;
+      // Cálculo de latencia adaptativa proporcional a la densidad del paquete de datos
+      const strategicDelay = Math.max(700, messageResponse.length * 12); 
+      setTimeout(() => {
+        endProcessingState();
+        appendMessageNode(messageResponse, "bot", menuOptions);
+      }, strategicDelay > 2200 ? 2200 : strategicDelay); 
+    }
+
+    function handleUserSubmit() {
+      const secureString = textInputNode.value.trim();
+      if (!secureString) return;
+      
+      if(activelyListening && speechEngine) speechEngine.stop();
+      
+      appendMessageNode(secureString, "user");
+      textInputNode.value = "";
+      routeInputVector(secureString);
+    }
+
+    function executeQuickReply(selectedText) {
+      appendMessageNode(selectedText, "user");
+      routeInputVector(selectedText);
+    }
+
+    function restartSystem() {
+      chatLogContainer.innerHTML = '';
+      systemState.activeNode = 'inicio';
+      textInputNode.value = "";
+      if('speechSynthesis' in window) window.speechSynthesis.cancel();
+      setAvatarState('idle');
+      
+      const primaryNode = strategicKnowledgeBase['inicio'];
+      simulateBotCompute(primaryNode.mensaje, primaryNode.opciones, primaryNode.subsystem);
+    }
+
+    textInputNode.addEventListener("keydown", event => {
+      if (event.key === "Enter") handleUserSubmit();
+    });
+
+    window.onload = () => {
+      restartSystem();
+    };
+  </script>
 </body>
 </html>
