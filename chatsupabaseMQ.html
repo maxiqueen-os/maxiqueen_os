@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <title>MaxiQueen OS - Chat Real</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@500&display=swap" rel="stylesheet">
+
+  <style>
+
+    body { background: radial-gradient(circle at top, #1e293b 0%, #0b0f1a 100%); font-family: 'Inter', sans-serif; }
+
+   .os-title { font-family: 'Orbitron', sans-serif; }
+
+    #chatLog::-webkit-scrollbar { width: 4px; } #chatLog::-webkit-scrollbar-thumb { background: rgba(251,191,36,.3); border-radius: 10px; }
+
+  </style>
+
+</head>
+
+<body class="min-h-screen flex flex-col items-center text-white">
+
+<main class="w-full max-w-2xl p-4 flex flex-col h-screen">
+
+  <header class="text-center py-4">
+
+    <h1 class="os-title text-2xl text-amber-400">MAXIQUEEN OS</h1>
+
+    <p id="status" class="text-xs text-zinc-500">Conectando...</p>
+
+  </header>
+
+
+
+  <div class="flex-1 bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-4 flex flex-col">
+
+    <div id="chatLog" class="flex-1 overflow-y-auto space-y-3 pr-2"></div>
+
+
+
+    <div class="mt-3 flex gap-2 items-center bg-white/5 p-2 rounded-2xl">
+
+      <input id="userInput" type="text" placeholder="Escribe..." class="flex-1 bg-transparent px-3 py-2 text-sm outline-none" />
+
+
+
+      <label class="cursor-pointer p-2 hover:bg-white/10 rounded-xl">
+
+        <input type="file" id="fileInput" class="hidden" accept="image/*,audio/*,.pdf" />
+
+        <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828L18 9.828a4 4 0 10-5.656-5.656L5.757 10.757a6 6 0 108.486 8.486L20.5 13"/></svg>
+
+      </label>
+
+
+
+      <button id="sendBtn" class="bg-amber-400 text-black p-2.5 rounded-xl">
+
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+
+<script>
+
+// ===== CLAVES CONFIGURADAS SEGÚN image_df5314.jpg =====
+
+const SUPABASE_URL = 'https://oqgpwkrqvfsyvirznome.supabase.co'
+
+const SUPABASE_ANON_KEY = 'sb_publishable_0qLt0TLUDXDnNk-lHwBGGuQ_ur8oQ'
+
+// ======================================================
+
+
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+const chatLog = document.getElementById('chatLog')
+
+const input = document.getElementById('userInput')
+
+const fileInput = document.getElementById('fileInput')
+
+const statusEl = document.getElementById('status')
+
+
+
+let conversationId = null
+
+let userId = null
+
+
+
+// 1. INICIAR SESIÓN ANÓNIMA Y CONVERSACIÓN
+
+async function init() {
+
+  try {
+
+    const { data: { user }, error: authError } = await supabase.auth.signInAnonymously()
+
+    if (authError) throw authError
+
+    userId = user.id
+
+    statusEl.textContent = 'Conectado'
+
+
+
+    const { data: conv, error: convError } = await supabase.from('maxiqueen_conversations')
+
+     .insert({ user_id: userId, title: 'Chat ' + new Date().toLocaleTimeString() })
+
+     .select().single()
+
+    
+
+    if (convError) throw convError
+
+    conversationId = conv.id
+
+
+
+    supabase.channel('chat')
+
+     .on('postgres_changes', {
+
+        event: 'INSERT',
+
+        schema: 'public',
+
+        table: 'maxiqueen_chat',
+
+        filter: `conversation_id=eq.${conversationId}`
+
+      }, (payload) => {
+
+        addMessageToUI(payload.new)
+
+      })
+
+     .subscribe()
+
+  } catch (err) {
+
+    console.error('Error al inicializar Supabase:', err)
+
+    statusEl.textContent = 'Error de conexión'
+
+  }
+
+}
+
+
+
+// 2. SUBIR ARCHIVO
+
+async function uploadFile(file) {
+
+  const fileName = `${userId}/${Date.now()}-${file.name}`
+
+  const { data, error } = await supabase.storage.from('maxiqueen-files').upload(fileName, file)
+
+  if (error) throw error
+
+  const { data: urlData } = supabase.storage.from('maxiqueen-files').getPublicUrl(fileName)
+
+  return urlData.publicUrl
+
+}
+
+
+
+// 3. ENVIAR MENSAJE
+
+async function sendMessage(text, fileUrl = null, type = 'text') {
+
+  await supabase.from('maxiqueen_chat').insert({
+
+    conversation_id: conversationId,
+
+    user_id: userId,
+
+    role: 'user',
+
+    message_type: type,
+
+    contenido: text,
+
+    metadata: fileUrl? { url: fileUrl } : {}
+
+  })
+
+}
+
+
+
+// 4. UI
+
+function addMessageToUI(msg) {
+
+  const div = document.createElement('div')
+
+  div.className = `p-3 rounded-2xl max-w-[80%] ${msg.role === 'user'? 'bg-amber-400 text-black ml-auto' : 'bg-zinc-800'}`
+
+
+
+  if (msg.message_type === 'image') {
+
+    div.innerHTML = `<img src="${msg.metadata.url}" class="max-w-full rounded-lg">`
+
+  } else if (msg.message_type === 'audio') {
+
+    div.innerHTML = `<audio controls src="${msg.metadata.url}" class="w-full"></audio>`
+
+  } else {
+
+    div.textContent = msg.contenido
+
+  }
+
+
+
+  chatLog.appendChild(div)
+
+  chatLog.scrollTop = chatLog.scrollHeight
+
+}
+
+
+
+// EVENTOS
+
+document.getElementById('sendBtn').onclick = async () => {
+
+  const text = input.value.trim()
+
+  if (!text) return
+
+  input.value = ''
+
+  await sendMessage(text)
+
+}
+
+
+
+fileInput.onchange = async (e) => {
+
+  const file = e.target.files[0]
+
+  if (!file) return
+
+
+
+  statusEl.textContent = 'Subiendo...'
+
+  try {
+
+      const url = await uploadFile(file)
+
+      const type = file.type.startsWith('image/')? 'image' : file.type.startsWith('audio/')? 'audio' : 'file'
+
+      await sendMessage(file.name, url, type)
+
+  } catch (err) {
+
+      console.error('Error al subir:', err)
+
+  }
+
+  statusEl.textContent = 'Conectado'
+
+}
+
+
+
+input.onkeydown = (e) => { if (e.key === 'Enter') document.getElementById('sendBtn').click() }
+
+
+
+init()
+
+</script>
+
+</body>
+
+</html>
