@@ -16,19 +16,12 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@500&display=swap" rel="stylesheet">
 
-  <style>
-
+<style>
     body { background: radial-gradient(circle at top, #1e293b 0%, #0b0f1a 100%); font-family: 'Inter', sans-serif; }
-
-   .os-title { font-family: 'Orbitron', sans-serif; }
-
+    .os-title { font-family: 'Orbitron', sans-serif; }
     #chatLog::-webkit-scrollbar { width: 4px; } #chatLog::-webkit-scrollbar-thumb { background: rgba(251,191,36,.3); border-radius: 10px; }
-
   </style>
-
-</head>
-
-<body class="min-h-screen flex flex-col items-center text-white">
+</head> <body class="min-h-screen flex flex-col items-center text-white">
 
 <main class="w-full max-w-2xl p-4 flex flex-col h-screen">
 
@@ -76,142 +69,80 @@
 
 </main>
 
-
-
 <script>
-
 // ===== CLAVES CONFIGURADAS SEGÚN image_df5314.jpg =====
-
 const SUPABASE_URL = 'https://oqgpwkrqvfsyvirznome.supabase.co'
-
 const SUPABASE_ANON_KEY = 'sb_publishable_0qLt0TLUDXDnNk-lHwBGGuQ_ur8oQ'
-
 // ======================================================
 
-
-
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
+// 1. CAMBIA EL NOMBRE DE LA VARIABLE AQUÍ
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 const chatLog = document.getElementById('chatLog')
-
 const input = document.getElementById('userInput')
-
 const fileInput = document.getElementById('fileInput')
-
 const statusEl = document.getElementById('status')
 
-
-
 let conversationId = null
-
 let userId = null
 
-
-
 // 1. INICIAR SESIÓN ANÓNIMA Y CONVERSACIÓN
-
 async function init() {
-
   try {
-
-    const { data: { user }, error: authError } = await supabase.auth.signInAnonymously()
-
+    // 2. ACTUALIZA AQUÍ (supabaseClient)
+    const { data: { user }, error: authError } = await supabaseClient.auth.signInAnonymously()
     if (authError) throw authError
-
     userId = user.id
-
     statusEl.textContent = 'Conectado'
 
-
-
-    const { data: conv, error: convError } = await supabase.from('maxiqueen_conversations')
-
-     .insert({ user_id: userId, title: 'Chat ' + new Date().toLocaleTimeString() })
-
-     .select().single()
-
+    // 3. ACTUALIZA AQUÍ (supabaseClient)
+    const { data: conv, error: convError } = await supabaseClient.from('maxiqueen_conversations')
+      .insert({ user_id: userId, title: 'Chat ' + new Date().toLocaleTimeString() })
+      .select().single()
     
-
     if (convError) throw convError
-
     conversationId = conv.id
 
-
-
-    supabase.channel('chat')
-
-     .on('postgres_changes', {
-
+    // 4. ACTUALIZA AQUÍ (supabaseClient)
+    supabaseClient.channel('chat')
+      .on('postgres_changes', {
         event: 'INSERT',
-
         schema: 'public',
-
         table: 'maxiqueen_chat',
-
         filter: `conversation_id=eq.${conversationId}`
-
       }, (payload) => {
-
         addMessageToUI(payload.new)
-
       })
-
-     .subscribe()
-
+      .subscribe()
   } catch (err) {
-
     console.error('Error al inicializar Supabase:', err)
-
     statusEl.textContent = 'Error de conexión'
-
   }
-
 }
-
-
 
 // 2. SUBIR ARCHIVO
-
 async function uploadFile(file) {
-
   const fileName = `${userId}/${Date.now()}-${file.name}`
-
-  const { data, error } = await supabase.storage.from('maxiqueen-files').upload(fileName, file)
-
+  // 5. ACTUALIZA AQUÍ (supabaseClient)
+  const { data, error } = await supabaseClient.storage.from('maxiqueen-files').upload(fileName, file)
   if (error) throw error
-
-  const { data: urlData } = supabase.storage.from('maxiqueen-files').getPublicUrl(fileName)
-
+  // 6. ACTUALIZA AQUÍ (supabaseClient)
+  const { data: urlData } = supabaseClient.storage.from('maxiqueen-files').getPublicUrl(fileName)
   return urlData.publicUrl
-
 }
-
-
 
 // 3. ENVIAR MENSAJE
-
 async function sendMessage(text, fileUrl = null, type = 'text') {
-
-  await supabase.from('maxiqueen_chat').insert({
-
+  // 7. ACTUALIZA AQUÍ (supabaseClient)
+  await supabaseClient.from('maxiqueen_chat').insert({
     conversation_id: conversationId,
-
     user_id: userId,
-
     role: 'user',
-
     message_type: type,
-
     contenido: text,
-
-    metadata: fileUrl? { url: fileUrl } : {}
-
+    metadata: fileUrl ? { url: fileUrl } : {}
   })
-
 }
-
-
-
+  
 // 4. UI
 
 function addMessageToUI(msg) {
