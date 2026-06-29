@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maxiqueen OS | Central de Juegos y Protocolos</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --os-bg: #030407;
+    --panel-bg: rgba(12, 16, 28, 0.85);
+    --panel-border: rgba(0, 229, 255, 0.25);
+    --primary: #00e5ff;
+    --primary-glow: rgba(0, 229, 255, 0.5);
+    --secondary: #ff007f;
+    --secondary-glow: rgba(255, 0, 127, 0.5);
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --accent-green: #00ff66;
+    --accent-yellow: #ffea00;
+  }
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    background-color: var(--os-bg);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+  }
+
+  /* Fondo de matriz tecnológica */
+  .matrix-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    z-index: -1;
+  }
+
+  /* --- HEADER DEL SISTEMA OPERATIVO --- */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(3, 4, 7, 0.95);
+    border-bottom: 2px solid var(--panel-border);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .os-brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .os-logo-container {
+    width: 60px;
+    height: 60px;
+    position: relative;
+  }
+
+  .os-logo-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 0 15px var(--primary-glow);
+  }
+
+  .os-titles {
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    margin: 0;
+    letter-spacing: 2px;
+    color: #fff;
+    text-shadow: 0 0 10px var(--primary-glow);
+  }
+
+  .os-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+
+  .os-status {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    color: var(--accent-green);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    background-color: var(--accent-green);
+    border-radius: 50%;
+    animation: statusPulse 1.5s infinite;
+  }
+
+  @keyframes statusPulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(0, 255, 102, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); }
+  }
+
+  /* --- MAIN CONTENT --- */
+  main {
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+  }
+
+  /* Grid de Juegos Principal */
+  #games-section h2 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+  }
+
+  .game-card {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+  }
+
+  .game-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 10px 30px rgba(0, 229, 255, 0.15);
+    transform: translateY(-5px);
+  }
+
+  .game-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+  }
+
+  .game-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.3rem;
+    margin: 0 0 10px 0;
+    color: #fff;
+  }
+
+  .game-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 20px;
+    flex-grow: 1;
+  }
+
+  .btn-start {
+    font-family: 'Orbitron', sans-serif;
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    padding: 10px 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-start:hover {
+    background: var(--primary);
+    color: var(--os-bg);
+    box-shadow: 0 0 20px var(--primary);
+  }
+
+  /* Paneles Integrados del OS (Derecha) */
+  .os-side-panels {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .integrated-panel {
+    background: var(--panel-bg);
+    border: 2px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .integrated-panel h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent-yellow);
+    margin-top: 0;
+    font-size: 1.1rem;
+  }
+
+  /* Integración Modo Anclaje V2.0 */
+  #breathe-container {
+    width: 100px;
+    height: 100px;
+    margin: 20px auto;
+    position: relative;
+  }
+  .pulse-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--primary) 0%, rgba(0,229,255,0.2) 70%, transparent 100%);
+    box-shadow: 0 0 30px var(--primary-glow);
+    animation: breatheAnimation 4s infinite ease-in-out;
+  }
+  @keyframes breatheAnimation {
+    0%, 100% { transform: scale(0.7); opacity: 0.6; }
+    50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 50px var(--primary); }
+  }
+  #breathe-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    color: var(--primary);
+    text-align: center;
+    height: 20px;
+  }
+
+  /* Integración Snake Autónomo */
+  #snake-canvas {
+    width: 100%;
+    height: 150px;
+    background: #000;
+    border: 1px solid var(--accent-green);
+  }
+</style>
+</head>
+<body>
+
+<div class="matrix-bg"></div>
+
+<!-- HEADER OFICIAL MAXIQUEEN OS -->
+<header>
+  <div class="os-brand">
+    <div class="os-logo-container">
+      <video class="os-logo-video" autoplay loop muted playsinline>
+        <source src="anime_logo.mp4" type="video/mp4">
+        <!-- Respaldo de imagen si el video falla -->
+        <img src="logo.png" alt="Maxiqueen OS Logo" class="os-logo-video">
+      </video>
+    </div>
+    <div class="os-titles">
+      <h1>MAXIQUEEN OS</h1>
+      <div class="os-subtitle">(SISTEMA OPERATIVO DIGITAL HUMANO)</div>
+    </div>
+  </div>
+  <div class="os-status">
+    <div class="status-dot"></div>
+    SISTEMA OPERATIVO COMPLETO Y MEJORADO
+  </div>
+</header>
+
+<!-- CONTENIDO PRINCIPAL -->
+<main>
+  
+  <!-- SECCIÓN CENTRAL DE JUEGOS Y PROTOCOLOS -->
+  <section id="games-section">
+    <h2>CENTRAL DE JUEGOS Y PROTOCOLOS</h2>
+    <div class="games-grid" id="games-grid-container">
+      <!-- Las tarjetas de juegos se generarán dinámicamente con JavaScript -->
+    </div>
+  </section>
+
+  <!-- PANELES DE INTEGRACIÓN DEL SISTEMA -->
+  <aside class="os-side-panels">
+    
+    <!-- Integración Anclaje Profundo V2.0 -->
+    <div class="integrated-panel">
+      <h3>SINCRONIZACIÓN DE ANCLAJE</h3>
+      <div id="breathe-container">
+        <div class="pulse-ring"></div>
+      </div>
+      <div id="breathe-text">Inhala...</div>
+    </div>
+
+    <!-- Integración Estado Reptil (Snake) -->
+    <div class="integrated-panel">
+      <h3>ESTADO REPTIL AUTÓNOMO</h3>
+      <canvas id="snake-canvas"></canvas>
+    </div>
+
+  </aside>
+
+</main>
+
+<script>
+// JSON de Datos de Juegos: Unificando los archivos para el portal
+const gamesData = [
+  // Categoria: Anclaje
+  { icon: '🧘', title: 'Modo Anclaje V2.0', file: 'ModoAnclaje.html', desc: 'Protocolo avanzado para estabilización y recalibración de foco ante alta presión.' },
+  { icon: '💨', title: 'Respiración de Anclaje', file: 'inala1.html', desc: 'Guía visual simple de sincronización bio-rítmica.' },
+  
+  // Categoria: Torres
+  { icon: '🏰', title: 'Queen Tower Pro', file: 'QueenTower.html', desc: 'Estrategia de defensa avanzada. El juego estratégico de torres Maxiqueen.' },
+  { icon: '🏗️', title: 'Reconstrucción de Torres', file: 'JuegodeTorresMQ.html', desc: 'Simulación de construcción estructural de la reina.' },
+  
+  // Categoria: Snake/Reptiles
+  { icon: '🐍', title: 'Snake Sistema Reptil v10', file: 'snake10.html', desc: 'La versión definitiva de control reptil con sistemas avanzados.' },
+  { icon: '🕹️', title: 'Sistema Snake Básico', file: 'playsnake.html', desc: 'Interfaz de control reptil directa para simulaciones.' },
+  
+  // Categoria: Lógica
+  { icon: '👑', title: 'Sudoku MQ Pro', file: 'Sudoku MaxiQueen PRO 👑.html', desc: 'El desafío lógico supremo Maxiqueen, optimizado.' },
+  { icon: '📊', title: 'Dashboard de Estrategia', file: 'dashboard.html', desc: 'Vista de análisis estratégico para el juego empresarial.' },
+  
+  // Categoria: Acción/Foco
+  { icon: '🚀', title: 'Neon Runner', file: 'NeonRunner.html', desc: 'Protocolo de evasión a alta velocidad con estética retro-tech.' },
+  { icon: '⏱️', title: 'Click-Play Foco Directo', file: 'clickMQ.html', desc: 'Micro-desafío para calibración instantánea de foco visual.' },
+  { icon: '🎯', title: 'Nodos de Juegos MQ', file: 'NodesJuegosMQ.html', desc: 'Red de desafíos de micro-objetivos.' }
+];
+
+// Generar las tarjetas de juegos dinámicamente
+const gridContainer = document.getElementById('games-grid-container');
+
+gamesData.forEach(game => {
+  const card = document.createElement('div');
+  card.className = 'game-card';
+  card.innerHTML = `
+    <div class="game-icon">${game.icon}</div>
+    <h3 class="game-title">${game.title}</h3>
+    <p class="game-desc">${game.desc}</p>
+    <a href="${game.file}" class="btn-start">INICIAR</a>
+  `;
+  gridContainer.appendChild(card);
+});
+
+// --- LÓGICA DE PANELES INTEGRADOS ---
+
+// 1. Sonido de ambiente al iniciar
+let audioCtx;
+function initOSAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Sonido de fondo tipo "os boot" inicial
+    playTONE(110, 'sine', 1.5, 0.1);
+  }
+}
+function playTONE(freq, type, duration, vol) {
+  if(!audioCtx) return;
+  let osc = audioCtx.createOscillator();
+  let gainNode = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+  osc.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+window.addEventListener('load', initOSAudio);
+
+// 2. Control del texto de respiración
+const breatheText = document.getElementById('breathe-text');
+let breatheCycle = 0;
+setInterval(() => {
+  breatheCycle++;
+  if (breatheCycle % 2 === 0) {
+    breatheText.innerText = "Inhala...";
+  } else {
+    breatheText.innerText = "Exhala...";
+  }
+}, 2000);
+
+// 3. Snake Autónomo (Pequeña simulación integrada)
+const canvas = document.getElementById('snake-canvas');
+const ctx = canvas.getContext('2d');
+const grid = 10;
+let snake = [{x: grid * 5, y: grid * 5}];
+let food = {x: grid * 10, y: grid * 10};
+let dx = grid, dy = 0;
+canvas.width = canvas.parentElement.clientWidth - 40;
+canvas.height = 150;
+
+function draw() {
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  ctx.fillStyle = '#00ff66';
+  snake.forEach(part => ctx.fillRect(part.x, part.y, grid-1, grid-1));
+  
+  ctx.fillStyle = '#ff007f';
+  ctx.fillRect(food.x, food.y, grid-1, grid-1);
+}
+
+function update() {
+  const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+  snake.unshift(head);
+  
+  if (head.x === food.x && head.y === food.y) {
+    food = {
+      x: Math.floor(Math.random() * (canvas.width/grid)) * grid,
+      y: Math.floor(Math.random() * (canvas.height/grid)) * grid
+    };
+  } else {
+    snake.pop();
+  }
+  
+  // Movimiento autónomo simple
+  if (Math.random() < 0.1) {
+    if (Math.random() < 0.5) {
+      dx = 0; dy = Math.random() < 0.5 ? grid : -grid;
+    } else {
+      dy = 0; dx = Math.random() < 0.5 ? grid : -grid;
+    }
+  }
+  
+  // Colisiones con paredes
+  if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+    snake = [{x: grid * 5, y: grid * 5}];
+    dx = grid; dy = 0;
+  }
+}
+
+setInterval(() => { draw(); update(); }, 150);
+
+</script>
+
+</body>
+</html>
