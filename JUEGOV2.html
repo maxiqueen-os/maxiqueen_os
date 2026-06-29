@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modo Anclaje v2.0 | Optimización de Foco</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #06070d;
+    --panel-bg: rgba(15, 22, 42, 0.6);
+    --primary: #00e5ff;
+    --primary-glow: rgba(0, 229, 255, 0.4);
+    --secondary: #ff007f;
+    --secondary-glow: rgba(255, 0, 127, 0.4);
+    --text: #f1f5f9;
+  }
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--bg-dark);
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Fondo decorativo tecnológico */
+  .grid-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Contenedor Principal */
+  .container {
+    position: relative;
+    z-index: 10;
+    width: 90%;
+    max-width: 600px;
+    background: var(--panel-bg);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(0, 229, 255, 0.05);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    transition: all 0.5s ease;
+  }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+    margin-top: 0;
+    color: #fff;
+    text-shadow: 0 0 10px var(--primary-glow);
+  }
+
+  p {
+    font-size: 1rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+
+  /* Botones Premium */
+  .btn {
+    font-family: 'Orbitron', sans-serif;
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.1);
+    outline: none;
+  }
+
+  .btn:hover {
+    background: var(--primary);
+    color: var(--bg-dark);
+    box-shadow: 0 0 25px var(--primary);
+    transform: translateY(-2px);
+  }
+
+  /* Pantallas del juego */
+  .screen {
+    display: none;
+  }
+  .screen.active {
+    display: block;
+  }
+
+  /* Fase 1: Círculo de Respiración Neuro-Anclaje */
+  #breathe-circle-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 40px auto;
+  }
+
+  .pulse-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--primary) 0%, rgba(0,229,255,0.2) 70%, transparent 100%);
+    box-shadow: 0 0 40px var(--primary-glow);
+    animation: breatheAnimation 4s infinite ease-in-out;
+  }
+
+  @keyframes breatheAnimation {
+    0%, 100% { transform: scale(0.6); opacity: 0.5; }
+    50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 60px var(--primary); }
+  }
+
+  #breathe-instruction {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-top: 20px;
+    height: 30px;
+  }
+
+  /* Fase 2: Elementos del minijuego (Nodos de Datos) */
+  .node {
+    width: 35px;
+    height: 35px;
+    background: radial-gradient(circle, #fff 0%, var(--secondary) 60%, #b0005d 100%);
+    border-radius: 50%;
+    position: absolute;
+    cursor: pointer;
+    box-shadow: 0 0 20px var(--secondary), 0 0 40px var(--secondary-glow);
+    z-index: 100;
+    transition: transform 0.1s ease;
+    animation: floatNode 3s infinite ease-in-out alternate;
+  }
+
+  .node:hover {
+    transform: scale(1.2);
+  }
+
+  @keyframes floatNode {
+    0% { transform: translateY(0px) rotate(0deg); }
+    100% { transform: translateY(-10px) rotate(10deg); }
+  }
+
+  /* Partículas de explosión */
+  .particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--secondary);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99;
+    animation: explode 0.5s ease-out forwards;
+  }
+
+  @keyframes explode {
+    to {
+      transform: translate(var(--x), var(--y)) scale(0);
+      opacity: 0;
+    }
+  }
+
+  /* HUD superior de juego */
+  #hud {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    display: none;
+    background: rgba(6, 7, 13, 0.8);
+    padding: 10px 30px;
+    border-radius: 30px;
+    border: 1px solid var(--secondary);
+    box-shadow: 0 0 15px var(--secondary-glow);
+    z-index: 200;
+  }
+
+  /* Métricas finales */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 30px 0;
+  }
+
+  .metric-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .metric-box val {
+    display: block;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin-top: 5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<div id="hud">NODOS RESTANTES: <span id="hud-count">5</span> | TIEMPO: <span id="hud-timer">0.00</span>s</div>
+
+<div class="container" id="main-panel">
+  
+  <div id="screen-intro" class="screen active">
+    <h1>MODO ANCLAJE</h1>
+    <p>Protocolo de contingencia empresarial activado.<br>Diseñado para estabilizar tus niveles de cortisol, resetear la fatiga mental y calibrar tu atención en picos de alta presión.</p>
+    <button class="btn" onclick="initProtocol()">INICIAR RE-CALIBRACIÓN</button>
+  </div>
+
+  <div id="screen-breathe" class="screen">
+    <h1>SINCRONIZACIÓN</h1>
+    <p>Sincroniza tu respiración con el núcleo cuántico. Despeja el ruido corporativo.</p>
+    <div id="breathe-circle-container">
+      <div class="pulse-ring"></div>
+    </div>
+    <div id="breathe-instruction">Inhala...</div>
+  </div>
+
+  <div id="screen-results" class="screen">
+    <h1>SISTEMA CALIBRADO</h1>
+    <p>Has reclamado con éxito el control de tu foco de atención.</p>
+    
+    <div class="metrics-grid">
+      <div class="metric-box">
+        Estado Mental
+        <val style="color: #00ff66;">ESTABLE</val>
+      </div>
+      <div class="metric-box">
+        Velocidad de Reacción
+        <val id="res-time">0.00s</val>
+      </div>
+    </div>
+
+    <button class="btn" onclick="resetGame()">VOLVER AL TABLERO</button>
+  </div>
+
+</div>
+
+<script>
+// Sistema de Audio integrado (Web Audio API) - No requiere archivos de sonido externos
+let audioCtx;
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+}
+
+function playTone(freq, type, duration, vol) {
+  if(!audioCtx) return;
+  let osc = audioCtx.createOscillator();
+  let gainNode = audioCtx.createGain();
+  
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  
+  gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+  
+  osc.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+// Variables del juego
+let gameStartTime;
+let timerInterval;
+let nodesLeft = 5;
+
+function changeScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+}
+
+// Paso 1: Iniciar el proceso
+function initProtocol() {
+  initAudio();
+  changeScreen('screen-breathe');
+  
+  // Sonido de fondo tipo "ambiente futurista" inicial
+  playTone(220, 'sine', 1.5, 0.2);
+
+  // Manejo de textos de respiración
+  let textIndicator = document.getElementById('breathe-instruction');
+  let cycle = 0;
+  
+  let breatheInterval = setInterval(() => {
+    cycle++;
+    if (cycle % 2 === 0) {
+      textIndicator.innerText = "Inhala...";
+      playTone(330, 'sine', 1, 0.1);
+    } else {
+      textIndicator.innerText = "Exhala...";
+      playTone(261.63, 'sine', 1, 0.1);
+    }
+  }, 2000);
+
+  // Pasar al juego real después de 8 segundos (2 ciclos completos de respiración profunda)
+  setTimeout(() => {
+    clearInterval(breatheInterval);
+    startFocusGame();
+  }, 8000);
+}
+
+// Paso 2: El Minijuego Mejorado
+function startFocusGame() {
+  // Esconder contenedor central temporalmente para limpiar la vista de juego
+  document.getElementById('main-panel').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('main-panel').style.display = 'none';
+  }, 500);
+
+  // Mostrar HUD superior
+  let hud = document.getElementById('hud');
+  hud.style.display = 'block';
+  
+  nodesLeft = 5;
+  document.getElementById('hud-count').innerText = nodesLeft;
+  
+  // Cronómetro de alta precisión
+  gameStartTime = performance.now();
+  timerInterval = setInterval(() => {
+    let elapsed = (performance.now() - gameStartTime) / 1000;
+    document.getElementById('hud-timer').innerText = elapsed.toFixed(2);
+  }, 10);
+
+  // Spawn de Nodos de distracción/foco
+  for(let i=0; i < 5; i++) {
+    createNode();
+  }
+}
+
+function createNode() {
+  let node = document.createElement('div');
+  node.className = 'node';
+  
+  // Evitar que aparezcan pegados a los bordes exactos
+  let topPos = Math.random() * 75 + 12;
+  let leftPos = Math.random() * 80 + 10;
+  
+  node.style.top = topPos + "vh";
+  node.style.left = leftPos + "vw";
+  
+  // Añadir una variación aleatoria a la velocidad de flotación para que se vea orgánico
+  node.style.animationDuration = (2 + Math.random() * 2) + "s";
+
+  node.onclick = (e) => {
+    e.stopPropagation();
+    
+    // Feedback de audio (un láser/click synth limpio)
+    playTone(880, 'triangle', 0.15, 0.3);
+    
+    // Generar partículas de explosión visual
+    createParticles(e.clientX, e.clientY);
+    
+    node.remove();
+    nodesLeft--;
+    document.getElementById('hud-count').innerText = nodesLeft;
+    
+    if(nodesLeft === 0) {
+      endGame();
+    }
+  };
+
+  document.body.appendChild(node);
+}
+
+function createParticles(x, y) {
+  for (let i = 0; i < 8; i++) {
+    let p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    
+    // Ángulo aleatorio y distancia para la explosión por CSS
+    let angle = Math.random() * Math.PI * 2;
+    let velocity = 30 + Math.random() * 50;
+    p.style.setProperty('--x', Math.cos(angle) * velocity + 'px');
+    p.style.setProperty('--y', Math.sin(angle) * velocity + 'px');
+    
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 500);
+  }
+}
+
+// Paso 3: Fin del juego y despliegue de métricas profesionales
+function endGame() {
+  clearInterval(timerInterval);
+  let totalTime = ((performance.now() - gameStartTime) / 1000).toFixed(2);
+  
+  // Sonido de victoria heroico/corporativo
+  playTone(523.25, 'sine', 0.2, 0.2); // Do
+  setTimeout(() => playTone(659.25, 'sine', 0.2, 0.2), 150); // Mi
+  setTimeout(() => playTone(783.99, 'sine', 0.4, 0.3), 300); // Sol
+  
+  // Quitar HUD
+  document.getElementById('hud').style.display = 'none';
+  
+  // Mostrar panel principal con datos guardados
+  let panel = document.getElementById('main-panel');
+  panel.style.display = 'block';
+  setTimeout(() => { panel.style.opacity = '1'; }, 50);
+  
+  document.getElementById('res-time').innerText = totalTime + "s";
+  changeScreen('screen-results');
+}
+
+function resetGame() {
+  changeScreen('screen-intro');
+}
+</script>
+
+</body>
+</html>
