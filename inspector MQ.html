@@ -19,6 +19,7 @@
   --mq-neon-1: #00ff88;
   --mq-neon-2: #00ffaa;
   --mq-neon-3: #00e676;
+  --mq-voice: #00ffff;
   --bg-black: #000000;
   --bg-space: #05070f;
   --glass-bg: rgba(0, 255, 136, 0.03);
@@ -61,6 +62,7 @@ body {
   cursor: pointer; padding: 2px 8px; font-size: 0.7rem; border-radius: 3px; transition: 0.2s;
 }
 .sys-btn:hover, .sys-btn.active { color: var(--mq-neon-1); border-color: var(--mq-neon-1); box-shadow: var(--glow-subtle); }
+.sys-btn.voice-active { color: var(--mq-voice); border-color: var(--mq-voice); box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
 
 /* ================= LAYOUT ================= */
 #app-container { display: flex; flex: 1; overflow: hidden; position: relative; }
@@ -112,6 +114,8 @@ body {
 .btn:hover { background: var(--glass-hover); border-color: var(--mq-neon-1); color: var(--mq-neon-1); }
 .btn-primary { background: rgba(0, 255, 136, 0.1); border-color: var(--mq-neon-1); color: var(--mq-neon-1); }
 .btn-primary:hover { background: var(--mq-neon-1); color: #000; box-shadow: var(--glow-strong); }
+.btn-voice { border-color: var(--mq-voice); color: var(--mq-voice); background: rgba(0, 255, 255, 0.02); }
+.btn-voice:hover { background: rgba(0, 255, 255, 0.1); box-shadow: 0 0 15px rgba(0, 255, 255, 0.2); }
 .btn-danger:hover { background: var(--error); border-color: var(--error); color: #fff; box-shadow: 0 0 15px rgba(255,51,102,0.4); }
 
 /* ================= WORKSPACE (MAIN) ================= */
@@ -123,30 +127,33 @@ body {
 }
 #toolbar::-webkit-scrollbar { display: none; }
 .toolbar-title { font-size: 1rem; font-weight: 600; color: var(--text-main); display:flex; align-items:center; gap:10px; flex-shrink: 0; margin-right: 15px; }
-.device-toggles { display: flex; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
-.device-toggles button { background: none; border: none; padding: 6px 15px; color: var(--text-muted); cursor: pointer; transition: 0.2s; font-size: 1.1rem; }
-.device-toggles button.active { background: var(--glass-hover); color: var(--mq-neon-1); }
 
-/* ================= SPLIT VIEW (EDITOR & PREVIEW) ================= */
+/* Controles de visualización y proporción */
+.layout-toggles, .device-toggles { display: flex; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+.layout-toggles button, .device-toggles button { background: none; border: none; padding: 6px 12px; color: var(--text-muted); cursor: pointer; transition: 0.2s; font-size: 0.9rem; font-weight: 600; }
+.layout-toggles button.active, .device-toggles button.active { background: var(--glass-hover); color: var(--mq-neon-1); }
+
+/* ================= SPLIT VIEW FLEXIBLE ================= */
 #content-area {
   display: flex;
   flex: 1;
   overflow: hidden;
   position: relative;
+  width: 100%;
 }
 
 #editor-pane {
-  width: 0;
+  width: 0%;
   display: none;
   flex-direction: column;
   border-right: 1px solid var(--glass-border);
   background: var(--bg-space);
-  transition: width 0.3s ease;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 #editor-pane.active {
   display: flex;
-  width: 50%;
+  /* El ancho se controla dinámicamente vía JS con la clase de proporción */
 }
 
 .CodeMirror {
@@ -156,7 +163,6 @@ body {
   font-size: 13px;
   background: transparent !important;
 }
-/* Personalización CodeMirror Neón */
 .cm-s-material-ocean .CodeMirror-gutters { background: rgba(0,0,0,0.5); border-right: 1px solid var(--glass-border); }
 
 #canvas-container {
@@ -164,7 +170,7 @@ body {
   background: radial-gradient(circle at center, rgba(0,255,136,0.02) 0%, transparent 70%),
               url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjEiIGZpbGw9InJnYmEoMCwgMjU1LCAxMzYsIDAuMSkiLz48L3N2Zz4=');
   padding: 20px; overflow: auto;
-  transition: width 0.3s ease;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .iframe-wrapper {
@@ -188,11 +194,13 @@ body {
 .toast-success .toast-header { color: var(--mq-neon-1); }
 .toast-error .toast-header { color: var(--error); }
 .toast-info .toast-header { color: var(--mq-neon-2); }
+.toast-voice .toast-header { color: var(--mq-voice); }
 .toast-msg { color: var(--text-muted); }
 .toast-bar { position: absolute; bottom: 0; left: 0; height: 3px; width: 100%; animation: toastProgress 4s linear forwards; }
 .toast-success .toast-bar { background: var(--mq-neon-1); }
 .toast-error .toast-bar { background: var(--error); }
 .toast-info .toast-bar { background: var(--mq-neon-2); }
+.toast-voice .toast-bar { background: var(--mq-voice); }
 
 @keyframes toastIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 @keyframes toastOut { to { transform: translateX(120%); opacity: 0; } }
@@ -204,11 +212,11 @@ body {
   #sidebar.open { transform: translateX(0); }
   .mobile-menu-btn { display: block !important; }
   
-  #editor-pane.active { width: 100%; }
-  #editor-pane.active + #canvas-container { display: none; /* Oculta vista previa en móvil al editar */ }
+  #editor-pane.active { width: 100% !important; }
+  #editor-pane.active + #canvas-container { display: none; }
+  .layout-toggles { display: none !important; }
 }
 .mobile-menu-btn { display: none; background: none; border: none; color: var(--mq-neon-1); font-size: 1.5rem; cursor: pointer; margin-right: 10px; }
-
 </style>
 </head>
 
@@ -223,7 +231,8 @@ body {
     <div class="sys-item">STORAGE: <span class="sys-val" id="sys-storage">0 KB</span></div>
   </div>
   <div class="sys-group">
-    <button class="sys-btn active" id="btn-audio" onclick="App.toggleAudio()" title="Sound FX">🔊 FX</button>
+    <button class="sys-btn" id="btn-audio" onclick="App.toggleAudio()" title="Sound FX">🔊 FX</button>
+    <button class="sys-btn" id="btn-global-voice" onclick="VoiceSys.stop()" title="Detener Lectura de Voz">🛑 SILENCIAR</button>
     <button class="sys-btn" onclick="App.undo()" title="Deshacer (Ctrl+Z)">↺ UNDO</button>
     <button class="sys-btn" onclick="App.redo()" title="Rehacer (Ctrl+Y)">↻ REDO</button>
   </div>
@@ -256,15 +265,22 @@ body {
         <span style="color:var(--text-muted)">//</span> Seleccione un archivo
       </div>
       
-      <div style="display:flex; gap: 15px; align-items:center;">
+      <div style="display:flex; gap: 12px; align-items:center;">
+        <div class="layout-toggles" id="layout-controls" style="display:none; margin-right: 8px;">
+          <button onclick="UI.setLayoutRatio('code')" id="layout-btn-code" title="Código Expandido">🖥️ [ ]</button>
+          <button class="active" onclick="UI.setLayoutRatio('split')" id="layout-btn-split" title="Dividido 50/50">[ ]=[ ]</button>
+          <button onclick="UI.setLayoutRatio('preview')" id="layout-btn-preview" title="Vista Previa Expandida">[ ] 🖥️</button>
+        </div>
+
         <div class="device-toggles" id="device-controls" style="display:none;">
           <button class="active" onclick="UI.setPreviewMode('desktop')" title="Desktop">🖥️</button>
           <button onclick="UI.setPreviewMode('tablet')" title="Tablet">📱</button>
           <button onclick="UI.setPreviewMode('mobile')" title="Mobile">🤳</button>
         </div>
+
         <div id="page-actions" style="display:none; gap: 8px;">
+          <button class="btn btn-voice" onclick="VoiceSys.readActiveDocument()" title="Analizar con Voz Inteligente">🗣️ Leer Documento</button>
           <button class="btn btn-primary" id="btn-edit" onclick="App.toggleEditor()">✏️ Editar Código</button>
-          
           <button class="btn" onclick="App.renameCurrent()">A</button>
           <button class="btn btn-danger" onclick="App.deleteCurrent()">🗑️</button>
         </div>
@@ -290,7 +306,6 @@ body {
 <script>
 /**
  * MAXIQUEEN OS - PRO CMS CORE + INTEGRATED BUILDER
- * Architect: Enterprise System AI
  */
 
 /* ================= STATE & DATA ================= */
@@ -306,6 +321,7 @@ const State = {
   history: [],
   historyPointer: -1,
   settings: { audio: true },
+  currentLayout: 'split', // ratios: 'code', 'split', 'preview'
   
   saveSnapshot() {
     if (this.historyPointer < this.history.length - 1) {
@@ -344,7 +360,7 @@ const State = {
     } else {
       this.project.pages.push({
         id: crypto.randomUUID(), name: "Index", folderId: 'root',
-        html: `<!DOCTYPE html>\n<html>\n<head>\n<style>\n  body { background:#000; color:#00ff88; font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; }\n</style>\n</head>\n<body>\n  <h2>MAXIQUEEN OS EN LÍNEA</h2>\n</body>\n</html>`
+        html: `<!DOCTYPE html>\n<html lang="es">\n<head>\n<meta charset="UTF-8">\n<style>\n  body { background:#000; color:#00ff88; font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }\n</style>\n</head>\n<body>\n  <h2>MAXIQUEEN OS EN LÍNEA</h2>\n</body>\n</html>`
       });
     }
     this.saveSnapshot();
@@ -381,6 +397,82 @@ const AudioSys = {
   }
 };
 
+/* ================= MOTOR DE INTERACCIÓN POR VOZ IA ================= */
+const VoiceSys = {
+  synth: window.speechSynthesis,
+  activeUtterance: null,
+
+  speak(text) {
+    if (!this.synth) {
+      UI.toast("Error de Voz", "La API de síntesis de voz no está soportada en este navegador.", "error");
+      return;
+    }
+    this.stop();
+
+    // Reemplazar sintaxis común de código por términos legibles para la voz humana
+    let cleanText = text
+      .replace(/<\/?[^>]+(>|$)/g, " ") // Remueve tags crudos si quedaran
+      .replace(/[\{\}\[\]\<\>\/]/g, " ")
+      .replace(/div/gi, " contenedor ")
+      .replace(/h1|h2|h3/gi, " encabezado ")
+      .replace(/body/gi, " cuerpo del documento ")
+      .replace(/style/gi, " bloque de estilos ");
+
+    this.activeUtterance = new SpeechSynthesisUtterance(cleanText);
+    this.activeUtterance.lang = 'es-MX'; // Prioridad Español Latino neutro o es-ES
+    this.activeUtterance.rate = 0.95; // Velocidad de lectura corporativa equilibrada
+    this.activeUtterance.pitch = 1.0;
+
+    this.activeUtterance.onstart = () => {
+      document.getElementById('btn-global-voice').classList.add('voice-active');
+    };
+
+    this.activeUtterance.onend = () => {
+      document.getElementById('btn-global-voice').classList.remove('voice-active');
+    };
+
+    this.synth.speak(this.activeUtterance);
+  },
+
+  stop() {
+    if (this.synth && this.synth.speaking) {
+      this.synth.cancel();
+      document.getElementById('btn-global-voice').classList.remove('voice-active');
+    }
+  },
+
+  readActiveDocument() {
+    if (State.currentIndex === null) return;
+    const page = State.project.pages[State.currentIndex];
+    
+    UI.toast("Analizador de Voz", "Compilando documento interno y abstrayendo textos...", "voice");
+    
+    // Parseador virtual para extraer solo texto semántico real del HTML de tu cliente
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(page.html, 'text/html');
+    
+    // Remover scripts y hojas de estilo pesadas del dictado estructurado de la IA
+    const styles = doc.querySelectorAll('style, script');
+    styles.forEach(s => s.remove());
+
+    const textContent = doc.body ? doc.body.innerText.trim() : "";
+    const headersCount = doc.querySelectorAll('h1, h2, h3, h4').length;
+    
+    let dictadoInfo = `Analizando página llamada: ${page.name}. `;
+    if(headersCount > 0) {
+      dictadoInfo += `Se detectaron ${headersCount} estructuras de encabezado en la arquitectura. `;
+    }
+    
+    if (textContent.length > 0) {
+      dictadoInfo += `El contenido textual legible para el cliente dice lo siguiente: ${textContent}`;
+    } else {
+      dictadoInfo += `El cuerpo de este documento se encuentra actualmente sin texto visible en pantalla.`;
+    }
+
+    this.speak(dictadoInfo);
+  }
+};
+
 /* ================= EDITOR CORE (CODEMIRROR) ================= */
 let editor;
 let saveTimeout;
@@ -397,14 +489,12 @@ function initEditor() {
     lineWrapping: true
   });
 
-  // Evento al escribir en el editor
   editor.on('change', () => {
     if (State.currentIndex !== null && !editor._isProgrammaticChange) {
       const newHtml = editor.getValue();
       State.project.pages[State.currentIndex].html = newHtml;
       document.getElementById('viewer').srcdoc = newHtml;
       
-      // Auto-guardado con debounce para no saturar el historial
       clearTimeout(saveTimeout);
       saveTimeout = setTimeout(() => {
         State.saveSnapshot();
@@ -462,6 +552,7 @@ const UI = {
     const title = document.getElementById('currentTitle');
     const actions = document.getElementById('page-actions');
     const controls = document.getElementById('device-controls');
+    const layoutControls = document.getElementById('layout-controls');
     const viewer = document.getElementById('viewer');
 
     if(State.currentIndex !== null && State.project.pages[State.currentIndex]) {
@@ -469,9 +560,9 @@ const UI = {
       title.innerHTML = `<span style="color:var(--mq-neon-1)">📄</span> ${page.name}`;
       actions.style.display = 'flex';
       controls.style.display = 'flex';
+      layoutControls.style.display = 'flex';
       viewer.srcdoc = page.html;
       
-      // Actualizar editor sin disparar el evento onchange
       editor._isProgrammaticChange = true;
       editor.setValue(page.html);
       editor._isProgrammaticChange = false;
@@ -480,10 +571,47 @@ const UI = {
       title.innerHTML = `<span style="color:var(--text-muted)">//</span> Seleccione un archivo`;
       actions.style.display = 'none';
       controls.style.display = 'none';
+      layoutControls.style.display = 'none';
       viewer.srcdoc = '';
       editor.setValue('');
     }
     this.renderDirectory();
+  },
+
+  /* Ajustador de Pantalla Inteligente Adaptativo */
+  setLayoutRatio(ratio) {
+    State.currentLayout = ratio;
+    const pane = document.getElementById('editor-pane');
+    const canvas = document.getElementById('canvas-container');
+    
+    document.querySelectorAll('.layout-toggles button').forEach(b => b.classList.remove('active'));
+    document.getElementById(`layout-btn-${ratio}`).classList.add('active');
+
+    if (!pane.classList.contains('active')) {
+      pane.classList.add('active');
+      const btn = document.getElementById('btn-edit');
+      if (btn) btn.innerHTML = "👁️ Ocultar Código";
+    }
+
+    if (ratio === 'code') {
+      pane.style.width = "100%";
+      canvas.style.width = "0%";
+      canvas.style.display = "none";
+    } else if (ratio === 'split') {
+      pane.style.width = "50%";
+      canvas.style.width = "50%";
+      canvas.style.display = "flex";
+    } else if (ratio === 'preview') {
+      pane.style.width = "0%";
+      pane.style.display = "none";
+      canvas.style.width = "100%";
+      canvas.style.display = "flex";
+    }
+
+    if(ratio !== 'preview') pane.style.display = "flex";
+
+    setTimeout(() => editor.refresh(), 320);
+    AudioSys.play('click');
   },
 
   setPreviewMode(mode) {
@@ -498,7 +626,7 @@ const UI = {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-    const icon = type === 'success' ? '✔' : type === 'error' ? '⚠' : 'ℹ';
+    const icon = type === 'success' ? '✔' : type === 'error' ? '⚠' : type === 'voice' ? '🗣️' : 'ℹ';
     toast.innerHTML = `
       <div class="toast-header"><span>${icon}</span> ${title}</div>
       <div class="toast-msg">${msg}</div>
@@ -519,6 +647,11 @@ const App = {
     AudioSys.init();
     State.load();
     UI.loadViewer();
+    // Forzar distribución balanceada inicial
+    if(State.project.pages.length > 0) {
+      State.currentIndex = 0;
+      UI.loadViewer();
+    }
   },
 
   toggleAudio() {
@@ -530,16 +663,22 @@ const App = {
 
   toggleEditor() {
     const pane = document.getElementById('editor-pane');
+    const canvas = document.getElementById('canvas-container');
     const btn = document.getElementById('btn-edit');
     pane.classList.toggle('active');
     
     if(pane.classList.contains('active')) {
       btn.innerHTML = "👁️ Ocultar Código";
       btn.classList.remove('btn-primary');
-      setTimeout(() => editor.refresh(), 50); // Necesario para que CodeMirror pinte bien
+      // Restaurar proporciones según estado guardado
+      UI.setLayoutRatio(State.currentLayout);
     } else {
       btn.innerHTML = "✏️ Editar Código";
       btn.classList.add('btn-primary');
+      pane.style.width = "0%";
+      setTimeout(() => { pane.style.display = "none"; }, 300);
+      canvas.style.width = "100%";
+      canvas.style.display = "flex";
     }
     AudioSys.play('click');
   },
@@ -549,14 +688,15 @@ const App = {
     if(!name) return;
     State.project.pages.push({
       id: crypto.randomUUID(), name: name, folderId: 'root',
-      html: `<!DOCTYPE html>\n<html>\n<head>\n<style>\n  body { background:#000; color:#00ff88; font-family:sans-serif; padding:40px; }\n</style>\n</head>\n<body>\n  <h1>${name}</h1>\n  <p>Módulo iniciado.</p>\n</body>\n</html>`
+      html: `<!DOCTYPE html>\n<html lang="es">\n<head>\n<meta charset="UTF-8">\n<style>\n  body { background:#000; color:#00ff88; font-family:sans-serif; padding:40px; }\n</style>\n</head>\n<body>\n  <h1>${name}</h1>\n  <p>Módulo iniciado con éxito.</p>\n</body>\n</html>`
     });
     State.currentIndex = State.project.pages.length - 1;
     State.saveSnapshot();
     UI.loadViewer();
+    UI.setLayoutRatio('split');
     AudioSys.play('save');
     UI.toast("Página Creada", `El nodo ${name} se inicializó correctamente.`, "success");
-    document.getElementById('sidebar').classList.remove('open'); // Cierra sidebar en móvil
+    document.getElementById('sidebar').classList.remove('open');
   },
 
   createFolder() {
@@ -571,8 +711,9 @@ const App = {
   openPage(index) {
     State.currentIndex = index;
     UI.loadViewer();
+    UI.setLayoutRatio('split');
     AudioSys.play('click');
-    document.getElementById('sidebar').classList.remove('open'); // Cierra en móvil
+    document.getElementById('sidebar').classList.remove('open');
   },
 
   renameCurrent() {
@@ -600,6 +741,7 @@ const App = {
     if(State.currentIndex === null) return;
     const p = State.project.pages[State.currentIndex];
     if(confirm(`¿Eliminar permanentemente la página: ${p.name}?`)) {
+      VoiceSys.stop();
       State.project.pages.splice(State.currentIndex, 1);
       State.currentIndex = null;
       State.saveSnapshot();
@@ -662,7 +804,7 @@ const App = {
       }
     };
     reader.readAsText(file);
-    e.target.value = ''; // Reset
+    e.target.value = '';
   }
 };
 
@@ -677,7 +819,6 @@ document.addEventListener('keydown', e => {
 
 /* ================= BOOTSTRAP ================= */
 document.addEventListener('DOMContentLoaded', () => App.init());
-
 </script>
 </body>
 </html>
