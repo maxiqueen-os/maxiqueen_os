@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxiQueen OS - Ultra Pro Ecosystem 2026</title>
+    <style>
+        :root {
+            --bg-color: #0a0a12;
+            --panel-bg: rgba(16, 16, 30, 0.75);
+            --neon-cyan: #00f0ff;
+            --neon-magenta: #ff007f;
+            --neon-green: #39ff14;
+            --text-main: #e2e8f0;
+            --border-glow: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(255, 0, 127, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 240, 255, 0.15) 0px, transparent 50%),
+                linear-gradient(rgba(18, 18, 36, 0.4) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(18, 18, 36, 0.4) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+        }
+
+        /* --- PANTALLA DE INICIO (BOOT) --- */
+        #boot-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #05050a;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo-title {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            background: linear-gradient(45deg, var(--neon-magenta), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0,240,255,0.3);
+        }
+        .boot-loader {
+            width: 250px;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+        .boot-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-magenta), var(--neon-cyan));
+            box-shadow: 0 0 10px var(--neon-cyan);
+            animation: load 2.5s forwards cubic-bezier(0.1, 0.8, 0.3, 1);
+        }
+        @keyframes load { to { width: 100%; } }
+
+        /* --- DISEÑO DE ESCRITORIO --- */
+        #desktop {
+            height: calc(100vh - 50px);
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 110px));
+            grid-template-rows: repeat(auto-fill, minmax(120px, 120px));
+            gap: 15px;
+            align-content: flex-start;
+        }
+
+        .desktop-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 10px;
+        }
+        .desktop-icon:hover {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .desktop-icon svg {
+            width: 45px;
+            height: 45px;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
+        }
+        .desktop-icon span {
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* --- VENTANAS FLOTANTES PRO --- */
+        .window {
+            position: absolute;
+            top: 10%;
+            left: 20%;
+            width: 800px;
+            height: 550px;
+            background: var(--panel-bg);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            animation: winOpen 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            resize: both;
+            overflow: hidden;
+        }
+        @keyframes winOpen { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .window-header {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            cursor: move;
+        }
+        .window-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .window-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--neon-cyan);
+        }
+        .window-controls {
+            display: flex;
+            gap: 8px;
+        }
+        .win-btn {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+        }
+        .win-close { background: #ff5f56; }
+        .win-close:hover { background: #ff3b30; }
+        .win-max { background: #ffbd2e; }
+        .win-min { background: #27c93f; }
+
+        .window-body {
+            flex-grow: 1;
+            background: #000;
+            position: relative;
+        }
+        .window-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+        }
+
+        /* --- BARRA DE TAREAS --- */
+        #taskbar {
+            height: 50px;
+            background: rgba(5, 5, 10, 0.9);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        .taskbar-left, .taskbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .start-menu-btn {
+            background: linear-gradient(135deg, var(--neon-magenta), var(--neon-cyan));
+            border: none;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+            transition: 0.2s;
+        }
+        .start-menu-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+        }
+
+        /* WIDGET MODO ANCLAJE V2.0 */
+        .anclaje-widget {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--neon-green);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--neon-green);
+            box-shadow: 0 0 8px rgba(57, 255, 20, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+
+        .system-time {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SCREEN SAVER / BOOTING SCREEN -->
+    <div id="boot-screen">
+        <div class="logo-container">
+            <div class="logo-title">MAXIQUEEN OS</div>
+            <div style="color: var(--neon-cyan); font-size:0.8rem; letter-spacing:3px; margin-top:5px; font-weight:600;">SISTEMA ULTRA PROFESIONAL v2.0</div>
+        </div>
+        <div class="boot-loader">
+            <div class="boot-bar"></div>
+        </div>
+        <button onclick="initializeOS()" style="margin-top: 30px; background: transparent; border: 1px solid var(--neon-cyan); color: #fff; padding: 8px 20px; border-radius:4px; cursor:pointer; font-weight:600; letter-spacing:1px; box-shadow: 0 0 10px rgba(0,240,255,0.2);">
+            INICIAR SISTEMA
+        </button>
+    </div>
+
+    <!-- ESCRITORIO PRINCIPAL -->
+    <div id="desktop">
+        <!-- Los iconos se autogeneran dinámicamente aquí para abarcar la totalidad de tus archivos sin perder ninguno -->
+    </div>
+
+    <!-- BARRA DE TAREAS -->
+    <div id="taskbar">
+        <div class="taskbar-left">
+            <button class="start-menu-btn" onclick="playSound('click')">⚡ MQ OS</button>
+            <div class="anclaje-widget">
+                <div class="pulse-dot"></div>
+                MODO ANCLAJE V2.0 ACTIVO
+            </div>
+        </div>
+        <div class="taskbar-right">
+            <div class="system-time" id="clock">00:00:00</div>
+        </div>
+    </div>
+
+    <script>
+        // --- MOTOR DE AUDIO NATIVO PRO (Web Audio API) ---
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playSound(type) {
+            initAudio();
+            if (!audioCtx) return;
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.08);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'hover') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, now);
+                gain.gain.setValueAtTime(0.04, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+                osc.start(now);
+                osc.stop(now + 0.04);
+            } else if (type === 'window') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.2);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'boot') {
+                // Acorde synth de bienvenida
+                [261.63, 329.63, 392.00, 523.25].forEach(freq => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.type = 'sawtooth';
+                    o.frequency.setValueAtTime(freq, now);
+                    g.gain.setValueAtTime(0.05, now);
+                    g.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+                    o.start(now); o.stop(now + 1.5);
+                });
+            }
+        }
+
+        // --- LISTA MAESTRA COMPLETA DE REPOSITORIO (Integración 100% Sin Omisiones) ---
+        const mqFiles = [
+            // Core & Sistemas
+            { name: "Modo Anclaje v2", file: "JUEGOV2.html", icon: "💎", cat: "sys" },
+            { name: "MaxiQueen IA", file: "MaxiqueenIA.html", icon: "🧠", cat: "ia" },
+            { name: "Chat Supabase", file: "chatsupabaseMQ.html", icon: "⚡", cat: "chat" },
+            { name: "Chat OS Advance", file: "ChatAdvance.html", icon: "💬", cat: "chat" },
+            { name: "Chat OS Básico", file: "CHATBASICO2026.html", icon: "💬", cat: "chat" },
+            { name: "Dashboard Core", file: "dashboard.html", icon: "📊", cat: "sys" },
+            { name: "Dashboard v2", file: "dashboard2.html", icon: "📈", cat: "sys" },
+            { name: "Activar Sistema MQ", file: "ActivarsistemaMQ.html", icon: "🔑", cat: "sys" },
+            { name: "Activar MQ v2", file: "ActivasistemaMQ2.html", icon: "🔓", cat: "sys" },
+            
+            // Juegos Integrados
+            { name: "Sudoku PRO 👑", file: "Sudoku MaxiQueen PRO 👑.html", icon: "🧩", cat: "game" },
+            { name: "Sudoku Advance", file: "Sudokuadvance.html", icon: "🔢", cat: "game" },
+            { name: "Shadow Runner", file: "ShadowRunner.html", icon: "🏃", cat: "game" },
+            { name: "Quantum Drive 26", file: "juegocar26.html", icon: "🏎️", cat: "game" },
+            { name: "Quantum Drive v4", file: "juegocarv4.html", icon: "🚗", cat: "game" },
+            { name: "Torres MQ Hub", file: "playTorresMQ.html", icon: "🏰", cat: "game" },
+            { name: "Queen Tower", file: "QueenTower.html", icon: "🗼", cat: "game" },
+            { name: "Snake MQ", file: "playsnake.html", icon: "🐍", cat: "game" },
+            { name: "Adivina IA", file: "adivina.html", icon: "🔮", cat: "game" },
+            { name: "Juegos Hub MQ", file: "JUEGOS_MAXIQUEEN.html", icon: "🎮", cat: "game" },
+            
+            // Ventas & SaaS Econ
+            { name: "Plataforma SaaS", file: "PlataformaSaaSHumana.html", icon: "🏢", cat: "saas" },
+            { name: "Agente Ventas", file: "AgenteVentas.html", icon: "💼", cat: "saas" },
+            { name: "CRM Pag Feb", file: "CRM_PAG_FEB.html", icon: "🤝", cat: "saas" },
+            { name: "Adm Pro Catálogo", file: "AdmProCatalogo.html", icon: "📦", cat: "saas" },
+            { name: "Ventas Dominio", file: "VentasDominio.html", icon: "🌐", cat: "saas" },
+            { name: "Store MaxiQueen", file: "Store_MaxiQueen.html", icon: "🛒", cat: "saas" },
+            
+            // Diagnóstico & Utilidades
+            { name: "Inspector MQ v3", file: "inspectorv3.html", icon: "🛡️", cat: "util" },
+            { name: "Mapa Visual API", file: "mapa_visual_api.html", icon: "🗺️", cat: "util" },
+            { name: "Galería Ultra v6", file: "galeriav6.html", icon: "🖼️", cat: "util" },
+            { name: "Perfil Pro v3", file: "Perfilv3.html", icon: "👤", cat: "util" }
+        ];
+
+        // --- CONTROLADORES DE INTERFAZ ---
+        function initializeOS() {
+            playSound('boot');
+            document.getElementById('boot-screen').style.opacity = 0;
+            setTimeout(() => document.getElementById('boot-screen').style.display = 'none', 1000);
+            renderDesktop();
+        }
+
+        function renderDesktop() {
+            const desktop = document.getElementById('desktop');
+            mqFiles.forEach(app => {
+                const iconDiv = document.createElement('div');
+                iconDiv.className = 'desktop-icon';
+                iconDiv.onmouseenter = () => playSound('hover');
+                iconDiv.onclick = () => openWindow(app.name, app.file);
+                
+                iconDiv.innerHTML = `
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="grad-${app.file.replace(/\./g,'')}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:var(--neon-magenta);stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:var(--neon-cyan);stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <rect x="10" y="10" width="80" height="80" rx="15" fill="url(#grad-${app.file.replace(/\./g,'')})" opacity="0.15" stroke="url(#grad-${app.file.replace(/\./g,'')})" stroke-width="2"/>
+                        <text x="50" y="60" font-size="38" text-anchor="middle" alignment-baseline="middle">${app.icon}</text>
+                    </svg>
+                    <span>${app.name}</span>
+                `;
+                desktop.appendChild(iconDiv);
+            });
+        }
+
+        function openWindow(title, url) {
+            playSound('window');
+            
+            // Validar si la ventana ya existe
+            const existingWin = document.getElementById(`win-${url}`);
+            if (existingWin) {
+                existingWin.style.zIndex = getTopZIndex();
+                return;
+            }
+
+            const win = document.createElement('div');
+            win.id = `win-${url}`;
+            win.className = 'window';
+            win.style.zIndex = getTopZIndex();
+            
+            // Posicionamiento aleatorio controlado inicial
+            const offset = Math.floor(Math.random() * 80) + 50;
+            win.style.top = `${offset}px`;
+            win.style.left = `${offset}px`;
+
+            win.innerHTML = `
+                <div class="window-header" onmousedown="dragElement(this.parentElement)">
+                    <div class="window-title">${title} <span style="font-size:0.7rem; opacity:0.6; font-weight:normal;">(${url})</span></div>
+                    <div class="window-controls">
+                        <button class="win-btn win-min"></button>
+                        <button class="win-btn win-max"></button>
+                        <button class="win-btn win-close" onclick="closeWindow('${url}')"></button>
+                    </div>
+                </div>
+                <div class="window-body">
+                    <iframe src="${url}"></iframe>
+                </div>
+            `;
+            
+            document.body.appendChild(win);
+        }
+
+        function closeWindow(url) {
+            playSound('click');
+            const win = document.getElementById(`win-${url}`);
+            if (win) win.remove();
+        }
+
+        function getTopZIndex() {
+            let maxZ = 10;
+            document.querySelectorAll('.window').forEach(w => {
+                const z = parseInt(w.style.zIndex);
+                if (z > maxZ) maxZ = z;
+            });
+            return maxZ + 1;
+        }
+
+        // --- SISTEMA WINDOW DRAG (Mover Ventanas) ---
+        function dragElement(elmnt) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            const header = elmnt.querySelector('.window-header');
+            
+            header.onmousedown = dragMouseDown;
+            elmnt.style.zIndex = getTopZIndex();
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
+        // --- RELOJ DEL SISTEMA ---
+        setInterval(() => {
+            const d = new Date();
+            document.getElementById('clock').innerText = d.toLocaleTimeString();
+        }, 1000);
+    </script>
+</body>
+</html>
