@@ -4527,5 +4527,275 @@ function toggleTheme(){
   mq.greet();
 </script>
 
+     <div class="anclaje-v2-container">
+    
+    <button class="btn-anclaje-master" id="btnAnclajeMaster" onclick="toggleModoAnclaje()">
+        <span class="pulse-ring"></span>
+        <span class="pulse-ring delay-1"></span>
+        <span class="icon-crown">👑</span>
+        <span class="text-btn">Activar Modo Anclaje v2.0</span>
+        <div class="voice-wave" id="voiceWave">
+            <span></span><span></span><span></span><span></span>
+        </div>
+    </button>
+
+    <div class="portals-panel" id="portalsPanel">
+        <div class="panel-header">
+            <h3>⚡ ZONA DE RELAX Y DISTRACCIÓN MQ</h3>
+            <p>Experiencias inmersivas para optimizar tu tiempo de espera</p>
+        </div>
+        
+        <div class="portals-grid">
+            <a href="JUEGOS_MAXIQUEEN.html" target="_blank" class="portal-card grid-1" onclick="playSound('click')">
+                <div class="card-glow"></div>
+                <div class="card-icon">🎮</div>
+                <h4>Multiverso Gamer</h4>
+                <p>Accede al hub central con todo el catálogo de minijuegos integrados.</p>
+                <span class="badge-portal">Portal 01</span>
+            </a>
+
+            <a href="JUEGOV2.html" target="_blank" class="portal-card grid-2" onclick="playSound('click')">
+                <div class="card-glow"></div>
+                <div class="card-icon">🌀</div>
+                <h4>Anclaje Matrix Core</h4>
+                <p>La evolución del algoritmo. Desconexión visual interactiva v2.0.</p>
+                <span class="badge-portal pro">Sistemas</span>
+            </a>
+
+            <a href="Anclajev2.html" target="_blank" class="portal-card grid-3" onclick="playSound('click')">
+                <div class="card-glow"></div>
+                <div class="card-icon">✨</div>
+                <h4>Portal de Flujo</h4>
+                <p>Experiencia de usuario premium diseñada para el descanso cognitivo.</p>
+                <span class="badge-portal">Portal 03</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .anclaje-v2-container {
+        width: 100%;
+        max-width: 900px;
+        margin: 40px auto;
+        text-align: center;
+        font-family: 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* BOTÓN MAESTRO DE ACTIVACIÓN */
+    .btn-anclaje-master {
+        position: relative;
+        background: linear-gradient(135deg, #ff007f, #00f0ff);
+        border: none;
+        color: white;
+        padding: 16px 35px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        letter-spacing: 1px;
+    }
+
+    .btn-anclaje-master:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 35px rgba(255, 0, 127, 0.7);
+    }
+
+    /* Anillos de pulso animados */
+    .pulse-ring {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        border: 2px solid #00f0ff;
+        border-radius: 50px;
+        opacity: 0;
+        animation: pulseAura 2s infinite;
+        pointer-events: none;
+    }
+    .pulse-ring.delay-1 { animation-delay: 0.6s; border-color: #ff007f; }
+
+    @keyframes pulseAura {
+        0% { transform: scale(1); opacity: 0.6; }
+        100% { transform: scale(1.3); opacity: 0; }
+    }
+
+    /* Ecualizador de Voz cuando habla */
+    .voice-wave {
+        display: none;
+        align-items: flex-end;
+        gap: 2px;
+        height: 18px;
+    }
+    .voice-wave span {
+        width: 3px;
+        background-color: white;
+        animation: waveMotion 0.5s ease-in-out infinite alternate;
+    }
+    .voice-wave span:nth-child(1) { height: 6px; animation-delay: 0.1s; }
+    .voice-wave span:nth-child(2) { height: 15px; animation-delay: 0.2s; }
+    .voice-wave span:nth-child(3) { height: 9px; animation-delay: 0.3s; }
+    .voice-wave span:nth-child(4) { height: 12px; animation-delay: 0.4s; }
+
+    @keyframes waveMotion { 0% { transform: scaleY(0.3); } 100% { transform: scaleY(1.1); } }
+
+    /* PANEL DESPLEGABLE HOLOGRÁFICO */
+    .portals-panel {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        margin-top: 30px;
+        background: rgba(16, 16, 30, 0.85);
+        border: 1px solid rgba(0, 240, 255, 0.2);
+        border-radius: 16px;
+        padding: 0 25px;
+        backdrop-filter: blur(25px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .portals-panel.active {
+        max-height: 500px;
+        opacity: 1;
+        padding: 30px 25px;
+        border-color: rgba(0, 240, 255, 0.5);
+        box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+    }
+
+    .panel-header h3 {
+        font-size: 1.2rem;
+        color: #00f0ff;
+        letter-spacing: 2px;
+        margin-bottom: 5px;
+    }
+    .panel-header p {
+        font-size: 0.85rem;
+        color: #a0aec0;
+        margin-bottom: 25px;
+    }
+
+    /* GRID DE PORTALES */
+    .portals-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .portal-card {
+        position: relative;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 25px 20px;
+        text-decoration: none;
+        color: white;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        display: block;
+    }
+
+    .portal-card:hover {
+        background: rgba(255, 255, 255, 0.06);
+        transform: translateY(-5px);
+        border-color: #00f0ff;
+        box-shadow: 0 10px 20px rgba(0, 240, 255, 0.1);
+    }
+
+    /* Efecto de resplandor interno */
+    .card-glow {
+        position: absolute;
+        top: -50%; left: -50%; width: 200%; height: 200%;
+        background: radial-gradient(circle, rgba(0,240,255,0.08) 0%, transparent 70%);
+        opacity: 0; transition: opacity 0.3s;
+        pointer-events: none;
+    }
+    .portal-card:hover .card-glow { opacity: 1; }
+
+    .card-icon { font-size: 2.5rem; margin-bottom: 15px; }
+    .portal-card h4 { font-size: 1rem; margin-bottom: 8px; color: #fff; font-weight: 600;}
+    .portal-card p { font-size: 0.78rem; color: #cbd5e0; line-height: 1.4; }
+
+    .badge-portal {
+        position: absolute;
+        bottom: 10px; right: 12px;
+        font-size: 0.65rem;
+        background: rgba(0, 240, 255, 0.15);
+        color: #00f0ff;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    .badge-portal.pro {
+        background: rgba(255, 0, 127, 0.15);
+        color: #ff007f;
+    }
+</style>
+
+<script>
+    function toggleModoAnclaje() {
+        const panel = document.getElementById('portalsPanel');
+        const wave = document.getElementById('voiceWave');
+        
+        // Alternar visualización del panel holográfico
+        panel.classList.toggle('active');
+        
+        if(panel.classList.contains('active')) {
+            // Mostrar animación de ecualizador de voz
+            wave.style.display = 'inline-flex';
+            // Ejecutar invitación de voz humana avanzada
+            hablarInvitacion();
+        } else {
+            wave.style.display = 'none';
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+    }
+
+    function hablarInvitacion() {
+        if ('speechSynthesis' in window) {
+            // Detener cualquier audio previo
+            window.speechSynthesis.cancel();
+
+            // Guión empático y natural
+            const mensaje = "Hola. Qué bueno tenerte por aquí. He activado el Modo Anclaje versión 2.0 especialmente para ti. Sé que tu tiempo es valioso, así que preparé tres portales exclusivos llenos de experiencias y minijuegos para que te relajes y pases un momento muy agradable mientras procesamos tus requerimientos. Elige el portal que más te llame la atención y empieza a disfrutar ahora mismo.";
+            
+            const lectura = new SpeechSynthesisUtterance(mensaje);
+            
+            // Configuración para simular calidez humana
+            lectura.lang = 'es-MX'; // Prioriza español latino clásico, cambia a 'es-ES' si prefieres castellano
+            lectura.rate = 0.94;    // Un toque más pausado para sonar natural, no acelerado como robot
+            lectura.pitch = 1.05;   // Tono optimista y agradable
+
+            // Cargar y seleccionar la mejor voz disponible en el sistema del usuario
+            const voces = window.speechSynthesis.getVoices();
+            // Buscar una voz en español que suene natural (Google, Microsoft Sabina/Helena, etc.)
+            const vozElegida = voces.find(v => v.lang.includes('es-MX') || v.lang.includes('es-ES') || v.lang.includes('es-'));
+            
+            if (vozElegida) {
+                lectura.voice = vozElegida;
+            }
+
+            // Ocultar ecualizador cuando termine de hablar naturalmente
+            lectura.onend = function() {
+                document.getElementById('voiceWave').style.display = 'none';
+            };
+
+            lectura.onerror = function() {
+                document.getElementById('voiceWave').style.display = 'none';
+            };
+
+            window.speechSynthesis.speak(lectura);
+        }
+    }
+
+    // Asegurar que las voces carguen correctamente en navegadores basados en Chromium
+    if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = () => {};
+    }
+</script>
+
 </body>
 </html>
