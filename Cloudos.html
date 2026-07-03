@@ -438,12 +438,14 @@
         const data = await response.json();
 
         if (response.ok) {
-            printChat(data.reply);
-            addSysLog("Respuesta de IA recibida.", "success");
-        } else {
-            printChat(`SYS_ERROR: ${data.error || 'No se pudo obtener respuesta de la IA.'}`);
-            addSysLog("Error en el retorno del API Gateway.", "warn");
-        }
+    printChat(data.reply);
+    addSysLog(`Respuesta de IA recibida via ${data.engine}.`, "success");
+} else {
+    const detalle = data.detalle_gemini || data.detalle?.groq || data.detalle || 'sin detalle';
+    printChat(`SYS_ERROR: ${data.error} | Detalle: ${detalle}`);
+    addSysLog(`Error API: ${detalle}`, "warn");
+    console.log('Error completo del backend:', data);
+}
     } catch (error) {
         printChat("SYS_CRITICAL_ERROR: Fallo en el enlace de datos del servidor.");
         addSysLog("Error de red crítico.", "warn");
