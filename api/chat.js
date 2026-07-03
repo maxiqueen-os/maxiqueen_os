@@ -2,22 +2,23 @@ import { randomUUID } from 'crypto';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method!== 'POST') return res.status(405).json({ error: 'Método no permitido' });
 
   const { message, session_id: clientSession } = req.body || {};
-  const session_id = clientSession || randomUUID(); // cliente único
+  const session_id = clientSession || randomUUID();
+  const userMsg = (message || 'hola').toString().substring(0, 2000);
 
-  const GROQ_KEY = process.env.GROQ_API_KEY?.trim();
-  const GEMINI_KEY = process.env.GEMINI_API_KEY_3?.trim();
+  const GROQ_KEY = process.env.GROQ_API_KEY;
+  const GEMINI_KEY = process.env.GEMINI_API_KEY_3 || process.env.GEMINI_API_KEY;
   const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!GROQ_KEY ||!GEMINI_KEY) {
-    return res.status(500).json({ error: 'Faltan API keys en Vercel' });
-  }
-
-  // Función para guardar en tu tabla existente
-  const guardarMensaje = async (contenido, role) => {
+  // Guarda en Supabase
+  const guardar = async (contenido, role) => {
     try {
       if (!SUPABASE_URL ||!SUPABASE_KEY) return;
       await fetch(`${SUPABASE_URL}/rest/v1/maxiqueen_chat`, {
@@ -29,80 +30,72 @@ export default async function handler(req, res) {
           'Prefer': 'return=minimal'
         },
         body: JSON.stringify({
-          contenido: contenido.substring(0, 2000),
+          contenido,
           session_id,
           role,
-          message_type: 'chat',
-          created_at: new Date().toISOString()
+          message_type: 'chat'
         })
       });
-    } catch (e) {}
+    } catch {}
   };
 
-  // Guarda lo que dijo el usuario
-  await guardarMensaje(message || 'hola', 'user');
+  await guardar(userMsg, 'user');
 
-  let groqError = null;
-  let reply = '';
-  let engine = '';
+  let reply = '', engine = '', groqErr = null;
 
-  // INTENTO 1: GROQ
+  // 1. GROQ (modelo vivo 2026)
   try {
-    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `Bearer ${GROQ_KEY}`,
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
         model: 'llama-3.1-8b-instant',
         messages: [
-          { role: 'system', content: 'Eres MaxiBot, inteligencia central de MaxiQueen OS. Responde en español, directo, estratégico. No inventes redes sociales.' },
-          { role: 'user', content: message || 'hola' }
+          { role: 'system', content: 'Eres MaxiBot de MaxiQueen OS. Responde en español, directo y estratégico.' },
+          { role: 'user', content: userMsg }
         ],
-        max_tokens: 500
+        max_tokens: 800,
+        temperature: 0.7
       })
     });
-    const groqData = await groqRes.json();
-    if (groqRes.ok && groqData.choices?.[0]) {
-      reply = groqData.choices[0].message.content;
+    const j = await r.json();
+    if (r.ok && j.choices?.[0]?.message?.content) {
+      reply = j.choices[0].message.content;
       engine = 'groq';
     } else {
-      groqError = groqData.error?.message || `Groq ${groqRes.status}`;
+      groqErr = j.error?.message || `Error ${r.status}`;
     }
-  } catch (e) { groqError = e.message; }
+  } catch (e) { groqErr = e.message; }
 
-  // INTENTO 2: GEMINI
-  if (!reply) {
+  // 2. GEMINI (fallback)
+  if (!reply && GEMINI_KEY) {
     try {
-      const geminiRes = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: message || 'hola' }] }] })
-        }
-      );
-      const geminiData = await geminiRes.json();
-      if (geminiRes.ok) {
-        reply = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || 'Sin respuesta';
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: userMsg }] }]
+        })
+      });
+      const j = await r.json();
+      if (r.ok && j.candidates?.[0]?.content?.parts?.[0]?.text) {
+        reply = j.candidates[0].content.parts[0].text;
         engine = 'gemini';
-      } else {
-        return res.status(500).json({ error: 'Ambos fallaron', detalle_groq: groqError, detalle_gemini: geminiData.error?.message });
       }
-    } catch (e) {
-      return res.status(500).json({ error: 'Error crítico', detalle_groq: groqError, detalle_gemini: e.message });
-    }
+    } catch {}
   }
 
-  // Guarda la respuesta del bot
-  await guardarMensaje(reply, 'assistant');
+  if (!reply) {
+    return res.status(500).json({
+      error: 'Ambos motores fallaron',
+      detalle_groq: groqErr,
+      detalle_gemini: 'Verifica GEMINI_API_KEY_3 en Vercel'
+    });
+  }
 
+  await guardar(reply, 'assistant');
   return res.status(200).json({ reply, engine, session_id });
 }
-
-let sessionId = localStorage.getItem('mq_session') || crypto.randomUUID();
-localStorage.setItem('mq_session', sessionId);
-
-fetch('/api/chat', {
-  method: 'POST',
-  headers: {'Content-Type':'application/json'},
-  body: JSON.stringify({ message: texto, session_id: sessionId })
-})
