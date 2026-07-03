@@ -97,3 +97,12 @@ export default async function handler(req, res) {
 
   return res.status(200).json({ reply, engine, session_id });
 }
+
+let sessionId = localStorage.getItem('mq_session') || crypto.randomUUID();
+localStorage.setItem('mq_session', sessionId);
+
+fetch('/api/chat', {
+  method: 'POST',
+  headers: {'Content-Type':'application/json'},
+  body: JSON.stringify({ message: texto, session_id: sessionId })
+})
