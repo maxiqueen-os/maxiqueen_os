@@ -437,10 +437,19 @@
         
         const data = await response.json();
 
-        if (response.ok) {
+       if (response.ok) {
     printChat(data.reply);
     addSysLog(`Respuesta de IA recibida via ${data.engine}.`, "success");
-} else {
+    // VOZ EN ESPAÑOL
+    if ('speechSynthesis' in window) {
+        const voz = new SpeechSynthesisUtterance(data.reply);
+        voz.lang = 'es-ES';
+        voz.rate = 1.1;
+        speechSynthesis.cancel(); // corta voz anterior
+        speechSynthesis.speak(voz);
+    }
+}
+    else {
     const detalle = data.detalle_gemini || data.detalle?.groq || data.detalle || 'sin detalle';
     printChat(`SYS_ERROR: ${data.error} | Detalle: ${detalle}`);
     addSysLog(`Error API: ${detalle}`, "warn");
