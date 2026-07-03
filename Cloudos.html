@@ -336,13 +336,11 @@
     const inputField = document.getElementById('userInput');
     const sysLogs = document.getElementById('sys-logs');
 
-    // Función para obtener la hora actual en formato [HH:MM:SS]
     function getTime() {
         const now = new Date();
         return `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}]`;
     }
 
-    // Agregar logs al sistema lateral
     function addSysLog(msg, type="info") {
         const div = document.createElement('div');
         div.className = 'log-line';
@@ -351,7 +349,6 @@
         sysLogs.scrollTop = sysLogs.scrollHeight;
     }
 
-    // Actualizar Chat
     function printChat(msg, isUser=false) {
         const div = document.createElement('div');
         div.className = isUser ? 'msg-user' : 'msg-bot';
@@ -361,18 +358,17 @@
         chatLog.scrollTop = chatLog.scrollHeight;
     }
 
-    // Activar una red/API visualmente
     function activateAPI(apiName) {
         const item = document.querySelector(`.integration-item[data-api="${apiName}"]`);
         if(item && !item.classList.contains('active')) {
             item.classList.add('active');
             const badge = item.querySelector('.status-badge');
             badge.innerText = 'Sincronizado';
-            addSysLog(`API ${apiName.toUpperCase()} conectada exitosamente.`, 'success');
+            badge.classList.add('active');
+            addSysLog(`API ${apiName.toUpperCase()} conectada.`, 'success');
         }
     }
 
-    // Activar Módulo Cloud visualmente
     function activateModule(modName) {
         const mod = document.querySelector(`.module-card[data-mod="${modName}"]`);
         if(mod && !mod.classList.contains('active')) {
@@ -381,17 +377,15 @@
         }
     }
 
-    // Avanzar barra de progreso
     function setStage(index) {
         currentStage = index;
         document.querySelectorAll('.stage-step').forEach((step, i) => {
             if(i <= index) step.classList.add('active');
             else step.classList.remove('active');
         });
-        addSysLog(`Actualizando estado a Fase ${index + 1}`, 'warn');
+        addSysLog(`Fase ${index + 1} activada`, 'warn');
     }
 
-    // Motor de procesamiento de intenciones
   async function processInput() {
     let val = inputField.value.trim();
     if(!val) return;
@@ -400,9 +394,13 @@
     inputField.value = '';
     const cleanVal = val.toLowerCase();
 
-    // 1. REACCIÓN VISUAL LOCAL (Mantiene vivas tus automatizaciones del OS)
+    // --- CLAVE: ID ÚNICO POR CLIENTE ---
+    let sessionId = localStorage.getItem('mq_session') || crypto.randomUUID();
+    localStorage.setItem('mq_session', sessionId);
+
+    // 1. REACCIÓN VISUAL LOCAL
     if(cleanVal.includes('pro') || cleanVal.includes('plan')) {
-        printChat("Plan PRO detectado. Iniciando estructuración del ecosistema y conectando pasarelas de pago.");
+        printChat("Plan PRO detectado. Iniciando estructuración...");
         setStage(1);
         activateAPI('stripe');
         activateAPI('whatsapp');
@@ -410,61 +408,55 @@
         activateModule('sales');
     } 
     else if (cleanVal.includes('venta') || cleanVal.includes('dinero')) {
-        printChat("Prioridad: Generación de ingresos. Desplegando funnels de conversión y activando Meta Graph para ads.");
+        printChat("Prioridad: Ventas. Desplegando funnels...");
         setStage(3);
         activateAPI('meta');
         activateAPI('tiktok');
         activateModule('sales');
-        activateModule('content');
     }
-    else if (cleanVal.includes('escala') || cleanVal.includes('completo') || cleanVal.includes('todo')) {
-        printChat("Activando SECUENCIA OMNIPRESENTE (OS Completo). Todos los sistemas en línea. Máxima capacidad habilitada.");
+    else if (cleanVal.includes('escala') || cleanVal.includes('completo')) {
+        printChat("SECUENCIA OMNIPRESENTE activada.");
         setStage(4);
-        ['whatsapp','meta','tiktok','stripe'].forEach(activateAPI);
+        ['whatsapp','meta','tiktok','stripe','openai','aws'].forEach(activateAPI);
         ['core','web','content','sales','auto','community'].forEach(activateModule);
-        addSysLog("ADVERTENCIA: Sistema operando al 100% de capacidad.", "warn");
     }
 
-    // 2. CONEXIÓN DIRECTA CON LA IA (Procesa la conversación real)
-    addSysLog("Procesando consulta con IA central...", "info");
+    // 2. CONEXIÓN CON TU API (que guarda en Supabase)
+    addSysLog("Enviando a MaxiBot...", "info");
 
     try {
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: val }) // Envía el mensaje original a Groq/Gemini
+            body: JSON.stringify({ message: val, session_id: sessionId }) // <-- AQUÍ VA EL ID
         });
         
         const data = await response.json();
 
        if (response.ok) {
-    printChat(data.reply);
-    addSysLog(`Respuesta de IA recibida via ${data.engine}.`, "success");
-    // VOZ EN ESPAÑOL
-    if ('speechSynthesis' in window) {
-        const voz = new SpeechSynthesisUtterance(data.reply);
-        voz.lang = 'es-ES';
-        voz.rate = 1.1;
-        speechSynthesis.cancel(); // corta voz anterior
-        speechSynthesis.speak(voz);
-    }
-}
-    else {
-    const detalle = data.detalle_gemini || data.detalle?.groq || data.detalle || 'sin detalle';
-    printChat(`SYS_ERROR: ${data.error} | Detalle: ${detalle}`);
-    addSysLog(`Error API: ${detalle}`, "warn");
-    console.log('Error completo del backend:', data);
-}
+            printChat(data.reply);
+            addSysLog(`Respuesta via ${data.engine} | Cliente: ${sessionId.substring(0,8)}`, "success");
+            
+            if ('speechSynthesis' in window) {
+                const voz = new SpeechSynthesisUtterance(data.reply);
+                voz.lang = 'es-ES';
+                voz.rate = 1.1;
+                speechSynthesis.cancel();
+                speechSynthesis.speak(voz);
+            }
+        } else {
+            printChat(`ERROR: ${data.error}`);
+            addSysLog(`Error: ${data.detalle_gemini || data.detalle_groq}`, "warn");
+        }
     } catch (error) {
-        printChat("SYS_CRITICAL_ERROR: Fallo en el enlace de datos del servidor.");
-        addSysLog("Error de red crítico.", "warn");
+        printChat("ERROR CRÍTICO: Sin conexión al servidor.");
+        addSysLog("Fallo de red.", "warn");
     }
-}
-    // Escuchar "Enter"
+  }
+
     inputField.addEventListener('keypress', function(e) {
         if(e.key === 'Enter') processInput();
     });
-
-</script>
+</script>    
 </body>
 </html>
