@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAXIQUEEN OS v2.0 — Manual Técnico Integrado</title>
+<meta name="theme-color" content="#0A1931">
+<style>
+:root{
+  --navy:#0A1931;
+  --navy-2:#0d2142;
+  --gold:#C9A227;
+  --gold-2:#E4C65A;
+  --bg:#060d18;
+  --bg-elev:#0b172c;
+  --card:#101f38;
+  --card-2:#142847;
+  --text:#e8eef9;
+  --muted:#9fb0c9;
+  --border:#1e3356;
+  --ok:#22c55e;
+  --warn:#f59e0b;
+  --err:#ef4444;
+  --code:#0a1426;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+[data-theme="light"]{
+  --bg:#f5f7fb;
+  --bg-elev:#ffffff;
+  --card:#ffffff;
+  --card-2:#ffffff;
+  --text:#0A1931;
+  --muted:#5b6b84;
+  --border:#dbe3f0;
+  --code:#f1f4fb;
+  --shadow:0 10px 30px rgba(10,25,49,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--gold);text-decoration:none}
+a:hover{text-decoration:underline}
+code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em}
+pre{background:var(--code);border:1px solid var(--border);padding:16px;border-radius:12px;overflow:auto}
+code.inline{background:var(--code);padding:.15em .45em;border-radius:6px;border:1px solid var(--border)}
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:310px;
+  background:linear-gradient(180deg,var(--navy) 0%, var(--navy-2) 100%);
+  color:#dbe6ff;
+  position:fixed;inset:0 auto 0 0;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  z-index:40;
+  transition:transform .3s ease;
+}
+.brand{
+  padding:22px 20px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:12px;
+}
+.logo{
+  width:38px;height:38px;border-radius:10px;
+  background:conic-gradient(from 210deg,var(--gold),var(--gold-2),var(--gold));
+  display:grid;place-items:center;color:#0A1931;font-weight:800;
+  box-shadow:inset 0 0 12px rgba(0,0,0,.2),0 6px 16px rgba(0,0,0,.25);
+}
+.brand h1{font-size:17px;margin:0;letter-spacing:.4px}
+.brand .badge{
+  margin-left:auto;
+  background:rgba(201,162,39,.15);
+  border:1px solid rgba(201,162,39,.4);
+  color:var(--gold-2);font-size:11px;padding:4px 8px;border-radius:999px;white-space:nowrap;
+}
+.nav{padding:14px 10px;overflow:auto}
+.nav h3{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#a5b5d1;margin:14px 10px 8px}
+.nav a{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;margin:2px 6px;border-radius:10px;
+  color:#cdd8ee;text-decoration:none;font-size:14px;
+  border:1px solid transparent;
+}
+.nav a:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08)}
+.nav a.active{background:rgba(201,162,39,.14);border-color:rgba(201,162,39,.35);color:#fff}
+.nav .num{width:22px;height:22px;display:grid;place-items:center;background:rgba(255,255,255,.08);border-radius:6px;font-size:12px;color:#e9d7a3}
+
+.main{margin-left:310px;flex:1;min-width:0}
+.topbar{
+  position:sticky;top:0;z-index:30;
+  backdrop-filter:saturate(140%) blur(10px);
+  background:color-mix(in srgb, var(--bg) 85%, transparent);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;padding:10px 16px;
+}
+.hamb{display:none}
+.btn{
+  appearance:none;border:1px solid var(--border);background:var(--bg-elev);color:var(--text);
+  padding:8px 12px;border-radius:10px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px
+}
+.btn:hover{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.15)}
+.btn.gold{background:linear-gradient(180deg,var(--gold),var(--gold-2));color:#0A1931;border-color:#b9941f;font-weight:600}
+.spacer{flex:1}
+.content{padding:28px;max-width:1200px;margin:0 auto}
+.hero{
+  background:radial-gradient(1200px 400px at 20% -10%, rgba(201,162,39,.25), transparent 60%), linear-gradient(180deg,var(--card),var(--card-2));
+  border:1px solid var(--border);border-radius:18px;padding:28px;box-shadow:var(--shadow);position:relative;overflow:hidden
+}
+.hero h2{font-size:32px;margin:0 0 8px;letter-spacing:.2px}
+.hero p{color:var(--muted);margin:0}
+.grid{display:grid;gap:18px}
+.grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:1024px){.grid.cols-2,.grid.cols-3{grid-template-columns:1fr}}
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)
+}
+.card h3{margin:0 0 8px;font-size:18px}
+.card p{margin:0;color:var(--muted)}
+.section{margin:42px 0 56px}
+.section>header{display:flex;align-items:baseline;gap:12px;margin-bottom:14px}
+.section>header .num{
+  background:linear-gradient(180deg, rgba(201,162,39,.2), rgba(201,162,39,.05));
+  border:1px solid rgba(201,162,39,.35);color:var(--gold-2);
+  width:34px;height:34px;display:grid;place-items:center;border-radius:10px;font-weight:700
+}
+.section>header h2{margin:0;font-size:24px}
+.kbd{font-size:12px;border:1px solid var(--border);background:var(--bg-elev);padding:2px 6px;border-radius:6px;color:var(--muted)}
+.table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:12px;border:1px solid var(--border)}
+.table th,.table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+.table th{background:var(--bg-elev);font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.table tr:last-child td{border-bottom:none}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid var(--border);background:var(--bg-elev);color:var(--muted)}
+.badge.gold{border-color:rgba(201,162,39,.4);color:var(--gold-2);background:rgba(201,162,39,.1)}
+.list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.list li{display:flex;gap:10px;align-items:flex-start}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:8px;flex:0 0 8px}
+details{
+  background:var(--bg-elev);border:1px solid var(--border);border-radius:12px;padding:12px 14px
+}
+details+details{margin-top:10px}
+summary{cursor:pointer;font-weight:600;list-style:none}
+summary::-webkit-details-marker{display:none}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pill{padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:var(--bg-elev);font-size:12px;color:var(--muted)}
+.org{
+  display:grid;gap:14px;justify-items:center;padding:10px
+}
+.org .lvl{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.node{
+  position:relative;
+  background:linear-gradient(180deg,var(--card-2),var(--card));
+  border:1px solid var(--border);border-radius:12px;padding:10px 14px;min-width:160px;text-align:center;
+  box-shadow:var(--shadow);cursor:default
+}
+.node b{display:block}
+.node small{color:var(--muted)}
+.node[data-tip]:hover::after{
+  content:attr(data-tip);
+  position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 8px);
+  background:#0a1324;color:#e6efff;border:1px solid var(--border);padding:8px 10px;border-radius:8px;white-space:nowrap;
+  font-size:12px;box-shadow:var(--shadow);z-index:5
+}
+[data-theme="light"] .node[data-tip]:hover::after{background:#fff;color:#0A1931}
+.flow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.arrow{opacity:.6}
+.diagram{
+  background:var(--bg-elev);border:1px solid var(--border);border-radius:14px;padding:14px;overflow:auto
+}
+.diagram svg{width:100%;height:auto}
+.metric{
+  background:var(--bg-elev);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px
+}
+.metric .v{font-size:22px;font-weight:700}
+.metric .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.timeline{position:relative;padding-left:26px}
+.timeline::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-item{position:relative;margin:0 0 18px}
+.tl-item::before{content:"";position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.2)}
+.footer{margin:60px 0 30px;color:var(--muted);font-size:13px;text-align:center}
+@media (max-width:1024px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .hamb{display:inline-flex}
+  .content{padding:18px}
+  .hero h2{font-size:26px}
+}
+@media print{
+  .sidebar,.topbar{display:none !important}
+  .main{margin:0}
+  .card,details{break-inside:avoid;box-shadow:none}
+  body{background:#fff;color:#000}
+  a{color:#000;text-decoration:underline}
+}
+.search{
+  display:flex;align-items:center;gap:8px;background:var(--bg-elev);border:1px solid var(--border);padding:6px 10px;border-radius:10px;min-width:220px
+}
+.search input{background:transparent;border:none;outline:none;color:var(--text);width:100%}
+.tag-good{color:var(--ok)} .tag-warn{color:var(--warn)} .tag-err{color:var(--err)}
+</style>
+</head>
+<body data-theme="dark">
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Navegación">
+    <div class="brand">
+      <div class="logo">MQ</div>
+      <h1>MAXIQUEEN OS</h1>
+      <span class="badge">v2.0 – Julio 2026</span>
+    </div>
+    <nav class="nav" id="nav">
+      <h3>Fundamentos v1.0</h3>
+      <a href="#s1" class="active"><span class="num">1</span> Manifiesto</a>
+      <a href="#s2"><span class="num">2</span> Visión</a>
+      <a href="#s3"><span class="num">3</span> Arquitectura por Capas</a>
+      <h3>Especificación v2.0</h3>
+      <a href="#s4"><span class="num">4</span> Arquitectura Física y Red</a>
+      <a href="#s5"><span class="num">5</span> El Kernel del SO</a>
+      <a href="#s6"><span class="num">6</span> Capa Operacional</a>
+      <a href="#s7"><span class="num">7</span> Proveedores Cognitivos</a>
+      <a href="#s8"><span class="num">8</span> Protocolos</a>
+      <a href="#s9"><span class="num">9</span> Jerarquía de Memoria</a>
+      <a href="#s10"><span class="num">10</span> Sistema Nervioso</a>
+      <a href="#s11"><span class="num">11</span> Ciclo de Vida del Agente</a>
+      <a href="#s12"><span class="num">12</span> Control Center</a>
+      <a href="#s13"><span class="num">13</span> Multi-Tenant</a>
+      <a href="#s14"><span class="num">14</span> Blueprints y Clonación</a>
+      <a href="#s15"><span class="num">15</span> Economía de Inferencia</a>
+      <a href="#s16"><span class="num">16</span> Conceptual vs Implementación</a>
+      <h3>Operación y Producto</h3>
+      <a href="#s17"><span class="num">17</span> Organigrama</a>
+      <a href="#s18"><span class="num">18</span> Renombramiento</a>
+      <a href="#s19"><span class="num">19</span> Flujos</a>
+      <a href="#s20"><span class="num">20</span> Escalabilidad</a>
+      <a href="#s21"><span class="num">21</span> Catálogo</a>
+      <a href="#s22"><span class="num">22</span> Monetización</a>
+      <a href="#s23"><span class="num">23</span> Roadmap</a>
+      <a href="#s24"><span class="num">24</span> Manual Vivo</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <button class="btn hamb" id="hamb" aria-label="Menú">☰</button>
+      <div class="search" role="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 0 0 1 0 15z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="q" placeholder="Buscar sección..."/>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn" id="theme" title="Modo claro/oscuro">🌗 Tema</button>
+      <button class="btn" id="print" title="Imprimir / PDF">🖨️ Imprimir</button>
+      <button class="btn gold" onclick="document.getElementById('s12').scrollIntoView({behavior:'smooth'})">Abrir Control Center</button>
+    </div>
+
+    <div class="content">
+      <div class="hero">
+        <h2>MAXIQUEEN OS v2.0</h2>
+        <p>Sistema Operativo Empresarial de Agentes Cognitivos. Manual técnico integrado y vivo — une el diseño fundacional v1.0 (navy #0A1931 / gold #C9A227) con la especificación completa v2.0.</p>
+        <div class="legend">
+          <span class="pill">Arquitectura por capas</span>
+          <span class="pill">Kernel cognitivo</span>
+          <span class="pill">Multi-tenant con RLS</span>
+          <span class="pill">Economía de inferencia</span>
+          <span class="pill">Observabilidad total</span>
+        </div>
+      </div>
+
+      <!-- 1 -->
+      <section class="section" id="s1">
+        <header><div class="num">1</div><h2>Manifiesto</h2></header>
+        <div class="card">
+          <p><b>MAXIQUEEN OS no es un chatbot.</b> Es el sistema operativo que convierte tu empresa en un organismo autónomo donde los <em>LLMs son herramientas, no empleados</em>. Los empleados son agentes especializados dirigidos por directores, orquestados por un kernel y gobernados por memoria, políticas y costos.</p>
+          <ul class="list" style="margin-top:12px">
+            <li><span class="dot"></span><div><b>Primero el negocio:</b> cada agente nace con un KPI, un presupuesto y un SLA.</div></li>
+            <li><span class="dot"></span><div><b>Gobierno por políticas:</b> privacidad, costo y latencia deciden qué cerebro usar.</div></li>
+            <li><span class="dot"></span><div><b>Memoria como activo:</b> lo que aprende hoy, opera mañana sin reentrenar.</div></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 2 -->
+      <section class="section" id="s2">
+        <header><div class="num">2</div><h2>Visión</h2></header>
+        <div class="grid cols-2">
+          <div class="card"><h3>De SaaS a OS</h3><p>Pasar de herramientas aisladas a un OS donde los procesos se ejecutan como hilos cognitivos orquestados, medibles y facturables.</p></div>
+          <div class="card"><h3>Empresa Clonable</h3><p>Blueprints versionados permiten replicar departamentos completos en minutos con memoria, políticas y métricas precargadas.</p></div>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section class="section" id="s3">
+        <header><div class="num">3</div><h2>Arquitectura por Capas (5)</h2></header>
+        <div class="grid cols-3">
+          <div class="card"><h3>1. Interfaz</h3><p>Control Center, APIs, Webhooks, SDK. Experiencia unificada para humanos y sistemas.</p></div>
+          <div class="card"><h3>2. Orquestación (Kernel)</h3><p>Scheduler DAG, Router de inferencia, Políticas, Seguridad.</p></div>
+          <div class="card"><h3>3. Operacional</h3><p>Directores y Agentes especializados con roles, memoria y herramientas.</p></div>
+          <div class="card"><h3>4. Cognitiva</h3><p>Proveedores abstractos A/B/C/Local. Los LLMs son herramientas.</p></div>
+          <div class="card"><h3>5. Persistencia</h3><p>Memoria jerárquica: RAM, corto plazo, vectorial, histórica.</p></div>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section class="section" id="s4">
+        <header><div class="num">4</div><h2>Arquitectura Física y Topología de Red</h2></header>
+        <div class="card">
+          <p>Distribución edge-to-core con enrutamiento inteligente y observabilidad end-to-end.</p>
+          <div class="diagram" style="margin-top:12px">
+            <svg viewBox="0 0 1200 220" role="img" aria-label="Topología">
+              <defs>
+                <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#142847"/><stop offset="100%" stop-color="#0f1d33"/>
+                </linearGradient>
+                <style>
+                  .b{fill:url(#g1);stroke:#C9A227;stroke-width:1.5}
+                  .t{fill:#e8eef9;font:600 13px system-ui}
+                  .s{fill:#9fb0c9;font:12px system-ui}
+                  .a{stroke:#C9A227;stroke-width:2;marker-end:url(#m)}
+                </style>
+                <marker id="m" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#C9A227"/></marker>
+              </defs>
+              <!-- boxes -->
+              <rect class="b" x="20" y="60" width="150" height="70" rx="12"/><text class="t" x="95" y="92" text-anchor="middle">Cloudflare Edge</text><text class="s" x="95" y="112" text-anchor="middle">WAF / CDN / DNS</text>
+              <rect class="b" x="210" y="60" width="150" height="70" rx="12"/><text class="t" x="285" y="92" text-anchor="middle">Vercel</text><text class="s" x="285" y="112" text-anchor="middle">Frontend / API</text>
+              <rect class="b" x="400" y="30" width="170" height="70" rx="12"/><text class="t" x="485" y="62" text-anchor="middle">Director Operaciones</text><text class="s" x="485" y="82" text-anchor="middle">Orquestador</text>
+              <rect class="b" x="400" y="120" width="170" height="70" rx="12"/><text class="t" x="485" y="152" text-anchor="middle">Worker Runtime</text><text class="s" x="485" y="172" text-anchor="middle">Jobs / Cron</text>
+              <rect class="b" x="610" y="75" width="150" height="70" rx="12"/><text class="t" x="685" y="107" text-anchor="middle">Balanceo</text><text class="s" x="685" y="127" text-anchor="middle">Políticas</text>
+              <rect class="b" x="800" y="30" width="160" height="70" rx="12"/><text class="t" x="880" y="62" text-anchor="middle">Inferencia Nube</text><text class="s" x="880" y="82" text-anchor="middle">Prov. A/B/C</text>
+              <rect class="b" x="800" y="120" width="160" height="70" rx="12"/><text class="t" x="880" y="152" text-anchor="middle">Inferencia Local</text><text class="s" x="880" y="172" text-anchor="middle">Ollama / GPU</text>
+              <rect class="b" x="1000" y="30" width="170" height="70" rx="12"/><text class="t" x="1085" y="62" text-anchor="middle">Persistencia</text><text class="s" x="1085" y="82" text-anchor="middle">Mongo / Redis / PG</text>
+              <rect class="b" x="1000" y="120" width="170" height="70" rx="12"/><text class="t" x="1085" y="152" text-anchor="middle">Observabilidad</text><text class="s" x="1085" y="172" text-anchor="middle">Logs / Métricas</text>
+              <!-- arrows -->
+              <path class="a" d="M170,95 H210"/><path class="a" d="M360,95 H400"/><path class="a" d="M570,65 H610"/><path class="a" d="M570,155 H610"/><path class="a" d="M760,110 H800"/><path class="a" d="M960,65 H1000"/><path class="a" d="M960,155 H1000"/>
+            </svg>
+          </div>
+          <details style="margin-top:12px"><summary>Notas de despliegue</summary>
+            <p>Edge termina TLS y aplica rate-limit. Vercel sirve UI y API routes stateless. El Director encola tareas en el Worker Runtime. El balanceador aplica la economía de inferencia antes de llamar a proveedores.</p>
+          </details>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section class="section" id="s5">
+        <header><div class="num">5</div><h2>El Kernel del Sistema Operativo</h2></header>
+        <div class="card">
+          <p style="font-size:18px"><b>El núcleo no ejecuta código binario tradicional; coordina hilos de ejecución cognitiva.</b></p>
+          <div class="grid cols-3" style="margin-top:12px">
+            <div class="metric"><div class="l">Scheduler (DAG)</div><div class="v">Grafos de tareas</div><p>Planifica dependencias, paralelismo y reintentos con garantías idempotentes.</p></div>
+            <div class="metric"><div class="l">Agent Runtime</div><div class="v">Ciclo de vida</div><p>Crea, hidrata memoria, ejecuta herramientas, guarda estado, duerme y reactiva.</p></div>
+            <div class="metric"><div class="l">Memory Manager</div><div class="v">4 niveles</div><p>Enruta lecturas/escrituras entre RAM, corto plazo, vectorial e histórica.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 -->
+      <section class="section" id="s6">
+        <header><div class="num">6</div><h2>Capa Operacional</h2></header>
+        <div class="card">
+          <p>Jerarquía operativa donde los LLMs son <b>herramientas</b>, no empleados:</p>
+          <div class="flow" style="margin-top:10px">
+            <span class="badge gold">CEO</span><span class="arrow">→</span>
+            <span class="badge">Director IA</span><span class="arrow">→</span>
+            <span class="badge">Director Comercial</span><span class="arrow">→</span>
+            <span class="badge">Director Financiero</span><span class="arrow">→</span>
+            <span class="badge">Director Técnico</span><span class="arrow">→</span>
+            <span class="badge">Agentes Especializados</span><span class="arrow">→</span>
+            <span class="badge">Herramientas</span><span class="arrow">→</span>
+            <span class="badge">LLMs</span>
+          </div>
+          <p class="kicker" style="color:var(--muted);margin-top:8px">Los directores definen objetivos y presupuestos; los agentes ejecutan; las herramientas (incluidos LLMs) amplifican capacidades.</p>
+        </div>
+      </section>
+
+      <!-- 7 -->
+      <section class="section" id="s7">
+        <header><div class="num">7</div><h2>Proveedores Cognitivos Abstractos</h2></header>
+        <div class="card">
+          <p>Se eliminan nombres de marca del núcleo. El router ve:</p>
+          <table class="table">
+            <thead><tr><th>Abstracción</th><th>Perfil</th><th>Uso típico</th></tr></thead>
+            <tbody>
+              <tr><td><b>Proveedor A</b></td><td>Alta capacidad razonamiento</td><td>Análisis complejo, auditoría</td></tr>
+              <tr><td><b>Proveedor B</b></td><td>Equilibrio costo/latencia</td><td>Operación diaria, RAG</td></tr>
+              <tr><td><b>Proveedor C</b></td><td>Ultra económico</td><td>Clasificación, extracción simple</td></tr>
+              <tr><td><b>Local</b></td><td>Privacidad total</td><td>Datos sensibles, on-prem</td></tr>
+            </tbody>
+          </table>
+          <details style="margin-top:10px"><summary>Enrutamiento por políticas</summary>
+            <p>El router evalúa: criticidad, privacidad, latencia máxima, presupuesto por tarea y calidad histórica. Si falla, hace failover automático.</p>
+          </details>
+        </div>
+      </section>
+
+      <!-- 8 -->
+      <section class="section" id="s8">
+        <header><div class="num">8</div><h2>Protocolos de Comunicación</h2></header>
+        <div class="grid cols-3">
+          <div class="card"><h3>JSON-RPC over WebSockets</h3><p>Comunicación bidireccional tipada entre UI, kernel y agentes. Ideal para streaming de tokens y eventos.</p><pre> { "jsonrpc":"2.0", "method":"agent.run", "params":{ "id":"auditor", "task":"conciliar" }, "id": 42 }</pre></div>
+          <div class="card"><h3>MCP</h3><p>Model Context Protocol para herramientas: descubrimiento, permisos y ejecución segura con esquemas.</p></div>
+          <div class="card"><h3>Event-Driven</h3><p>Bus de eventos para Signals → Events → Tasks. Desacopla productores y consumidores, habilita replay.</p></div>
+        </div>
+      </section>
+
+      <!-- 9 -->
+      <section class="section" id="s9">
+        <header><div class="num">9</div><h2>Jerarquía de Memoria</h2></header>
+        <table class="table">
+          <thead><tr><th>Nivel</th><th>Tecnología</th><th>Contenido</th><th>TTL típico</th></tr></thead>
+          <tbody>
+            <tr><td><b>1. RAM</b> (contexto inmediato)</td><td>Memoria de proceso</td><td>Ventana de conversación, scratchpad</td><td>segundos</td></tr>
+            <tr><td><b>2. Corto Plazo</b></td><td>MongoDB / Redis</td><td>Estado de tareas, sesiones, locks</td><td>horas–días</td></tr>
+            <tr><td><b>3. Vectorial</b></td><td>Supabase pgvector</td><td>Embeddings, RAG, conocimiento</td><td>semanas–meses</td></tr>
+            <tr><td><b>4. Histórica</b></td><td>MongoDB Atlas</td><td>Auditoría, costos, trazas, aprendizajes</td><td>años</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 10 -->
+      <section class="section" id="s10">
+        <header><div class="num">10</div><h2>Sistema Nervioso</h2></header>
+        <div class="card">
+          <div class="diagram">
+            <svg viewBox="0 0 1000 140">
+              <defs><marker id="m2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#C9A227"/></marker></defs>
+              <style>.bx{fill:#0f1d33;stroke:#C9A227;stroke-width:1.4;rx:12}.tx{fill:#e8eef9;font:600 14px system-ui}.ar{stroke:#C9A227;stroke-width:2;marker-end:url(#m2)}</style>
+              <rect class="bx" x="20" y="40" width="160" height="60"/><text class="tx" x="100" y="75" text-anchor="middle">Signals</text>
+              <rect class="bx" x="220" y="40" width="160" height="60"/><text class="tx" x="300" y="75" text-anchor="middle">Events</text>
+              <rect class="bx" x="420" y="40" width="160" height="60"/><text class="tx" x="500" y="75" text-anchor="middle">Tasks</text>
+              <rect class="bx" x="620" y="40" width="160" height="60"/><text class="tx" x="700" y="75" text-anchor="middle">Memory</text>
+              <rect class="bx" x="820" y="40" width="160" height="60"/><text class="tx" x="900" y="75" text-anchor="middle">Actions</text>
+              <path class="ar" d="M180,70 H220"/><path class="ar" d="M380,70 H420"/><path class="ar" d="M580,70 H620"/><path class="ar" d="M780,70 H820"/>
+            </svg>
+          </div>
+          <p style="color:var(--muted);margin-top:8px">Cada señal (webhook, email, cambio de dato) se normaliza a evento, se convierte en tarea DAG, consulta/escribe memoria y ejecuta acciones con herramientas.</p>
+        </div>
+      </section>
+
+      <!-- 11 -->
+      <section class="section" id="s11">
+        <header><div class="num">11</div><h2>Ciclo de Vida del Agente</h2></header>
+        <div class="card">
+          <div class="flow">
+            <span class="pill">Crear</span><span class="arrow">→</span>
+            <span class="pill">Inicializar</span><span class="arrow">→</span>
+            <span class="pill">Cargar memoria</span><span class="arrow">→</span>
+            <span class="pill">Trabajar</span><span class="arrow">→</span>
+            <span class="pill">Guardar memoria</span><span class="arrow">→</span>
+            <span class="pill">Dormir</span><span class="arrow">→</span>
+            <span class="pill">Reactivarse</span><span class="arrow">→</span>
+            <span class="pill">Actualizar</span><span class="arrow">→</span>
+            <span class="pill">Eliminar</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 -->
+      <section class="section" id="s12">
+        <header><div class="num">12</div><h2>MAXIQUEEN CONTROL CENTER</h2></header>
+        <div class="grid cols-3">
+          <div class="metric"><div class="l">Agentes activos</div><div class="v">24</div><span class="badge">12 en ejecución</span></div>
+          <div class="metric"><div class="l">Costo / minuto</div><div class="v">$0.18</div><span class="badge gold">Meta: &lt; $0.20</span></div>
+          <div class="metric"><div class="l">Latencia p95</div><div class="v">720 ms</div><span class="badge">SLA 800ms</span></div>
+          <div class="metric"><div class="l">Errores 1h</div><div class="v">3</div><span class="badge tag-warn">reintentos ok</span></div>
+          <div class="metric"><div class="l">Clientes conectados</div><div class="v">187</div><span class="badge">WS activos</span></div>
+          <div class="metric"><div class="l">Tokens / min</div><div class="v">42.3k</div><span class="badge">A:58% B:32% C:7% L:3%</span></div>
+        </div>
+        <div class="grid cols-2" style="margin-top:14px">
+          <div class="card"><h3>Facturación</h3><p>Wallet por workspace con prepago y alertas. Desglose por agente, proveedor y tarea.</p></div>
+          <div class="card"><h3>Estado de Plataforma</h3><p>Vercel <span class="tag-good">● operativo</span> · Supabase <span class="tag-good">● operativo</span> · Ollama <span class="tag-warn">● degradado</span> · Groq <span class="tag-good">● operativo</span></p></div>
+        </div>
+      </section>
+
+      <!-- 13 -->
+      <section class="section" id="s13">
+        <header><div class="num">13</div><h2>Arquitectura Multi-Tenant</h2></header>
+        <div class="card">
+          <p>Aislamiento por <code class="inline">workspace_id</code> con RLS en Postgres y particionamiento lógico en Mongo. Cada workspace tiene wallet, políticas y claves propias.</p>
+          <ul class="list">
+            <li><span class="dot"></span><div><b>RLS:</b> toda consulta filtra por workspace_id del JWT.</div></li>
+            <li><span class="dot"></span><div><b>Cuotas:</b> tokens/min, concurrencia y almacenamiento por plan.</div></li>
+            <li><span class="dot"></span><div><b>Auditoría:</b> traza inmutable por workspace.</div></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 14 -->
+      <section class="section" id="s14">
+        <header><div class="num">14</div><h2>Sistema de Blueprints y Clonación</h2></header>
+        <div class="card">
+          <p>Un blueprint es un JSON versionado que define rol, capacidades, memoria y políticas.</p>
+<pre>{
+  "id": "auditor_financiero",
+  "version": "2.0.3",
+  "parent": "director_financiero",
+  "rol": "Auditor Financiero",
+  "capacidades": ["conciliacion", "deteccion_anomalias", "reportes_sat", "n8n_trigger"],
+  "memoria": {
+    "corto_plazo": { "ttl": "7d" },
+    "vectorial": { "coleccion": "finanzas", "top_k": 8 },
+    "historica": { "retencion": "7y" }
+  },
+  "proveedores": { "preferidos": ["A","B"], "fallback": ["C","Local"] },
+  "politicas": { "privacidad": "alta", "costo_max_tarea_usd": 0.05, "latencia_p95_ms": 800 },
+  "herramientas": ["postgres", "sheets", "email", "storage"],
+  "kpis": { "precision_min": 0.97, "falsos_positivos_max": 0.02 }
+}</pre>
+        </div>
+      </section>
+
+      <!-- 15 -->
+      <section class="section" id="s15">
+        <header><div class="num">15</div><h2>Economía de Inferencia</h2></header>
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Árbol de decisión</h3>
+            <ul class="list">
+              <li><span class="dot"></span><div>¿Privacidad alta o datos sensibles? → <b>Local</b></div></li>
+              <li><span class="dot"></span><div>¿Complejidad &lt; 0.3 y costo crítico? → <b>Proveedor C</b></div></li>
+              <li><span class="dot"></span><div>¿Necesita razonamiento profundo? → <b>Proveedor A</b></div></li>
+              <li><span class="dot"></span><div>Resto → <b>Proveedor B</b> con fallback</div></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Algoritmo (JS)</h3>
+<pre>function routeInference({tarea, complejidad, criticidad, presupuesto, privacidad}) {
+  if (privacidad === 'alta') return 'Local';
+  if (complejidad < 0.3 && presupuesto === 'bajo') return 'Proveedor C';
+  if (criticidad >= 0.8 || complejidad >= 0.7) return 'Proveedor A';
+  return 'Proveedor B'; // con fallback automático
+}
+// Uso:
+const prov = routeInference({tarea:'conciliar', complejidad:0.65, criticidad:0.9, presupuesto:'medio', privacidad:'media'});</pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- 16 -->
+      <section class="section" id="s16">
+        <header><div class="num">16</div><h2>Separación Conceptual vs Implementación</h2></header>
+        <table class="table">
+          <thead><tr><th>Componente Conceptual</th><th>Implementación Actual v2.0</th><th>Notas</th></tr></thead>
+          <tbody>
+            <tr><td>Gateway / Edge</td><td>Cloudflare + Vercel</td><td>TLS, WAF, rate limit</td></tr>
+            <tr><td>Kernel / Scheduler</td><td>Vercel Functions + Queue</td><td>DAG con reintentos</td></tr>
+            <tr><td>Memoria RAM</td><td>Proceso Node</td><td>context window</td></tr>
+            <tr><td>Memoria Corto Plazo</td><td>MongoDB / Redis</td><td>sesiones y locks</td></tr>
+            <tr><td>Memoria Vectorial</td><td>Supabase pgvector</td><td>RAG multi-tenant</td></tr>
+            <tr><td>Memoria Histórica</td><td>MongoDB Atlas</td><td>auditoría y costos</td></tr>
+            <tr><td>Proveedores</td><td>A/B/C/Local</td><td>enrutado por políticas</td></tr>
+            <tr><td>Observabilidad</td><td>Logs centralizados + métricas</td><td>Control Center</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 17 -->
+      <section class="section" id="s17">
+        <header><div class="num">17</div><h2>Organigrama</h2></header>
+        <div class="card">
+          <div class="org" aria-label="Organigrama interactivo">
+            <div class="lvl"><div class="node" data-tip="Define estrategia y presupuesto cognitivo"><b>CEO</b><small>Maxiqueen</small></div></div>
+            <div class="lvl">
+              <div class="node" data-tip="Gobierna modelos y políticas"><b>Director IA</b><small>Modelos & RAG</small></div>
+              <div class="node" data-tip="Pipeline y revenue"><b>Director Comercial</b><small>Ventas & CS</small></div>
+              <div class="node" data-tip="Costos y compliance"><b>Director Financiero</b><small>Finanzas</small></div>
+              <div class="node" data-tip="Infra y despliegues"><b>Director Técnico</b><small>DevOps</small></div>
+            </div>
+            <div class="lvl">
+              <div class="node" data-tip="Ejecutan tareas con KPIs"><b>Agentes Especializados</b><small>Auditor, Closer, Soporte...</small></div>
+            </div>
+            <div class="lvl">
+              <div class="node" data-tip="APIs, DB, Correo, Sheets..."><b>Herramientas</b><small>MCP Tools</small></div>
+              <div class="node" data-tip="Cerebros intercambiables"><b>LLMs</b><small>Proveedor A/B/C/Local</small></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 18 -->
+      <section class="section" id="s18">
+        <header><div class="num">18</div><h2>Renombramiento</h2></header>
+        <table class="table">
+          <thead><tr><th>v1.0</th><th>v2.0</th><th>Razón</th></tr></thead>
+          <tbody>
+            <tr><td>Bot</td><td>Agente</td><td>Rol con memoria y KPI</td></tr>
+            <tr><td>Modelo</td><td>Proveedor Cognitivo</td><td>Abstracción multimarca</td></tr>
+            <tr><td>Base de conocimiento</td><td>Memoria Vectorial</td><td>Parte de jerarquía</td></tr>
+            <tr><td>Flujo</td><td>DAG de Tareas</td><td>Orquestación explícita</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 19 -->
+      <section class="section" id="s19">
+        <header><div class="num">19</div><h2>Flujos</h2></header>
+        <div class="grid cols-2">
+          <div class="card"><h3>Onboarding Cliente</h3><p>Signal (registro) → Event → Crear Workspace → Clonar Blueprints → Hidratar memoria → Activar agentes.</p></div>
+          <div class="card"><h3>Conciliación Financiera</h3><p>Job diario → Extraer movimientos → RAG políticas → Detectar anomalías → Reporte → Acción.</p></div>
+        </div>
+      </section>
+
+      <!-- 20 -->
+      <section class="section" id="s20">
+        <header><div class="num">20</div><h2>Escalabilidad</h2></header>
+        <div class="card">
+          <ul class="list">
+            <li><span class="dot"></span><div><b>Horizontal:</b> workers sin estado, colas particionadas por workspace.</div></li>
+            <li><span class="dot"></span><div><b>Elástica:</b> auto-scaling por backlog y latencia p95.</div></li>
+            <li><span class="dot"></span><div><b>Económica:</b> cache semántico y batching reduce tokens ~30%.</div></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 21 -->
+      <section class="section" id="s21">
+        <header><div class="num">21</div><h2>Catálogo</h2></header>
+        <div class="grid cols-3">
+          <div class="card"><h3>Auditor Financiero</h3><p>Conciliación, SAT, anomalías. SLA 800ms.</p></div>
+          <div class="card"><h3>Closer Comercial</h3><p>Califica, propone, agenda, hace follow-up.</p></div>
+          <div class="card"><h3>Soporte Técnico</h3><p>RAG sobre docs, crea tickets, cierra L1/L2.</p></div>
+        </div>
+      </section>
+
+      <!-- 22 -->
+      <section class="section" id="s22">
+        <header><div class="num">22</div><h2>Monetización</h2></header>
+        <table class="table">
+          <thead><tr><th>Plan</th><th>Incluye</th><th>Desde</th></tr></thead>
+          <tbody>
+            <tr><td><b>Starter</b></td><td>3 agentes, 1 workspace, 500k tokens</td><td>$99/mes</td></tr>
+            <tr><td><b>Growth</b></td><td>12 agentes, 3 workspaces, RLS, 5M tokens</td><td>$499/mes</td></tr>
+            <tr><td><b>Enterprise</b></td><td>Ilimitado, on-prem/Local, SSO, auditoría</td><td>Custom</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 23 -->
+      <section class="section" id="s23">
+        <header><div class="num">23</div><h2>Roadmap</h2></header>
+        <div class="timeline">
+          <div class="tl-item"><b>Q3 2025 (v2.0)</b> — Kernel DAG, Economía de Inferencia, Control Center.</div>
+          <div class="tl-item"><b>Q4 2025 (v2.1)</b> — Memoria vectorial multi-región, replay de eventos.</div>
+          <div class="tl-item"><b>Q1 2026 (v2.5)</b> — Blueprints marketplace, agentes auto-optimizables.</div>
+          <div class="tl-item"><b>Q3 2026 (v3.0)</b> — OS distribuido edge, inferencia local por defecto.</div>
+        </div>
+      </section>
+
+      <!-- 24 -->
+      <section class="section" id="s24">
+        <header><div class="num">24</div><h2>Manual Vivo</h2></header>
+        <div class="card">
+          <p>Este documento es la fuente de verdad operativa. Cada cambio de arquitectura actualiza el Control Center y versiona blueprints. Última actualización: <b>Julio 2026</b>.</p>
+          <details style="margin-top:10px"><summary>Cómo proponer cambios</summary>
+            <p>Abrir PR al repo del manual con diff de sección, impacto en costos/latencia y plan de rollback. Requiere aprobación de Director IA y Director Técnico.</p>
+          </details>
+        </div>
+      </section>
+
+      <div class="footer">© 2026 Maxiqueen — MAXIQUEEN OS v2.0. Diseño navy #0A1931 / gold #C9A227. Hecho para operar, no para prometer.</div>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  const body=document.body;
+  const sidebar=document.getElementById('sidebar');
+  const hamb=document.getElementById('hamb');
+  const themeBtn=document.getElementById('theme');
+  const printBtn=document.getElementById('print');
+  const q=document.getElementById('q');
+  const navLinks=[...document.querySelectorAll('.nav a')];
+
+  // theme
+  const saved=localStorage.getItem('mq-theme');
+  if(saved){ body.setAttribute('data-theme', saved); }
+  themeBtn.addEventListener('click',()=>{
+    const next=body.getAttribute('data-theme')==='dark'?'light':'dark';
+    body.setAttribute('data-theme',next); localStorage.setItem('mq-theme',next);
+  });
+
+  // mobile
+  hamb.addEventListener('click',()=>sidebar.classList.toggle('open'));
+  document.addEventListener('click',e=>{
+    if(window.innerWidth<=1024 && !sidebar.contains(e.target) && e.target!==hamb){sidebar.classList.remove('open')}
+  });
+
+  // print
+  printBtn.addEventListener('click',()=>window.print());
+
+  // scrollspy
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        const id='#'+en.target.id;
+        navLinks.forEach(a=>a.classList.toggle('active', a.getAttribute('href')===id));
+      }
+    });
+  },{rootMargin:'-40% 0px -55% 0px',threshold:0});
+  document.querySelectorAll('section.section').forEach(s=>obs.observe(s));
+
+  // search filter nav
+  q.addEventListener('input',()=>{
+    const term=q.value.toLowerCase();
+    navLinks.forEach(a=>{
+      const hit=a.textContent.toLowerCase().includes(term);
+      a.style.display=hit?'flex':'none';
+    });
+  });
+
+  // smooth anchor close on mobile
+  navLinks.forEach(a=>a.addEventListener('click',()=>{ if(window.innerWidth<=1024) sidebar.classList.remove('open'); }));
+})();
+</script>
+<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
+</body>
+</html>
