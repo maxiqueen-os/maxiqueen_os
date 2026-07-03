@@ -1,12 +1,12 @@
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
+  if (req.method!== 'POST') return res.status(405).json({ error: 'Método no permitido' });
 
   const { message } = req.body || {};
   const GROQ_KEY = process.env.GROQ_API_KEY?.trim();
   const GEMINI_KEY = process.env.GEMINI_API_KEY_3?.trim();
 
-  if (!GROQ_KEY || !GEMINI_KEY) {
+  if (!GROQ_KEY ||!GEMINI_KEY) {
     return res.status(500).json({ error: 'Faltan API keys en Vercel' });
   }
 
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'llama3-8b-8192',
+        model: 'llama-3.1-8b-instant',
         messages: [
           { role: 'system', content: 'Eres MaxiBot, inteligencia central de MaxiQueen OS. Responde en español, directo.' },
           { role: 'user', content: message || 'hola' }
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
   // INTENTO 2: GEMINI (modelo actualizado)
   try {
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
