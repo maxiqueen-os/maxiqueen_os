@@ -392,46 +392,63 @@
     }
 
     // Motor de procesamiento de intenciones
-    function processInput() {
-        let val = inputField.value.trim();
-        if(!val) return;
-        
-        printChat(val, true);
-        inputField.value = '';
-        val = val.toLowerCase();
+  async function processInput() {
+    let val = inputField.value.trim();
+    if(!val) return;
+    
+    printChat(val, true);
+    inputField.value = '';
+    const cleanVal = val.toLowerCase();
 
-        // Simular retraso de procesamiento
-        setTimeout(() => {
-            if(val.includes('pro') || val.includes('plan')) {
-                printChat("Plan PRO detectado. Iniciando estructuración del ecosistema y conectando pasarelas de pago.");
-                setStage(1);
-                activateAPI('stripe');
-                activateAPI('whatsapp');
-                activateModule('core');
-                activateModule('sales');
-            } 
-            else if (val.includes('venta') || val.includes('dinero')) {
-                printChat("Prioridad: Generación de ingresos. Desplegando funnels de conversión y activando Meta Graph para ads.");
-                setStage(3);
-                activateAPI('meta');
-                activateAPI('tiktok');
-                activateModule('sales');
-                activateModule('content');
-            }
-            else if (val.includes('escala') || val.includes('completo') || val.includes('todo')) {
-                printChat("Activando SECUENCIA OMNIPRESENTE (OS Completo). Todos los sistemas en línea. Máxima capacidad habilitada.");
-                setStage(4);
-                ['whatsapp','meta','tiktok','stripe'].forEach(activateAPI);
-                ['core','web','content','sales','auto','community'].forEach(activateModule);
-                addSysLog("ADVERTENCIA: Sistema operando al 100% de capacidad.", "warn");
-            }
-            else {
-                printChat("Datos insuficientes para ejecución automática. Por favor, especifica si deseas iniciar un 'plan', aumentar 'ventas' o 'escalar' todo el sistema.");
-                addSysLog("Comando no reconocido o requiere más contexto.", "info");
-            }
-        }, 800);
+    // 1. REACCIÓN VISUAL LOCAL (Mantiene vivas tus automatizaciones del OS)
+    if(cleanVal.includes('pro') || cleanVal.includes('plan')) {
+        printChat("Plan PRO detectado. Iniciando estructuración del ecosistema y conectando pasarelas de pago.");
+        setStage(1);
+        activateAPI('stripe');
+        activateAPI('whatsapp');
+        activateModule('core');
+        activateModule('sales');
+    } 
+    else if (cleanVal.includes('venta') || cleanVal.includes('dinero')) {
+        printChat("Prioridad: Generación de ingresos. Desplegando funnels de conversión y activando Meta Graph para ads.");
+        setStage(3);
+        activateAPI('meta');
+        activateAPI('tiktok');
+        activateModule('sales');
+        activateModule('content');
+    }
+    else if (cleanVal.includes('escala') || cleanVal.includes('completo') || cleanVal.includes('todo')) {
+        printChat("Activando SECUENCIA OMNIPRESENTE (OS Completo). Todos los sistemas en línea. Máxima capacidad habilitada.");
+        setStage(4);
+        ['whatsapp','meta','tiktok','stripe'].forEach(activateAPI);
+        ['core','web','content','sales','auto','community'].forEach(activateModule);
+        addSysLog("ADVERTENCIA: Sistema operando al 100% de capacidad.", "warn");
     }
 
+    // 2. CONEXIÓN DIRECTA CON LA IA (Procesa la conversación real)
+    addSysLog("Procesando consulta con IA central...", "info");
+
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: val }) // Envía el mensaje original a Groq/Gemini
+        });
+        
+        const data = await response.json();
+
+        if (response.ok) {
+            printChat(data.reply);
+            addSysLog("Respuesta de IA recibida.", "success");
+        } else {
+            printChat(`SYS_ERROR: ${data.error || 'No se pudo obtener respuesta de la IA.'}`);
+            addSysLog("Error en el retorno del API Gateway.", "warn");
+        }
+    } catch (error) {
+        printChat("SYS_CRITICAL_ERROR: Fallo en el enlace de datos del servidor.");
+        addSysLog("Error de red crítico.", "warn");
+    }
+}
     // Escuchar "Enter"
     inputField.addEventListener('keypress', function(e) {
         if(e.key === 'Enter') processInput();
