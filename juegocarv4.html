@@ -13,7 +13,7 @@ canvas{display:block;position:absolute;top:0;left:0;width:100vw;height:100vh;z-i
 .chromatic-aberration { filter: contrast(1.2) saturate(1.4) drop-shadow(4px 0px 0px rgba(255,0,0,0.5)) drop-shadow(-4px 0px 0px rgba(0,255,255,0.5)); }
 
 .mq-hud{background:radial-gradient(ellipse at center,rgba(2,6,16,.75)0%,rgba(0,2,8,.9)100%);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(0,255,200,.12);border-radius:20px;color:#e0f8ff;box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);transform:translateZ(0)}
-#ui-top{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:min(96%,800px);display:grid;grid-template-columns:1fr auto 1fr 1fr;gap:12px;align-items:center;padding:12px 20px;z-index:10}
+#ui-top{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:min(96%,800px);display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;padding:12px 20px;z-index:10}
 .mq-metric{font-size:11px;opacity:.85;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
 .mq-metric span{display:block;color:#00ffc8;font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;text-shadow:0 0 12px rgba(0,255,200,.5);margin-top:2px}
 #speedometer{width:80px;height:80px;position:relative}
@@ -42,6 +42,10 @@ canvas{display:block;position:absolute;top:0;left:0;width:100vw;height:100vh;z-i
 #game-over-screen h1{font-family:'JetBrains Mono',monospace;font-size:clamp(40px,9vw,70px);background:linear-gradient(135deg,#ff0055,#ff0000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;margin-bottom:8px;letter-spacing:-2px}
 #btn-restart{padding:16px 40px;font-size:15px;font-family:'JetBrains Mono',monospace;font-weight:700;background:linear-gradient(135deg,#00ffc8,#06b6d4);color:#000;border:none;border-radius:12px;box-shadow:0 8px 25px rgba(0,255,200,.3);cursor:pointer;transition:transform.2s}
 #btn-restart:active{transform:scale(.95)}
+
+/* [MAXI+] NUEVO: Estilos para power-ups */
+.powerup-glow { animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
 </style>
 </head>
 <body>
@@ -53,7 +57,7 @@ canvas{display:block;position:absolute;top:0;left:0;width:100vw;height:100vh;z-i
 </div>
 
 <div id="sys-stats">
-    FPS: <span id="dom-fps">60</span> | LAT: <span id="dom-lat">12ms</span> | AI: <span id="dom-ai">DRIVE</span>
+    FPS: <span id="dom-fps">60</span> | LAT: <span id="dom-lat">12ms</span> | AI: <span id="dom-ai">DRIVE</span> | BEST: <span id="dom-best">0</span>
 </div>
 
 <div id="mq-ai-panel" class="mq-hud">
@@ -65,15 +69,18 @@ canvas{display:block;position:absolute;top:0;left:0;width:100vw;height:100vh;z-i
       <div class="mq-engine-badge" data-engine="quantum" style="--c1:#ff00aa;--c2:#aa0055">⚛ Quantum</div>
       <div class="mq-engine-badge" data-engine="infinity" style="--c1:#e0e7ff;--c2:#6366f1">🌌 Infinity</div>
       <div class="mq-engine-badge" data-engine="hyper" style="--c1:#ef4444;--c2:#f97316">🔥 Hyper</div>
+      <!-- [MAXI+] NUEVO MOTOR -->
+      <div class="mq-engine-badge" data-engine="ultra" style="--c1:#fde047;--c2:#facc15">⚡ Ultra</div>
     </div>
-    <button id="mq-voice-btn" title="Mantén para hablar"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+    <button id="mq-voice-btn" title="Mantén para hablar"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
   </div>
-  <div id="mq-log-stream">MaxiQueen OS Engine Init. Di "hipervelocidad" o "izquierda".</div>
+  <div id="mq-log-stream">MaxiQueen OS Engine Init. Di "hipervelocidad" o "izquierda". Presiona P para pausar.</div>
 </div>
 
 <div id="game-over-screen">
   <h1>SISTEMA OFFLINE</h1>
-  <p style="font-family:'JetBrains Mono';font-size:16px;color:#a1a1aa;margin-bottom:30px">Nivel: <b id="final-level" style="color:#00ffc8">1</b> · Puntos: <b id="final-score" style="color:#00ffc8">0</b></p>
+  <p style="font-family:'JetBrains Mono';font-size:16px;color:#a1a1aa;margin-bottom:10px">Nivel: <b id="final-level" style="color:#00ffc8">1</b> · Puntos: <b id="final-score" style="color:#00ffc8">0</b></p>
+  <p style="font-family:'JetBrains Mono';font-size:12px;color:#fde047;margin-bottom:20px">RÉCORD: <b id="final-best">0</b></p>
   <button id="btn-restart">REINICIAR NÚCLEO</button>
 </div>
 
@@ -90,7 +97,13 @@ const LEVELS=[
  {name:'Túnel Cuántico', max:290, color:'#9d4edd', weather:'neon'},
  {name:'Andes Eléctricos', max:320, color:'#ffaa00', weather:'fog'},
  {name:'Lluvia Ácida', max:310, color:'#00a8ff', weather:'rain'},
- {name:'Desierto Solar', max:350, color:'#ff6d00', weather:'heat'}
+ {name:'Desierto Solar', max:350, color:'#ff6d00', weather:'heat'},
+ // [MAXI+] NUEVOS NIVELES 6-10
+ {name:'Neón Nocturno', max:380, color:'#ff00ff', weather:'neon'},
+ {name:'Tormenta Plasma', max:400, color:'#00ffff', weather:'rain'},
+ {name:'Vacío Cuántico', max:420, color:'#ffffff', weather:'clear'},
+ {name:'Hiperespacio', max:450, color:'#fde047', weather:'heat'},
+ {name:'Infinito', max:500, color:'#ff0055', weather:'neon'}
 ];
 
 // FASE 4: Preset Modes
@@ -100,13 +113,19 @@ const Engines = {
     tactical: { mult: 0.9, accel: 1.8, grip: 0.75, color: '#00a8ff', rgb: '0,168,255' },
     quantum: { mult: 1.3, accel: 2.2, grip: 0.95, color: '#ff00aa', rgb: '255,0,170' },
     infinity: { mult: 1.5, accel: 2.8, grip: 0.97, color: '#e0e7ff', rgb: '224,231,255' },
-    hyper: { mult: 1.8, accel: 3.5, grip: 0.99, color: '#ef4444', rgb: '239,68,68' }
+    hyper: { mult: 1.8, accel: 3.5, grip: 0.99, color: '#ef4444', rgb: '239,68' },
+    // [MAXI+] NUEVO MOTOR ULTRA
+    ultra: { mult: 2.2, accel: 4.2, grip: 1.0, color: '#fde047', rgb: '253,224,71' }
 };
 let activeEng = 'drive';
 
-const Game={active:true, level:1, score:0, distance:0, speed:0, nitro:100, shield:0, autopilot:0, lastTime:0, slowMo:1, screenShake:0, frames:0, lastFps:0};
+const Game={active:true, level:1, score:0, distance:0, speed:0, nitro:100, shield:0, autopilot:0, lastTime:0, slowMo:1, screenShake:0, frames:0, lastFps:0, paused:false, bestScore:0};
+// [MAXI+] Cargar récord
+Game.bestScore = parseInt(localStorage.getItem('mq-best')||'0');
+document.getElementById('dom-best').textContent = Game.bestScore;
+
 const Player={x:0, vx:0, targetX:0, y:H*0.8, w:W*0.12, h:H*0.14, angle:0, trail:[]};
-let obstacles=[], particles=[], rain=[], stars=[], city=[];
+let obstacles=[], particles=[], rain=[], stars=[], city=[], powerups=[];
 
 // Audio Seguro (Anti-Fugas)
 const AudioX={
@@ -148,7 +167,7 @@ const AudioX={
 const Voice={
     syn:window.speechSynthesis, rec:null, listen:false,
     speak(txt){
-        this.syn.cancel(); // Detener lectura anterior inmediatamente
+        this.syn.cancel();
         const u=new SpeechSynthesisUtterance(txt);
         u.lang='es-CO'; u.rate=1.2; u.pitch=1.1; u.volume=1;
         this.syn.speak(u);
@@ -159,17 +178,18 @@ const Voice={
         if(!SR) return;
         this.rec=new SR(); this.rec.continuous=true; this.rec.interimResults=false; this.rec.lang='es-CO';
         this.rec.onresult=e=>{
-            // Evitar acumulación leyendo solo el último índice
             const txt = e.results[e.resultIndex][0].transcript.toLowerCase().trim();
             document.getElementById('mq-log-stream').textContent = `CMD: "${txt}"`;
-            
+
             if(txt.includes('turbo')||txt.includes('boost')) activateTurbo();
             if(txt.includes('frena')||txt.includes('stop')) { Game.speed*=0.4; this.speak('Frenado de emergencia'); }
             if(txt.includes('izquierda')) Player.targetX = -0.75;
             if(txt.includes('derecha')) Player.targetX = 0.75;
             if(txt.includes('centro')) Player.targetX = 0;
             if(txt.includes('hipervelocidad')) { changeEngine('hyper'); activateTurbo(true); }
-            if(txt.includes('reiniciar') && !Game.active) reset();
+            if(txt.includes('ultra')) { changeEngine('ultra'); activateTurbo(true); } // [MAXI+]
+            if(txt.includes('escudo')) { Game.shield=300; this.speak('Escudo activado'); } // [MAXI+]
+            if(txt.includes('reiniciar') &&!Game.active) reset();
         };
         this.rec.onend=()=>{ if(this.listen) this.rec.start(); };
     }
@@ -191,26 +211,33 @@ function spawn(){
     obstacles.push({x:lane,z:0,w:W*0.08,h:H*0.09,col:`hsl(${Math.random()*360},85%,55%)`,sp:0.012+Math.random()*0.008});
 }
 
+// [MAXI+] NUEVO: Spawn power-ups
+function spawnPowerup(){
+    if(Math.random()<0.003){
+        powerups.push({x:(Math.random()*2-1)*0.7, z:0, type: Math.random()<0.5?'nitro':'shield'});
+    }
+}
+
 function createParticles(x,y,count,color,isExplosion=false){
     for(let i=0;i<count;i++){
         particles.push({
-            x, y, 
-            vx: (Math.random()-0.5)*(isExplosion?30:12), 
-            vy: (Math.random()-0.5)*(isExplosion?30:8)-2, 
-            life: 1, 
-            s: Math.random()*(isExplosion?8:4)+1, 
+            x, y,
+            vx: (Math.random()-0.5)*(isExplosion?30:12),
+            vy: (Math.random()-0.5)*(isExplosion?30:8)-2,
+            life: 1,
+            s: Math.random()*(isExplosion?8:4)+1,
             c: color
         });
     }
 }
 
 function activateTurbo(hyper=false){
-    if(Game.nitro<15 && !hyper) return;
+    if(Game.nitro<15 &&!hyper) return;
     Game.speed = Math.min(LEVELS[Game.level-1].max*Engines[activeEng].mult + 150, Game.speed+(hyper?150:80));
     Game.nitro -= hyper?0:15;
     Game.screenShake = hyper?25:12;
     AudioX.rpm(Game.speed, true);
-    Voice.speak(hyper ? 'Hipervelocidad cuántica acoplada' : 'Inyección de nitro');
+    Voice.speak(hyper? 'Hipervelocidad cuántica acoplada' : 'Inyección de nitro');
     if(navigator.vibrate) navigator.vibrate(hyper?150:80);
     canvas.classList.add('chromatic-aberration');
     setTimeout(()=>canvas.classList.remove('chromatic-aberration'), 800);
@@ -228,9 +255,15 @@ function changeEngine(engine){
 }
 
 function reset(){
-    Game.active=true; Game.score=0; Game.distance=0; Game.speed=0; Game.nitro=100; Game.slowMo=1; Game.screenShake=0;
+    // [MAXI+] Guardar récord
+    if(Game.score > Game.bestScore){
+        Game.bestScore = Game.score;
+        localStorage.setItem('mq-best', Game.bestScore);
+        document.getElementById('dom-best').textContent = Game.bestScore;
+    }
+    Game.active=true; Game.score=0; Game.distance=0; Game.speed=0; Game.nitro=100; Game.slowMo=1; Game.screenShake=0; Game.shield=0;
     Player.x=0; Player.vx=0; Player.targetX=0; Player.trail=[];
-    obstacles=[]; particles=[]; 
+    obstacles=[]; particles=[]; powerups=[];
     document.getElementById('game-over-screen').style.opacity = '0';
     setTimeout(()=>document.getElementById('game-over-screen').style.display='none', 300);
     Voice.speak('Sistemas restablecidos. Ecosistema en línea.');
@@ -239,18 +272,21 @@ function reset(){
 }
 
 function gameOver(){
+    // [MAXI+] Si tiene escudo, no muere
+    if(Game.shield>0){ Game.shield=0; Voice.speak('Escudo absorbió impacto'); return; }
+
     Game.active=false; Game.slowMo=0.15; Game.screenShake=30;
     AudioX.boom(); Voice.speak('Colisión crítica detectada. Daño estructural.');
     if(navigator.vibrate) navigator.vibrate([200,100,200]);
     canvas.classList.add('chromatic-aberration');
-    
-    // FASE 8: Cinematic Explosion
+
     createParticles(W/2+Player.x*W*0.4, Player.y, 150, '#ff0033', true);
     createParticles(W/2+Player.x*W*0.4, Player.y, 100, '#ffaa00', true);
-    
-    document.getElementById('final-level').textContent=Game.level; 
+
+    document.getElementById('final-level').textContent=Game.level;
     document.getElementById('final-score').textContent=Game.score;
-    
+    document.getElementById('final-best').textContent=Game.bestScore;
+
     setTimeout(()=>{
         const go = document.getElementById('game-over-screen');
         go.style.display='flex';
@@ -259,11 +295,12 @@ function gameOver(){
     }, 1200);
 }
 
-// Listeners unificados (Sin duplicados)
+// Listeners unificados
 let keys={};
 window.addEventListener('keydown',e=>{
-    keys[e.key.toLowerCase()]=true; 
+    keys[e.key.toLowerCase()]=true;
     if(e.code==='Space' && Game.active) activateTurbo();
+    if(e.key.toLowerCase()==='p'){ Game.paused=!Game.paused; Voice.speak(Game.paused?'Pausa':'Reanudado'); } // [MAXI+]
     if(!AudioX.ctx) AudioX.init();
 });
 window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
@@ -271,6 +308,11 @@ window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 canvas.addEventListener('touchstart',e=>{ AudioX.init(); Player.targetX=((e.touches[0].clientX/W)-0.5)*1.8; }, {passive:true});
 canvas.addEventListener('touchmove',e=>{ Player.targetX=((e.touches[0].clientX/W)-0.5)*1.8; }, {passive:true});
 canvas.addEventListener('touchend',()=>Player.targetX*=0.5, {passive:true});
+
+// [MAXI+] Control por inclinación móvil
+window.addEventListener('deviceorientation', e=>{
+    if(e.gamma) Player.targetX = Math.max(-0.9, Math.min(0.9, e.gamma/30));
+});
 
 const vBtn = document.getElementById('mq-voice-btn');
 const startV = (e)=>{ e.preventDefault(); AudioX.init(); Voice.listen=true; try{Voice.rec&&Voice.rec.start();}catch(e){} vBtn.classList.add('listening'); AudioX.beep(); };
@@ -284,55 +326,52 @@ document.getElementById('mq-router').onclick=e=>{
     if(b) changeEngine(b.dataset.engine);
 };
 
-// --- CORE UPDATE ---
 function update(dt){
-    if(!Game.active) return;
+    if(!Game.active || Game.paused) return; // [MAXI+]
     const lvl = LEVELS[Game.level-1];
     const eng = Engines[activeEng];
     const trueMax = lvl.max * eng.mult;
 
-    // Físicas Base
     if(keys['arrowleft']||keys['a']) Player.targetX = Math.max(-0.9, Player.targetX - 0.08);
     if(keys['arrowright']||keys['d']) Player.targetX = Math.min(0.9, Player.targetX + 0.08);
     if(keys['arrowup']||keys['w']) Game.speed = Math.min(trueMax, Game.speed + eng.accel);
     if(keys['arrowdown']||keys['s']) Game.speed = Math.max(0, Game.speed - eng.accel*3);
-    if(!keys['arrowleft'] && !keys['arrowright'] && !keys['a'] && !keys['d']) Player.targetX *= 0.92;
-    if(!keys['arrowup'] && !keys['w']) Game.speed *= 0.97;
+    if(!keys['arrowleft'] &&!keys['arrowright'] &&!keys['a'] &&!keys['d']) Player.targetX *= 0.92;
+    if(!keys['arrowup'] &&!keys['w']) Game.speed *= 0.97;
 
-    // Inercia lateral
     const dx = Player.targetX - Player.x;
     Player.vx += dx * 0.2;
     Player.vx *= eng.grip;
     Player.x += Player.vx * dt * 60;
     Player.x = Math.max(-0.9, Math.min(0.9, Player.x));
     Player.angle = Player.vx * 0.15;
-    
-    // Trail handling (FASE 6)
+
     if(Game.speed > 100) {
         Player.trail.unshift({x: Player.x, a: Player.angle, life: 1});
         if(Player.trail.length > 5) Player.trail.pop();
     }
     Player.trail.forEach(t => t.life -= dt * 5);
 
-    // Progresión
     Game.distance += Game.speed * dt * 0.12;
     Game.score = Math.floor(Game.distance);
     if(Game.distance > Game.level*1000 && Game.level < LEVELS.length){
-        Game.level++; AudioX.beep(); Voice.speak('Evolución de Bioma');
+        Game.level++; AudioX.beep(); Voice.speak('Evolución de Bioma '+LEVELS[Game.level-1].name);
         document.getElementById('level').textContent = Game.level;
         initRain();
     }
     Game.nitro = Math.min(100, Game.nitro + dt*6);
+    if(Game.shield>0) Game.shield -= dt*60; // [MAXI+]
 
-    // Obstáculos
     if(Math.random() < 0.015 + Game.speed/12000) spawn();
+    spawnPowerup(); // [MAXI+]
+
     for(let i = obstacles.length-1; i>=0; i--){
         const o = obstacles[i];
         o.z += (o.sp + Game.speed/5000) * dt * 60;
-        
+
         if(o.z > 0.78 && o.z < 0.95){
             const px = W/2 + Player.x*W*0.4;
-            const ox = W/2 + o.x*W*0.4 * o.z; // Hitbox corregido con Z
+            const ox = W/2 + o.x*W*0.4 * o.z;
             if(Math.abs(px - ox) < (Player.w*0.8 + o.w*o.z)*0.45){
                 gameOver(); return;
             }
@@ -340,7 +379,17 @@ function update(dt){
         if(o.z > 1.25) obstacles.splice(i,1);
     }
 
-    // Partículas (Clima y FX)
+    // [MAXI+] Colisión power-ups
+    for(let i=powerups.length-1;i>=0;i--){
+        const p=powerups[i]; p.z+=(0.01+Game.speed/5000)*dt*60;
+        if(p.z>0.75 && p.z<0.95 && Math.abs(Player.x-p.x)<0.3){
+            if(p.type==='nitro'){ Game.nitro=100; Voice.speak('Nitro completo'); }
+            else { Game.shield=300; Voice.speak('Escudo activado'); }
+            powerups.splice(i,1); createParticles(W/2, H*0.7, 30, '#00ffc8');
+        }
+        if(p.z>1.3) powerups.splice(i,1);
+    }
+
     for(let i=particles.length-1; i>=0; i--){
         let p=particles[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.5; p.life-=dt*1.5;
         if(p.life<=0) particles.splice(i,1);
@@ -349,43 +398,37 @@ function update(dt){
         rain.forEach(r=>{ r.y += r.v + Game.speed*0.05; if(r.y>H){ r.y=-10; r.x=Math.random()*W; } });
     }
 
-    // Shake
     Game.screenShake *= 0.85;
     if(Game.speed > trueMax*0.8) Game.screenShake += (Math.random()-0.5)*(Game.speed/100);
 
-    // DOM Sync (FASE 7)
     document.getElementById('score').textContent=Game.score;
     document.getElementById('nitro-pct').textContent=Math.floor(Game.nitro)+'%';
     const nFill = document.getElementById('nitro-fill');
     nFill.style.width=Game.nitro+'%';
-    nFill.style.background = Game.nitro > 20 ? `linear-gradient(90deg, #ff00aa, ${eng.color})` : '#555';
-    document.getElementById('dom-lat').textContent = Math.floor(10+Math.random()*8) + 'ms'; // Latencia simulada premium
+    nFill.style.background = Game.nitro > 20? `linear-gradient(90deg, #ff00aa, ${eng.color})` : '#555';
+    document.getElementById('dom-lat').textContent = Math.floor(10+Math.random()*8) + 'ms';
     drawSpeed(eng, trueMax);
     AudioX.rpm(Game.speed);
 }
 
-// --- RENDERIZADO ALTO RENDIMIENTO (FASE 2, 3, 6) ---
 function draw(){
     const lvl = LEVELS[Game.level-1];
     const eng = Engines[activeEng];
     const horizon = H*0.45;
-    
-    // Clear con Motion Blur
-    ctx.fillStyle = `rgba(0, 0, 5, ${Game.slowMo<1 ? 0.8 : (0.35 + Game.speed/2500)})`;
+
+    ctx.fillStyle = `rgba(0, 0, 5, ${Game.slowMo<1? 0.8 : (0.35 + Game.speed/2500)})`;
     ctx.fillRect(0,0,W,H);
-    
+
     ctx.save();
     ctx.translate(Game.screenShake, Game.screenShake);
 
-    // Entorno: Cielo y Estrellas
     ctx.fillStyle = '#010103'; ctx.fillRect(0,0,W,horizon);
     stars.forEach(s=>{
         s.x -= Game.speed * 0.005;
         if(s.x<0) s.x=W;
-        ctx.fillStyle = `rgba(255,255,255,${s.s/2.5})`; ctx.fillRect(s.x, s.y, s.s, s.s);
+        ctx.fillStyle = `rgba(255,255,${s.s/2.5})`; ctx.fillRect(s.x, s.y, s.s, s.s);
     });
 
-    // Entorno: Ciudad Parallax
     city.forEach(c=>{
         c.x -= Game.speed * 0.015;
         if(c.x<-20) c.x=W+20;
@@ -393,37 +436,42 @@ function draw(){
     });
     ctx.globalAlpha = 1;
 
-    // Entorno: Carretera con Reflejos y Niebla Gradiente
     let roadGrad = ctx.createLinearGradient(0, horizon, 0, H);
     roadGrad.addColorStop(0, '#020308'); roadGrad.addColorStop(1, '#0a0d18');
     ctx.fillStyle = roadGrad;
     ctx.beginPath(); ctx.moveTo(W*0.48, horizon); ctx.lineTo(W*0.52, horizon); ctx.lineTo(W*0.98, H); ctx.lineTo(W*0.02, H); ctx.fill();
 
-    // Líneas Neón Velocidad
     ctx.strokeStyle = eng.color; ctx.lineWidth = 3; ctx.shadowBlur = (Game.speed>200)?25:10; ctx.shadowColor = eng.color;
     ctx.setLineDash([40, 50]); ctx.lineDashOffset = -Game.distance * 2;
     ctx.beginPath(); ctx.moveTo(W*0.5, horizon); ctx.lineTo(W*0.5, H); ctx.stroke();
     ctx.setLineDash([]); ctx.shadowBlur = 0;
 
-    // Bordes Carretera
     ctx.strokeStyle = `rgba(${eng.rgb}, 0.3)`; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(W*0.48, horizon); ctx.lineTo(W*0.02, H); ctx.moveTo(W*0.52, horizon); ctx.lineTo(W*0.98, H); ctx.stroke();
 
-    // Obstáculos (Proyección Pseudo-3D)
     obstacles.sort((a,b)=>b.z-a.z).forEach(o=>{
         const sc=o.z, x=W/2+o.x*W*0.4*sc, y=horizon+(H-horizon)*sc, w=o.w*sc, h=o.h*sc;
         ctx.globalAlpha = Math.max(0, 1 - Math.pow(sc*0.6, 2));
-        
+
         ctx.shadowBlur = 15*sc; ctx.shadowColor = o.col; ctx.fillStyle = o.col;
         ctx.beginPath(); ctx.roundRect(x-w/2, y-h, w, h*0.7, 3); ctx.fill();
         ctx.shadowBlur=0;
-        // Ventanas obstáculo
         ctx.fillStyle = '#000812'; ctx.fillRect(x-w*0.35, y-h*0.9, w*0.7, h*0.25);
         ctx.fillStyle = '#fff'; ctx.fillRect(x-w*0.3, y-h*0.2, w*0.15, h*0.1); ctx.fillRect(x+w*0.15, y-h*0.2, w*0.15, h*0.1);
     });
     ctx.globalAlpha = 1;
 
-    // FASE 6: Trail del Vehículo (Efecto fantasma Hyper)
+    // [MAXI+] Dibujar power-ups
+    powerups.forEach(p=>{
+        const sc=p.z, x=W/2+p.x*W*0.4*sc, y=horizon+(H-horizon)*sc;
+        ctx.fillStyle = p.type==='nitro'?'#ff00aa':'#00ffc8';
+        ctx.shadowBlur=20; ctx.shadowColor=ctx.fillStyle;
+        ctx.beginPath(); ctx.arc(x,y,12*sc,0,Math.PI*2); ctx.fill();
+        ctx.shadowBlur=0;
+        ctx.fillStyle='#000'; ctx.font='bold '+10*sc+'px Arial'; ctx.textAlign='center';
+        ctx.fillText(p.type==='nitro'?'N':'S', x, y+3*sc);
+    });
+
     Player.trail.forEach(t => {
         if(t.life<=0) return;
         ctx.save(); ctx.translate(W/2 + t.x*W*0.4, Player.y); ctx.rotate(t.a);
@@ -434,30 +482,31 @@ function draw(){
     });
     ctx.globalAlpha = 1;
 
-    // FASE 2: CARRO REALISTA (CANVAS PURO, CERO IMÁGENES)
     ctx.save();
     ctx.translate(W/2 + Player.x*W*0.4, Player.y);
     ctx.rotate(Player.angle);
 
     const pw = Player.w, ph = Player.h;
 
-    // Sombra y Underglow dinámico
     ctx.fillStyle = 'rgba(0,0,0,0.6)';
     ctx.beginPath(); ctx.ellipse(0, 0, pw*0.6, ph*0.25, 0, 0, Math.PI*2); ctx.fill();
-    
+
+    // [MAXI+] Escudo visual
+    if(Game.shield>0){
+        ctx.strokeStyle=`rgba(0,255,200,${Game.shield/300})`; ctx.lineWidth=3;
+        ctx.beginPath(); ctx.arc(0,-ph*0.4,pw*0.7,0,Math.PI*2); ctx.stroke();
+    }
+
     ctx.shadowBlur = 30; ctx.shadowColor = eng.color; ctx.fillStyle = `rgba(${eng.rgb}, 0.5)`;
     ctx.beginPath(); ctx.ellipse(0, -ph*0.1, pw*0.5, ph*0.15, 0, 0, Math.PI*2); ctx.fill();
     ctx.shadowBlur = 0;
 
-    // Llantas Circulares 3D
     ctx.fillStyle = '#050505';
-    ctx.beginPath(); ctx.roundRect(-pw*0.55, -ph*0.35, pw*0.2, ph*0.4, 6); ctx.fill(); // Izq
-    ctx.beginPath(); ctx.roundRect(pw*0.35, -ph*0.35, pw*0.2, ph*0.4, 6); ctx.fill(); // Der
-    // Rines Metálicos
+    ctx.beginPath(); ctx.roundRect(-pw*0.55, -ph*0.35, pw*0.2, ph*0.4, 6); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(pw*0.35, -ph*0.35, pw*0.2, ph*0.4, 6); ctx.fill();
     ctx.fillStyle = '#475569';
     ctx.fillRect(-pw*0.48, -ph*0.25, pw*0.06, ph*0.2); ctx.fillRect(pw*0.42, -ph*0.25, pw*0.06, ph*0.2);
 
-    // Carrocería Curva (Aerodinámica)
     let bodyGrad = ctx.createLinearGradient(0, -ph, 0, 0);
     bodyGrad.addColorStop(0, eng.color); bodyGrad.addColorStop(1, '#020617');
     ctx.fillStyle = bodyGrad;
@@ -469,7 +518,6 @@ function draw(){
     ctx.closePath();
     ctx.fill();
 
-    // Vidrio Realista (Reflejos)
     let glassGrad = ctx.createLinearGradient(0, -ph, 0, -ph*0.5);
     glassGrad.addColorStop(0, '#0f172a'); glassGrad.addColorStop(1, '#38bdf8');
     ctx.fillStyle = glassGrad;
@@ -477,21 +525,18 @@ function draw(){
     ctx.fillStyle = 'rgba(255,255,255,0.1)';
     ctx.beginPath(); ctx.moveTo(-pw*0.2, -ph*0.8); ctx.lineTo(pw*0.1, -ph*0.8); ctx.lineTo(pw*0.2, -ph*0.6); ctx.closePath(); ctx.fill();
 
-    // Alerón
     ctx.fillStyle = '#0f172a';
     ctx.beginPath(); ctx.roundRect(-pw*0.55, -ph*0.3, pw*1.1, ph*0.1, 4); ctx.fill();
     ctx.fillStyle = '#020617'; ctx.fillRect(-pw*0.3, -ph*0.4, pw*0.05, ph*0.15); ctx.fillRect(pw*0.25, -ph*0.4, pw*0.05, ph*0.15);
 
-    // Luces Traseras LED (Frenado dinámico)
     let braking = keys['arrowdown']||keys['s'];
-    ctx.fillStyle = braking ? '#ff0033' : '#990011';
-    ctx.shadowBlur = braking ? 25 : 10; ctx.shadowColor = '#ff0033';
+    ctx.fillStyle = braking? '#ff0033' : '#990011';
+    ctx.shadowBlur = braking? 25 : 10; ctx.shadowColor = '#ff0033';
     ctx.beginPath(); ctx.roundRect(-pw*0.45, -ph*0.2, pw*0.25, ph*0.07, 3); ctx.fill();
     ctx.beginPath(); ctx.roundRect(pw*0.2, -ph*0.2, pw*0.25, ph*0.07, 3); ctx.fill();
     ctx.shadowBlur = 0;
 
-    // Propulsor Central
-    if(Game.speed > eng.maxSpeed*0.85 || Game.isTurbo){
+    if(Game.speed > 200 || Game.isTurbo){
         ctx.fillStyle = '#fff'; ctx.shadowBlur = 20; ctx.shadowColor = eng.color;
         ctx.beginPath(); ctx.arc(0, -ph*0.1, pw*0.12, 0, Math.PI*2); ctx.fill();
         ctx.shadowBlur = 0;
@@ -499,7 +544,6 @@ function draw(){
 
     ctx.restore();
 
-    // Clima y Partículas Foreground
     if(lvl.weather==='rain'){
         ctx.strokeStyle = 'rgba(150,220,255,0.3)'; ctx.lineWidth = 1;
         rain.forEach(r=>{ ctx.beginPath(); ctx.moveTo(r.x, r.y); ctx.lineTo(r.x+Player.vx*2, r.y+r.l); ctx.stroke(); });
@@ -512,10 +556,17 @@ function draw(){
     ctx.globalAlpha = 1;
 
     ctx.restore();
+
+    // [MAXI+] Pausa overlay
+    if(Game.paused){
+        ctx.fillStyle='rgba(0,0,0,0.7)'; ctx.fillRect(0,0,W,H);
+        ctx.fillStyle='#00ffc8'; ctx.font='bold 48px JetBrains Mono'; ctx.textAlign='center';
+        ctx.fillText('PAUSA', W/2, H/2);
+    }
 }
 
 function drawSpeed(eng, maxSpeed){
-    sctx.clearRect(0,0,80,80); sctx.save(); sctx.translate(40,40);
+    sctx.clearRect(0,0,80); sctx.save(); sctx.translate(40,40);
     sctx.strokeStyle = 'rgba(255,255,255,0.1)'; sctx.lineWidth = 6;
     sctx.beginPath(); sctx.arc(0,0,32,Math.PI*0.75,Math.PI*2.25); sctx.stroke();
 
@@ -533,23 +584,22 @@ function drawSpeed(eng, maxSpeed){
 
 function loop(t){
     if(!Game.lastTime) Game.lastTime=t;
-    const dt = Math.min((t-Game.lastTime)/1000, 0.033); // FASE 1: Límite delta para evitar fallos de colisión
+    const dt = Math.min((t-Game.lastTime)/1000, 0.033);
     Game.lastTime=t;
 
-    // Cálculo FPS real (FASE 7)
     Game.frames++;
     if(t - Game.lastFps >= 1000){
         document.getElementById('dom-fps').textContent = Game.frames;
         Game.frames = 0; Game.lastFps = t;
     }
 
-    update(dt*Game.slowMo); // FASE 8: Cámara Lenta aplicada a la física
+    update(dt*Game.slowMo);
     draw();
     requestAnimationFrame(loop);
 }
 
 Voice.init(); initRain(); requestAnimationFrame(loop);
-Voice.speak('Sistemas evolucionados. Piloto, inserte comando de voz.');
+Voice.speak('Sistemas evolucionados. 10 niveles activos. Motor Ultra desbloqueado. Piloto, inserte comando de voz.');
 </script>
 </body>
 </html>
