@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -7,57 +7,68 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;500&display=swap');
-    :root { --bg-deep: #030303; --panel-bg: rgba(10, 12, 10, 0.85); --neon-green: #39ff14; --neon-green-dim: rgba(57, 255, 20, 0.2); --neon-glow: 0 0 15px rgba(57, 255, 20, 0.4); --text-main: #e0e0e0; --text-muted: #666; --danger: #ff003c; --warning: #ffb000; --border-thin: 1px solid rgba(57, 255, 20, 0.15); }
+    :root {
+        --bg-deep: #030303; --panel-bg: rgba(10, 12, 10, 0.85); --neon-green: #39ff14;
+        --neon-green-dim: rgba(57, 255, 20, 0.2); --neon-glow: 0 0 15px rgba(57, 255, 20, 0.4);
+        --text-main: #e0e0e0; --text-muted: #666; --danger: #ff003c; --warning: #ffb000;
+        --border-thin: 1px solid rgba(57, 255, 20, 0.15);
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background-color: var(--bg-deep); color: var(--text-main); font-family: 'Inter', sans-serif; overflow-x: hidden; background-image: linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px); background-size: 30px 30px; }
-    ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: var(--bg-deep); } ::-webkit-scrollbar-thumb { background: var(--neon-green-dim); border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
-  .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: linear-gradient(180deg, rgba(0,20,0,0.9) 0%, transparent 100%); border-bottom: var(--border-thin); font-family: 'Orbitron', sans-serif; }
-  .header-title { color: var(--neon-green); font-size: 24px; text-shadow: var(--neon-glow); display: flex; align-items: center; gap: 15px; }
-  .status-indicator { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--neon-green); display: flex; align-items: center; gap: 8px; }
-  .status-dot { width: 10px; height: 10px; background: var(--neon-green); border-radius: 50%; box-shadow: var(--neon-glow); animation: blink 1.5s infinite; }
-  .layout-grid { display: grid; grid-template-columns: 300px 1fr 350px; gap: 20px; padding: 20px; height: calc(100vh - 70px); }
-  .panel { background: var(--panel-bg); border: var(--border-thin); border-radius: 12px; padding: 20px; backdrop-filter: blur(10px); display: flex; flex-direction: column; position: relative; overflow: hidden; }
-  .panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--neon-green), transparent); opacity: 0.5; }
-  .panel-title { font-family: 'Orbitron', sans-serif; font-size: 14px; color: var(--neon-green); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid #222; padding-bottom: 10px; }
-  .integration-list { display: flex; flex-direction: column; gap: 12px; }
-  .integration-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: rgba(0,0,0.5); border: 1px solid #111; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; transition: all 0.3s; cursor: pointer; }
-  .integration-item.active { border-color: var(--neon-green); box-shadow: inset 0 0 10px var(--neon-green-dim); }
-  .integration-item i { font-size: 16px; width: 20px; text-align: center; margin-right: 10px; }
-  .status-badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; background: #111; color: var(--text-muted); }
-  .integration-item.active.status-badge { background: var(--neon-green-dim); color: var(--neon-green); }
-  .chat-container { flex: 1; display: flex; flex-direction: column; background: #000; border-radius: 8px; border: 1px solid #222; overflow: hidden; }
-  .chat-log { flex: 1; padding: 15px; overflow-y: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px; }
-  .msg-bot { color: var(--text-main); }.msg-bot span.prefix { color: var(--neon-green); font-weight: bold; }
-  .msg-user { color: #aaa; text-align: right; }.msg-user span.prefix { color: #fff; font-weight: bold; }
-  .chat-input-wrapper { display: flex; border-top: 1px solid #222; background: #050505; align-items: center; }
-  .chat-input-wrapper input { flex: 1; background: transparent; border: none; padding: 15px; color: var(--neon-green); font-family: 'JetBrains Mono', monospace; outline: none; }
-  .chat-input-wrapper input::placeholder { color: #333; }
-  .chat-input-wrapper button { background: var(--neon-green-dim); border: none; color: var(--neon-green); padding: 0 20px; cursor: pointer; transition: 0.3s; font-family: 'Orbitron', sans-serif; text-transform: uppercase; height: 48px; }
-  .chat-input-wrapper button:hover { background: var(--neon-green); color: #000; }
-  .icon-btn { background: transparent!important; border: none!important; color: #39ff14!important; padding: 0 12px!important; font-size: 16px; }
-  .icon-btn:hover { color: #000!important; background: var(--neon-green-dim)!important; }
-  .stage-tracker { display: flex; justify-content: space-between; margin: 20px 0; position: relative; }
-  .stage-tracker::before { content: ''; position: absolute; top: 15px; left: 0; width: 100%; height: 2px; background: #222; z-index: 1; }
-  .stage-step { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .step-circle { width: 30px; height: 30px; border-radius: 50%; background: #111; border: 2px solid #333; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono'; font-size: 12px; transition: 0.5s; }
-  .step-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-family: 'Orbitron'; }
-  .stage-step.active.step-circle { border-color: var(--neon-green); background: var(--neon-green-dim); box-shadow: var(--neon-glow); color: var(--neon-green); }
-  .stage-step.active.step-label { color: var(--neon-green); }
-  .cloud-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-  .module-card { background: #0a0a0a; border: 1px solid #222; border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
-  .module-card i { font-size: 24px; color: #555; margin-bottom: 10px; display: block; transition: 0.3s; }
-  .module-card span { font-size: 11px; font-family: 'Orbitron'; color: #888; }
-  .module-card:hover,.module-card.active { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(57,255,20,0.2); }
-  .module-card.active i { color: var(--neon-green); text-shadow: var(--neon-glow); }
-  .module-card.active span { color: #fff; }
-  .system-logs { flex: 1; background: #000; border: 1px solid #111; border-radius: 8px; padding: 10px; font-family: 'JetBrains Mono'; font-size: 10px; color: #555; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; }
-  .log-line span.time { color: #444; margin-right: 8px; }.log-line span.info { color: #00aaff; }.log-line span.success { color: var(--neon-green); }.log-line span.warn { color: var(--warning); }
-  .audio-controls { display: none; gap: 8px; padding: 8px 12px; background: #050505; border-top: 1px solid #111; align-items: center; }
-  .audio-controls button { background: transparent; border: 1px solid var(--neon-green-dim); color: var(--neon-green); padding: 5px 9px; font-size: 11px; cursor: pointer; border-radius: 4px; font-family: 'JetBrains Mono'; }
-  .audio-controls button:hover { background: var(--neon-green-dim); color: #000; }
-  .audio-controls span { font-size: 10px; color: #666; margin-left: auto; font-family: 'JetBrains Mono'; }
+    body { background-color: var(--bg-deep); color: var(--text-main); font-family: 'Inter', sans-serif; overflow-x: hidden;
+        background-image: linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
+        background-size: 30px 30px; }
+    ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: var(--neon-green-dim); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px;
+        background: linear-gradient(180deg, rgba(0,20,0,0.9) 0%, transparent 100%); border-bottom: var(--border-thin); font-family: 'Orbitron', sans-serif; }
+    .header-title { color: var(--neon-green); font-size: 24px; text-shadow: var(--neon-glow); display: flex; align-items: center; gap: 15px; }
+    .status-indicator { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--neon-green); display: flex; align-items: center; gap: 8px; }
+    .status-dot { width: 10px; height: 10px; background: var(--neon-green); border-radius: 50%; box-shadow: var(--neon-glow); animation: blink 1.5s infinite; }
+    .layout-grid { display: grid; grid-template-columns: 300px 1fr 350px; gap: 20px; padding: 20px; height: calc(100vh - 70px); }
+    .panel { background: var(--panel-bg); border: var(--border-thin); border-radius: 12px; padding: 20px; backdrop-filter: blur(10px); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    .panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--neon-green), transparent); opacity: 0.5; }
+    .panel-title { font-family: 'Orbitron', sans-serif; font-size: 14px; color: var(--neon-green); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+    .integration-list { display: flex; flex-direction: column; gap: 12px; }
+    .integration-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: rgba(0,0,0,0.5); border: 1px solid #111; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; transition: all 0.3s; }
+    .integration-item.active { border-color: var(--neon-green); box-shadow: inset 0 0 10px var(--neon-green-dim); }
+    .integration-item i { font-size: 16px; width: 20px; text-align: center; margin-right: 10px; }
+    .status-badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; background: #111; color: var(--text-muted); }
+    .active .status-badge { background: var(--neon-green-dim); color: var(--neon-green); }
+    .chat-container { flex: 1; display: flex; flex-direction: column; background: #000; border-radius: 8px; border: 1px solid #222; overflow: hidden; }
+    .chat-log { flex: 1; padding: 15px; overflow-y: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px; }
+    .msg-bot { color: var(--text-main); } .msg-bot span.prefix { color: var(--neon-green); font-weight: bold; }
+    .msg-user { color: #aaa; text-align: right; } .msg-user span.prefix { color: #fff; font-weight: bold; }
+    .chat-input-wrapper { display: flex; border-top: 1px solid #222; background: #050505; align-items: center; }
+    .chat-input-wrapper input { flex: 1; background: transparent; border: none; padding: 15px; color: var(--neon-green); font-family: 'JetBrains Mono', monospace; outline: none; }
+    .chat-input-wrapper input::placeholder { color: #333; }
+    .chat-input-wrapper button { background: var(--neon-green-dim); border: none; color: var(--neon-green); padding: 0 20px; cursor: pointer; transition: 0.3s; font-family: 'Orbitron', sans-serif; text-transform: uppercase; height: 48px; }
+    .chat-input-wrapper button:hover { background: var(--neon-green); color: #000; }
+    .icon-btn { background: transparent !important; border: none !important; color: #39ff14 !important; padding: 0 12px !important; font-size: 16px; }
+    .icon-btn:hover { color: #000 !important; background: var(--neon-green-dim) !important; }
+    .stage-tracker { display: flex; justify-content: space-between; margin: 20px 0; position: relative; }
+    .stage-tracker::before { content: ''; position: absolute; top: 15px; left: 0; width: 100%; height: 2px; background: #222; z-index: 1; }
+    .stage-step { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .step-circle { width: 30px; height: 30px; border-radius: 50%; background: #111; border: 2px solid #333; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono'; font-size: 12px; transition: 0.5s; }
+    .step-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-family: 'Orbitron'; }
+    .stage-step.active .step-circle { border-color: var(--neon-green); background: var(--neon-green-dim); box-shadow: var(--neon-glow); color: var(--neon-green); }
+    .stage-step.active .step-label { color: var(--neon-green); }
+    .cloud-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .module-card { background: #0a0a0a; border: 1px solid #222; border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
+    .module-card i { font-size: 24px; color: #555; margin-bottom: 10px; display: block; transition: 0.3s; }
+    .module-card span { font-size: 11px; font-family: 'Orbitron'; color: #888; }
+    .module-card:hover, .module-card.active { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(57,255,20,0.2); }
+    .module-card.active i { color: var(--neon-green); text-shadow: var(--neon-glow); }
+    .module-card.active span { color: #fff; }
+    .system-logs { flex: 1; background: #000; border: 1px solid #111; border-radius: 8px; padding: 10px; font-family: 'JetBrains Mono'; font-size: 10px; color: #555; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; }
+    .log-line span.time { color: #444; margin-right: 8px; } .log-line span.info { color: #00aaff; } .log-line span.success { color: var(--neon-green); } .log-line span.warn { color: var(--warning); }
+    /* NUEVO: Controles de audio */
+    .audio-controls { display: none; gap: 8px; padding: 8px 12px; background: #050505; border-top: 1px solid #111; align-items: center; }
+    .audio-controls button { background: transparent; border: 1px solid var(--neon-green-dim); color: var(--neon-green); padding: 5px 9px; font-size: 11px; cursor: pointer; border-radius: 4px; font-family: 'JetBrains Mono'; }
+    .audio-controls button:hover { background: var(--neon-green-dim); color: #000; }
+    .audio-controls span { font-size: 10px; color: #666; margin-left: auto; font-family: 'JetBrains Mono'; }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-    @media (max-width: 1200px) {.layout-grid { grid-template-columns: 1fr; height: auto; }.chat-container { height: 400px; } }
+    @media (max-width: 1200px) { .layout-grid { grid-template-columns: 1fr; height: auto; } .chat-container { height: 400px; } }
 </style>
 </head>
 <body>
@@ -69,12 +80,12 @@
     <div class="panel">
         <div class="panel-title"><i class="fa-solid fa-network-wired"></i> API Gateway / Redes</div>
         <div class="integration-list" id="api-list">
-            <div class="integration-item" data-api="whatsapp" onclick="window.open('https://api.whatsapp.com/send/?phone=573016625921','_blank')"><div><i class="fa-brands fa-whatsapp"></i> WhatsApp API</div><div class="status-badge">Standby</div></div>
+            <div class="integration-item" data-api="whatsapp"><div><i class="fa-brands fa-whatsapp"></i> WhatsApp API</div><div class="status-badge">Standby</div></div>
             <div class="integration-item" data-api="meta"><div><i class="fa-brands fa-meta"></i> Meta Graph (IG/FB)</div><div class="status-badge">Standby</div></div>
-            <div class="integration-item" data-api="tiktok" onclick="window.open('https://www.tiktok.com/@cesarbedoya9','_blank')"><div><i class="fa-brands fa-tiktok"></i> TikTok Pixel</div><div class="status-badge">Standby</div></div>
+            <div class="integration-item" data-api="tiktok"><div><i class="fa-brands fa-tiktok"></i> TikTok Pixel</div><div class="status-badge">Standby</div></div>
             <div class="integration-item" data-api="stripe"><div><i class="fa-brands fa-stripe"></i> Stripe Billing</div><div class="status-badge">Standby</div></div>
-            <div class="integration-item" data-api="openai" onclick="window.open('https://chat-maxiqueen-os.vercel.app','_blank')"><div><i class="fa-solid fa-brain"></i> OpenAI / LLM</div><div class="status-badge">Conectado</div></div>
-            <div class="integration-item" data-api="aws" onclick="window.open('https://vercel.com/maxiqueen-os-2026','_blank')"><div><i class="fa-brands fa-aws"></i> AWS Hosting</div><div class="status-badge">Conectado</div></div>
+            <div class="integration-item" data-api="openai"><div><i class="fa-solid fa-brain"></i> OpenAI / LLM</div><div class="status-badge active">Conectado</div></div>
+            <div class="integration-item" data-api="aws"><div><i class="fa-brands fa-aws"></i> AWS Hosting</div><div class="status-badge active">Conectado</div></div>
         </div>
         <div style="margin-top: auto;">
             <div class="panel-title" style="margin-top: 20px;"><i class="fa-solid fa-chart-simple"></i> Telemetría</div>
@@ -84,11 +95,11 @@
     <div class="panel" style="border-color: rgba(57, 255, 20, 0.4); box-shadow: 0 0 30px rgba(0,0,0,0.8);">
         <div class="panel-title"><i class="fa-solid fa-terminal"></i> Terminal Interactiva (MaxiBot)</div>
         <div class="stage-tracker" id="stage-tracker">
-            <div class="stage-step active"><div class="step-circle">1</div><div class="step-label">Escaneo</div></div>
-            <div class="stage-step"><div class="step-circle">2</div><div class="step-label">Estructura</div></div>
-            <div class="stage-step"><div class="step-circle">3</div><div class="step-label">Despliegue</div></div>
-            <div class="stage-step"><div class="step-circle">4</div><div class="step-label">Ventas</div></div>
-            <div class="stage-step"><div class="step-circle">5</div><div class="step-label">Escala</div></div>
+            <div class="stage-step active" id="step-0"><div class="step-circle">1</div><div class="step-label">Escaneo</div></div>
+            <div class="stage-step" id="step-1"><div class="step-circle">2</div><div class="step-label">Estructura</div></div>
+            <div class="stage-step" id="step-2"><div class="step-circle">3</div><div class="step-label">Despliegue</div></div>
+            <div class="stage-step" id="step-3"><div class="step-circle">4</div><div class="step-label">Ventas</div></div>
+            <div class="stage-step" id="step-4"><div class="step-circle">5</div><div class="step-label">Escala</div></div>
         </div>
         <div class="chat-container">
             <div class="chat-log" id="chatLog">
@@ -112,94 +123,102 @@
         </div>
     </div>
     <div class="panel">
-       <div class="panel-title"><i class="fa-solid fa-server"></i> Cloud Modules Activos</div>
-       <div class="cloud-grid" id="cloud-modules">
-            <div class="module-card" data-mod="core" onclick="window.open('https://maxiqueen-os-app.vercel.app/', '_blank')"><i class="fa-solid fa-user-astronaut"></i><span>Core Humano</span></div>
+        <div class="panel-title"><i class="fa-solid fa-server"></i> Cloud Modules Activos</div>
+        <div class="cloud-grid" id="cloud-modules">
+            <div class="module-card" data-mod="core"><i class="fa-solid fa-user-astronaut"></i><span>Core Humano</span></div>
             <div class="module-card" data-mod="web"><i class="fa-solid fa-globe"></i><span>Web Cloud</span></div>
             <div class="module-card" data-mod="content"><i class="fa-solid fa-video"></i><span>Content Cloud</span></div>
             <div class="module-card" data-mod="sales"><i class="fa-solid fa-cart-shopping"></i><span>Sales Cloud</span></div>
             <div class="module-card" data-mod="auto"><i class="fa-solid fa-robot"></i><span>Automation</span></div>
-            <div class="module-card" data-mod="community" onclick="window.open('https://maxiqueen-os.vercel.app/Abrir-manual-v2.html#s22', '_blank')"><i class="fa-solid fa-users"></i><span>Community</span></div>
-       </div>
+            <div class="module-card" data-mod="community"><i class="fa-solid fa-users"></i><span>Community</span></div>
+        </div>
         <div class="panel-title" style="margin-top: 10px;"><i class="fa-solid fa-list-check"></i> System Logs</div>
         <div class="system-logs" id="sys-logs">
             <div class="log-line"><span class="time">[00:00:01]</span><span class="info">Kernel cargado.</span></div>
-            <div class="log-line"><span class="time">[00:02]</span><span class="success">Módulos base listos.</span></div>
+            <div class="log-line"><span class="time">[00:00:02]</span><span class="success">Módulos base listos.</span></div>
         </div>
     </div>
 </div>
-<input type="file" id="fileInput" accept="image/*,.pdf,.png,.jpg,.jpeg,.webp" style="display:none">
+<input type="file" id="fileInput" accept="image/*,.pdf" style="display:none">
 <script>
     let currentStage = 0;
     const chatLog = document.getElementById('chatLog');
     const inputField = document.getElementById('userInput');
     const sysLogs = document.getElementById('sys-logs');
-    const fileInput = document.getElementById('fileInput');
-    const attachBtn = document.getElementById('attachBtn');
-    let pendingFile = null;
+    // --- AUDIO EVOLUCIONADO ---
     let currentUtterance = null;
     let speechVolume = 0.9;
     let speechRate = 1.1;
+    let attachedFile = null;
 
-    attachBtn.onclick = () => fileInput.click();
-    fileInput.onchange = async (e) => {
-        const f = e.target.files[0];
-        if (!f) return;
-        const buf = await f.arrayBuffer();
-        const base64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
-        pendingFile = { name: f.name, type: f.type, data: base64 };
-        printChat(`[Adjunto: ${f.name}]`, true);
-        addSysLog(`Archivo listo: ${f.name}`, 'info');
-    };
+    function getTime() { const now = new Date(); return `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}]`; }
+    function addSysLog(msg, type="info") { const div = document.createElement('div'); div.className = 'log-line'; div.innerHTML = `<span class="time">${getTime()}</span><span class="${type}">${msg}</span>`; sysLogs.appendChild(div); sysLogs.scrollTop = sysLogs.scrollHeight; }
+    function printChat(msg, isUser=false) { const div = document.createElement('div'); div.className = isUser ? 'msg-user' : 'msg-bot'; const prefix = isUser ? 'USER>' : 'MAXIBOT>'; div.innerHTML = `<span class="prefix">${prefix}</span> ${msg}`; chatLog.appendChild(div); chatLog.scrollTop = chatLog.scrollHeight; }
+    function activateAPI(apiName) { const item = document.querySelector(`.integration-item[data-api="${apiName}"]`); if(item && !item.classList.contains('active')) { item.classList.add('active'); const badge = item.querySelector('.status-badge'); badge.innerText = 'Sincronizado'; badge.classList.add('active'); addSysLog(`API ${apiName.toUpperCase()} conectada.`, 'success'); } }
+    function activateModule(modName) { const mod = document.querySelector(`.module-card[data-mod="${modName}"]`); if(mod && !mod.classList.contains('active')) { mod.classList.add('active'); addSysLog(`Módulo ${modName.toUpperCase()} desplegado.`, 'info'); } }
+    function setStage(index) { currentStage = index; document.querySelectorAll('.stage-step').forEach((step, i) => { if(i <= index) step.classList.add('active'); else step.classList.remove('active'); }); addSysLog(`Fase ${index + 1} activada`, 'warn'); }
 
-    function getTime(){ return `[${new Date().toLocaleTimeString()}]` }
-    function addSysLog(m,t="info"){ sysLogs.innerHTML+=`<div class="log-line"><span class="time">${getTime()}</span><span class="${t}">${m}</span></div>`; sysLogs.scrollTop=9999 }
-    function printChat(m,u=false){ chatLog.innerHTML+=`<div class="${u?'msg-user':'msg-bot'}"><span class="prefix">${u?'USER>':'MAXIBOT>'}</span> ${m}</div>`; chatLog.scrollTop=9999 }
-    function activateAPI(n){ document.querySelector(`[data-api="${n}"]`)?.classList.add('active') }
-    function activateModule(n){ document.querySelector(`[data-mod="${n}"]`)?.classList.add('active') }
-    function setStage(i){ document.querySelectorAll('.stage-step').forEach((s,idx)=>s.classList.toggle('active',idx<=i)) }
-
-    function speakText(text){
-        if(!('speechSynthesis' in window)) return;
+    // --- FUNCIONES DE VOZ ---
+    function speakText(text) {
+        if (!('speechSynthesis' in window)) return;
         speechSynthesis.cancel();
         currentUtterance = new SpeechSynthesisUtterance(text);
         currentUtterance.lang = 'es-ES';
         currentUtterance.volume = speechVolume;
         currentUtterance.rate = speechRate;
-        currentUtterance.onstart = ()=>{ document.getElementById('audioControls').style.display='flex'; document.getElementById('audioStatus').textContent = `▶ ${Math.round(speechRate*100)}%`; };
-        currentUtterance.onend = ()=>{ document.getElementById('audioStatus').textContent='Finalizado'; };
+        currentUtterance.onstart = () => { document.getElementById('audioControls').style.display = 'flex'; document.getElementById('audioStatus').textContent = `▶ ${Math.round(speechRate*100)}% | Vol ${Math.round(speechVolume*100)}%`; document.getElementById('playPauseBtn').innerHTML = '<i class="fa-solid fa-pause"></i>'; };
+        currentUtterance.onend = () => { document.getElementById('audioStatus').textContent = 'Finalizado'; document.getElementById('playPauseBtn').innerHTML = '<i class="fa-solid fa-play"></i>'; };
+        currentUtterance.onpause = () => { document.getElementById('audioStatus').textContent = 'Pausado'; document.getElementById('playPauseBtn').innerHTML = '<i class="fa-solid fa-play"></i>'; };
+        currentUtterance.onresume = () => { document.getElementById('audioStatus').textContent = 'Reproduciendo'; document.getElementById('playPauseBtn').innerHTML = '<i class="fa-solid fa-pause"></i>'; };
         speechSynthesis.speak(currentUtterance);
     }
-    function togglePlayPause(){ if(!speechSynthesis.speaking) return; speechSynthesis.paused? speechSynthesis.resume() : speechSynthesis.pause(); }
-    function stopSpeech(){ speechSynthesis.cancel(); document.getElementById('audioControls').style.display='none'; }
-    function changeVolume(d){ speechVolume = Math.min(1, Math.max(0, speechVolume + d)); }
-    function changeRate(d){ speechRate = Math.min(2, Math.max(0.5, speechRate + d)); }
+    function togglePlayPause() { if (!speechSynthesis.speaking) return; if (speechSynthesis.paused) { speechSynthesis.resume(); } else { speechSynthesis.pause(); } }
+    function stopSpeech() { speechSynthesis.cancel(); document.getElementById('audioControls').style.display = 'none'; }
+    function changeVolume(delta) { speechVolume = Math.min(1, Math.max(0, speechVolume + delta)); if(currentUtterance) currentUtterance.volume = speechVolume; document.getElementById('audioStatus').textContent = `Vol ${Math.round(speechVolume*100)}%`; addSysLog(`Volumen: ${Math.round(speechVolume*100)}%`, 'info'); }
+    function changeRate(delta) { speechRate = Math.min(2, Math.max(0.5, speechRate + delta)); if(currentUtterance) currentUtterance.rate = speechRate; document.getElementById('audioStatus').textContent = `Vel ${Math.round(speechRate*100)}%`; addSysLog(`Velocidad: ${speechRate.toFixed(1)}x`, 'info'); }
 
-    async function processInput(){
+    async function processInput() {
         let val = inputField.value.trim();
-        if(!val &&!pendingFile) return;
-        if(val) printChat(val,true);
-        inputField.value='';
+        if(!val && !attachedFile) return;
+        printChat(val || '[Archivo]', true);
+        inputField.value = '';
+        const cleanVal = val.toLowerCase();
         let sessionId = localStorage.getItem('mq_session') || crypto.randomUUID();
         localStorage.setItem('mq_session', sessionId);
-        const payload = { message: val || 'analiza el archivo', session_id: sessionId };
-        if(pendingFile){ payload.image_base64 = pendingFile.data; payload.file_type = pendingFile.type; payload.file_name = pendingFile.name; }
+        if(cleanVal.includes('pro') || cleanVal.includes('plan')) { printChat("Plan PRO detectado. Iniciando estructuración..."); setStage(1); activateAPI('stripe'); activateAPI('whatsapp'); activateModule('core'); activateModule('sales'); }
+        else if (cleanVal.includes('venta') || cleanVal.includes('dinero')) { printChat("Prioridad: Ventas. Desplegando funnels..."); setStage(3); activateAPI('meta'); activateAPI('tiktok'); activateModule('sales'); }
+        else if (cleanVal.includes('escala') || cleanVal.includes('completo')) { printChat("SECUENCIA OMNIPRESENTE activada."); setStage(4); ['whatsapp','meta','tiktok','stripe','openai','aws'].forEach(activateAPI); ['core','web','content','sales','auto','community'].forEach(activateModule); }
         addSysLog("Enviando a MaxiBot...", "info");
-        try{
-            const r = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-            const data = await r.json();
-            if(r.ok){ printChat(data.reply); addSysLog(`Respuesta via ${data.engine}`, "success"); speakText(data.reply); if(data.tipo==='vision') setStage(1); }
-            else { printChat(`ERROR: ${data.error}`); }
-        }catch(e){ printChat("ERROR CRÍTICO") }
-        pendingFile = null; fileInput.value = '';
+        try {
+            const body = { message: val, session_id: sessionId };
+            if (attachedFile) { body.image_base64 = attachedFile.base64; body.filename = attachedFile.name; }
+            const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const data = await response.json();
+            if (response.ok) {
+                printChat(data.reply);
+                addSysLog(`Respuesta via ${data.engine} | Cliente: ${sessionId.substring(0,8)}`, "success");
+                speakText(data.reply);
+            } else { printChat(`ERROR: ${data.error}`); addSysLog(`Error: ${data.detalle_gemini || data.detalle_groq}`, "warn"); }
+            attachedFile = null;
+        } catch (error) { printChat("ERROR CRÍTICO: Sin conexión al servidor."); addSysLog("Fallo de red.", "warn"); }
     }
-    inputField.addEventListener('keypress',e=>{if(e.key==='Enter')processInput()});
+
+    inputField.addEventListener('keypress', function(e) { if(e.key === 'Enter') processInput(); });
+    // Controles
     document.getElementById('playPauseBtn').onclick = togglePlayPause;
     document.getElementById('stopBtn').onclick = stopSpeech;
-    document.getElementById('volDownBtn').onclick = ()=>changeVolume(-0.1);
-    document.getElementById('volUpBtn').onclick = ()=>changeVolume(0.1);
-    document.getElementById('speedDownBtn').onclick = ()=>changeRate(-0.1);
-    document.getElementById('speedUpBtn').onclick = ()=>changeRate(0.1);
+    document.getElementById('volDownBtn').onclick = () => changeVolume(-0.1);
+    document.getElementById('volUpBtn').onclick = () => changeVolume(0.1);
+    document.getElementById('speedDownBtn').onclick = () => changeRate(-0.1);
+    document.getElementById('speedUpBtn').onclick = () => changeRate(0.1);
+    // Adjuntar
+    document.getElementById('attachBtn').onclick = () => document.getElementById('fileInput').click();
+    document.getElementById('fileInput').onchange = async (e) => {
+        const file = e.target.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = () => { attachedFile = { name: file.name, base64: reader.result.split(',')[1], type: file.type }; printChat(`[Adjunto: ${file.name}]`, true); addSysLog(`Archivo listo: ${file.name}`, 'info'); };
+        reader.readAsDataURL(file);
+    };
 </script>
 </body>
 </html>
