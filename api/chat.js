@@ -35,7 +35,7 @@ export default async function handler(req, res) {
           message_type: tipo
         })
       });
-    } catch {}
+    } catch (e) { console.error('Supabase error', e.message); }
   };
 
   const tipoEntrada = image_base64? 'vision' : document_text? 'doc' : 'chat';
@@ -44,6 +44,7 @@ export default async function handler(req, res) {
 
   let reply = '', engine = '', groqErr = null;
 
+  // 1) GEMINI VISION - con tipo real
   if ((image_base64 || document_text) && GEMINI_KEY) {
     try {
       const parts = [{ text: userMsg || 'Analiza este archivo' }];
@@ -62,12 +63,13 @@ export default async function handler(req, res) {
         reply = j.candidates[0].content.parts[0].text;
         engine = 'gemini-vision';
       } else {
-        groqErr = j.error?.message || 'Error Gemini';
+        groqErr = j.error?.message || 'Gemini no respondió';
       }
     } catch (e) { groqErr = e.message; }
   }
 
-  if (!reply &&!image_base64 &&!document_text) {
+  // 2) GROQ - solo texto
+  if (!reply &&!image_base64 &&!document_text && GROQ_KEY) {
     try {
       const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -90,6 +92,7 @@ export default async function handler(req, res) {
     } catch (e) { groqErr = e.message; }
   }
 
+  // 3) GEMINI texto fallback
   if (!reply && GEMINI_KEY &&!image_base64) {
     try {
       const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
@@ -98,11 +101,15 @@ export default async function handler(req, res) {
         body: JSON.stringify({ contents: [{ parts: [{ text: userMsg }] })
       });
       const j = await r.json();
-      if (r.ok) { reply = j.candidates?.[0]?.content?.parts?.[0]?.text; engine = 'gemini'; }
+      if (r.ok) { reply = j.candidates?.[0]?.content?.parts?.[0]?.text || ''; engine = 'gemini'; }
     } catch {}
   }
 
-  if (!reply) return res.status(500).json({ error: 'Fallo', detalle_groq: groqErr });
+  if (!reply) {
+    reply = 'No pude procesar tu solicitud. Verifica tus API keys en Vercel.';
+    engine = 'error';
+    return res.status(200).json({ reply, engine, session_id, tipo: tipoEntrada, detalle: groqErr });
+  }
 
   await guardar(reply, 'assistant', tipoEntrada);
   return res.status(200).json({ reply, engine, session_id, tipo: tipoEntrada });
