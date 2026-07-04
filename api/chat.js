@@ -8,7 +8,6 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method!== 'POST') return res.status(405).json({ error: 'Método no permitido' });
 
-  // <-- AÑADIDO file_type y file_name
   const { message, session_id: clientSession, image_base64, document_text, file_type, file_name } = req.body || {};
   const session_id = clientSession || randomUUID();
   const userMsg = (message || 'hola').toString().substring(0, 2000);
@@ -40,23 +39,16 @@ export default async function handler(req, res) {
   };
 
   const tipoEntrada = image_base64? 'vision' : document_text? 'doc' : 'chat';
-  // <-- AÑADIDO nombre del archivo en el log
   const userContent = file_name? `${userMsg} [${file_name}]` : userMsg;
   await guardar(userContent, 'user', tipoEntrada);
 
   let reply = '', engine = '', groqErr = null;
 
-  // 1. SI HAY IMAGEN O DOCUMENTO → Gemini Vision
   if ((image_base64 || document_text) && GEMINI_KEY) {
     try {
-      const parts = [{ text: userMsg || 'Analiza esto' }];
+      const parts = [{ text: userMsg || 'Analiza este archivo' }];
       if (image_base64) {
-        parts.push({
-          inline_data: {
-            mime_type: file_type || 'image/jpeg', // <-- AHORA USA EL TIPO REAL
-            data: image_base64
-          }
-        });
+        parts.push({ inline_data: { mime_type: file_type || 'image/jpeg', data: image_base64 } });
       }
       if (document_text) parts.push({ text: `\n\nDOCUMENTO:\n${document_text.substring(0,8000)}` });
 
@@ -70,12 +62,11 @@ export default async function handler(req, res) {
         reply = j.candidates[0].content.parts[0].text;
         engine = 'gemini-vision';
       } else {
-        groqErr = j.error?.message;
+        groqErr = j.error?.message || 'Error Gemini';
       }
     } catch (e) { groqErr = e.message; }
   }
 
-  // 2. GROQ (solo texto)
   if (!reply &&!image_base64 &&!document_text) {
     try {
       const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -99,13 +90,12 @@ export default async function handler(req, res) {
     } catch (e) { groqErr = e.message; }
   }
 
-  // 3. GEMINI texto fallback
   if (!reply && GEMINI_KEY &&!image_base64) {
     try {
       const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: userMsg }] }] })
+        body: JSON.stringify({ contents: [{ parts: [{ text: userMsg }] })
       });
       const j = await r.json();
       if (r.ok) { reply = j.candidates?.[0]?.content?.parts?.[0]?.text; engine = 'gemini'; }
