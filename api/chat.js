@@ -56,24 +56,20 @@ export default async function handler(req, res) {
 
   let reply = '', engine = '', groqErr = null, geminiErr = null;
 
-  // 1. GEMINI VISION (imagen o documento)
-  if ((image_base64 || document_text) && GEMINI_KEY) {
+  // 1. GEMINI VISION (solo imagen, NO documento) - FIX: quito document_text y cambio modelo
+  if (image_base64 && GEMINI_KEY) { // FIX: antes era (image_base64 || document_text)
     try {
       const parts = [{ text: userMsg || 'Analiza esto' }];
-
       if (image_base64) {
         parts.push({
-          inlineData: { // <-- CORREGIDO: era inline_data
-            mimeType: finalFileType, // <-- CORREGIDO: era mime_type
+          inlineData: {
+            mimeType: finalFileType,
             data: image_base64
           }
         });
       }
-      if (document_text) {
-        parts.push({ text: `\n\nDOCUMENTO:\n${document_text.substring(0,8000)}` });
-      }
-
-      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
+      // FIX: cambio de 2.0-flash (sin cuota) a 1.5-flash
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_KEY}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: [{ parts }] })
@@ -86,6 +82,56 @@ export default async function handler(req, res) {
         geminiErr = j.error?.message || 'Respuesta vacía';
       }
     } catch (e) { geminiErr = e.message; console.error('Gemini Vision:', e); }
+  }
+
+  // 1.5 NUEVO: GROQ para DOCUMENTOS (el PDF ya viene como texto del front) - FIX: evita Gemini
+  if (!reply && document_text && GROQ_KEY) {
+    try {
+      const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'llama-3.1-8b-instant',
+          messages: [
+            { role: 'system', content: 'Eres MaxiBot de MQ NEXUS. Responde en español, directo y estratégico.' },
+            { role: 'user', content: `${userMsg}\n\nDOCUMENTO [${finalFileName}]:\n${document_text.substring(0,7000)}` }
+          ],
+          max_tokens: 1000,
+          temperature: 0.7
+        })
+      });
+      const j = await r.json();
+      if (r.ok && j.choices?.[0]?.message?.content) {
+        reply = j.choices[0].message.content;
+        engine = 'groq-doc';
+      } else { groqErr = j.error?.message; }
+    } catch (e) { groqErr = e.message; }
+  }
+
+  // 1.6 NUEVO: Fallback de VISIÓN con GROQ si Gemini falla
+  if (!reply && image_base64 && GROQ_KEY) {
+    try {
+      const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'llama-3.2-11b-vision-preview', // FIX: modelo activo en 2026
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'text', text: userMsg || 'Analiza la imagen' },
+              { type: 'image_url', image_url: { url: `data:${finalFileType};base64,${image_base64}` } }
+            ]
+          }],
+          max_tokens: 800
+        })
+      });
+      const j = await r.json();
+      if (r.ok && j.choices?.[0]?.message?.content) {
+        reply = j.choices[0].message.content;
+        engine = 'groq-vision';
+      } else { groqErr = j.error?.message; }
+    } catch (e) { groqErr = e.message; }
   }
 
   // 2. GROQ (solo texto)
@@ -112,10 +158,10 @@ export default async function handler(req, res) {
     } catch (e) { groqErr = e.message; console.error('Groq:', e); }
   }
 
-  // 3. GEMINI texto fallback
+  // 3. GEMINI texto fallback - FIX: cambio modelo
   if (!reply && GEMINI_KEY &&!image_base64) {
     try {
-      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_KEY}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: [{ parts: [{ text: userMsg }] }] })
