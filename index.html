@@ -2519,370 +2519,182 @@ html,body{
 
 
 
-<!-- ARCHIVO DE VERSIONES - MAXIQUEEN OS v6 HOLOGRAPHIC -->
+
+<!-- ARCHIVO DE VERSIONES -->
 <div class="mq-version-control-box">
-  <style>
-    .mq-version-control-box {
-      position: relative;
-      background: radial-gradient(ellipse at center, #0a0f14 0%, #020305 100%);
-      border: 1px solid rgba(212,175,55,0.15);
-      border-radius: 24px;
-      padding: 32px 24px;
-      overflow: hidden;
-      backdrop-filter: blur(20px);
-      box-shadow: 
-        0 0 80px rgba(212,175,55,0.08),
-        inset 0 1px 0 rgba(255,255,0.03);
-    }
-    .mq-version-control-box::before {
-      content: '';
-      position: absolute;
-      top: -50%; left: -50%;
-      width: 200%; height: 200%;
-      background: conic-gradient(from 0deg, transparent, rgba(212,175,55,0.1), transparent 30%);
-      animation: mq-rotate 20s linear infinite;
-      pointer-events: none;
-    }
-    @keyframes mq-rotate { to { transform: rotate(360deg); } }
-
-    .command-center { position: relative; z-index: 2; }
-
-    /* AVATAR HOLOGRÁFICO */
-    .mq-character {
-      width: 80px; height: 80px; margin: 0 auto 24px;
-      position: relative; filter: drop-shadow(0 20px rgba(16,185,129,0.5));
-      animation: mq-float 4s ease-in-out infinite;
-    }
-    @keyframes mq-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-    .mq-head {
-      width: 60px; height: 50px; background: linear-gradient(145deg, #0f172a, #020617);
-      border-radius: 50% 50% 40% 40%; margin: 0 auto; position: relative;
-      border: 2px solid rgba(212,175,55,0.4); overflow: hidden;
-    }
-    .mq-visor {
-      position: absolute; top: 12px; left: 8px; right: 8px; height: 18px;
-      background: linear-gradient(90deg, #10b981, #d4af37, #10b981);
-      border-radius: 10px; animation: mq-scan 3s linear infinite;
-      box-shadow: 0 0 15px rgba(16,185,129,0.8);
-    }
-    @keyframes mq-scan { 0%{background-position:-60px} 100%{background-position:60px} }
-    .mq-ears .ear { position: absolute; width: 18px; height: 24px; background: #0f172a; border: 2px solid #d4af37; top: -8px; border-radius: 50%; }
-    .ear.left { left: 8px; transform: rotate(-20deg); } .ear.right { right: 8px; transform: rotate(20deg); }
-
-    /* BOTÓN MAESTRO */
-    .master-btn {
-      display: block; width: fit-content; margin: 0 auto 32px; padding: 14px 28px;
-      background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
-      border: 1px solid #d4af37; border-radius: 14px; color: #d4af37;
-      font-weight: 800; letter-spacing: 1.5px; text-decoration: none;
-      position: relative; overflow: hidden; transition: all 0.3s;
-      box-shadow: 0 0 30px rgba(212,175,55,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
-    }
-    .master-btn:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(212,175,55,0.4); }
-    .master-btn-shine {
-      position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      animation: mq-shine 3s infinite;
-    }
-    @keyframes mq-shine { 0%{left:-100%} 100%{left:200%} }
-
-    /* TÍTULOS HOLOGRÁFICOS */
-    .mq-section-title {
-      text-align: center; margin: 32px 0 16px;
-    }
-    .mq-section-title h3 {
-      color: #d4af37; font-size: 13px; letter-spacing: 2px; margin: 0;
-      text-shadow: 0 0 10px rgba(212,175,55,0.5); display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .amber-dot { width: 6px; height: 6px; background: #d4af37; border-radius: 50%; box-shadow: 0 0 8px #d4af37; animation: mq-pulse 2s infinite; }
-    @keyframes mq-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-    /* BOTÓN RAPICREDIT - SUBREALISTA */
-    .mq-rapi-container { text-align: center; margin: 28px 0; position: relative; }
-    .mq-rapi-btn {
-      display: inline-block; position: relative;
-      background: #000; color: #d4af37; padding: 18px 40px;
-      border-radius: 16px; font-weight: 800; font-size: 16px; text-decoration: none;
-      letter-spacing: 0.5px; overflow: hidden;
-      border: 2px solid transparent;
-      background-clip: padding-box;
-      box-shadow: 0 40px rgba(212,175,55,0.3);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .mq-rapi-btn::before {
-      content: ''; position: absolute; inset: -2px; z-index: -1;
-      background: linear-gradient(45deg, #d4af37, #10b981, #d4af37, #f59e0b);
-      background-size: 300% 300%; border-radius: 16px;
-      animation: mq-border-flow 4s linear infinite;
-    }
-    @keyframes mq-border-flow { 0%{background-position:0% 50%} 100%{background-position:300% 50%} }
-    .mq-rapi-btn:hover { transform: scale(1.05) translateY(-3px); box-shadow: 0 0 60px rgba(212,175,55,0.6); }
-    .mq-rapi-btn span { position: relative; z-index: 2; }
-    .mq-rapi-sub { font-size: 10px; color: #6b7280; margin-top: 10px; letter-spacing: 0.5px; }
-
-    /* HERO GALERÍA */
-    .mq-hero {
-      display: block; position: relative; margin: 24px auto; max-width: 420px;
-      background: linear-gradient(145deg, rgba(15,23,42,0.8), rgba(2,6,23,0.9));
-      border: 1px solid rgba(212,175,55,0.2); border-radius: 20px; padding: 20px;
-      text-decoration: none; overflow: hidden; transition: all 0.4s;
-      backdrop-filter: blur(10px);
-    }
-    .mq-hero:hover { border-color: rgba(212,175,55,0.5); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0.5); }
-    .mq-hero-glow { position: absolute; inset: 0; background: radial-gradient(circle at 50% 0%, rgba(212,175,55,0.15), transparent 70%); opacity: 0; transition: opacity 0.4s; }
-    .mq-hero:hover .mq-hero-glow { opacity: 1; }
-  </style>
-
   <div class="command-center">
-    <!-- AVATAR -->
-    <div class="mq-character" aria-hidden="true">
+ 
+    
+   <!-- AVATAR del Sistema -->
+
+   <div class="mq-character" aria-hidden="true">
       <div class="mq-ears"><div class="ear left"></div><div class="ear right"></div></div>
-      <div class="mq-head"><div class="mq-visor"></div></div>
-    </div>
-
-    <!-- PERFIL -->
-    <a href="https://maxiqueen-os-app.vercel.app" class="master-btn">
-      <span>⚡ PERFIL MAXIQUEEN_OS 🔥</span>
-      <div class="master-btn-shine"></div>
-    </a>
-
-    <!-- TÍTULO -->
-    <div class="mq-section-title">
-      <h3><span class="amber-dot"></span>GANA CON ACTIVOS DIGITALES</h3>
-      <p style="color:#475569;font-size:11px;margin:4px 0 0;letter-spacing:1px;">ÁREA COMERCIAL • NEXO CUÁNTICO</p>
-    </div>
-
-    <!-- RAPICREDIT -->
-    <div class="mq-section-title" style="margin-top:40px;">
-      <h3><span class="amber-dot"></span>RAPICREDIT</h3>
-      <p style="color:#64748b;font-size:11px;margin:4px 0 0;">Panel de módulos MAXIQUEEN OS</p>
-    </div>
-
-    <div class="mq-rapi-container">
-      <a href="https://www.rapicredit.com/?promoter=VTJGc2RHVmtYMTlwTS9XV29za2tHUTI2MWpzcHlBZ3lDWFVLaW8zRy8xbENUVzlBNUtoRklVTjltdXhseFJxLw==" 
-         target="_blank" rel="noopener noreferrer" class="mq-rapi-btn">
-        <span>Gana $20.000 por referido →</span>
-      </a>
-      <p class="mq-rapi-sub">*Pago sujeto a aprobación y desembolso • RapiCredit NIT 900.564.668-4</p>
-    </div>
-
-    <!-- GALERÍA -->
-    <div class="mq-section-title">
-      <h3><span class="amber-dot"></span>GALERÍAS</h3>
-    </div>
-
-    <a href="galeriav5.html" class="mq-hero">
-      <div class="mq-hero-glow"></div>
-      <span style="position:absolute;top:12px;right:12px;background:rgba(212,175,55,0.2);color:#d4af37;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid rgba(212,175,55,0.3);">ACTUAL • v5</span>
-      <div style="display:flex;align-items:center;gap:16px;position:relative;z-index:2;">
-        <div style="font-size:28px;filter:drop-shadow(0 10px rgba(212,175,55,0.5));">◈</div>
-        <div>
-          <h4 style="color:#fff;margin:0 4px;font-size:15px;font-weight:700;">MQ Galería – Activos Pro</h4>
-          <p style="color:#94a3b8;margin:0;font-size:12px;">Catálogo completo con contadores cuánticos</p>
-        </div>
-        <span style="margin-left:auto;color:#d4af37;font-weight:700;">→</span>
+      <div class="mq-head">
+        <div class="mq-visor"></div>
+        <div class="mq-mouth"></div>
+        <div class="mq-whiskers left"><span></span><span></span></div>
+        <div class="mq-whiskers right"><span></span><span></span></div>
       </div>
-    </a>
+      <div class="mq-body"></div>
+      <div class="mq-feet"><div class="foot"></div><div class="foot"></div></div>
+    </div>
+    <div class="scanline"></div>
 
+     <!-- PERFIL MAXIQUEEN -->
+<a href="https://maxiqueen-os-app.vercel.app" class="master-btn">
+  <span>⚡ PERFIL MAXIQUEEN_OS 🔥</span>
+  <div class="master-btn-shine"></div>
+</a>
+
+<div class="mq-box-header" style="text-align:center;margin-top:30px;">
+  <h3 style="color:#d4af37;font-size:14px;letter-spacing:1px;margin:0;">
+    <span class="amber-dot" style="display:inline-block;width:8px;height:8px;background:#d4af37;border-radius:50%;margin-right:8px;"></span> 
+    GANA CON ACTIVOS DIGITALES
+  </h3>
+  <p style="color:#6b7280;font-size:12px;margin:4px 0 20px;text-transform:uppercase;">AREA COMERCIAL</p>
+</div>
+     <a href="https://maxiqueen-os-app.vercel.app" class="master-btn">
+        <span>⚡ PERFIL MAXIQUEEN_OS 🔥</span>
+        <div class="master-btn-shine"></div>
+    </a>
+  </div>
+
+  <div class="mq-box-header">
+    <h3><span class="amber-dot"></span> ARCHIVO DE VERSIONES</h3>
+    <p>Panel de módulos MAXIQUEEN OS</p>
+  </div>
+
+<p class="mq-section-label" style="text-align:center;color:#9ca3af;font-size:12px;letter-spacing:1px;margin:20px 0 10px;">GALERÍAS</p>
+
+<!-- RAPICREDIT -->
+<div class="mq-box-header" style="text-align:center;">
+  <h3 style="color:#d4af37;font-size:16px;margin:0;">
+    <span class="amber-dot" style="display:inline-block;width:8px;height:8px;background:#d4af37;border-radius:50%;margin-right:8px;"></span> 
+    RAPICREDIT
+  </h3>
+  <p style="color:#9ca3af;font-size:12px;margin:4px 0 20px;">Panel de módulos MAXIQUEEN OS</p>
+</div>
+
+<!-- BOTÓN DORADO EXACTO -->
+<div style="text-align:center;margin:25px 0;">
+  <a href="https://www.rapicredit.com/?promoter=VTJGc2RHVmtYMTlwTS9XV29za2tHUTI2MWpzcHlBZ3lDWFVLaW8zRy8xbENUVzlBNUtoRklVTjltdXhseFJxLw==" 
+     target="_blank" 
+     rel="noopener noreferrer"
+     style="display:inline-block;background:#d4af37;color:#000000;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;box-shadow:0 0 20px rgba(212,175,55,0.4);transition:transform 0.2s;">
+    Gana $20.000 por referido →
+  </a>
+  <p style="font-size:10px;color:#6b7280;margin-top:8px;">*Pago sujeto a aprobación y desembolso por RapiCredit</p>
+</div>
+
+<p class="mq-section-label" style="text-align:center;color:#9ca3af;font-size:12px;letter-spacing:1px;margin:30px 0 10px;">GALERÍAS</p>
+
+<!-- HERO v5 ACTUAL - TU CÓDIGO ORIGINAL INTACTO -->
+<a href="galeriav5.html" class="mq-hero">
+  <div class="mq-hero-glow"></div>
+  <div class="mq-character" aria-hidden="true">
+    <div class="mq-ears"><div class="ear left"></div><div class="ear right"></div></div>
+    <div class="mq-head">
+      <div class="mq-visor"></div>
+      <div class="mq-mouth"></div>
+      <div class="mq-whiskers left"><span></span><span></span></div>
+      <div class="mq-whiskers right"><span></span><span></span></div>
+    </div>
+    <div class="mq-body"></div>
+    <div class="mq-feet"><div class="foot"></div><div class="foot"></div></div>
+  </div>
+  <span class="mq-hero-badge">ACTUAL • v5</span>
+  <div class="mq-hero-content">
+    <span class="mq-hero-icon">◈</span>
+    <div>
+      <h4>MQ Galería – Activos Pro</h4>
+      <p>Catálogo completo con contadores</p>
+    </div>
+  </div>
+  <span class="mq-hero-cta">Abrir →</span>
+</a>
     <!-- LEGACY -->
-    <details style="margin-top:24px;background:rgba(0,0,0.3);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:12px;">
-      <summary style="color:#64748b;font-size:12px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;">Versiones anteriores <span style="background:#1e293b;padding:2px 8px;border-radius:10px;font-size:10px;">v2</span></summary>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;">
-        <a href="Abrir-manual-v2.html" style="background:rgba(15,23,42,0.5);padding:12px;border-radius:8px;text-decoration:none;border:1px solid rgba(255,255,0.05);">
-          <strong style="color:#d4af37;font-size:12px;">v2</strong><br>
-          <span style="color:#cbd5e1;font-size:11px;">Juego Cars 2026</span>
+    <details class="mq-legacy">
+      <summary>Versiones anteriores <span>v2</span></summary>
+      <div class="mq-legacy-grid">
+        <a href="Abrir-manual-v2.html" class="mq-legacy-card">
+          <strong>v2</strong>
+          <span>Juego Cars 2026</span>
+          <small>CDN optimizado</small>
         </a>
-        <a href="https://maxiqueen-os.vercel.app/ActivasistemaMQ2.html" style="background:rgba(15,23,42,0.5);padding:12px;border-radius:8px;text-decoration:none;border:1px solid rgba(255,255,255,0.05);">
-          <strong style="color:#d4af37;font-size:12px;">v3</strong><br>
-          <span style="color:#cbd5e1;font-size:11px;">Backend</span>
+        <a href="https://maxiqueen-os.vercel.app/ActivasistemaMQ2.html" class="mq-legacy-card">
+          <strong>v3</strong>
+          <span>Backend</span>
+          <small>Gestión dinámica</small>
         </a>
       </div>
     </details>
   </div>
-</div>
-
-<!-- PLAY & CARS - MAXIQUEEN OS v7 NEON CORE -->
-<div class="mq-gaming-hub">
-  <style>
-    .mq-gaming-hub {
-      --neon-cyan: #00f5ff;
-      --neon-magenta: #ff006e;
-      --neon-gold: #ffd700;
-      --bg-void: #020208;
-      --panel: rgba(10, 15, 30, 0.85);
-      max-width: 960px; margin: 0 auto; padding: 2rem;
-      font-family: 'Rajdhani', 'Inter', sans-serif;
-      background: radial-gradient(ellipse at top, #0a0e1a 0%, var(--bg-void) 70%);
-      position: relative; overflow: hidden;
-    }
-    .mq-gaming-hub::before {
-      content: ''; position: absolute; inset: 0;
-      background-image: 
-        linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
-      background-size: 40px 40px; animation: grid-move 20s linear infinite;
-      pointer-events: none;
-    }
-    @keyframes grid-move { 0%{transform:translate(0,0)} 100%{transform:translate(40px,40px)} }
-
-    .mq-section-label {
-      position: relative; margin: 3rem 0 1.5rem; text-align: center;
-      color: var(--neon-cyan); font-size: 0.9rem; font-weight: 700;
-      letter-spacing: 0.3em; text-transform: uppercase;
-      text-shadow: 0 0 20px var(--neon-cyan);
-    }
-    .mq-section-label::before,
-    .mq-section-label::after {
-      content: ''; position: absolute; top: 50%; width: 30%; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
-    }
-    .mq-section-label::before { left: 0; } .mq-section-label::after { right: 0; }
-
-    .mq-versions-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1rem; position: relative; z-index: 2;
-    }
-
-    .btn-portal-galeria {
-      position: relative; display: flex; align-items: center; gap: 1rem;
-      padding: 1.2rem; background: var(--panel);
-      border: 1px solid rgba(0,245,255,0.2); border-radius: 16px;
-      text-decoration: none; color: #e2e8f0; overflow: hidden;
-      backdrop-filter: blur(12px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
-    }
-    .btn-portal-galeria::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(135deg, transparent 30%, rgba(0,245,255,0.1) 50%, transparent 70%);
-      transform: translateX(-100%); transition: transform 0.6s;
-    }
-    .btn-portal-galeria:hover::before { transform: translateX(100%); }
-    .btn-portal-galeria:hover {
-      transform: translateY(-4px) scale(1.02);
-      border-color: var(--neon-cyan);
-      box-shadow: 
-        0 0 30px rgba(0,245,255,0.3),
-        inset 0 1px 0 rgba(255,255,0.1);
-    }
-
-    .portal-icon {
-      width: 48px; height: 48px; display: grid; place-items: center;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      border: 2px solid var(--neon-cyan); border-radius: 12px;
-      font-weight: 800; color: var(--neon-cyan); font-size: 1.1rem;
-      box-shadow: 0 0 15px rgba(0,245,255,0.4), inset 0 10px rgba(0,245,255,0.1);
-      position: relative; overflow: hidden;
-    }
-    .portal-icon::after {
-      content: ''; position: absolute; inset: 2px; border-radius: 8px;
-      background: linear-gradient(45deg, transparent, rgba(0,245,255,0.2), transparent);
-      animation: icon-scan 2s linear infinite;
-    }
-    @keyframes icon-scan { 0%{transform:translateX(-100%)} 100%{transform:translateX(200%)} }
-
-    .portal-main { flex: 1; }
-    .portal-text {
-      display: block; font-weight: 700; font-size: 1.05rem; letter-spacing: 0.5px;
-      background: linear-gradient(90deg, #fff, #a5f3fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      margin-bottom: 2px;
-    }
-    .portal-sub {
-      display: block; font-size: 0.8rem; color: #64748b; font-weight: 500;
-    }
-
-    .portal-badge {
-      padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.7rem;
-      font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;
-      border: 1px solid; position: relative; overflow: hidden;
-    }
-    .badge-play {
-      background: rgba(255,0,110,0.15); color: #ff006e; border-color: rgba(255,0,110,0.4);
-      box-shadow: 0 10px rgba(255,0,110,0.3);
-    }
-    .badge-core {
-      background: rgba(255,215,0.15); color: var(--neon-gold); border-color: rgba(255,215,0.4);
-      box-shadow: 0 0 10px rgba(255,215,0.3);
-    }
-    .portal-badge::before {
-      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      animation: badge-shine 3s infinite;
-    }
-    @keyframes badge-shine { 0%{left:-100%} 50%,100%{left:200%} }
-
-    /* CARS usa magenta */
-    .mq-section-label.cars { color: var(--neon-magenta); text-shadow: 0 0 20px var(--neon-magenta); }
-    .mq-section-label.cars::before,
-    .mq-section-label.cars::after { background: linear-gradient(90deg, transparent, var(--neon-magenta), transparent); }
-    .cars-grid .btn-portal-galeria { border-color: rgba(255,0,110,0.2); }
-    .cars-grid .btn-portal-galeria:hover { border-color: var(--neon-magenta); box-shadow: 0 0 30px rgba(255,0,110,0.3), inset 0 1px 0 rgba(255,0.1); }
-    .cars-grid .portal-icon { border-color: var(--neon-magenta); color: var(--neon-magenta); box-shadow: 0 15px rgba(255,0,110,0.4), inset 0 10px rgba(255,0,110,0.1); }
-    .cars-grid .portal-icon::after { background: linear-gradient(45deg, transparent, rgba(255,0,110,0.2), transparent); }
-  </style>
 
   <!-- PLAY -->
-  <p class="mq-section-label">MQ PLAY // NEURAL ARCADE</p>
+  <p class="mq-section-label">MQ Play</p>
   <div class="mq-versions-grid">
     <a href="PlayTorres2.html" class="btn-portal-galeria">
-      <span class="portal-icon">01</span>
+      <span class="portal-icon">1▶</span>
       <span class="portal-main">
         <span class="portal-text">Avatar Neon Snake</span>
-        <span class="portal-sub">Estrategia cuántica • Tiempo real</span>
+        <span class="portal-sub">Juego estratégico</span>
       </span>
-      <span class="portal-badge badge-play">PLAY</span>
+      <span class="portal-badge badge-play">Play</span>
     </a>
     <a href="PlayTorres3.html" class="btn-portal-galeria">
-      <span class="portal-icon">02</span>
+      <span class="portal-icon">2▶</span>
       <span class="portal-main">
         <span class="portal-text">Snake v3</span>
-        <span class="portal-sub">Arcade clásico • 60fps</span>
+        <span class="portal-sub">Arcade clásico</span>
       </span>
-      <span class="portal-badge badge-play">PLAY</span>
+      <span class="portal-badge badge-play">Play</span>
     </a>
     <a href="PlayTorres4.html" class="btn-portal-galeria">
-      <span class="portal-icon">03</span>
+      <span class="portal-icon">3▶</span>
       <span class="portal-main">
         <span class="portal-text">Snake v4</span>
-        <span class="portal-sub">Modo infinito • Neon</span>
+        <span class="portal-sub">Arcade clásico</span>
       </span>
-      <span class="portal-badge badge-play">PLAY</span>
+      <span class="portal-badge badge-play">Play</span>
     </a>
     <a href="PlayTorres5.html" class="btn-portal-galeria">
-      <span class="portal-icon">04</span>
+      <span class="portal-icon">4▶</span>
       <span class="portal-main">
         <span class="portal-text">Snake v5</span>
-        <span class="portal-sub">Battle Royale • 4 jugadores</span>
+        <span class="portal-sub">Arcade clásico</span>
       </span>
-      <span class="portal-badge badge-play">PLAY</span>
+      <span class="portal-badge badge-play">Play</span>
     </a>
   </div>
 
-  <!-- CARS -->
-  <p class="mq-section-label cars">CARS // VELOCITY CORE</p>
-  <div class="mq-versions-grid cars-grid">
+  <!-- SISTEMAS -->
+  <p class="mq-section-label">CARS </p>
+  <p class="mq-section-label">CARS </p>
+  <div class="mq-versions-grid">
     <a href="juegocarv3.html" class="btn-portal-galeria">
-      <span class="portal-icon">◆</span>
+      <span class="portal-icon">1◆</span>
       <span class="portal-main">
         <span class="portal-text">MQ Juego Car V3</span>
-        <span class="portal-sub">Credenciales MAXIQUEEN OS • NFT ready</span>
+        <span class="portal-sub">Credenciales MAXIQUEEN OS</span>
       </span>
-      <span class="portal-badge badge-core">v3</span>
+      <span class="portal-badge badge-core">v1</span>
     </a>
     <a href="juegocarv1.html" class="btn-portal-galeria">
-      <span class="portal-icon">◆</span>
+      <span class="portal-icon">2◆</span>
       <span class="portal-main">
-        <span class="portal-text">MQ Juego Car V1</span>
-        <span class="portal-sub">Módulo conversacional • IA evolutiva</span>
+        <span class="portal-text"> MQ Juego car V1</span>
+        <span class="portal-sub">Módulo conversacional Evolución</span>
       </span>
-      <span class="portal-badge badge-core">CHAT</span>
+      <span class="portal-badge badge-core">Chat</span>
     </a>
-    <a href="juegocarv4.html" class="btn-portal-galeria">
-      <span class="portal-icon">◆</span>
+
+      <a href="juegocarv4.html" class="btn-portal-galeria">
+      <span class="portal-icon">2◆</span>
       <span class="portal-main">
-        <span class="portal-text">MQ Juego Car V4</span>
-        <span class="portal-sub">Drift cuántico • Multijugador</span>
+        <span class="portal-text"> MQ Juego car V4</span>
+        <span class="portal-sub"> Juego Car V4</span>
       </span>
-      <span class="portal-badge badge-core">v4</span>
+      <span class="portal-badge badge-core">Chat</span>
     </a>
   </div>
 </div>
