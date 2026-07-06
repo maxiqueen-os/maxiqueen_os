@@ -1,47 +1,37 @@
 import { randomUUID } from 'crypto';
 
 export default async function handler(req, res) {
-  // Configuración de Cabeceras CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
+  if (req.method!== 'POST') return res.status(405).json({ error: 'Método no permitido' });
 
-  // 1. DESESTRUCTURACIÓN UNIFICADA (Elimina duplicados y SyntaxErrors)
+  // NORMALIZAR NOMBRES (acepta filename o file_name)
   const {
     message,
     session_id: clientSession,
-    files = [],
     image_base64,
     document_text,
     file_type,
     file_name,
-    filename,
-    systemPrompt,
-    history = [] // Captura el historial nativo enviado desde tu frontend
+    filename
   } = req.body || {};
 
-  // 2. NORMALIZACIÓN ESTRICTA DE ENTRADAS
-  const file = files[0] || {};
-  const finalFileName = file.name || file_name || filename || null;
-  const finalFileType = file.mimeType || file_type || 'image/jpeg';
-  const finalImageBase64 = file.base64Data || image_base64 || null;
-  
+  const finalFileName = file_name || filename || null;
+  const finalFileType = file_type || 'image/jpeg';
   const session_id = clientSession || randomUUID();
-  const userMsg = (message || 'Analiza este archivo').toString().substring(0, 2000);
+  const userMsg = (message || 'hola').toString().substring(0, 2000);
 
-  // Carga de Credenciales del Entorno
   const GROQ_KEY = process.env.GROQ_API_KEY;
   const GEMINI_KEY = process.env.GEMINI_API_KEY_3 || process.env.GEMINI_API_KEY;
   const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  // Persistencia en base de datos Supabase
-  const guardar = async (contenido, role, tipo = 'chat') => {
+  const guardar = async (contenido, role, tipo='chat') => {
     try {
-      if (!SUPABASE_URL || !SUPABASE_KEY) return;
+      if (!SUPABASE_URL ||!SUPABASE_KEY) return;
       await fetch(`${SUPABASE_URL}/rest/v1/maxiqueen_chat`, {
         method: 'POST',
         headers: {
@@ -57,128 +47,80 @@ export default async function handler(req, res) {
           message_type: tipo
         })
       });
-    } catch (e) { 
-      console.error('Error de registro en Supabase:', e.message); 
-    }
+    } catch (e) { console.error('Supabase error:', e.message); }
   };
 
-  // Clasificación del tipo de entrada para auditoría
-  const tipoEntrada = finalImageBase64 ? 'vision' : document_text ? 'doc' : 'chat';
-  const userContent = finalFileName ? `${userMsg} [Archivo: ${finalFileName}]` : userMsg;
+  const tipoEntrada = image_base64? 'vision' : document_text? 'doc' : 'chat';
+  const userContent = finalFileName? `${userMsg} [${finalFileName}]` : userMsg;
   await guardar(userContent, 'user', tipoEntrada);
 
   let reply = '', engine = '', groqErr = null, geminiErr = null;
 
-  // 3. PROCESAMIENTO ESTRATÉGICO DE MODELOS IA
-
-  // Bloque A: GEMINI MULTIMODAL (Procesa Imágenes y PDFs nativamente)
-  if (finalImageBase64 && GEMINI_KEY) {
+  // 1. GEMINI VISION (solo imagen, NO documento) - FIX: quito document_text y cambio modelo
+  if (image_base64 && GEMINI_KEY) { // FIX: antes era (image_base64 || document_text)
     try {
-      // Estructuramos los contenidos incluyendo el historial si existe
-      const formattedContents = [];
-      
-      // Mapeamos el historial al formato nativo estructurado de Gemini
-      if (Array.isArray(history) && history.length > 0) {
-        history.forEach(h => {
-          formattedContents.push({
-            role: h.role === 'assistant' ? 'model' : h.role,
-            parts: h.parts || [{ text: h.text }]
-          });
+      const parts = [{ text: userMsg || 'Analiza esto' }];
+      if (image_base64) {
+        parts.push({
+          inlineData: {
+            mimeType: finalFileType,
+            data: image_base64
+          }
         });
       }
-
-      // Preparamos el bloque de datos del archivo actual
-      const currentParts = [{ text: userMsg }];
-      currentParts.push({
-        inlineData: {
-          mimeType: finalFileType,
-          data: finalImageBase64
-        }
-      });
-
-      // Añadimos el turno actual del usuario al payload
-      formattedContents.push({ role: 'user', parts: currentParts });
-
-      const defaultSystemInstruction = systemPrompt || "Eres el asistente del MAPA MAXIQUEEN OS v0.8. Conoces los 14 módulos completos con sus pitches, capacidades, clientes ideales y monetización. Responde en español, directo y técnico.";
-
+      // FIX: cambio de 2.0-flash (sin cuota) a 1.5-flash
       const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_KEY}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          contents: formattedContents,
-          systemInstruction: { parts: [{ text: defaultSystemInstruction }] }
-        })
+        body: JSON.stringify({ contents: [{ parts }] })
       });
-
       const j = await r.json();
       if (r.ok && j.candidates?.[0]?.content?.parts?.[0]?.text) {
         reply = j.candidates[0].content.parts[0].text;
-        engine = 'gemini-multimodal';
+        engine = 'gemini-vision';
       } else {
-        geminiErr = j.error?.message || 'Respuesta vacía o formato desconocido de Gemini';
+        geminiErr = j.error?.message || 'Respuesta vacía';
       }
-    } catch (e) { 
-      geminiErr = e.message; 
-      console.error('Fallo en Gemini Multimodal:', e); 
-    }
+    } catch (e) { geminiErr = e.message; console.error('Gemini Vision:', e); }
   }
 
-  // Bloque B: GROQ PARA TEXTO EXTRAÍDO DE DOCUMENTOS (Si se provee texto pre-procesado)
+  // 1.5 NUEVO: GROQ para DOCUMENTOS (el PDF ya viene como texto del front) - FIX: evita Gemini
   if (!reply && document_text && GROQ_KEY) {
     try {
-      const groqMessages = [
-        { role: 'system', content: systemPrompt || 'Eres MaxiBot de MQ NEXUS. Responde en español, directo y estratégico.' }
-      ];
-
-      // Sincronizar el historial al formato de Groq
-      if (Array.isArray(history)) {
-        history.forEach(h => {
-          const role = h.role === 'model' || h.role === 'assistant' ? 'assistant' : 'user';
-          const text = h.parts?.[0]?.text || h.text || '';
-          if (text) groqMessages.push({ role, content: text });
-        });
-      }
-
-      groqMessages.push({ 
-        role: 'user', 
-        content: `${userMsg}\n\nDOCUMENTO ADJUNTO [${finalFileName}]:\n${document_text.substring(0, 8000)}` 
-      });
-
       const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'llama-3.1-8b-instant',
-          messages: groqMessages,
+          messages: [
+            { role: 'system', content: 'Eres MaxiBot de MQ NEXUS. Responde en español, directo y estratégico.' },
+            { role: 'user', content: `${userMsg}\n\nDOCUMENTO [${finalFileName}]:\n${document_text.substring(0,7000)}` }
+          ],
           max_tokens: 1000,
-          temperature: 0.5
+          temperature: 0.7
         })
       });
       const j = await r.json();
       if (r.ok && j.choices?.[0]?.message?.content) {
         reply = j.choices[0].message.content;
         engine = 'groq-doc';
-      } else { 
-        groqErr = j.error?.message; 
-      }
-    } catch (e) { 
-      groqErr = e.message; 
-    }
+      } else { groqErr = j.error?.message; }
+    } catch (e) { groqErr = e.message; }
   }
 
-  // Bloque C: FALLBACK DE VISIÓN CON GROQ (Solo si es imagen y Gemini falló)
-  if (!reply && finalImageBase64 && finalFileType.startsWith('image/') && GROQ_KEY) {
+  // 1.6 NUEVO: Fallback de VISIÓN con GROQ si Gemini falla
+  if (!reply && image_base64 && GROQ_KEY) {
     try {
       const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'llama-3.2-11b-vision-preview',
+          model: 'llama-3.2-11b-vision-preview', // FIX: modelo activo en 2026
           messages: [{
             role: 'user',
             content: [
-              { type: 'text', text: userMsg },
-              { type: 'image_url', image_url: { url: `data:${finalFileType};base64,${finalImageBase64}` } }
+              { type: 'text', text: userMsg || 'Analiza la imagen' },
+              { type: 'image_url', image_url: { url: `data:${finalFileType};base64,${image_base64}` } }
             ]
           }],
           max_tokens: 800
@@ -188,37 +130,22 @@ export default async function handler(req, res) {
       if (r.ok && j.choices?.[0]?.message?.content) {
         reply = j.choices[0].message.content;
         engine = 'groq-vision';
-      } else { 
-        groqErr = j.error?.message; 
-      }
-    } catch (e) { 
-      groqErr = e.message; 
-    }
+      } else { groqErr = j.error?.message; }
+    } catch (e) { groqErr = e.message; }
   }
 
-  // Bloque D: GROQ CONTEXTO CHAT REGULAR (Solo Texto Alternativo)
-  if (!reply && !finalImageBase64 && !document_text && GROQ_KEY) {
+  // 2. GROQ (solo texto)
+  if (!reply &&!image_base64 &&!document_text && GROQ_KEY) {
     try {
-      const groqMessages = [
-        { role: 'system', content: systemPrompt || 'Eres MaxiBot de MQ NEXUS. Responde en español, directo y estratégico.' }
-      ];
-
-      if (Array.isArray(history)) {
-        history.forEach(h => {
-          const role = h.role === 'model' || h.role === 'assistant' ? 'assistant' : 'user';
-          const text = h.parts?.[0]?.text || h.text || '';
-          if (text) groqMessages.push({ role, content: text });
-        });
-      }
-
-      groqMessages.push({ role: 'user', content: userMsg });
-
       const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'llama-3.1-8b-instant',
-          messages: groqMessages,
+          messages: [
+            { role: 'system', content: 'Eres MaxiBot de MQ NEXUS. Responde en español, directo y estratégico.' },
+            { role: 'user', content: userMsg }
+          ],
           max_tokens: 800,
           temperature: 0.7
         })
@@ -226,59 +153,37 @@ export default async function handler(req, res) {
       const j = await r.json();
       if (r.ok && j.choices?.[0]?.message?.content) {
         reply = j.choices[0].message.content;
-        engine = 'groq-pure-text';
-      } else { 
-        groqErr = j.error?.message; 
-      }
-    } catch (e) { 
-      groqErr = e.message; 
-      console.error('Error en canal Groq texto:', e); 
-    }
+        engine = 'groq';
+      } else { groqErr = j.error?.message; }
+    } catch (e) { groqErr = e.message; console.error('Groq:', e); }
   }
 
-  // Bloque E: FALLBACK FINAL DE CHAT COMPLETO CON GEMINI (Texto Puro)
-  if (!reply && GEMINI_KEY && !finalImageBase64) {
+  // 3. GEMINI texto fallback - FIX: cambio modelo
+  if (!reply && GEMINI_KEY &&!image_base64) {
     try {
-      const formattedContents = [];
-      if (Array.isArray(history)) {
-        history.forEach(h => {
-          formattedContents.push({
-            role: h.role === 'assistant' ? 'model' : h.role,
-            parts: h.parts || [{ text: h.text }]
-          });
-        });
-      }
-      formattedContents.push({ role: 'user', parts: [{ text: userMsg }] });
-
       const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_KEY}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: formattedContents })
+        body: JSON.stringify({ contents: [{ parts: [{ text: userMsg }] }] })
       });
       const j = await r.json();
       if (r.ok) {
-        reply = j.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        engine = 'gemini-pure-text';
-      } else { 
-        geminiErr = j.error?.message; 
-      }
-    } catch (e) { 
-      geminiErr = e.message; 
-    }
+        reply = j.candidates?.[0]?.content?.parts?.[0]?.text;
+        engine = 'gemini';
+      } else { geminiErr = j.error?.message; }
+    } catch (e) { geminiErr = e.message; }
   }
 
-  // Manejo de Error en caso de falla de orquestación de LLMs
   if (!reply) {
-    console.error('🚨 QUIEBRE DE OPERACIÓN EN CASM IA:', { groqErr, geminiErr });
+    console.error('FALLO TOTAL:', { groqErr, geminiErr, hasGroq:!!GROQ_KEY, hasGemini:!!GEMINI_KEY });
     return res.status(500).json({
-      error: 'Fallo integral en respuesta de IA',
+      error: 'Fallo en IA',
       detalle_groq: groqErr,
       detalle_gemini: geminiErr,
-      diagnostico_keys: { groq_disponible: !!GROQ_KEY, gemini_disponible: !!GEMINI_KEY }
+      keys: { groq:!!GROQ_KEY, gemini:!!GEMINI_KEY }
     });
   }
 
-  // Registro final en persistencia y retorno de respuesta limpia de éxito
   await guardar(reply, 'assistant', tipoEntrada);
   return res.status(200).json({ reply, engine, session_id, tipo: tipoEntrada });
 }
