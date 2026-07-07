@@ -2942,110 +2942,12 @@ html,body{
     opacity: .25;
 }
 
-/* ===== NUEVOS ESTILOS ARREGLADOS (EVITAN EL DESCUADRE) ===== */
-.command-header {
-    text-align: center;
-    margin: 2rem 0;
-    width: 100%;
-}
-.command-header h2 {
-    font-size: 1.4rem;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    color: #fff;
-    text-shadow: 0 0 15px rgba(255,255,255,0.2);
-}
-.mq-title-colombia {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #fff;
-    margin: 1.5rem 0 1rem;
-    letter-spacing: 0.05em;
-}
-
-/* Base Maestra para los Botones de Acceso */
-.mq-btn-access {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 1rem 1.25rem;
-    margin-bottom: 0.8rem;
-    width: 100%;
-    max-width: 100%;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid var(--mq-border);
-    border-radius: 14px;
-    color: var(--mq-text);
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.95rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: all 0.25s ease;
-    box-sizing: border-box;
-}
-.mq-btn-access:hover {
-    transform: translateX(4px);
-    background: rgba(255, 255, 255, 0.06);
-    color: #fff;
-}
-.mq-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    font-size: 1.1rem;
-}
-
-/* Variaciones de Color del Ecosistema */
-.mq-btn-google { border-color: rgba(0, 212, 255, 0.25); }
-.mq-btn-google:hover { border-color: var(--mq-cyan); box-shadow: 0 0 15px rgba(0, 212, 255, 0.2); }
-
-.mq-btn-modules { border-color: rgba(156, 163, 1 gray, 0.25); }
-.mq-btn-modules:hover { border-color: #fff; }
-
-.mq-btn-games { border-color: rgba(250, 204, 21, 0.25); }
-.mq-btn-games:hover { border-color: var(--mq-gold); box-shadow: 0 0 15px rgba(250, 204, 21, 0.2); }
-
-.mq-btn-profile { border-color: rgba(161, 161, 170, 0.25); }
-.mq-btn-profile:hover { border-color: #a1a1aa; }
-
-.mq-btn-yellow { border-color: var(--mq-gold-dim); color: var(--mq-gold); }
-.mq-btn-yellow:hover { background: rgba(250, 204, 21, 0.07); border-color: var(--mq-gold); }
-
-.mq-btn-blue { border-color: var(--mq-cyan-dark); color: var(--mq-cyan); }
-.mq-btn-blue:hover { background: rgba(0, 212, 255, 0.07); border-color: var(--mq-cyan); }
-
-.mq-btn-red { border-color: #9f1239; color: #f43f5e; }
-.mq-btn-red:hover { background: rgba(244, 63, 94, 0.07); border-color: #f43f5e; box-shadow: 0 0 15px rgba(244, 63, 94, 0.15); }
-
-.mq-btn-colombia { border-color: rgba(250, 204, 21, 0.35); }
-.mq-btn-colombia:hover { border-color: var(--mq-gold); background: linear-gradient(90deg, rgba(250,204,21,0.03), rgba(0,212,255,0.03)); }
-
-/* Botón Cloudinary unificado */
-.cloudinary-button {
-    width: 100%;
-    padding: 1rem;
-    background: #222236;
-    border: 1px dashed var(--mq-cyan);
-    color: var(--mq-cyan);
-    border-radius: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    margin: 1.5rem 0;
-    transition: all 0.2s ease;
-}
-.cloudinary-button:hover {
-    background: var(--mq-cyan-dark);
-    color: #fff;
-    box-shadow: 0 0 15px rgba(0,212,255,0.3);
-}
-
 /* ===== AVATAR ===== */
 .mq-character {
     position: relative; width: 100px; height: 100px; 
     display: flex; flex-direction: column;
     align-items: center; justify-content: center; 
-    margin: 0 auto 30px;
+    margin-bottom: 30px;
     animation: float-glitch 4s ease-in-out infinite;
     filter: drop-shadow(0 0 15px rgba(0,212,255,0.4)) drop-shadow(0 0 5px rgba(250,204,21,0.2));
     z-index: 10;
@@ -3103,34 +3005,15 @@ html,body{
 .portal-sub{font-size:.8rem;color:var(--mq-muted)}
 .portal-badge{font-size:.7rem;padding:.25rem .5rem;background:#222236;border-radius:999px;color:var(--mq-muted)}
 
-.c-box { color:#f43f5e; }
-.module-card {
-    display: flex;
-    flex-direction: column;
-    padding: 1.25rem;
-    background: #0f0f1a;
-    border: 1px solid #222236;
-    border-radius: 14px;
-    text-decoration: none;
-    margin: 1rem 0;
-    transition: all 0.2s ease;
-}
-.module-card:hover {
-    border-color: #f43f5e;
-    box-shadow: 0 0 15px rgba(244, 63, 94, 0.2);
-}
-
 @media (max-width: 768px) {
   .mq-hero{flex-direction:column;align-items:flex-start;gap:.6rem}
   .mq-hero-cta{align-self:flex-end}
 }
 </style>
 
-<!-- ENTORNO DEL PANEL CENTRAL CONTENEDOR (Encapsula todo para evitar fugas de diseño) -->
-<div class="mq-version-control-box">
+        <!-- AVATAR del Sistema -->
 
-    <!-- AVATAR del Sistema -->
-    <div class="mq-character" aria-hidden="true">
+   <div class="mq-character" aria-hidden="true">
       <div class="mq-ears"><div class="ear left"></div><div class="ear right"></div></div>
       <div class="mq-head">
         <div class="mq-visor"></div>
@@ -3142,73 +3025,34 @@ html,body{
       <div class="mq-feet"><div class="foot"></div><div class="foot"></div></div>
     </div>
 
-    <!-- Enlace Principal Chat -->
-    <a href="https://chat-maxiqueen-os.vercel.app" class="mq-btn-access mq-btn-google">
-        <span class="mq-icon">G</span>Soy tu chat conectado a Gemini MAXIQUEEN OS
-    </a>
+<a href="https://chat-maxiqueen-os.vercel.app" class="mq-btn-access mq-btn-google"><span class="mq-icon">G</span>Soy tu chat conectado a Gemini MAXIQUEEN OS</a>
 
-    <!-- Bloque 1: Experiencias de Juego -->
-    <div class="mb-12">
-        <h4 class="text-xl font-semibold text-white mb-4">🎮 Plays y Experiencias</h4>
-        <a href="play25.html" class="mq-btn-access mq-btn-google"><span class="mq-icon">G</span>Nave 1</a>
-        <a href="inspector MQ.html" class="mq-btn-access mq-btn-modules"><span class="mq-icon">💻</span>Inspector MQ 1</a>
-        <a href="play30.html" class="mq-btn-access mq-btn-games"><span class="mq-icon">🎮</span>Antenas de conexion 1</a>
-        <a href="playCarrito.html" class="mq-btn-access mq-btn-profile"><span class="mq-icon">👑</span>Play Carrito 1</a>
-        <a href="ventas2026.html" class="mq-btn-access mq-btn-profile"><span class="mq-icon">👑</span>Ventas 2026 1</a>
-    </div>
+<div class="mb-12">
+    <h4 class="text-xl font-semibold text-white mb-4">🎮 Plays y Experiencias</h4>
+    <a href="play25.html" class="mq-btn-access mq-btn-google"><span class="mq-icon">G</span>Nave 1</a>
+    <a href="inspector MQ.html" class="mq-btn-access mq-btn-modules"><span class="mq-icon">💻</span>Inspector MQ 1</a>
+    <a href="play30.html" class="mq-btn-access mq-btn-games"><span class="mq-icon">🎮</span>Antenas de conexion 1</a>
+    <a href="playCarrito.html" class="mq-btn-access mq-btn-profile"><span class="mq-icon">👑</span>Play Carrito 1</a>
+    <a href="ventas2026.html" class="mq-btn-access mq-btn-profile"><span class="mq-icon">👑</span>Ventas 2026 1</a>
+</div>
 
-    <!-- Encabezados del Sistema -->
-    <div class="command-header">
-        <h2>MAXIQUEEN ACCESS COMMAND CENTER</h2>
-    </div>
 
-    <!-- Panel de Acceso Premium -->
-    <div class="mb-12">
-        <h3 class="mq-title-colombia">ACCESO PREMIUM COLOMBIA</h3>
-        <a href="ChatOS.html" class="mq-btn-access mq-btn-yellow"><span class="mq-icon">🔑</span>SOLICITAR LLAVE ORO (AMARILLO)</a>
-        <a href="manager.html" class="mq-btn-access mq-btn-blue"><span class="mq-icon">🖥️</span>CONEXIÓN NÚCLEO AZUL</a>
-        <a href="sudoku-play1.0.html" class="mq-btn-access mq-btn-red"><span class="mq-icon">🔥</span>PROTOCOLO EMERGENCIA ROJO</a>
-        <a href="ChatOS2.html" class="mq-btn-access mq-btn-colombia"><span class="mq-icon">⭐</span>MAXIQUEEN COLOMBIA FULL ACCESS</a>
-        <a href="ventasv11.html" class="mq-btn-access mq-btn-colombia"><span class="mq-icon">⭐</span>MAXIQUEEN COLOMBIA ADQUIERE TUS BENEFICIOS EXCLUSIVOS</a>
-    </div>
+        <!-- Encabezados del Sistema -->
+        <div class="command-header">
+            <h2>MAXIQUEEN ACCESS COMMAND CENTER</h2>
+        </div>
 
-    <!-- Componente Cloudinary -->
-    <button id="upload_widget" class="cloudinary-button">Subir archivo Maxiqueen OS</button>
+        <!-- Panel de Acceso Premium -->
+        <div class="mb-12">
+            <h3 class="mq-title-colombia">ACCESO PREMIUM COLOMBIA</h3>
+            <a href="ChatOS.html" class="mq-btn-access mq-btn-yellow"><i class="fas fa-key mq-icon"></i>SOLICITAR LLAVE ORO (AMARILLO)</a>
+            <a href="manager.html" class="mq-btn-access mq-btn-blue"><i class="fas fa-server mq-icon"></i>CONEXIÓN NÚCLEO AZUL</a>
+            <a href="sudoku-play1.0.html" class="mq-btn-access mq-btn-red"><i class="fas fa-fire mq-icon"></i>PROTOCOLO EMERGENCIA ROJO</a>
+            <a href="ChatOS2.html" class="mq-btn-access mq-btn-colombia"><i class="fas fa-star mq-icon"></i>MAXIQUEEN COLOMBIA FULL ACCESS</a>
+            <a href="ventasv11.html" class="mq-btn-access mq-btn-colombia"><i class="fas fa-star mq-icon"></i>MAXIQUEEN COLOMBIA ADQUIERE TUS BENEFICIOS EXCLUSIVOS</a>
+        </div>
 
-    <!-- Caja Negra -->
-    <a href="index4000.html" class="module-card">
-        <span class="block text-white mb-1"><span class="c-box">■</span> The Black Box 4000</span>
-        <span class="opacity-50 text-xs">Docs • Versiones • Exp</span>
-    </a>
-
-    <!-- Ecosistema Regional -->
-    <div class="mb-12">
-      <h4 class="mq-title-colombia">🇨🇴 Ecosistema MaxiQueen Colombia</h4>
-
-      <a href="Activosindex.html" class="mq-btn-access mq-btn-yellow">
-          <span class="mq-icon">⭐</span>1. Play Activos
-      </a>
-
-      <a href="https://juegos-maxi-queen-os.vercel.app/cuadro-play1.html" target="_blank" class="mq-btn-access mq-btn-blue">
-          <span class="mq-icon">🌌</span>2. Core V3 Juego
-      </a>
-
-      <a href="Primeras_paginas_azul.html" target="_blank" class="mq-btn-access mq-btn-red">
-          <span class="mq-icon">🔥</span>3. Paginas Primerisas 0.1 MQ OS
-      </a>
-
-      <a href="Play5MQ.html" class="mq-btn-access mq-btn-colombia">
-          <span class="mq-icon">👑</span>4. 🇨🇴 Play 5 puntos rojos
-      </a>
-
-      <a href="MaxiqueenIA.html" class="mq-btn-access mq-btn-colombia">
-          <span class="mq-icon">👑</span>5. 🇨🇴 Maxiqueen IA PMQ
-      </a>
-    </div>
-
-</div> <!-- FIN DEL CONTENEDOR SEGURO -->
-
-<!-- SCRIPTS OPERATIVOS (Separados de la estructura visual para evitar cierres erróneos) -->
+<button id="upload_widget" class="cloudinary-button">Subir archivo Maxiqueen OS</button>
 <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
 <script type="text/javascript">
   var myWidget = cloudinary.createUploadWidget({
@@ -3220,11 +3064,12 @@ html,body{
       console.log(result.info);
     }
   });
-  
-  document.getElementById("upload_widget")?.addEventListener("click", function() {
+  document.getElementById("upload_widget").addEventListener("click", function() {
     myWidget.open();
   });
 </script>
+</footer>
+
 
 <script>
 function openArcade(){
@@ -3234,6 +3079,42 @@ function openArcade(){
     }, 150);
 }
 </script>
+
+<style>
+.c-box { color:#f43f5e; }
+</style>
+
+<a href="index4000.html" class="module-card">
+    <i class="fas fa-microchip c-box"></i>
+    <span class="block text-white mb-1">The Black Box 4000</span>
+    <span class="opacity-50 text-">Docs • Versiones • Exp</span>
+</a>
+
+<div class="mb-12">
+  <h4 class="mq-title-colombia">🇨🇴 Ecosistema MaxiQueen Colombia</h4>
+
+  <a href="Activosindex.html" class="mq-btn-access mq-btn-yellow">
+      <span class="mq-icon">⭐</span>1. Play Activos
+  </a>
+
+  <a href="https://juegos-maxi-queen-os.vercel.app/cuadro-play1.html" target="_blank" class="mq-btn-access mq-btn-blue">
+      <span class="mq-icon">🌌</span>2. Core V3 Juego
+  </a>
+
+  <a href="Primeras_paginas_azul.html" target="_blank" class="mq-btn-access mq-btn-red">
+      <span class="mq-icon">🔥</span>3. Paginas Primerisas 0.1 MQ OS
+  </a>
+
+  <a href="Play5MQ.html" class="mq-btn-access mq-btn-colombia">
+      <span class="mq-icon">👑</span>4. 🇨🇴 Play 5 puntos rojos
+  </a>
+
+  <a href="MaxiqueenIA.html" class="mq-btn-access mq-btn-colombia">
+      <span class="mq-icon">👑</span>5. 🇨🇴 Maxiqueen IA PMQ
+  </a>
+</div>
+
+
    
 <section class="mq-underworld-section">
     <div class="mq-underworld-header">
