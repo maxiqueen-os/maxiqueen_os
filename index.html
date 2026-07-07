@@ -3323,66 +3323,84 @@ function openArcade(){
     </button>
 
 
-  <!-- ... toda tu sección de licencia ... -->
+  <!-- ================= SECCIÓN LEGAL Y LICENCIA ================= -->
+<section class="py-12 px-6 border-t border-zinc-900 bg-black/50">
+  <div class="max-w-4xl mx-auto text-center">
+    <div class="inline-block p-1 mb-6 rounded-full bg-gradient-to-r from-zinc-800 to-zinc-700">
+      <span class="px-4 py-1 text-xs font-bold text-zinc-400 uppercase tracking-widest bg-black rounded-full">Apache License 2.0</span>
+    </div>
+
+    <h2 class="text-3xl font-bold text-white mb-4">Licencia de Uso Profesional</h2>
+
+    <div class="text-zinc-400 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
+      <p>
+        El núcleo de <span class="text-yellow-500 font-medium">MaxiQueen OS</span> es de código abierto.
+        Eres libre de usar, modificar y distribuir el sistema base, incluso para fines comerciales.
+      </p>
+      <p class="mt-4 border-l-2 border-yellow-600 pl-4 italic text-zinc-500">
+        Nota: La identidad visual, branding y módulos premium (Suite Black & Gold) están protegidos y no se incluyen bajo esta licencia.
+      </p>
+    </div>
+
+    <!-- Checkbox de aceptación (si lo usas) -->
+    <div class="mt-8 flex items-center justify-center gap-3">
+      <input type="checkbox" id="acceptMQ" class="w-4 h-4 accent-yellow-500 bg-zinc-800 border-zinc-700 rounded">
+      <label for="acceptMQ" class="text-sm text-zinc-400">Acepto los términos de la licencia</label>
+    </div>
+    <button id="continueMQ" disabled class="mt-4 px-6 py-2 bg-zinc-800 text-zinc-500 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-700 transition">
+      Continuar
+    </button>
+  </div>
+</section>
+
+<!-- ================= SOPORTE Y PAGOS ================= -->
+<section class="py-16 text-center">
+  <div class="relative inline-block px-12 py-10 rounded-[2rem] border border-yellow-500/10 shadow-2xl overflow-hidden group" style="background: rgba(0,0,0,0.4); backdrop-filter: blur(16px);">
+    <!-- Efecto de luz interna -->
+    <div class="absolute -top-24 -left-24 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl group-hover:bg-yellow-500/20 transition-all duration-500"></div>
+
+    <h3 class="text-2xl font-bold text-white mb-2">Asistente MQ</h3>
+    <p class="mb-8 text-zinc-400">Finaliza tu solicitud o consulta con soporte técnico.</p>
+
+    <!-- Avatar de Soporte -->
+    <div id="soporte-maxiqueen-container" class="relative inline-block">
+      <div class="absolute inset-0 bg-yellow-400 rounded-full animate-ping opacity-20"></div>
+      <video
+        src="https://chat-maxiqueen-os.vercel.app/assets/video_princesa.mp4"
+        id="avatar-soporte-action"
+        class="relative w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-zinc-900 shadow-2xl cursor-pointer hover:scale-110 hover:border-yellow-500 transition-all duration-300"
+        autoplay muted loop playsinline>
+      </video>
+    </div>
+
+    <div class="mt-8">
+      <span class="text-xs text-zinc-500 uppercase tracking-widest">Soporte 24/7 Activo</span>
+    </div>
+  </div>
+</section>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const acceptMQ = document.getElementById('acceptMQ');
   const continueMQ = document.getElementById('continueMQ');
+  const avatar = document.getElementById('avatar-soporte-action');
+
   if (acceptMQ && continueMQ) {
     acceptMQ.addEventListener('change', () => {
-      continueMQ.disabled = !acceptMQ.checked;
+      continueMQ.disabled =!acceptMQ.checked;
+      continueMQ.classList.toggle('bg-yellow-500', acceptMQ.checked);
+      continueMQ.classList.toggle('text-black', acceptMQ.checked);
+    });
+  }
+
+  if (avatar) {
+    avatar.addEventListener('click', () => {
+      window.open('https://chat-maxiqueen-os.vercel.app', '_blank');
     });
   }
 });
 </script>
-
-  </section>
-  
-  <!-- ================= SECCIÓN LEGAL Y LICENCIA ================= -->
-  <section class="py-12 px-6 border-t border-zinc-900 bg-black/50">
-    <div class="max-w-4xl mx-auto text-center">
-      <div class="inline-block p-1 mb-6 rounded-full bg-gradient-to-r from-zinc-800 to-zinc-700">
-        <span class="px-4 py-1 text-xs font-bold text-zinc-400 uppercase tracking-widest bg-black rounded-full">Apache License 2.0</span>
-      </div>
-      
-      <h2 class="text-3xl font-bold text-white mb-4">Licencia de Uso Profesional</h2>
-      
-      <div class="text-zinc-400 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
-        <p>
-          El núcleo de <span class="text-yellow-500 font-medium">MaxiQueen OS</span> es de código abierto. 
-          Eres libre de usar, modificar y distribuir el sistema base, incluso para fines comerciales.
-        </p>
-        <p class="mt-4 border-l-2 border-yellow-600 pl-4 italic text-zinc-500">
-          Nota: La identidad visual, branding y módulos premium (Suite Black & Gold) están protegidos y no se incluyen bajo esta licencia.
-        </p>
-      </div>
-    </div>
-
-  <!-- ================= SOPORTE Y PAGOS ================= -->
-  <section class="py-16 text-center">
-    <div class="relative glass inline-block px-12 py-10 rounded-[2rem] border border-yellow-500/10 shadow-2xl overflow-hidden group">
-      <!-- Efecto de luz interna -->
-      <div class="absolute -top-24 -left-24 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl group-hover:bg-yellow-500/20 transition-all"></div>
-      
-      <h3 class="text-2xl font-bold text-white mb-2">Asistente MQ</h3>
-      <p class="mb-8 text-zinc-400">Finaliza tu solicitud o consulta con soporte técnico.</p>
-
-      <!-- Avatar de Soporte Interactuable -->
-      <div id="soporte-maxiqueen-container" class="relative inline-block">
-        <div class="absolute inset-0 bg-yellow-400 rounded-full animate-ping opacity-20"></div>
-        <video src="https://chat-maxiqueen-os.vercel.app/assets/video_princesa.mp4" 
-            alt="Soporte MaxiQueen" 
-            id="avatar-soporte-action"
-            class="relative w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-zinc-900 shadow-2xl cursor-pointer hover:scale-110 hover:border-yellow-500 transition-all duration-300">
-      </div>
-
-      <div class="mt-8">
-        <span class="text-xs text-zinc-500 uppercase tracking-widest">Soporte 24/7 Activo</span>
-      </div>
-    </div>
-  </section>
-     
+   
 <!-- REDES MAXIQUEEN OS - V3 BLOQUES -->
 <div class="py-10">
   <h4 class="text-xl font-bold text-white mb-8 text-center tracking-widest uppercase drop-shadow-[0_0_8px_rgba(0,195,255,0.5)]">
