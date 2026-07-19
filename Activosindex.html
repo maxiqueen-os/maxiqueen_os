@@ -1,496 +1,539 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<!-- Playables SDK -->
-<script>// Playables SDK v1.0.0
-// Game lifecycle bridge: rAF-based game-ready detection + event communication
-(function() {
-  'use strict';
-
-  // Idempotency: skip if already initialized (e.g., server-side injection
-  // followed by client-side inject-javascript via the Bloks webview component).
-  if (window.playablesSDK) return;
-
-  var HANDLER_NAME = 'playablesGameEventHandler';
-  var ANDROID_BRIDGE_NAME = '_MetaPlayablesBridge';
-  var RAF_FRAME_THRESHOLD = 3;
-
-  var gameReadySent = false;
-  var firstInteractionSent = false;
-  var errorSent = false;
-  var frameCount = 0;
-  var originalRAF = window.requestAnimationFrame;
-
-  // --- Transport Layer ---
-
-  function hasIOSBridge() {
-    return !!(window.webkit &&
-              window.webkit.messageHandlers &&
-              window.webkit.messageHandlers[HANDLER_NAME]);
-  }
-
-  function hasAndroidBridge() {
-    return !!(window[ANDROID_BRIDGE_NAME] &&
-              typeof window[ANDROID_BRIDGE_NAME].postEvent === 'function');
-  }
-
-  function isInIframe() {
-    return !!(window.parent && window.parent !== window);
-  }
-
-  function sendEvent(eventName, payload) {
-    var message = {
-      type: eventName,
-      payload: payload || {},
-      timestamp: Date.now()
-    };
-
-    if (hasIOSBridge()) {
-      try {
-        window.webkit.messageHandlers[HANDLER_NAME].postMessage(message);
-      } catch (e) { /* ignore */ }
-      return;
-    }
-
-    if (hasAndroidBridge()) {
-    try {
-      var p = payload || {};
-      p.__secureToken = window.__fbAndroidBridgeAuthToken || '';
-      p.timestamp = message.timestamp;
-      window[ANDROID_BRIDGE_NAME].postEvent(
-        eventName,
-        JSON.stringify(p)
-      );
-    } catch (e) { /* ignore */ }
-    return;
-  }
-
-    if (isInIframe()) {
-      try {
-        window.parent.postMessage(message, '*');
-      } catch (e) { /* ignore */ }
-      return;
-    }
-  }
-
-  // --- rAF Game-Ready Detection ---
-
-  function onFrame() {
-    if (gameReadySent) return;
-
-    frameCount++;
-    if (frameCount >= RAF_FRAME_THRESHOLD) {
-      gameReadySent = true;
-      sendEvent('game_ready', {
-        frame_count: frameCount,
-        detected_at: Date.now()
-      });
-      return;
-    }
-
-    originalRAF.call(window, onFrame);
-  }
-
-  if (originalRAF) {
-    window.requestAnimationFrame = function(callback) {
-      if (!gameReadySent) {
-        return originalRAF.call(window, function(timestamp) {
-          frameCount++;
-          if (frameCount >= RAF_FRAME_THRESHOLD && !gameReadySent) {
-            gameReadySent = true;
-            sendEvent('game_ready', {
-              frame_count: frameCount,
-              detected_at: Date.now()
-            });
-          }
-          callback(timestamp);
-        });
-      }
-      return originalRAF.call(window, callback);
-    };
-  }
-
-  // --- First User Interaction Detection ---
-
-  function setupFirstInteractionDetection() {
-    var events = ['touchstart', 'mousedown', 'keydown'];
-
-    function onFirstInteraction() {
-      if (firstInteractionSent) return;
-      firstInteractionSent = true;
-      sendEvent('user_interaction_start', null);
-
-      for (var i = 0; i < events.length; i++) {
-        document.removeEventListener(events[i], onFirstInteraction, true);
-      }
-    }
-
-    for (var i = 0; i < events.length; i++) {
-      document.addEventListener(events[i], onFirstInteraction, true);
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupFirstInteractionDetection);
-  } else {
-    setupFirstInteractionDetection();
-  }
-
-  // --- Auto Error Capture ---
-
-  window.addEventListener('error', function(event) {
-    if (errorSent) return;
-    errorSent = true;
-    sendEvent('error', {
-      message: event.message || 'Unknown error',
-      source: event.filename || '',
-      lineno: event.lineno || 0,
-      colno: event.colno || 0,
-      auto_captured: true
-    });
-  });
-
-  window.addEventListener('unhandledrejection', function(event) {
-    if (errorSent) return;
-    errorSent = true;
-    var reason = event.reason;
-    sendEvent('error', {
-      message: (reason instanceof Error) ? reason.message : String(reason),
-      type: 'unhandled_promise_rejection',
-      auto_captured: true
-    });
-  });
-
-  // --- Public API ---
-
-  window.playablesSDK = {
-    complete: function(score) {
-      sendEvent('game_ended', {
-        score: score,
-        completed: true
-      });
-    },
-
-    error: function(message) {
-      if (errorSent) return;
-      errorSent = true;
-      sendEvent('error', {
-        message: message || 'Unknown error',
-        auto_captured: false
-      });
-    },
-
-    sendEvent: function(eventName, payload) {
-      if (!eventName || typeof eventName !== 'string') return;
-      sendEvent(eventName, payload);
-    }
-  };
-
-  // Kick off rAF detection in case no game code calls rAF immediately
-  if (originalRAF) {
-    originalRAF.call(window, onFrame);
-  }
-})();</script>
-<!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
-(function() {
-  if (window.__playableTouchPatchInstalled) return;
-  window.__playableTouchPatchInstalled = true;
-  var origAdd = EventTarget.prototype.addEventListener;
-  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
-  EventTarget.prototype.addEventListener = function(type, listener, options) {
-    if (blockedTypes[type]) {
-      if (options === undefined || options === null) {
-        options = { passive: true };
-      } else if (typeof options === 'boolean') {
-        options = { capture: options, passive: true };
-      } else {
-        options = Object.assign({}, options, { passive: true });
-      }
-    }
-    return origAdd.call(this, type, listener, options);
-  };
-})();
-</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MaxiQueen OS — Logo Demo</title>
+    <title>👑 MAXIQUEEN OS — PORTAFOLIO CORPORATIVO ENTERPRISE</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-main: #0b1220;
-            --accent: #faac51;
-            --text-main: #d4f7f3;
-        }
-        
-        * {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg-main);
-            color: var(--text-main);
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: 
-                radial-gradient(800px circle at 50% -10%, rgba(250,172,81,0.13), transparent 60%),
-                radial-gradient(600px circle at 90% 90%, rgba(212,247,243,0.05), transparent 50%),
-                radial-gradient(500px circle at 10% 80%, rgba(250,172,81,0.06), transparent 50%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .mq-circle {
-            width: 180px;
-            height: 180px;
-            position: relative;
-            border-radius: 50%;
-        }
-
-        .mq-arc {
-            position: absolute;
-            inset: -2px;
-            border-radius: 50%;
-            background: conic-gradient(from 0deg, transparent 0deg, transparent 300deg, var(--accent) 360deg);
-            animation: mq-spin 4s linear infinite;
-            mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 1px));
-            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 1px));
-        }
-
-        .mq-arc::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            background: conic-gradient(from 180deg, transparent 0deg, transparent 300deg, var(--accent) 360deg);
-            filter: blur(8px);
-            opacity: 0.6;
-            mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 1px));
-            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 1px));
-        }
-
-        .mq-inner {
-            position: absolute;
-            inset: 6px;
-            border-radius: 50%;
-            border: 2px solid rgba(250, 172, 81, 0.25);
-            display: grid;
-            place-items: center;
-            background: 
-                radial-gradient(circle at center, rgba(250,172,81,0.1) 0%, transparent 60%),
-                linear-gradient(180deg, #0f172a 0%, #0b1220 100%);
-            box-shadow: 
-                inset 0 0 30px rgba(0,0,0,0.8),
-                inset 0 1px 0 rgba(212,247,243,0.05);
-        }
-
-        .mq-inner::before {
-            content: '';
-            position: absolute;
-            inset: -6px;
-            border-radius: 50%;
-            border: 1px solid rgba(250, 172, 81, 0.1);
-        }
-
-        .mq-logo {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 16px rgba(250,172,81,0.6)) drop-shadow(0 0 32px rgba(250,172,81,0.3));
-            animation: mq-pulse 3s ease-in-out infinite;
-        }
-
-        .mq-pill {
-            padding: 10px 22px;
-            border-radius: 9999px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(250, 172, 81, 0.4);
-            color: var(--text-main);
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 0.01em;
-            backdrop-filter: blur(12px);
-            transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .mq-pill::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(250,172,81,0.15), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.6s;
-        }
-
-        .mq-pill:hover {
-            background: rgba(250, 172, 81, 0.08);
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(250, 172, 81, 0.2), inset 0 1px 0 rgba(250,172,81,0.2);
-            transform: translateY(-2px);
-            color: #fff;
-        }
-
-        .mq-pill:hover::before {
-            transform: translateX(100%);
-        }
-
-        .mq-nav-item {
-            transition: all 0.2s;
-            color: rgba(212,247,243,0.6);
-        }
-
-        .mq-nav-item:hover {
-            color: var(--text-main);
-            transform: translateY(-1px);
-        }
-
-        .mq-nav-item.active {
-            color: var(--accent);
-        }
-
-        @keyframes mq-spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes mq-pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.03); opacity: 0.95; }
-        }
+        :root { color-scheme: dark; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #030508; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .glass { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #060913; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+        .premium-border { box-shadow: 0 0 50px rgba(212,175,55,0.03), inset 0 1px 0 rgba(255,255,255,0.05); }
+        .mq-chat { position: fixed; bottom: 0; right: 24px; width: 400px; height: 580px; max-height: 85vh; display: flex; flex-direction: column; border: 1px solid rgba(212,175,55,0.3); box-shadow: 0 25px 60px rgba(0,0,0,0.9); border-radius: 16px 16px 0 0; background: #050811; z-index: 9999; overflow: hidden; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        .mq-chat.minimized { height: 48px!important; border-color: rgba(212,175,55,0.15); }
+        .mq-chat-header { background: #090e1a; border-b: 1px solid rgba(212,175,55,0.2); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .mq-chat-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; bg: rgba(5,8,17,0.98); }
+        .mq-bubble { border-left: 3px solid #d4af37; background: #0d1324; padding: 12px 14px; border-radius: 4px 12px 12px 12px; color: #f3f4f6; font-size: 13.5px; line-height: 1.5; max-width: 85%; }
+        .mq-bubble.user { margin-left: auto; border-left: none; border-right: 3px solid #10b981; background: #071c18; border-radius: 12px 4px 12px 12px; }
+        .mq-chat-input { display: flex; align-items: center; background: #03050a; border-top: 1px solid rgba(212,175,55,0.15); padding: 12px; gap: 8px; }
+        .mq-launcher { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; border: 1px solid #d4af37; background: #050811; box-shadow: 0 0 25px rgba(212,175,55,0.2); cursor: pointer; z-index: 9998; display: flex; align-items: center; justify-content: center; font-size: 22px; transition: transform 0.2s; }
+        .mq-launcher:hover { transform: scale(1.05); }
+        .mq-launcher.hidden { display: none; }
     </style>
 </head>
-<body class="min-h-screen relative">
-    <main class="relative z-10 pb-40">
-        <!-- Header -->
-        <header class="text-center pt-14 sm:pt-20 pb-10 px-6">
-            <div class="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-[rgba(250,172,81,0.2)] bg-[rgba(250,172,81,0.05)] backdrop-blur">
-                <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse"></span>
-                <span class="text-[11px] uppercase tracking-[0.18em] font-medium text-[var(--accent)]">Demo Component</span>
-            </div>
-            
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-black tracking-[0.02em] mb-3" style="font-variation-settings: 'wght' 900;">
-                MAXI<span style="color: var(--accent);">QUEEN</span> OS
-            </h1>
-            <p class="text-sm sm:text-[15px] uppercase tracking-[0.22em] font-medium" style="color: rgba(212,247,243,0.7);">
-                Arquitectura Digital Incorruptible
-            </p>
-        </header>
+<body class="min-h-screen text-gray-100 antialiased bg-slate-950">
+    <!-- Fondos de Gradiente Estratégico -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(212,175,55,0.04),transparent_50%)]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_rgba(16,185,129,0.05),transparent_50%)]"></div>
+    </div>
 
-        <!-- Animated Circle -->
-        <section class="flex justify-center px-6 mb-14">
-            <div class="relative">
-                <!-- glow -->
-                <div class="absolute -inset-8 rounded-full opacity-40 blur-3xl" style="background: radial-gradient(circle, var(--accent), transparent 60%);"></div>
-                
-                <div class="mq-circle">
-                    <div class="mq-arc"></div>
-                    <div class="mq-inner">
-                        <img 
-                            src="https://maxiqueen-os.vercel.app/assets/MAXIQUEEN_LOGO.png" 
-                            alt="MaxiQueen Logo"
-                            class="mq-logo"
-                        />
+    <div class="relative z-10">
+        <!-- SECCIÓN 1: HERO EJECUTIVO -->
+        <header class="border-b border-white/5 bg-black/40 glass sticky top-0 z-40 backdrop-blur">
+            <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-3">
+                            <span class="mono text-[10px] tracking-widest font-black uppercase text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded border border-amber-500/20">
+                                MAXIQUEEN OS ENTERPRISE • V2.0
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
+                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Ecosistema Activo
+                            </span>
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-2">
+                            Catálogo Ejecutivo del Portafolio
+                        </h1>
+                        <p class="text-sm text-gray-400 mt-1 max-w-2xl">
+                            Los clientes adquieren productos empresariales de alto impacto. Cada producto está respaldado por uno o más nodos especializados de infraestructura inteligente.
+                        </p>
+                    </div>
+                    
+                    <!-- KPI Counter -->
+                    <div class="grid grid-cols-3 gap-2 bg-white/[0.02] border border-white/10 p-2 rounded-xl mono text-center">
+                        <div class="px-3 py-1.5 bg-black/40 rounded-lg">
+                            <p class="text-lg font-bold text-amber-400">4</p>
+                            <p class="text-[9px] text-gray-400 uppercase tracking-wider">Productos</p>
+                        </div>
+                        <div class="px-3 py-1.5 bg-black/40 rounded-lg">
+                            <p class="text-lg font-bold text-sky-400">14</p>
+                            <p class="text-[9px] text-gray-400 uppercase tracking-wider">Nodos IA</p>
+                        </div>
+                        <div class="px-3 py-1.5 bg-black/40 rounded-lg">
+                            <p class="text-lg font-bold text-emerald-400">1</p>
+                            <p class="text-[9px] text-gray-400 uppercase tracking-wider">Plataforma</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </header>
 
-        <!-- Buttons -->
-        <section class="px-6 mb-16">
-            <div class="flex flex-wrap justify-center gap-2.5 sm:gap-3 max-w-3xl mx-auto">
-                <button class="mq-pill">Python Core</button>
-                <button class="mq-pill">JavaScript Runtime</button>
-                <button class="mq-pill">Modules</button>
-                <button class="mq-pill">Cloud Systems</button>
-                <button class="mq-pill">Interactive UI</button>
-            </div>
-        </section>
-
-        <!-- Implementation Note -->
-        <section class="px-6 max-w-2xl mx-auto">
-            <div class="relative overflow-hidden rounded-2xl border border-[rgba(250,172,81,0.15)] bg-[rgba(15,23,42,0.5)] backdrop-blur-xl p-5 sm:p-6">
-                <div class="absolute top-0 left-0 right-0 h-px" style="background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.5;"></div>
-                
-                <h3 class="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wider mb-3" style="color: var(--accent);">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="m18 16 4-4-4-4M6 8l-4 4 4 4M14.5 4l-5 16"/>
-                    </svg>
-                    Cómo implementar
-                </h3>
-                <div class="space-y-2.5 text-[13.5px] leading-relaxed" style="color: rgba(212,247,243,0.8);">
-                    <p><strong style="color: var(--text-main);">1. Círculo animado:</strong> Copia el HTML de <code class="px-1.5 py-0.5 rounded bg-black/40 text-[12px]" style="color: var(--accent);">.mq-circle</code> y el CSS de <code class="px-1.5 py-0.5 rounded bg-black/40 text-[12px]" style="color: var(--accent);">.mq-arc</code> + <code class="px-1.5 py-0.5 rounded bg-black/40 text-[12px]" style="color: var(--accent);">@keyframes mq-spin</code>.</p>
-                    <p><strong style="color: var(--text-main);">2. Avatar inferior:</strong> Usa el componente del nav "Copilot" (32px, border 2px accent).</p>
-                    <p><strong style="color: var(--text-main);">3. Logo source:</strong> <code class="px-1.5 py-0.5 rounded bg-black/40 text-[11px] break-all" style="color: var(--accent);">https://maxiqueen-os.vercel.app/assets/MAXIQUEEN_LOGO.png</code></p>
+        <main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+            
+            <!-- BARRA DE BÚSQUEDA CRUZADA (PRODUCTOS & INFRAESTRUCTURA) -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/[0.01] border border-white/5 p-4 rounded-xl">
+                <div>
+                    <h2 class="text-base font-semibold text-white">Matriz de Soluciones y Gobernanza</h2>
+                    <p class="text-xs text-gray-400">Escribe perfiles de cliente, modelos o identificadores de ingeniería para filtrar de forma global.</p>
+                </div>
+                <div class="relative w-full sm:w-96">
+                    <input id="globalSearch" type="text" placeholder="Buscar producto, cliente, caso de uso, o nodo interno..." class="w-full bg-slate-900/60 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/50 transition">
+                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-sm">🔍</span>
                 </div>
             </div>
-        </section>
-    </main>
 
-    <!-- Bottom Chat Nav Bar -->
-    <nav class="fixed bottom-0 inset-x-0 z-50 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <div class="mx-auto w-full max-w-[440px] px-4">
-            <div class="relative">
-                <!-- bar glow -->
-                <div class="absolute -inset-1 rounded-[32px] blur-xl opacity-30" style="background: linear-gradient(90deg, transparent, var(--accent), transparent);"></div>
-                
-                <div class="relative flex items-center justify-around gap-1 px-2 py-3 rounded-[28px] border shadow-2xl" style="background: rgba(11,18,32,0.85); backdrop-filter: blur(24px); border-color: rgba(250,172,81,0.18); box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(212,247,243,0.05);">
+            <!-- SECCIÓN 2: TABLA MAESTRA COMERCIAL (4 FILAS) -->
+            <section class="bg-[#080d16]/60 border border-white/10 rounded-2xl overflow-hidden premium-border">
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[1200px] text-left border-collapse">
+                        <thead>
+                            <tr class="bg-black/40 border-b border-white/10 text-[11px] uppercase tracking-wider text-gray-400 font-medium">
+                                <th class="px-6 py-4.5 w-72">Producto Comercial</th>
+                                <th class="px-6 py-4.5 w-64">Qué Resuelve</th>
+                                <th class="px-6 py-4.5 bg-emerald-500/[0.02] text-emerald-300">Momento de Valor Comercial ("Aha Moment")</th>
+                                <th class="px-6 py-4.5 w-40">Monetización</th>
+                                <th class="px-6 py-4.5 w-48">Cliente Objetivo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="commercialTable" class="divide-y divide-white/[0.04]">
+                            <!-- PRODUCTO 1 -->
+                            <tr class="product-row hover:bg-white/[0.01] transition" data-search="maxiqueen enterprise core plataforma base router inteligente core engine dashboard dam toda la empresa utiliza ia simultáneamente y el tráfico se distribuye automáticamente reduciendo costos de api platform fee anual cto coo empresas enterprise id3 id6 id7 id8">
+                                <td class="px-6 py-5">
+                                    <div class="flex items-start gap-3">
+                                        <div class="h-8 w-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-sm">01</div>
+                                        <div>
+                                            <h3 class="font-bold text-white text-sm">MaxiQueen Enterprise Core</h3>
+                                            <p class="text-xs text-gray-400 mt-0.5">Infraestructura base de control y orquestación.</p>
+                                            <div class="flex gap-1.5 mt-2">
+                                                <span class="mono text-[10px] px-1.5 py-0.5 bg-white/5 rounded text-gray-400 border border-white/10">ID: 3, 6, 7, 8</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5 text-gray-300 text-xs leading-relaxed">
+                                    Proporciona la plataforma base centralizada. Gobierna el enrutamiento inteligente, distribución de tráfico multi-modelo, administración de activos y paneles corporativos sin caídas de servicio.
+                                </td>
+                                <td class="px-6 py-5 bg-emerald-500/[0.01] text-xs font-medium text-emerald-300 leading-relaxed">
+                                    🚀 Toda la empresa utiliza IA de forma concurrente bajo políticas unificadas y el tráfico se distribuye automáticamente protegiendo y reduciendo dramáticamente costos de API globales.
+                                </td>
+                                <td class="px-6 py-5">
+                                    <span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 rounded-full font-medium text-[11px] uppercase tracking-wide border border-amber-500/20">Platform Fee Anual</span>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <div class="flex flex-wrap gap-1 text-[11px] font-mono text-gray-300">
+                                        <span class="bg-slate-900 px-1.5 py-0.5 rounded">CTO</span>
+                                        <span class="bg-slate-900 px-1.5 py-0.5 rounded">COO</span>
+                                        <span class="bg-slate-900 px-1.5 py-0.5 rounded">Enterprise</span>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- PRODUCTO 2 -->
+                            <tr class="product-row hover:bg-white/[0.01] transition" data-search="elite financial auditor business intelligence id1 id2 saas por volumen cfo fintech consultoras auditoría diagnósticos financieros inmediatos grandes volúmenes de datos de texto">
+                                <td class="px-6 py-5">
+                                    <div class="flex items-start gap-3">
+                                        <div class="h-8 w-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 font-bold text-sm">02</div>
+                                        <div>
+                                            <h3 class="font-bold text-white text-sm">Elite Financial Auditor & BI</h3>
+                                            <p class="text-xs text-gray-400 mt-0.5">Diagnóstico y analítica financiera computacional.</p>
+                                            <div class="flex gap-1.5 mt-2">
+                                                <span class="mono text-[10px] px-1.5 py-0.5 bg-white/5 rounded text-gray-400 border border-white/10">ID: 1, 2</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5 text-gray-300 text-xs leading-relaxed">
+                                    Automatiza auditorías de balances, consistencia aritmética de libros de cuentas y cruce masivo de perfiles corporativos / CVs técnicos mediante modelos de procesamiento lingüístico masivo.
+                                </td>
+                                <td class="px-6 py-5 bg-emerald-500/[0.01] text-xs font-medium text-emerald-300 leading-relaxed">
+                                    📊 El CFO obtiene un diagnóstico financiero, regulatorio y operativo detallado de forma prácticamente inmediata sobre millones de registros o documentos de texto sin procesar.
+                                </td>
+                                <td class="px-6 py-5">
+                                    <span class="px-2.5 py-1 bg-sky-500/10 text-sky-400 rounded-full font-medium text-[11px] uppercase tracking-wide border border-sky-500/20">SaaS por Volumen</span>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <div class="flex flex-wrap gap-1 text-[11px] font-mono text-gray-300">
+                                        <span class="bg-slate-900 px-1.5 py-0.5 rounded">CFO</span>
+                                        <span class="bg-slate-900 px-1.5 py-0.5 rounded">Consultoras</span>
+                                        <span class="bg-slate-900 px-1.5 py-0.5 rounded">Fintech</span>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- PRODUCTO 3 -->
+                            <tr class="product-row hover:bg-white/[0.01] transition" data-search="quantum nexus documento cargado ocr datos estructurados no se almacena información sensible pay per api rrhh fintech legal kyc id5 id11 landing router multimodal document ai">
+                                <td class="px-6 py-5">
+                                    <div class="flex items-start gap-3">
+                                        <div class="h-8 w-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-sm">03</div>
+                                        <div>
+                                            <h3 class="font-bold text-white text-sm">Quantum Nexus</h3>
+                                            <p class="text-xs text-gray-400 mt-0.5">Extracción inteligente de IDs y documentos de identidad.</p>
+                                            <div class="flex gap-1.5 mt-2">
+                                                <span class="mono text-[10px] px-1.5 py-0.5 bg-white/5 rounded text-gray-400 border border-white/10">ID: 5, 11</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5 text-gray-300 text-xs leading-relaxed">
+                                    Motor de ingesta inteligente y reconocimiento para Onboarding / KYC. Transforma imágenes de identificaciones y PDFs de seguridad en modelos estructurados JSON en milisegundos.
+                                </td>
+                                <td class="px-6 py-5 bg-emerald-500/[0.01] text-xs font-medium text-emerald-300 leading-relaxed">
+                                    🔒 Documento cargado ➔ OCR de Alta Velocidad ➔ Datos Estructurados inmediatos. Todo bajo privacidad radical: Cero almacenamiento o persistencia de datos sensibles en servidores locales.
+                                </td>
+                                <td class="px-6 py-5">
+                                    <span class="px-2.5 py-1 bg-purple-500/10 text-purple-400 rounded-full font-medium text-[11px] uppercase tracking-wide border border-purple-500/20">Pay Per API Call</span>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <div class="flex flex-wrap gap-1 text-[11px] font-mono text-gray-300">
+                                        <span class="bg-slate-900 px-1.5 py-0.5 rounded">KYC</span>
+                                        <span class="bg-slate-900 px-1.5 py-0.5 rounded">Legal</span>
+                                        <span class="bg-slate-900 px-1.5 py-0.5 rounded">RRHH</span>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- PRODUCTO 4 -->
+                            <tr class="product-row hover:bg-white/[0.01] transition" data-search="ai commerce pagina creator suite escribe una idea landing lista whatsapp conectado crm conectado lead entrando suscripción marketing agencias pymes startups id12 id13 id14 id9 id10 embudo de entrada premium showcase creator ia sudoku v1 v2">
+                                <td class="px-6 py-5">
+                                    <div class="flex items-start gap-3">
+                                        <div class="h-8 w-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-sm">04</div>
+                                        <div>
+                                            <h3 class="font-bold text-white text-sm">AI Commerce & Creator Suite</h3>
+                                            <p class="text-xs text-gray-400 mt-0.5">Generación acelerada de canales y captación digital.</p>
+                                            <div class="flex gap-1.5 mt-2">
+                                                <span class="mono text-[10px] px-1.5 py-0.5 bg-white/5 rounded text-gray-400 border border-white/10">ID: 12, 13, 14 + Addons (9, 10)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5 text-gray-300 text-xs leading-relaxed">
+                                    Inyección automatizada de embudos de conversión de marketing y creación de landing pages integradas con Notion, WhatsApp y automatizaciones en segundo plano para retención activa.
+                                </td>
+                                <td class="px-6 py-5 bg-emerald-500/[0.01] text-xs font-medium text-emerald-300 leading-relaxed">
+                                    ⚡ Escribe una idea de campaña ➔ Landing Page autogenerada lista ➔ Canal de WhatsApp conectado ➔ Automatización de CRM enlazada ➔ Lead calificado entrando en piloto automático.
+                                </td>
+                                <td class="px-6 py-5">
+                                    <span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-full font-medium text-[11px] uppercase tracking-wide border border-emerald-500/20">Suscripción Mensual</span>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <div class="flex flex-wrap gap-1 text-[11px] font-mono text-gray-300">
+                                        <span class="bg-slate-900 px-1.5 py-0.5 rounded">Agencias</span>
+                                        <span class="bg-slate-900 px-1.5 py-0.5 rounded">Marketing</span>
+                                        <span class="bg-slate-900 px-1.5 py-0.5 rounded">PyMES</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 3: INFRAESTRUCTURA TÉCNICA DEL ECOSISTEMA (VISTA DE INGENIERÍA DESPLEGABLE) -->
+            <section class="space-y-4">
+                <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                    <div>
+                        <h2 class="text-lg font-bold tracking-tight text-gray-200">🔍 Capa Back-End: Infraestructura del Ecosistema</h2>
+                        <p class="text-xs text-gray-400">Desglose de auditoría técnica. Mapeo operativo de los 14 nodos de despliegue que respaldan la viabilidad comercial.</p>
+                    </div>
+                    <button onclick="toggleAllAccordions()" class="text-xs bg-white/5 hover:bg-white/10 border border-white/10 text-amber-300 px-3 py-1.5 rounded-lg font-medium transition">
+                        Expandir / Colapsar Todo
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="infrastructureGrid">
                     
-                    <!-- Principal -->
-                    <a href="#" class="mq-nav-item flex flex-col items-center gap-1.5 w-[78px] py-1.5 rounded-2xl">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
-                            <path d="M3 10.5 12 3l9 7.5"/>
-                            <path d="M5 9.5V19a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>
-                        </svg>
-                        <span class="text-[11px] font-medium tracking-wide">Principal</span>
-                    </a>
-
-                    <!-- Inbox -->
-                    <a href="#" class="mq-nav-item flex flex-col items-center gap-1.5 w-[78px] py-1.5 rounded-2xl">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
-                            <rect x="3" y="5" width="18" height="14" rx="2"/>
-                            <path d="m3 7 9 6 9-6"/>
-                        </svg>
-                        <span class="text-[11px] font-medium tracking-wide">Inbox</span>
-                    </a>
-
-                    <!-- Explorar -->
-                    <a href="#" class="mq-nav-item flex flex-col items-center gap-1.5 w-[78px] py-1.5 rounded-2xl">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
-                            <circle cx="12" cy="12" r="9"/>
-                            <path d="M9 12 12 9l3 3-3 3-3-3Z"/>
-                            <path d="M12 3v3M12 18v3M3 12h3M18 12h3"/>
-                        </svg>
-                        <span class="text-[11px] font-medium tracking-wide">Explorar</span>
-                    </a>
-
-                    <!-- Copilot (Avatar) -->
-                    <a href="#" class="mq-nav-item active flex flex-col items-center gap-1.5 w-[78px] py-1.5 rounded-2xl">
-                        <div class="relative">
-                            <div class="absolute -inset-1.5 rounded-full opacity-60 blur-md" style="background: var(--accent);"></div>
-                            <div class="relative w-8 h-8 rounded-full flex items-center justify-center overflow-hidden" style="background: #0b1220; border: 2px solid var(--accent); box-shadow: 0 0 12px rgba(250,172,81,0.4), inset 0 1px 2px rgba(0,0,0,0.5);">
-                                <img 
-                                    src="https://maxiqueen-os.vercel.app/assets/MAXIQUEEN_LOGO.png" 
-                                    alt="Copilot"
-                                    class="w-[18px] h-[18px] object-contain"
-                                    style="filter: drop-shadow(0 0 6px rgba(250,172,81,0.7));"
-                                />
+                    <!-- BLOQUE INFRAESTRUCTURA PRODUCTO 1 -->
+                    <div class="infra-block border border-white/5 bg-[#070b12]/80 rounded-xl overflow-hidden p-5" data-nodes="id3 id8 id6 id7 router inteligente core engine dashboard profesional digital asset manager">
+                        <div class="flex justify-between items-center border-b border-white/5 pb-3 mb-4">
+                            <div>
+                                <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wide">Soporte de: MaxiQueen Enterprise Core</h4>
+                                <p class="text-[11px] text-gray-400 mt-0.5">4 Nodos Críticos Asignados</p>
                             </div>
-                            <div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2" style="background: var(--accent); border-color: #0b1220;"></div>
+                            <span class="text-[10px] font-mono bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">Todos Operativos</span>
                         </div>
-                        <span class="text-[11px] font-semibold tracking-wide" style="color: var(--accent);">Copilot</span>
-                    </a>
+                        <div class="space-y-2.5">
+                            <div class="flex items-center justify-between bg-black/40 p-2 rounded.xl border border-white/5">
+                                <div class="text-xs">
+                                    <span class="text-emerald-400 font-bold mr-1.5">✓ ID3</span> 
+                                    <a href="https://maxiqueen-os.vercel.app" target="_blank" class="text-sky-400 hover:underline font-mono">Router Inteligente</a>
+                                </div>
+                                <span class="text-[10px] text-gray-500 font-mono">5,017 LOC</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
+                                <div class="text-xs">
+                                    <span class="text-emerald-400 font-bold mr-1.5">✓ ID8</span> 
+                                    <a href="https://system-maxi-queen-os.vercel.app/" target="_blank" class="text-sky-400 hover:underline font-mono">Core Engine Operacional</a>
+                                </div>
+                                <span class="text-[10px] text-gray-500 font-mono">814 LOC</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
+                                <div class="text-xs">
+                                    <span class="text-emerald-400 font-bold mr-1.5">✓ ID6</span> 
+                                    <a href="https://maxiqueen-os-app.vercel.app" target="_blank" class="text-sky-400 hover:underline font-mono">Dashboard Profesional</a>
+                                </div>
+                                <span class="text-[10px] text-gray-500 font-mono">1,003 LOC</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
+                                <div class="text-xs">
+                                    <span class="text-emerald-400 font-bold mr-1.5">✓ ID7</span> 
+                                    <a href="https://maxiqueen-ver.vercel.app/" target="_blank" class="text-sky-400 hover:underline font-mono">Digital Asset Manager (DAM)</a>
+                                </div>
+                                <span class="text-[10px] text-gray-500 font-mono">2,232 LOC</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BLOQUE INFRAESTRUCTURA PRODUCTO 2 -->
+                    <div class="infra-block border border-white/5 bg-[#070b12]/80 rounded-xl overflow-hidden p-5" data-nodes="id1 id2 auditoría financiera diagnóstico técnico">
+                        <div class="flex justify-between items-center border-b border-white/5 pb-3 mb-4">
+                            <div>
+                                <h4 class="text-xs font-bold text-sky-400 uppercase tracking-wide">Soporte de: Elite Financial Auditor & BI</h4>
+                                <p class="text-[11px] text-gray-400 mt-0.5">2 Nodos Críticos Asignados</p>
+                            </div>
+                            <span class="text-[10px] font-mono bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">Todos Operativos</span>
+                        </div>
+                        <div class="space-y-2.5">
+                            <div class="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
+                                <div class="text-xs">
+                                    <span class="text-emerald-400 font-bold mr-1.5">✓ ID1</span> 
+                                    <a href="https://maxiqueen-os-framework.vercel.app" target="_blank" class="text-sky-400 hover:underline font-mono">Auditoría Financiera IA (Texto Puro)</a>
+                                </div>
+                                <span class="text-[10px] text-gray-500 font-mono">505 LOC</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
+                                <div class="text-xs">
+                                    <span class="text-emerald-400 font-bold mr-1.5">✓ ID2</span> 
+                                    <a href="https://nextjs-m162.vercel.app" target="_blank" class="text-sky-400 hover:underline font-mono">Cerebro de Diagnóstico Técnico</a>
+                                </div>
+                                <span class="text-[10px] text-gray-500 font-mono">394 LOC</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BLOQUE INFRAESTRUCTURA PRODUCTO 3 -->
+                    <div class="infra-block border border-white/5 bg-[#070b12]/80 rounded-xl overflow-hidden p-5" data-nodes="id5 id11 landing router multimodal document ai quantum nexus">
+                        <div class="flex justify-between items-center border-b border-white/5 pb-3 mb-4">
+                            <div>
+                                <h4 class="text-xs font-bold text-purple-400 uppercase tracking-wide">Soporte de: Quantum Nexus</h4>
+                                <p class="text-[11px] text-gray-400 mt-0.5">2 Nodos Críticos Asignados</p>
+                            </div>
+                            <span class="text-[10px] font-mono bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">Todos Operativos</span>
+                        </div>
+                        <div class="space-y-2.5">
+                            <div class="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
+                                <div class="text-xs">
+                                    <span class="text-emerald-400 font-bold mr-1.5">✓ ID5</span> 
+                                    <a href="https://chat-maxiqueen-os.vercel.app/" target="_blank" class="text-sky-400 hover:underline font-mono">Landing Router Multi-API Pool</a>
+                                </div>
+                                <span class="text-[10px] text-gray-500 font-mono">228 LOC</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
+                                <div class="text-xs">
+                                    <span class="text-emerald-400 font-bold mr-1.5">✓ ID11</span> 
+                                    <a href="https://chat-maxiqueen-os-v2.vercel.app/" target="_blank" class="text-sky-400 hover:underline font-mono">Extractor Document AI Nexus</a>
+                                </div>
+                                <span class="text-[10px] text-gray-500 font-mono">228 LOC</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BLOQUE INFRAESTRUCTURA PRODUCTO 4 -->
+                    <div class="infra-block border border-white/5 bg-[#070b12]/80 rounded-xl overflow-hidden p-5" data-nodes="id12 id13 id14 id9 id10 embudo de entrada premium showcase creator ia sudoku v1 v2 active engagement">
+                        <div class="flex justify-between items-center border-b border-white/5 pb-3 mb-4">
+                            <div>
+                                <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">Soporte de: AI Commerce & Creator Suite</h4>
+                                <p class="text-[11px] text-gray-400 mt-0.5">3 Nodos Core + 2 Addons de Gamificación</p>
+                            </div>
+                            <span class="text-[10px] font-mono bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">Todos Operativos</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
+                                <div class="text-xs">
+                                    <span class="text-emerald-400 font-bold mr-1.5">✓ ID12</span> 
+                                    <a href="https://maxiqueen-os-marketing.vercel.app/" target="_blank" class="text-sky-400 hover:underline font-mono">Embudo de Ingesta Inteligente</a>
+                                </div>
+                                <span class="text-[10px] text-gray-500 font-mono">408 LOC</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
+                                <div class="text-xs">
+                                    <span class="text-emerald-400 font-bold mr-1.5">✓ ID13</span> 
+                                    <a href="https://maxiqueen-os-campa-a1.vercel.app/" target="_blank" class="text-sky-400 hover:underline font-mono">Premium Vitrina Showcase</a>
+                                </div>
+                                <span class="text-[10px] text-gray-500 font-mono">Campaña L1</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
+                                <div class="text-xs">
+                                    <span class="text-emerald-400 font-bold mr-1.5">✓ ID14</span> 
+                                    <a href="https://chat-maxiqueen-os-v1.vercel.app/" target="_blank" class="text-sky-400 hover:underline font-mono">Creator IA Server (WhatsApp/Notion)</a>
+                                </div>
+                                <span class="text-[10px] text-gray-500 font-mono">319 LOC</span>
+                            </div>
+                            <div class="border-t border-white/5 pt-2 mt-2">
+                                <p class="text-[10px] text-gray-400 font-semibold uppercase mb-1.5 tracking-wider">Módulos de Retención Pasiva (Addons):</p>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="bg-black/20 p-1.5 rounded border border-white/5 text-[11px]">
+                                        <span class="text-amber-400 font-bold">✓ ID9</span> <a href="https://play-maxi-queen-os.vercel.app/" target="_blank" class="text-gray-300 hover:underline">Sudoku UI V1</a>
+                                    </div>
+                                    <div class="bg-black/20 p-1.5 rounded border border-white/5 text-[11px]">
+                                        <span class="text-amber-400 font-bold">✓ ID10</span> <a href="https://juegos-maxi-queen-os.vercel.app/" target="_blank" class="text-gray-300 hover:underline">Cross-Sync V2</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- SECCIÓN 4: CHAT INTEGRADO DIRECTIVO REORIENTADO COMERCIALMENTE -->
+    <section class="mq-chat minimized" id="mqChat">
+        <div class="mq-chat-header" onclick="toggleChat()">
+            <div class="text-white font-bold text-xs flex items-center gap-2">
+                <span class="h-2 w-2 rounded-full bg-amber-400 animate-ping"></span>
+                <span>SYNDICATE_CORE OS ASISTENTE</span> 
+            </div>
+            <div class="flex items-center gap-3 text-xs" onclick="event.stopPropagation();">
+                <button onclick="controlVoz('pause')" class="text-gray-400 hover:text-white" title="Pausar">⏸</button>
+                <button onclick="controlVoz('resume')" class="text-gray-400 hover:text-white" title="Continuar">▶</button>
+                <button onclick="controlVoz('stop')" class="text-red-400 hover:text-white" title="Parar">⏹</button>
+                <span class="text-gray-600">|</span>
+                <button onclick="toggleChat()" class="text-amber-400 font-bold hover:text-amber-200">Minimizar</button>
             </div>
         </div>
-    </nav>
-<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
+        <div class="mq-chat-body" id="mqChatBody">
+            <div class="mq-bubble">
+                💼 **Soy el asistente de MaxiQueen OS.**<br><br>Puedo ayudarte a identificar qué producto resuelve tu necesidad o mostrarte cómo está compuesto cada producto mediante sus nodos funcionales de infraestructura.
+            </div>
+        </div>
+        <form class="mq-chat-input" id="mqChatForm">
+            <input type="file" id="mqFileInput" style="display:none">
+            <button type="button" onclick="document.getElementById('mqFileInput').click()" class="text-gray-400 hover:text-amber-400 text-lg transition">📎</button>
+            <input type="text" id="mqInput" placeholder="Preguntar por productos o arquitecturas..." class="flex-1 bg-transparent border-none text-white outline-none text-xs" autocomplete="off">
+            <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs transition">Analizar</button>
+        </form>
+    </section>
+
+    <!-- Lanzador flotante alternativo -->
+    <button class="mq-launcher" id="chatLauncher" onclick="toggleChat()">💬</button>
+
+    <!-- CONTROLADORES JAVASCRIPT AVANZADOS -->
+    <script>
+        // Sistema de Búsqueda Cruzada e Inteligente (Filtra filas comerciales y bloques técnicos simultáneamente)
+        document.getElementById('globalSearch').addEventListener('input', e => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            // Filtrar Tabla Comercial
+            document.querySelectorAll('#commercialTable .product-row').forEach(row => {
+                const searchData = row.getAttribute('data-search') || '';
+                row.style.display = searchData.includes(query) ? '' : 'none';
+            });
+
+            // Filtrar Módulos de Infraestructura Técnica
+            document.querySelectorAll('#infrastructureGrid .infra-block').forEach(block => {
+                const nodeData = block.getAttribute('data-nodes') || '';
+                block.style.display = nodeData.includes(query) ? '' : 'none';
+            });
+        });
+
+        let chatOpen = false;
+        let chatHistory = [];
+        let speechUtterance = null;
+
+        function toggleChat() {
+            const chat = document.getElementById('mqChat');
+            const launcher = document.getElementById('chatLauncher');
+            chatOpen = !chatOpen;
+            chat.classList.toggle('minimized', !chatOpen);
+            launcher.classList.toggle('hidden', chatOpen);
+            if (chatOpen) setTimeout(() => {
+                const body = document.getElementById('mqChatBody');
+                body.scrollTop = body.scrollHeight;
+            }, 80);
+        }
+
+        // Controladores de Voz (TTS) para reportes directivos
+        function hablar(texto) {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const limpio = texto.replace(/[*#`_\-➔]/g, '');
+            speechUtterance = new SpeechSynthesisUtterance(limpio);
+            speechUtterance.lang = 'es-ES';
+            window.speechSynthesis.speak(speechUtterance);
+        }
+
+        function controlVoz(accion) {
+            if (!window.speechSynthesis) return;
+            if (accion === 'pause') window.speechSynthesis.pause();
+            if (accion === 'resume') window.speechSynthesis.resume();
+            if (accion === 'stop') window.speechSynthesis.cancel();
+        }
+
+        // Toggle global para ingenieros apurados
+        let accordionsOpen = true;
+        function toggleAllAccordions() {
+            accordionsOpen = !accordionsOpen;
+            document.querySelectorAll('#infrastructureGrid .infra-block').forEach(block => {
+                block.style.opacity = accordionsOpen ? '1' : '0.35';
+            });
+        }
+
+        // Manejo del formulario simulado de interacción del ecosistema
+        document.getElementById('mqChatForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('mqInput');
+            const userMsg = input.value.trim();
+            if (!userMsg) return;
+
+            // Renderizar burbuja de usuario
+            const body = document.getElementById('mqChatBody');
+            const userBubble = document.createElement('div');
+            userBubble.className = 'mq-bubble user';
+            userBubble.innerText = userMsg;
+            body.appendChild(userBubble);
+            input.value = '';
+            body.scrollTop = body.scrollHeight;
+
+            // Simulación de respuesta orientada a Producto/Estructura Corporativa
+            const loadingId = 'loading-' + Date.now();
+            const loadingBubble = document.createElement('div');
+            loadingBubble.className = 'mq-bubble text-amber-400 animate-pulse';
+            loadingBubble.id = loadingId;
+            loadingBubble.innerText = '⚡ Procesando a través del Router Corporativo de MaxiQueen OS...';
+            body.appendChild(loadingBubble);
+            body.scrollTop = body.scrollHeight;
+
+            setTimeout(() => {
+                document.getElementById(loadingId).remove();
+                const aiBubble = document.createElement('div');
+                aiBubble.className = 'mq-bubble';
+                
+                let respuesta = `Mapeando requerimiento empresarial. Recomiendo evaluar el portafolio comercial de **MaxiQueen Enterprise Core** para asegurar estabilidad de APIs en base a su consulta.`;
+                if(userMsg.toLowerCase().includes('cfo') || userMsg.toLowerCase().includes('auditor') || userMsg.toLowerCase().includes('financiero')) {
+                    respuesta = `Para requerimientos financieros, el producto idóneo es **Elite Financial Auditor & Business Intelligence** (respaldado por los nodos ID1 e ID2 en infraestructura). Resuelve auditorías lingüísticas masivas en segundos.`;
+                } else if(userMsg.toLowerCase().includes('kyc') || userMsg.toLowerCase().includes('documento') || userMsg.toLowerCase().includes('nexus')) {
+                    respuesta = `El producto **Quantum Nexus** procesa ingesta documental mediante OCR estructurado (nodos internos ID5 e ID11) aislando los datos sensibles por políticas estrictas de privacidad.`;
+                } else if(userMsg.toLowerCase().includes('landing') || userMsg.toLowerCase().includes('marketing') || userMsg.toLowerCase().includes('whatsapp')) {
+                    respuesta = `La suite comercial **AI Commerce & Creator Suite** integra flujos dinámicos automáticos desde una idea hasta el lead en CRM, apalancado en los microservicios ID12, ID13 e ID14.`;
+                }
+
+                aiBubble.innerHTML = respuesta.replace(/\n/g, '<br>');
+                body.appendChild(aiBubble);
+                body.scrollTop = body.scrollHeight;
+                hablar(respuesta);
+            }, 950);
+        });
+    </script>
 </body>
 </html>
