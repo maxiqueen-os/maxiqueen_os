@@ -255,7 +255,7 @@ body {
       <button class="btn" onclick="App.createFolder()">📁 Carpeta</button>
       <button class="btn" onclick="App.exportProject()">📤 Export</button>
       <button class="btn" onclick="document.getElementById('fileInput').click()">📥 Import</button>
-      <input type="file" id="fileInput" style="display:none" accept=".json" onchange="App.importProject(event)">
+      <input type="file" id="fileInput" style="display:none" accept=".json,.txt" onchange="App.importProject(event)">
     </div>
   </aside>
 
@@ -783,30 +783,48 @@ const App = {
     UI.toast("Exportación Completa", "Archivo JSON generado y descargado.", "success");
   },
 
-  importProject(e) {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try {
-        const data = JSON.parse(ev.target.result);
-        if(!data.pages) throw new Error("Formato inválido");
-        State.project = data;
-        State.currentIndex = null;
-        State.history = []; State.historyPointer = -1;
+  importProject(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  
+  reader.onload = (e) => {
+    const content = e.target.result;
+
+    // Si el archivo es un .txt
+    if (file.name.endsWith('.txt')) {
+      State.project.pages.push({
+        id: crypto.randomUUID(),
+        name: file.name.replace('.txt', ''),
+        folderId: 'root',
+        html: content
+      });
+      State.saveSnapshot();
+      UI.renderDirectory();
+      UI.showToast("Archivo TXT importado correctamente", "success");
+      return;
+    }
+
+    // Si es un proyecto en formato JSON
+    try {
+      const parsed = JSON.parse(content);
+      if (parsed && parsed.pages) {
+        State.project = parsed;
         State.saveSnapshot();
-        UI.loadViewer();
-        AudioSys.play('save');
-        UI.toast("Importación Exitosa", "Directorio cargado al sistema.", "success");
-      } catch(err) {
-        AudioSys.play('delete');
-        UI.toast("Error Crítico", "El archivo JSON está corrupto o es incompatible.", "error");
+        UI.renderDirectory();
+        UI.showToast("Proyecto JSON importado correctamente", "success");
+      } else {
+        throw new Error("Formato JSON no válido");
       }
-    };
-    reader.readAsText(file);
-    e.target.value = '';
-  }
-};
+    } catch (err) {
+      UI.showToast("Error al procesar el archivo. Asegúrate de seleccionar un .json o .txt válido.", "error");
+    }
+  };
+
+  reader.readAsText(file);
+  event.target.value = ''; // Limpiar input para permitir reimportar
+}
 
 /* ================= HOTKEYS ================= */
 document.addEventListener('keydown', e => {
